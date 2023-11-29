@@ -1,1 +1,23 @@
 = secp256k1-java
+
+`secp256k1-java` is a wrapper around https://github.com/bitcoin-core/secp256k1[libsecp256k1], a C
+library implementing various cryptographic functions using the https://www.secg.org/[SECG] curve
+https://en.bitcoin.it/wiki/Secp256k1[secp256k1].
+
+== Building with Nix
+
+NOTE:: These instructions assume you are using `experimental-features = nix-command flakes`.
+
+WARNING:: This is a work-in-progress by a Nix beginner.
+
+. nix develop
+. ./extract-headers.sh
+
+== Building without Nix
+
+. Install `jextract` somehow
+. ./extract-headers.sh
+
+== Reporting a vulnerability
+
+See SECURITY.adoc (TBD)
