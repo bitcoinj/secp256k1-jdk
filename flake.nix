@@ -48,6 +48,8 @@
         jextract = pkgs.jextract;  # Will need update but should be ok for now
         jdk = pkgs.jdk21;          # Should be JDK 22, when/if package is available (EA and then final)
         maven = pkgs.maven;        # Not currently used, but I expect to use Maven, not Gradle
+        # secp256k1 library
+        secp256k1 = pkgs.secp256k1;
 
       in {
         # define a devshell
@@ -77,6 +79,7 @@
                 jextract
                 jdk
                 maven
+                secp256k1
               ]
             ];
         };
