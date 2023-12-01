@@ -15,8 +15,12 @@ WARNING:: This is a work-in-progress by a Nix beginner.
 
 == Building without Nix
 
-. Install `jextract` somehow
-. ./extract-headers.sh
+TBD
+
+== Other Java Implementations
+
+* bitcoin-s fork https://bitcoin-s.org/docs/secp256k1/jni-modify
+* Kotlin multiplatform wrapper: https://github.com/acinq/secp256k1-kmp
 
 == Reporting a vulnerability
 
