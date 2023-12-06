@@ -44,10 +44,10 @@
       }: let
         inherit (pkgs) stdenv;
 
-        # pick our JDK and Maven versions
-        jextract = pkgs.jextract;  # Will need update but should be ok for now
-        jdk = pkgs.jdk21;          # Should be JDK 22, when/if package is available (EA and then final)
-        maven = pkgs.maven;        # Not currently used, but I expect to use Maven, not Gradle
+        # pick our JDK, jextract and Gradle versions
+        jdk = pkgs.jdk21;          # Should be JDK 22, see https://github.com/NixOS/nixpkgs/issues/271971
+        jextract = pkgs.jextract;  # Currently relies on https://github.com/NixOS/nixpkgs/pull/271127
+        gradle = pkgs.gradle;      # Should use Gradle 8.5: https://github.com/NixOS/nixpkgs/pull/271141
         # secp256k1 library
         secp256k1 = pkgs.secp256k1;
 
@@ -76,9 +76,9 @@
           packages = with lib;
             mkMerge [
               [
-                jextract
                 jdk
-                maven
+                jextract
+                gradle
                 secp256k1
               ]
             ];

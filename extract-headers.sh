@@ -7,5 +7,5 @@ mkdir -p build
 jextract --target-package org.consensusj.secp256k1 \
         --output build \
         --source \
-	-lsecp256k1 \
+        -lsecp256k1 \
         $SECP_PATH/include/secp256k1.h

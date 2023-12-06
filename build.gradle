@@ -1,0 +1,45 @@
+plugins {
+    id "application"
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("21")
+    targetCompatibility = JavaVersion.toVersion("21")
+}
+
+repositories {
+    mavenCentral()
+}
+
+group = 'org.consensusj'
+
+dependencies {
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+    options.compilerArgs += ['--enable-preview']
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
+    jvmArgs += '--enable-native-access=ALL-UNNAMED'
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty "java.library.path", findProperty("javaPath") ?: "/nix/store/j9mf1fh4wbb8c3x1zwqfs218bhml1rbw-secp256k1-0.4.0/lib/"
+    jvmArgs += '--enable-preview'
+    jvmArgs += '--enable-native-access=ALL-UNNAMED'
+}
+
+application {
+    mainClass = 'org.consensusj.secp256k1.examples.Ecdsa'
+}
+
+run {
+    systemProperty "java.library.path", findProperty("javaPath") ?: ""
+}

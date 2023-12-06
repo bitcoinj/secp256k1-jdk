@@ -4,7 +4,7 @@
 library implementing various cryptographic functions using the https://www.secg.org/[SECG] curve
 https://en.bitcoin.it/wiki/Secp256k1[secp256k1].
 
-== Building with Nix
+== Building Headers with Nix
 
 NOTE:: These instructions assume you are using `experimental-features = nix-command flakes`.
 
@@ -13,9 +13,24 @@ WARNING:: This is a work-in-progress by a Nix beginner.
 . nix develop
 . ./extract-headers.sh
 
-== Building without Nix
+== Building with Gradle Wrapper
 
-TBD
+If necessary copy updated, extracted headers into `src/main/java/org/consensusj/secp256k1/`
+
+. `./gradlew build`
+
+== Running with Gradle Wrapper
+
+(This assumes a specific version of secp256k1 was installed with nixpkgs)
+
+. `./gradlew -PjavaPath="/nix/store/j9mf1fh4wbb8c3x1zwqfs218bhml1rbw-secp256k1-0.4.0/lib/" run`
+
+== Building with Nix
+
+WARNING: This doesn't work yet
+
+. `nix develop`
+. `gradle build`
 
 == Other Java Implementations
 
