@@ -3,6 +3,8 @@ package org.consensusj.secp256k1.examples;
 import org.consensusj.secp256k1.foreign.Secp256k1;
 
 import java.lang.foreign.MemorySegment;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HexFormat;
 
@@ -15,12 +17,10 @@ import static org.consensusj.secp256k1.secp256k1_h.SECP256K1_EC_COMPRESSED;
 public class Ecdsa {
     private static final HexFormat formatter = HexFormat.of();
     /* Instead of signing the message directly, we must sign a 32-byte hash.
-     * Here the message is "Hello, world!" and the hash function was SHA-256.
-     * An actual implementation should just call SHA-256, but this example
-     * hardcodes the output to avoid depending on an additional library.
-     * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116 */
-    private static final byte[] msg_hash = formatter.parseHex("315F5BDB76D078C43B8AC0064E4A0164612B1FCE77C869345BFC94C75894EDD3");
-
+     * Here the message is "Hello, world!" and the hash function is SHA-256.
+     * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116
+     */
+    private static final byte[] msg_hash = hash("Hello, world!");
 
     public static void main(String[] args) {
         /* Use a java try-with-resources to allocate and cleanup -- secp256k1_context_destroy is automatically called */
@@ -66,5 +66,17 @@ public class Ecdsa {
         }
 
         // Bonus example TBD: use the static ecdsaVerify() method to verify a signature
+    }
+
+    private static byte[] hash(String messageString) {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);  // Can't happen.
+        }
+        byte[] message = messageString.getBytes();
+        digest.update(message, 0, message.length);
+        return digest.digest();
     }
 }
