@@ -1,8 +1,12 @@
-= secp256k1-java
+= secp256k1-jdk
 
-`secp256k1-java` is a wrapper around https://github.com/bitcoin-core/secp256k1[libsecp256k1], a C
-library implementing various cryptographic functions using the https://www.secg.org/[SECG] curve
-https://en.bitcoin.it/wiki/Secp256k1[secp256k1].
+`secp256k1-jdk` is a Java library providing Eliptic Curve Cryptography functions using the https://www.secg.org/[SECG] curve
+https://en.bitcoin.it/wiki/Secp256k1[secp256k1]. It defines an API with a Java Interface (API JAR will be JDK 8/9+) and will support multiple implementations. Initial plans are for a `java.lang.foreign` (aka Panama) wrapper of https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], a C
+library implementing various cryptographic functions and also a Bouncy Castle-based implementation.
+
+Schnorr Signature support is planned.
+
+We are also hoping to officially support other JDK-based languages such as Kotlin, Scala, and Clojure.
 
 == Building Headers with Nix
 
@@ -10,8 +14,8 @@ NOTE:: These instructions assume you are using `experimental-features = nix-comm
 
 WARNING:: This is a work-in-progress by a Nix beginner.
 
-. nix develop
-. ./extract-headers.sh
+. `nix develop`
+. `./extract-headers.sh`
 
 == Building with Gradle Wrapper
 
@@ -21,13 +25,11 @@ If necessary copy updated, extracted headers into `src/main/java/org/consensusj/
 
 == Running with Gradle Wrapper
 
-(This assumes a specific version of secp256k1 was installed with nixpkgs)
+(This assumes a specific hash/version of secp256k1 was installed with nixpkgs)
 
 . `./gradlew -PjavaPath="/nix/store/j9mf1fh4wbb8c3x1zwqfs218bhml1rbw-secp256k1-0.4.0/lib/" run`
 
 == Building with Nix
-
-WARNING: This doesn't work yet
 
 . `nix develop`
 . `gradle build`
@@ -40,3 +42,12 @@ WARNING: This doesn't work yet
 == Reporting a vulnerability
 
 See SECURITY.adoc (TBD)
+
+== References
+
+* https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] on GitHub
+* https://fangpenlin.com/posts/2019/10/07/elliptic-curve-cryptography-explained/[Elliptic Curve Cryptography Explained]
+* https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki[BIP 340]: Schnorr Signatures for secp256k1
+* https://leanpub.com/javacryptotoolsandtech[Java Cryptography: Tools and Techniques]
+* https://www.novixys.com/blog/generate-bitcoin-addresses-java/ (Obsolete as of JDK 16)
+* https://eprint.iacr.org/2015/1060.pdf[Complete addition formulas for prime order elliptic curves]: Joost Renes1, Craig Costello, and Lejla Batina

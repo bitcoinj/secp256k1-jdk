@@ -2,7 +2,7 @@
   description = "secp2565k1-java (Java wrapper for secp256k1)";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -46,8 +46,8 @@
 
         # pick our JDK, jextract and Gradle versions
         jdk = pkgs.jdk21;          # Should be JDK 22, see https://github.com/NixOS/nixpkgs/issues/271971
-        jextract = pkgs.jextract;  # Currently relies on https://github.com/NixOS/nixpkgs/pull/271127
-        gradle = pkgs.gradle;      # Should use Gradle 8.5: https://github.com/NixOS/nixpkgs/pull/271141
+        jextract = pkgs.jextract;  # Last tested with (nixpkgs-unstable, jextract-unstable, Version: 2023-11-27)
+        gradle = pkgs.gradle;      # Last tested with Gradle 8.5 (nixpkgs-unstable, gradle, Version: 8.5)
         # secp256k1 library
         secp256k1 = pkgs.secp256k1;
 
@@ -58,7 +58,7 @@
           env = with lib;
             mkMerge [
               [
-                # Configure nix to use nixpgks
+                # Configure nix to use nixpkgs
                 {
                   name = "NIX_PATH";
                   value = "nixpkgs=${toString pkgs.path}";
