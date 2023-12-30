@@ -701,13 +701,283 @@ public class secp256k1_h  {
             throw new AssertionError("should not reach here", ex$);
         }
     }
+    public static MethodHandle secp256k1_xonly_pubkey_parse$MH() {
+        return RuntimeHelper.requireNonNull(constants$10.const$2,"secp256k1_xonly_pubkey_parse");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_xonly_pubkey_parse(struct secp256k1_context_struct* ctx, struct secp256k1_xonly_pubkey* pubkey, unsigned char* input32);
+     * }
+     */
+    public static int secp256k1_xonly_pubkey_parse(MemorySegment ctx, MemorySegment pubkey, MemorySegment input32) {
+        var mh$ = secp256k1_xonly_pubkey_parse$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, pubkey, input32);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_xonly_pubkey_serialize$MH() {
+        return RuntimeHelper.requireNonNull(constants$10.const$3,"secp256k1_xonly_pubkey_serialize");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_xonly_pubkey_serialize(struct secp256k1_context_struct* ctx, unsigned char* output32, struct secp256k1_xonly_pubkey* pubkey);
+     * }
+     */
+    public static int secp256k1_xonly_pubkey_serialize(MemorySegment ctx, MemorySegment output32, MemorySegment pubkey) {
+        var mh$ = secp256k1_xonly_pubkey_serialize$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, output32, pubkey);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_xonly_pubkey_cmp$MH() {
+        return RuntimeHelper.requireNonNull(constants$10.const$4,"secp256k1_xonly_pubkey_cmp");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_xonly_pubkey_cmp(struct secp256k1_context_struct* ctx, struct secp256k1_xonly_pubkey* pk1, struct secp256k1_xonly_pubkey* pk2);
+     * }
+     */
+    public static int secp256k1_xonly_pubkey_cmp(MemorySegment ctx, MemorySegment pk1, MemorySegment pk2) {
+        var mh$ = secp256k1_xonly_pubkey_cmp$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, pk1, pk2);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_xonly_pubkey_from_pubkey$MH() {
+        return RuntimeHelper.requireNonNull(constants$10.const$5,"secp256k1_xonly_pubkey_from_pubkey");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_xonly_pubkey_from_pubkey(struct secp256k1_context_struct* ctx, struct secp256k1_xonly_pubkey* xonly_pubkey, int* pk_parity, struct secp256k1_pubkey* pubkey);
+     * }
+     */
+    public static int secp256k1_xonly_pubkey_from_pubkey(MemorySegment ctx, MemorySegment xonly_pubkey, MemorySegment pk_parity, MemorySegment pubkey) {
+        var mh$ = secp256k1_xonly_pubkey_from_pubkey$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, xonly_pubkey, pk_parity, pubkey);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_xonly_pubkey_tweak_add$MH() {
+        return RuntimeHelper.requireNonNull(constants$11.const$0,"secp256k1_xonly_pubkey_tweak_add");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_xonly_pubkey_tweak_add(struct secp256k1_context_struct* ctx, struct secp256k1_pubkey* output_pubkey, struct secp256k1_xonly_pubkey* internal_pubkey, unsigned char* tweak32);
+     * }
+     */
+    public static int secp256k1_xonly_pubkey_tweak_add(MemorySegment ctx, MemorySegment output_pubkey, MemorySegment internal_pubkey, MemorySegment tweak32) {
+        var mh$ = secp256k1_xonly_pubkey_tweak_add$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, output_pubkey, internal_pubkey, tweak32);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_xonly_pubkey_tweak_add_check$MH() {
+        return RuntimeHelper.requireNonNull(constants$11.const$2,"secp256k1_xonly_pubkey_tweak_add_check");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_xonly_pubkey_tweak_add_check(struct secp256k1_context_struct* ctx, unsigned char* tweaked_pubkey32, int tweaked_pk_parity, struct secp256k1_xonly_pubkey* internal_pubkey, unsigned char* tweak32);
+     * }
+     */
+    public static int secp256k1_xonly_pubkey_tweak_add_check(MemorySegment ctx, MemorySegment tweaked_pubkey32, int tweaked_pk_parity, MemorySegment internal_pubkey, MemorySegment tweak32) {
+        var mh$ = secp256k1_xonly_pubkey_tweak_add_check$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, tweaked_pubkey32, tweaked_pk_parity, internal_pubkey, tweak32);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_keypair_create$MH() {
+        return RuntimeHelper.requireNonNull(constants$11.const$3,"secp256k1_keypair_create");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_keypair_create(struct secp256k1_context_struct* ctx, struct secp256k1_keypair* keypair, unsigned char* seckey);
+     * }
+     */
+    public static int secp256k1_keypair_create(MemorySegment ctx, MemorySegment keypair, MemorySegment seckey) {
+        var mh$ = secp256k1_keypair_create$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, keypair, seckey);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_keypair_sec$MH() {
+        return RuntimeHelper.requireNonNull(constants$11.const$4,"secp256k1_keypair_sec");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_keypair_sec(struct secp256k1_context_struct* ctx, unsigned char* seckey, struct secp256k1_keypair* keypair);
+     * }
+     */
+    public static int secp256k1_keypair_sec(MemorySegment ctx, MemorySegment seckey, MemorySegment keypair) {
+        var mh$ = secp256k1_keypair_sec$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, seckey, keypair);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_keypair_pub$MH() {
+        return RuntimeHelper.requireNonNull(constants$11.const$5,"secp256k1_keypair_pub");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_keypair_pub(struct secp256k1_context_struct* ctx, struct secp256k1_pubkey* pubkey, struct secp256k1_keypair* keypair);
+     * }
+     */
+    public static int secp256k1_keypair_pub(MemorySegment ctx, MemorySegment pubkey, MemorySegment keypair) {
+        var mh$ = secp256k1_keypair_pub$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, pubkey, keypair);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_keypair_xonly_pub$MH() {
+        return RuntimeHelper.requireNonNull(constants$12.const$0,"secp256k1_keypair_xonly_pub");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_keypair_xonly_pub(struct secp256k1_context_struct* ctx, struct secp256k1_xonly_pubkey* pubkey, int* pk_parity, struct secp256k1_keypair* keypair);
+     * }
+     */
+    public static int secp256k1_keypair_xonly_pub(MemorySegment ctx, MemorySegment pubkey, MemorySegment pk_parity, MemorySegment keypair) {
+        var mh$ = secp256k1_keypair_xonly_pub$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, pubkey, pk_parity, keypair);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_keypair_xonly_tweak_add$MH() {
+        return RuntimeHelper.requireNonNull(constants$12.const$1,"secp256k1_keypair_xonly_tweak_add");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_keypair_xonly_tweak_add(struct secp256k1_context_struct* ctx, struct secp256k1_keypair* keypair, unsigned char* tweak32);
+     * }
+     */
+    public static int secp256k1_keypair_xonly_tweak_add(MemorySegment ctx, MemorySegment keypair, MemorySegment tweak32) {
+        var mh$ = secp256k1_keypair_xonly_tweak_add$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, keypair, tweak32);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MemoryLayout secp256k1_nonce_function_bip340$LAYOUT() {
+        return RuntimeHelper.POINTER;
+    }
+    public static VarHandle secp256k1_nonce_function_bip340$VH() {
+        return constants$0.const$5;
+    }
+    public static MemorySegment secp256k1_nonce_function_bip340$SEGMENT() {
+        return RuntimeHelper.requireNonNull(constants$13.const$0,"secp256k1_nonce_function_bip340");
+    }
+    /**
+     * Getter for variable:
+     * {@snippet lang=c :
+     * int (*secp256k1_nonce_function_bip340)(unsigned char*,unsigned char*,unsigned long,unsigned char*,unsigned char*,unsigned char*,unsigned long,void*);
+     * }
+     */
+    public static MemorySegment secp256k1_nonce_function_bip340$get() {
+        return (java.lang.foreign.MemorySegment) constants$0.const$5.get(RuntimeHelper.requireNonNull(constants$13.const$0, "secp256k1_nonce_function_bip340"));
+    }
+    /**
+     * Setter for variable:
+     * {@snippet lang=c :
+     * int (*secp256k1_nonce_function_bip340)(unsigned char*,unsigned char*,unsigned long,unsigned char*,unsigned char*,unsigned char*,unsigned long,void*);
+     * }
+     */
+    public static void secp256k1_nonce_function_bip340$set(MemorySegment x) {
+        constants$0.const$5.set(RuntimeHelper.requireNonNull(constants$13.const$0, "secp256k1_nonce_function_bip340"), x);
+    }
+    public static secp256k1_nonce_function_bip340 secp256k1_nonce_function_bip340 () {
+        return secp256k1_nonce_function_bip340.ofAddress(secp256k1_nonce_function_bip340$get(), Arena.global());
+    }
+    public static MethodHandle secp256k1_schnorrsig_sign32$MH() {
+        return RuntimeHelper.requireNonNull(constants$13.const$6,"secp256k1_schnorrsig_sign32");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_schnorrsig_sign32(struct secp256k1_context_struct* ctx, unsigned char* sig64, unsigned char* msg32, struct secp256k1_keypair* keypair, unsigned char* aux_rand32);
+     * }
+     */
+    public static int secp256k1_schnorrsig_sign32(MemorySegment ctx, MemorySegment sig64, MemorySegment msg32, MemorySegment keypair, MemorySegment aux_rand32) {
+        var mh$ = secp256k1_schnorrsig_sign32$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, sig64, msg32, keypair, aux_rand32);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_schnorrsig_sign$MH() {
+        return RuntimeHelper.requireNonNull(constants$14.const$0,"secp256k1_schnorrsig_sign");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_schnorrsig_sign(struct secp256k1_context_struct* ctx, unsigned char* sig64, unsigned char* msg32, struct secp256k1_keypair* keypair, unsigned char* aux_rand32);
+     * }
+     */
+    public static int secp256k1_schnorrsig_sign(MemorySegment ctx, MemorySegment sig64, MemorySegment msg32, MemorySegment keypair, MemorySegment aux_rand32) {
+        var mh$ = secp256k1_schnorrsig_sign$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, sig64, msg32, keypair, aux_rand32);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_schnorrsig_sign_custom$MH() {
+        return RuntimeHelper.requireNonNull(constants$14.const$2,"secp256k1_schnorrsig_sign_custom");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_schnorrsig_sign_custom(struct secp256k1_context_struct* ctx, unsigned char* sig64, unsigned char* msg, unsigned long msglen, struct secp256k1_keypair* keypair, struct secp256k1_schnorrsig_extraparams* extraparams);
+     * }
+     */
+    public static int secp256k1_schnorrsig_sign_custom(MemorySegment ctx, MemorySegment sig64, MemorySegment msg, long msglen, MemorySegment keypair, MemorySegment extraparams) {
+        var mh$ = secp256k1_schnorrsig_sign_custom$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, sig64, msg, msglen, keypair, extraparams);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
+    public static MethodHandle secp256k1_schnorrsig_verify$MH() {
+        return RuntimeHelper.requireNonNull(constants$14.const$4,"secp256k1_schnorrsig_verify");
+    }
+    /**
+     * {@snippet lang=c :
+     * int secp256k1_schnorrsig_verify(struct secp256k1_context_struct* ctx, unsigned char* sig64, unsigned char* msg, unsigned long msglen, struct secp256k1_xonly_pubkey* pubkey);
+     * }
+     */
+    public static int secp256k1_schnorrsig_verify(MemorySegment ctx, MemorySegment sig64, MemorySegment msg, long msglen, MemorySegment pubkey) {
+        var mh$ = secp256k1_schnorrsig_verify$MH();
+        try {
+            return (int)mh$.invokeExact(ctx, sig64, msg, msglen, pubkey);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
+    }
     /**
      * {@snippet lang=c :
      * #define NULL 0
      * }
      */
     public static MemorySegment NULL() {
-        return constants$10.const$0;
+        return constants$14.const$5;
     }
     /**
      * {@snippet lang=c :

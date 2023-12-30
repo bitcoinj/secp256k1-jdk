@@ -7,31 +7,36 @@ import java.lang.invoke.VarHandle;
 import java.nio.ByteOrder;
 import java.lang.foreign.*;
 import static java.lang.foreign.ValueLayout.*;
-final class constants$10 {
+final class constants$11 {
 
     // Suppresses default constructor, ensuring non-instantiability.
-    private constants$10() {}
-    static final StructLayout const$0 = MemoryLayout.structLayout(
-        MemoryLayout.sequenceLayout(64, JAVA_BYTE).withName("data")
-    ).withName("secp256k1_xonly_pubkey");
-    static final StructLayout const$1 = MemoryLayout.structLayout(
-        MemoryLayout.sequenceLayout(96, JAVA_BYTE).withName("data")
-    ).withName("secp256k1_keypair");
+    private constants$11() {}
+    static final MethodHandle const$0 = RuntimeHelper.downcallHandle(
+        "secp256k1_xonly_pubkey_tweak_add",
+        constants$5.const$2
+    );
+    static final FunctionDescriptor const$1 = FunctionDescriptor.of(JAVA_INT,
+        RuntimeHelper.POINTER,
+        RuntimeHelper.POINTER,
+        JAVA_INT,
+        RuntimeHelper.POINTER,
+        RuntimeHelper.POINTER
+    );
     static final MethodHandle const$2 = RuntimeHelper.downcallHandle(
-        "secp256k1_xonly_pubkey_parse",
-        constants$4.const$5
+        "secp256k1_xonly_pubkey_tweak_add_check",
+        constants$11.const$1
     );
     static final MethodHandle const$3 = RuntimeHelper.downcallHandle(
-        "secp256k1_xonly_pubkey_serialize",
+        "secp256k1_keypair_create",
         constants$4.const$5
     );
     static final MethodHandle const$4 = RuntimeHelper.downcallHandle(
-        "secp256k1_xonly_pubkey_cmp",
+        "secp256k1_keypair_sec",
         constants$4.const$5
     );
     static final MethodHandle const$5 = RuntimeHelper.downcallHandle(
-        "secp256k1_xonly_pubkey_from_pubkey",
-        constants$5.const$2
+        "secp256k1_keypair_pub",
+        constants$4.const$5
     );
 }
 
