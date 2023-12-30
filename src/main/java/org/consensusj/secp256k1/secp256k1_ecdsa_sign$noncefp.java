@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.lang.foreign.*;
 import static java.lang.foreign.ValueLayout.*;
 /**
- * {@snippet :
+ * {@snippet lang=c :
  * int (*secp256k1_ecdsa_sign$noncefp)(unsigned char*,unsigned char*,unsigned char*,unsigned char*,void*,unsigned int);
  * }
  */

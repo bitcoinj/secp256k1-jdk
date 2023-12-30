@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.lang.foreign.*;
 import static java.lang.foreign.ValueLayout.*;
 /**
- * {@snippet :
+ * {@snippet lang=c :
  * typedef struct secp256k1_scratch_space_struct secp256k1_scratch_space;
  * }
  */

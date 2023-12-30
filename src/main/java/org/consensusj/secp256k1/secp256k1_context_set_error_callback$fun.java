@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.lang.foreign.*;
 import static java.lang.foreign.ValueLayout.*;
 /**
- * {@snippet :
+ * {@snippet lang=c :
  * void (*secp256k1_context_set_error_callback$fun)(char*,void*);
  * }
  */

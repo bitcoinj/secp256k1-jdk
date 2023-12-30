@@ -18,7 +18,7 @@ public class secp256k1_h  {
     public static final OfDouble C_DOUBLE = JAVA_DOUBLE;
     public static final AddressLayout C_POINTER = RuntimeHelper.POINTER;
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_TAG_PUBKEY_EVEN 2
      * }
      */
@@ -26,7 +26,7 @@ public class secp256k1_h  {
         return (int)2L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_TAG_PUBKEY_ODD 3
      * }
      */
@@ -34,7 +34,7 @@ public class secp256k1_h  {
         return (int)3L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_TAG_PUBKEY_UNCOMPRESSED 4
      * }
      */
@@ -42,7 +42,7 @@ public class secp256k1_h  {
         return (int)4L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_TAG_PUBKEY_HYBRID_EVEN 6
      * }
      */
@@ -50,7 +50,7 @@ public class secp256k1_h  {
         return (int)6L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_TAG_PUBKEY_HYBRID_ODD 7
      * }
      */
@@ -58,19 +58,19 @@ public class secp256k1_h  {
         return (int)7L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * typedef long ptrdiff_t;
      * }
      */
     public static final OfLong ptrdiff_t = JAVA_LONG;
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * typedef unsigned long size_t;
      * }
      */
     public static final OfLong size_t = JAVA_LONG;
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * typedef int wchar_t;
      * }
      */
@@ -86,7 +86,7 @@ public class secp256k1_h  {
     }
     /**
      * Getter for variable:
-     * {@snippet :
+     * {@snippet lang=c :
      * struct secp256k1_context_struct* secp256k1_context_static;
      * }
      */
@@ -95,7 +95,7 @@ public class secp256k1_h  {
     }
     /**
      * Setter for variable:
-     * {@snippet :
+     * {@snippet lang=c :
      * struct secp256k1_context_struct* secp256k1_context_static;
      * }
      */
@@ -113,7 +113,7 @@ public class secp256k1_h  {
     }
     /**
      * Getter for variable:
-     * {@snippet :
+     * {@snippet lang=c :
      * struct secp256k1_context_struct* secp256k1_context_no_precomp;
      * }
      */
@@ -122,7 +122,7 @@ public class secp256k1_h  {
     }
     /**
      * Setter for variable:
-     * {@snippet :
+     * {@snippet lang=c :
      * struct secp256k1_context_struct* secp256k1_context_no_precomp;
      * }
      */
@@ -133,7 +133,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$1.const$3,"secp256k1_selftest");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * void secp256k1_selftest();
      * }
      */
@@ -149,7 +149,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$1.const$5,"secp256k1_context_create");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * struct secp256k1_context_struct* secp256k1_context_create(unsigned int flags);
      * }
      */
@@ -165,7 +165,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$2.const$1,"secp256k1_context_clone");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * struct secp256k1_context_struct* secp256k1_context_clone(struct secp256k1_context_struct* ctx);
      * }
      */
@@ -181,7 +181,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$2.const$3,"secp256k1_context_destroy");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * void secp256k1_context_destroy(struct secp256k1_context_struct* ctx);
      * }
      */
@@ -197,7 +197,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$3.const$2,"secp256k1_context_set_illegal_callback");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * void secp256k1_context_set_illegal_callback(struct secp256k1_context_struct* ctx, void (*fun)(char*,void*), void* data);
      * }
      */
@@ -213,7 +213,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$3.const$4,"secp256k1_context_set_error_callback");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * void secp256k1_context_set_error_callback(struct secp256k1_context_struct* ctx, void (*fun)(char*,void*), void* data);
      * }
      */
@@ -229,7 +229,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$3.const$6,"secp256k1_scratch_space_create");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * struct secp256k1_scratch_space_struct* secp256k1_scratch_space_create(struct secp256k1_context_struct* ctx, unsigned long size);
      * }
      */
@@ -245,7 +245,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$4.const$0,"secp256k1_scratch_space_destroy");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * void secp256k1_scratch_space_destroy(struct secp256k1_context_struct* ctx, struct secp256k1_scratch_space_struct* scratch);
      * }
      */
@@ -261,7 +261,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$4.const$2,"secp256k1_ec_pubkey_parse");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_pubkey_parse(struct secp256k1_context_struct* ctx, struct secp256k1_pubkey* pubkey, unsigned char* input, unsigned long inputlen);
      * }
      */
@@ -277,7 +277,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$4.const$4,"secp256k1_ec_pubkey_serialize");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_pubkey_serialize(struct secp256k1_context_struct* ctx, unsigned char* output, unsigned long* outputlen, struct secp256k1_pubkey* pubkey, unsigned int flags);
      * }
      */
@@ -293,7 +293,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$4.const$6,"secp256k1_ec_pubkey_cmp");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_pubkey_cmp(struct secp256k1_context_struct* ctx, struct secp256k1_pubkey* pubkey1, struct secp256k1_pubkey* pubkey2);
      * }
      */
@@ -309,7 +309,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$5.const$0,"secp256k1_ecdsa_signature_parse_compact");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ecdsa_signature_parse_compact(struct secp256k1_context_struct* ctx, struct secp256k1_ecdsa_signature* sig, unsigned char* input64);
      * }
      */
@@ -325,7 +325,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$5.const$1,"secp256k1_ecdsa_signature_parse_der");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ecdsa_signature_parse_der(struct secp256k1_context_struct* ctx, struct secp256k1_ecdsa_signature* sig, unsigned char* input, unsigned long inputlen);
      * }
      */
@@ -341,7 +341,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$5.const$3,"secp256k1_ecdsa_signature_serialize_der");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ecdsa_signature_serialize_der(struct secp256k1_context_struct* ctx, unsigned char* output, unsigned long* outputlen, struct secp256k1_ecdsa_signature* sig);
      * }
      */
@@ -357,7 +357,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$5.const$4,"secp256k1_ecdsa_signature_serialize_compact");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ecdsa_signature_serialize_compact(struct secp256k1_context_struct* ctx, unsigned char* output64, struct secp256k1_ecdsa_signature* sig);
      * }
      */
@@ -373,7 +373,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$5.const$5,"secp256k1_ecdsa_verify");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ecdsa_verify(struct secp256k1_context_struct* ctx, struct secp256k1_ecdsa_signature* sig, unsigned char* msghash32, struct secp256k1_pubkey* pubkey);
      * }
      */
@@ -389,7 +389,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$6.const$0,"secp256k1_ecdsa_signature_normalize");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ecdsa_signature_normalize(struct secp256k1_context_struct* ctx, struct secp256k1_ecdsa_signature* sigout, struct secp256k1_ecdsa_signature* sigin);
      * }
      */
@@ -412,7 +412,7 @@ public class secp256k1_h  {
     }
     /**
      * Getter for variable:
-     * {@snippet :
+     * {@snippet lang=c :
      * int (*secp256k1_nonce_function_rfc6979)(unsigned char*,unsigned char*,unsigned char*,unsigned char*,void*,unsigned int);
      * }
      */
@@ -421,7 +421,7 @@ public class secp256k1_h  {
     }
     /**
      * Setter for variable:
-     * {@snippet :
+     * {@snippet lang=c :
      * int (*secp256k1_nonce_function_rfc6979)(unsigned char*,unsigned char*,unsigned char*,unsigned char*,void*,unsigned int);
      * }
      */
@@ -442,7 +442,7 @@ public class secp256k1_h  {
     }
     /**
      * Getter for variable:
-     * {@snippet :
+     * {@snippet lang=c :
      * int (*secp256k1_nonce_function_default)(unsigned char*,unsigned char*,unsigned char*,unsigned char*,void*,unsigned int);
      * }
      */
@@ -451,7 +451,7 @@ public class secp256k1_h  {
     }
     /**
      * Setter for variable:
-     * {@snippet :
+     * {@snippet lang=c :
      * int (*secp256k1_nonce_function_default)(unsigned char*,unsigned char*,unsigned char*,unsigned char*,void*,unsigned int);
      * }
      */
@@ -465,7 +465,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$7.const$1,"secp256k1_ecdsa_sign");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ecdsa_sign(struct secp256k1_context_struct* ctx, struct secp256k1_ecdsa_signature* sig, unsigned char* msghash32, unsigned char* seckey, int (*noncefp)(unsigned char*,unsigned char*,unsigned char*,unsigned char*,void*,unsigned int), void* ndata);
      * }
      */
@@ -481,7 +481,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$7.const$3,"secp256k1_ec_seckey_verify");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_seckey_verify(struct secp256k1_context_struct* ctx, unsigned char* seckey);
      * }
      */
@@ -497,7 +497,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$7.const$4,"secp256k1_ec_pubkey_create");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_pubkey_create(struct secp256k1_context_struct* ctx, struct secp256k1_pubkey* pubkey, unsigned char* seckey);
      * }
      */
@@ -513,7 +513,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$7.const$5,"secp256k1_ec_seckey_negate");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_seckey_negate(struct secp256k1_context_struct* ctx, unsigned char* seckey);
      * }
      */
@@ -529,7 +529,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$8.const$0,"secp256k1_ec_privkey_negate");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_privkey_negate(struct secp256k1_context_struct* ctx, unsigned char* seckey);
      * }
      */
@@ -545,7 +545,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$8.const$1,"secp256k1_ec_pubkey_negate");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_pubkey_negate(struct secp256k1_context_struct* ctx, struct secp256k1_pubkey* pubkey);
      * }
      */
@@ -561,7 +561,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$8.const$2,"secp256k1_ec_seckey_tweak_add");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_seckey_tweak_add(struct secp256k1_context_struct* ctx, unsigned char* seckey, unsigned char* tweak32);
      * }
      */
@@ -577,7 +577,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$8.const$3,"secp256k1_ec_privkey_tweak_add");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_privkey_tweak_add(struct secp256k1_context_struct* ctx, unsigned char* seckey, unsigned char* tweak32);
      * }
      */
@@ -593,7 +593,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$8.const$4,"secp256k1_ec_pubkey_tweak_add");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_pubkey_tweak_add(struct secp256k1_context_struct* ctx, struct secp256k1_pubkey* pubkey, unsigned char* tweak32);
      * }
      */
@@ -609,7 +609,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$8.const$5,"secp256k1_ec_seckey_tweak_mul");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_seckey_tweak_mul(struct secp256k1_context_struct* ctx, unsigned char* seckey, unsigned char* tweak32);
      * }
      */
@@ -625,7 +625,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$9.const$0,"secp256k1_ec_privkey_tweak_mul");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_privkey_tweak_mul(struct secp256k1_context_struct* ctx, unsigned char* seckey, unsigned char* tweak32);
      * }
      */
@@ -641,7 +641,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$9.const$1,"secp256k1_ec_pubkey_tweak_mul");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_pubkey_tweak_mul(struct secp256k1_context_struct* ctx, struct secp256k1_pubkey* pubkey, unsigned char* tweak32);
      * }
      */
@@ -657,7 +657,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$9.const$2,"secp256k1_context_randomize");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_context_randomize(struct secp256k1_context_struct* ctx, unsigned char* seed32);
      * }
      */
@@ -673,7 +673,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$9.const$3,"secp256k1_ec_pubkey_combine");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_ec_pubkey_combine(struct secp256k1_context_struct* ctx, struct secp256k1_pubkey* out, struct secp256k1_pubkey** ins, unsigned long n);
      * }
      */
@@ -689,7 +689,7 @@ public class secp256k1_h  {
         return RuntimeHelper.requireNonNull(constants$9.const$5,"secp256k1_tagged_sha256");
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * int secp256k1_tagged_sha256(struct secp256k1_context_struct* ctx, unsigned char* hash32, unsigned char* tag, unsigned long taglen, unsigned char* msg, unsigned long msglen);
      * }
      */
@@ -702,7 +702,7 @@ public class secp256k1_h  {
         }
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define NULL 0
      * }
      */
@@ -710,7 +710,7 @@ public class secp256k1_h  {
         return constants$10.const$0;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_FLAGS_TYPE_MASK 255
      * }
      */
@@ -718,7 +718,7 @@ public class secp256k1_h  {
         return (int)255L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_FLAGS_TYPE_CONTEXT 1
      * }
      */
@@ -726,7 +726,7 @@ public class secp256k1_h  {
         return (int)1L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_FLAGS_TYPE_COMPRESSION 2
      * }
      */
@@ -734,7 +734,7 @@ public class secp256k1_h  {
         return (int)2L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_FLAGS_BIT_CONTEXT_VERIFY 256
      * }
      */
@@ -742,7 +742,7 @@ public class secp256k1_h  {
         return (int)256L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_FLAGS_BIT_CONTEXT_SIGN 512
      * }
      */
@@ -750,7 +750,7 @@ public class secp256k1_h  {
         return (int)512L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_FLAGS_BIT_CONTEXT_DECLASSIFY 1024
      * }
      */
@@ -758,7 +758,7 @@ public class secp256k1_h  {
         return (int)1024L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_FLAGS_BIT_COMPRESSION 256
      * }
      */
@@ -766,7 +766,7 @@ public class secp256k1_h  {
         return (int)256L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_CONTEXT_NONE 1
      * }
      */
@@ -774,7 +774,7 @@ public class secp256k1_h  {
         return (int)1L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_CONTEXT_VERIFY 257
      * }
      */
@@ -782,7 +782,7 @@ public class secp256k1_h  {
         return (int)257L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_CONTEXT_SIGN 513
      * }
      */
@@ -790,7 +790,7 @@ public class secp256k1_h  {
         return (int)513L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_CONTEXT_DECLASSIFY 1025
      * }
      */
@@ -798,7 +798,7 @@ public class secp256k1_h  {
         return (int)1025L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_EC_COMPRESSED 258
      * }
      */
@@ -806,7 +806,7 @@ public class secp256k1_h  {
         return (int)258L;
     }
     /**
-     * {@snippet :
+     * {@snippet lang=c :
      * #define SECP256K1_EC_UNCOMPRESSED 2
      * }
      */
