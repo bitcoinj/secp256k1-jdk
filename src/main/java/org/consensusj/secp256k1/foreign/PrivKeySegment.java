@@ -18,7 +18,7 @@ import static java.lang.foreign.ValueLayout.JAVA_BYTE;
     }
 
     @Override
-    public byte[] bytes() {
+    public byte[] getEncoded() {
         return new byte[0];
     }
 

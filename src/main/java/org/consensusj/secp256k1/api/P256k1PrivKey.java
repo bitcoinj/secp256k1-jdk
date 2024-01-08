@@ -10,14 +10,6 @@ import java.security.spec.ECParameterSpec;
  */
 public interface P256k1PrivKey extends ECPrivateKey {
 
-    /**
-     * @return Private key bytes in big-endian order
-     */
-    public byte[] bytes();
-    default BigInteger integer() {
-        return toInteger(bytes());
-    }
-
     /* package */ static BigInteger toInteger(byte[] bytes) {
         int signum = 0;
         for (byte b : bytes) {
@@ -36,22 +28,23 @@ public interface P256k1PrivKey extends ECPrivateKey {
 
     @Override
     default String getFormat() {
-        return "xx";
+        return "Big-endian";
     }
 
+    /**
+     * @return 32-bytes, Big endian with no prefix or suffix
+     */
     @Override
-    default byte[] getEncoded() {
-        return null;
-    }
+    byte[] getEncoded();
 
     @Override
     default BigInteger getS() {
-        return null;
+        return toInteger(getEncoded());
     }
 
     @Override
     default ECParameterSpec getParams() {
-        return null;
+        return Secp256k1.EC_PARAMS;
     }
 
     /**

@@ -2,6 +2,7 @@ package org.consensusj.secp256k1;
 
 import org.consensusj.secp256k1.api.P256k1PrivKey;
 import org.consensusj.secp256k1.api.P256k1PubKey;
+import org.consensusj.secp256k1.api.Secp256k1;
 import org.consensusj.secp256k1.bouncy.Bouncy256k1;
 import org.consensusj.secp256k1.bouncy.BouncyPrivKey;
 import org.consensusj.secp256k1.foreign.Secp256k1Foreign;
@@ -11,6 +12,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemoryLayout;
 import java.lang.foreign.MemorySegment;
 import java.math.BigInteger;
+import java.security.spec.ECPoint;
 import java.util.HexFormat;
 import java.util.Random;
 
@@ -25,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  */
 public class CurveTest {
+    static final ECPoint G = Secp256k1.EC_PARAMS.getGenerator();
+
 
     @Test
     void smokeTest() {
@@ -78,10 +82,9 @@ public class CurveTest {
             /* Public key creation using a valid context with a verified secret key should never fail */
             P256k1PubKey pubkey = secp.ecPubKeyCreate(privkey);
             P256k1PubKey pubkey2 = bouncyp.ecPubKeyCreate(privkey);
-            P256k1PubKey g = bouncyp.g();
 
-            assertEquals(g.getW(), pubkey.getW());
-            assertEquals(g.getW(), pubkey2.getW());
+            assertEquals(G, pubkey.getW());
+            assertEquals(G, pubkey2.getW());
 
             System.out.println(pubkey);
             System.out.println(pubkey2);

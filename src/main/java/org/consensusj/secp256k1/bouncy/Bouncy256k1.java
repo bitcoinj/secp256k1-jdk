@@ -7,16 +7,20 @@ import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.math.ec.ECFieldElement;
 import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.math.ec.FixedPointCombMultiplier;
 import org.bouncycastle.math.ec.FixedPointUtil;
+import org.bouncycastle.math.ec.custom.sec.SecP256K1FieldElement;
+import org.bouncycastle.math.ec.custom.sec.SecP256K1Point;
+import org.consensusj.secp256k1.api.P256K1KeyPair;
+import org.consensusj.secp256k1.api.P256K1XOnlyPubKey;
 import org.consensusj.secp256k1.api.Secp256k1;
 import org.consensusj.secp256k1.api.CompressedPubKeyData;
 import org.consensusj.secp256k1.api.CompressedSignatureData;
 import org.consensusj.secp256k1.api.P256k1PrivKey;
 import org.consensusj.secp256k1.api.P256k1PubKey;
 import org.consensusj.secp256k1.api.SignatureData;
-import org.consensusj.secp256k1.eggcc.EggPubKey;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -28,10 +32,10 @@ import java.util.Optional;
 public class Bouncy256k1 implements Secp256k1 {
 
     // The parameters of the secp256k1 curve that Bitcoin uses.
-    private static final X9ECParameters CURVE_PARAMS = CustomNamedCurves.getByName("secp256k1");
+    private static final X9ECParameters BC_CURVE_PARAMS = CustomNamedCurves.getByName("secp256k1");
 
     /** The parameters of the secp256k1 curve that Bitcoin uses. */
-    private static final ECDomainParameters CURVE;
+    static final ECDomainParameters BC_CURVE;
 
     /**
      * Equal to CURVE.getN().shiftRight(1), used for canonicalising the S value of a signature. If you aren't
@@ -43,10 +47,12 @@ public class Bouncy256k1 implements Secp256k1 {
 
     static {
         // Tell Bouncy Castle to precompute data that's needed during secp256k1 calculations.
-        FixedPointUtil.precompute(CURVE_PARAMS.getG());
-        CURVE = new ECDomainParameters(CURVE_PARAMS.getCurve(), CURVE_PARAMS.getG(), CURVE_PARAMS.getN(),
-                CURVE_PARAMS.getH());
-        HALF_CURVE_ORDER = CURVE_PARAMS.getN().shiftRight(1);
+        FixedPointUtil.precompute(BC_CURVE_PARAMS.getG());
+        BC_CURVE = new ECDomainParameters(BC_CURVE_PARAMS.getCurve(),
+                BC_CURVE_PARAMS.getG(),
+                BC_CURVE_PARAMS.getN(),
+                BC_CURVE_PARAMS.getH());
+        HALF_CURVE_ORDER = BC_CURVE_PARAMS.getN().shiftRight(1);
         secureRandom = new SecureRandom();
     }
 
@@ -54,9 +60,9 @@ public class Bouncy256k1 implements Secp256k1 {
     }
     
     @Override
-    public P256k1PrivKey ecPrivKeyCreate() {
+    public BouncyPrivKey ecPrivKeyCreate() {
         ECKeyPairGenerator generator = new ECKeyPairGenerator();
-        ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(CURVE, secureRandom);
+        ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(BC_CURVE, secureRandom);
         generator.init(keygenParams);
         AsymmetricCipherKeyPair keypair = generator.generateKeyPair();
         ECPrivateKeyParameters privParams = (ECPrivateKeyParameters) keypair.getPrivate();
@@ -64,16 +70,40 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public P256k1PubKey ecPubKeyCreate(P256k1PrivKey seckey) {
-        ECPoint G = CURVE.getG();
-        BigInteger secInt = seckey.integer();
+    public BouncyPubKey ecPubKeyCreate(P256k1PrivKey seckey) {
+        ECPoint G = BC_CURVE.getG();
+        BigInteger secInt = seckey.getS();
         ECPoint pub = new FixedPointCombMultiplier().multiply(G, secInt).normalize();
         return new BouncyPubKey(pub);
     }
 
     @Override
-    public Optional<Object> ecKeyPairCreate() {
-        return Optional.empty();
+    public P256K1KeyPair ecKeyPairCreate() {
+        BouncyPrivKey priv = ecPrivKeyCreate();
+        BouncyPubKey pub = ecPubKeyCreate(priv);
+        return new BouncyKeyPair(priv, pub);
+    }
+
+    @Override
+    public P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey) {
+        BouncyPrivKey priv = new BouncyPrivKey(privKey.getS());
+        BouncyPubKey pub = ecPubKeyCreate(priv);
+        return new BouncyKeyPair(priv, pub);
+    }
+
+    @Override
+    public P256k1PubKey ecPubKeyTweakMul(P256k1PubKey pubKey, BigInteger scalarMultiplier) {
+        ECPoint pubKeyBC = BC_CURVE.getCurve().createPoint(pubKey.getW().getAffineX(), pubKey.getW().getAffineY());
+        ECPoint pub = new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier).normalize();
+        return new BouncyPubKey(pub);
+    }
+
+    @Override
+    public P256k1PubKey ecPubKeyCombine(P256k1PubKey key1, P256k1PubKey key2) {
+        ECPoint pubKey1BC = BC_CURVE.getCurve().createPoint(key1.getW().getAffineX(), key1.getW().getAffineY());
+        ECPoint pubKey2BC = BC_CURVE.getCurve().createPoint(key2.getW().getAffineX(), key2.getW().getAffineY());
+        ECPoint result = pubKey1BC.add(pubKey2BC);
+        return new BouncyPubKey(result);
     }
 
     @Override
@@ -105,14 +135,23 @@ public class Bouncy256k1 implements Secp256k1 {
     public Optional<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey) {
         return Optional.empty();
     }
+    @Override
+    public byte[] taggedSha256(byte[] tag, byte[] message) {
+        return new byte[0];
+    }
+
+    @Override
+    public Object schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair) {
+        return null;
+    }
+
+    @Override
+    public Optional<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
+        return Optional.empty();
+    }
 
     @Override
     public void close() {
 
-    }
-
-    public P256k1PubKey g() {
-        ECPoint G = CURVE.getG();
-        return new EggPubKey(G.getXCoord().toBigInteger(), G.getYCoord().toBigInteger());
     }
 }

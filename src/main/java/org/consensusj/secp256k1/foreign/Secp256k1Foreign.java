@@ -1,5 +1,7 @@
 package org.consensusj.secp256k1.foreign;
 
+import org.consensusj.secp256k1.api.P256K1KeyPair;
+import org.consensusj.secp256k1.api.P256K1XOnlyPubKey;
 import org.consensusj.secp256k1.api.Secp256k1;
 import org.consensusj.secp256k1.api.CompressedPubKeyData;
 import org.consensusj.secp256k1.api.CompressedSignatureData;
@@ -8,8 +10,11 @@ import org.consensusj.secp256k1.api.P256k1PubKey;
 import org.consensusj.secp256k1.api.SignatureData;
 import org.consensusj.secp256k1.secp256k1_ecdsa_signature;
 import org.consensusj.secp256k1.secp256k1_h;
+import org.consensusj.secp256k1.secp256k1_keypair;
 import org.consensusj.secp256k1.secp256k1_pubkey;
+import org.consensusj.secp256k1.secp256k1_xonly_pubkey;
 
+import java.lang.foreign.AddressLayout;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.SegmentAllocator;
@@ -18,8 +23,11 @@ import java.security.SecureRandom;
 import java.security.spec.ECPoint;
 import java.util.Optional;
 
+import static java.lang.foreign.ValueLayout.ADDRESS;
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
+import static org.consensusj.secp256k1.secp256k1_h.C_POINTER;
 import static org.consensusj.secp256k1.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
+import static org.consensusj.secp256k1.secp256k1_h.secp256k1_schnorrsig_sign32;
 
 /**
  *
@@ -87,14 +95,17 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         do {
             seckey = fill_random(arena, 32);
         } while (secp256k1_h.secp256k1_ec_seckey_verify(ctx, seckey) != 1);
-        return new PrivKeyPojo(seckey);
+        P256k1PrivKey privKey = new PrivKeyPojo(seckey);
+        seckey.fill((byte) 0x00);   
+        return privKey;
     }
 
     @Override
     public P256k1PubKey ecPubKeyCreate(P256k1PrivKey privkey) {
         // Should we verify the key here for safety? (Probably)
-        MemorySegment privkeySegment = arena.allocateArray(JAVA_BYTE, privkey.bytes());
+        MemorySegment privkeySegment = arena.allocateArray(JAVA_BYTE, privkey.getEncoded());
         MemorySegment pubKey = ecPubKeyCreate(privkeySegment);
+        privkeySegment.fill((byte) 0x00);
         // Return serialized pubkey
         return new PubKeyPojo(toPoint(pubKey));
     }
@@ -107,7 +118,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return pubkey;
     }
 
-    /* package */ ECPoint toPoint(MemorySegment pubKeySegment) {
+    static /* package */ ECPoint toPoint(MemorySegment pubKeySegment) {
         // Serialize uncompressed
         MemorySegment serialized_pubkey = pubKeySerializeSegment(pubKeySegment, SECP256K1_EC_UNCOMPRESSED());
 
@@ -116,7 +127,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return toPoint(uncompressed_bytes);
     }
 
-    /* package */ ECPoint toPoint(byte[] uncompressed_bytes) {
+    static /* package */ ECPoint toPoint(byte[] uncompressed_bytes) {
         // Extract x and y, create an ECPoint and return it
         byte[] xbytes = new byte[32];
         byte[] ybytes = new byte[32];
@@ -129,9 +140,67 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public Optional<Object> ecKeyPairCreate() {
-        return Optional.empty();  // TBD
+    public P256K1KeyPair ecKeyPairCreate() {
+        MemorySegment keyPairSeg = secp256k1_keypair.allocate(arena);
+        /* If the secret key is zero or out of range (bigger than secp256k1's
+         * order), we try to sample a new key. Note that the probability of this
+         * happening is negligible. */
+        MemorySegment seckey;
+        do {
+            seckey = fill_random(arena, 32);
+        } while (secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, seckey) != 1);
+        P256K1KeyPair keyPair = new OpaqueKeyPair(keyPairSeg.toArray(JAVA_BYTE));
+        keyPairSeg.fill((byte) 0x00);
+        return keyPair;
     }
+
+    @Override
+    public P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey) {
+        MemorySegment keyPairSeg = secp256k1_keypair.allocate(arena);
+        MemorySegment seckey = arena.allocateArray(JAVA_BYTE, privKey.getEncoded());
+        int return_val = secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, seckey);
+        assert(return_val == 1);
+        P256K1KeyPair keyPair = new OpaqueKeyPair(keyPairSeg.toArray(JAVA_BYTE));
+        keyPairSeg.fill((byte) 0x00);
+        return keyPair;
+    }
+
+    @Override
+    public P256k1PubKey ecPubKeyTweakMul(P256k1PubKey pubKey, BigInteger scalarMultiplier) {
+        MemorySegment pubKeySeg = pubKeyParse(pubKey);
+        byte[] tweakBytes = P256k1PubKey.integerTo32Bytes(scalarMultiplier);
+        MemorySegment tweakSeg = arena.allocateArray(JAVA_BYTE, tweakBytes);
+        int return_val = secp256k1_h.secp256k1_ec_pubkey_tweak_mul(ctx, pubKeySeg, tweakSeg);
+        if (return_val != 1) {
+            throw new IllegalStateException("Tweak_mul failed");
+        }
+        return new PubKeyPojo(toPoint(pubKeySeg));
+    }
+
+    @Override
+    public P256k1PubKey ecPubKeyCombine(P256k1PubKey key1, P256k1PubKey key2) {
+        MemorySegment resultKeySeg = secp256k1_pubkey.allocate(arena);
+        MemorySegment ins = arena.allocateArray(C_POINTER, 2);
+        ins.setAtIndex(C_POINTER, 0, pubKeyParse(key1));
+        ins.setAtIndex(C_POINTER, 1, pubKeyParse(key2));
+        int return_val = secp256k1_h.secp256k1_ec_pubkey_combine(ctx, resultKeySeg, ins, 2);
+        if (return_val != 1) {
+            throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
+        }
+        return new PubKeyPojo(toPoint(resultKeySeg));
+    }
+
+    public P256k1PubKey ecPubKeyCombine(P256k1PubKey key1) {
+        MemorySegment resultKeySeg = secp256k1_pubkey.allocate(arena);
+        MemorySegment ins = arena.allocateArray(C_POINTER, 1);
+        ins.setAtIndex(C_POINTER, 0, pubKeyParse(key1));
+        int return_val = secp256k1_h.secp256k1_ec_pubkey_combine(ctx, resultKeySeg, ins, 1);
+        if (return_val != 1) {
+            throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
+        }
+        return new PubKeyPojo(toPoint(resultKeySeg));
+    }
+
 
     /**
      * Since {@code PubKeyData} is serializable without using the native lib, this method
@@ -150,16 +219,16 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return new CompressedPubKeyPojo(pubKey.getSerialized(compressed));
     }
 
-    /* package */ MemorySegment pubKeySerializeSegment(MemorySegment pubKeySegment, int flags) {
+    /* package */ static MemorySegment pubKeySerializeSegment(MemorySegment pubKeySegment, int flags) {
         int byteSize = switch(flags) {
             case 2 -> 65;           // SECP256K1_EC_UNCOMPRESSED())
             case 258 -> 33;         // SECP256K1_EC_COMPRESSED())
             default -> throw new IllegalArgumentException();
         };
-        MemorySegment serialized_pubkey = arena.allocate(byteSize);
-        MemorySegment lenSegment = arena.allocate(secp256k1_h.size_t);
+        MemorySegment serialized_pubkey = globalArena.allocate(byteSize);
+        MemorySegment lenSegment = globalArena.allocate(secp256k1_h.size_t);
         lenSegment.set(secp256k1_h.size_t, 0, serialized_pubkey.byteSize());
-        int return_val = secp256k1_h.secp256k1_ec_pubkey_serialize(ctx,
+        int return_val = secp256k1_h.secp256k1_ec_pubkey_serialize(secp256k1StaticContext,
                 serialized_pubkey,
                 lenSegment,
                 pubKeySegment,
@@ -188,7 +257,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment pubkey = secp256k1_pubkey.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
         if (return_val != 1) {
-            throw new IllegalStateException("Unexpected Failure parsing uncompressed public key\n");
+            throw new IllegalStateException("Unexpected Failure parsing uncompressed public key");
         }
         return pubkey;
     }
@@ -203,7 +272,9 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
         MemorySegment nullCallback =  secp256k1_h.NULL(); // Double-check this (normally you shouldn't use a NULL pointer for a null callback)
         MemorySegment nullPointer = secp256k1_h.NULL();
-        int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, arena.allocateArray(JAVA_BYTE, seckey.bytes()), nullCallback, nullPointer);
+        MemorySegment privKeySeg = arena.allocateArray(JAVA_BYTE, seckey.getEncoded());
+        int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, nullCallback, nullPointer);
+        privKeySeg.fill((byte) 0x00);
         assert(return_val == 1);
         return Optional.of(new SignaturePojo(sig));
     }
@@ -237,7 +308,41 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
                 pubKeyParse(pubKey));
         return Optional.of(return_val == 1);
     }
-    
+
+    @Override
+    public byte[] taggedSha256(byte[] tag, byte[] message) {
+        MemorySegment hash32 = arena.allocate(32);
+        MemorySegment tagSeg = arena.allocateArray(JAVA_BYTE, tag);
+        MemorySegment msgSeg = arena.allocateArray(JAVA_BYTE, message);
+        int return_val = secp256k1_h.secp256k1_tagged_sha256(ctx, hash32, tagSeg, tag.length, msgSeg, message.length);
+        assert(return_val == 1);
+        return hash32.toArray(JAVA_BYTE);
+    }
+
+    @Override
+    public byte[] schnorrSigSign32(byte[] messageHash, P256K1KeyPair keyPair) {
+        MemorySegment sig = arena.allocate(64);
+        MemorySegment msg_hash = arena.allocateArray(JAVA_BYTE, messageHash);
+        MemorySegment auxiliary_rand = fill_random(arena, 32);
+        MemorySegment keypair = arena.allocateArray(JAVA_BYTE, ((OpaqueKeyPair) keyPair).getOpaque());
+
+        int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keypair, auxiliary_rand);
+        assert(return_val == 1);
+        return sig.toArray(JAVA_BYTE);
+    }
+
+    @Override
+    public Optional<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
+        MemorySegment sigSegment = arena.allocateArray(JAVA_BYTE, signature);
+        MemorySegment msgSegment = arena.allocateArray(JAVA_BYTE, msg_hash);
+        MemorySegment pubKeySegment = arena.allocateArray(JAVA_BYTE, pubKey.getSerialized()); // 32-byte
+        MemorySegment pubKeySegmentOpaque = secp256k1_xonly_pubkey.allocate(arena); // 64-byte opaque
+        int r = secp256k1_h.secp256k1_xonly_pubkey_parse(ctx, pubKeySegmentOpaque, pubKeySegment);
+        assert(r == 1);
+        int return_val = secp256k1_h.secp256k1_schnorrsig_verify(ctx, sigSegment, msgSegment, msg_hash.length, pubKeySegmentOpaque);
+        return Optional.of(return_val == 1);
+    }
+
     /**
      *
      * @param allocator allocator to create segment with

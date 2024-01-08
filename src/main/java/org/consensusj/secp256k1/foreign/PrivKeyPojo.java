@@ -24,7 +24,13 @@ public class PrivKeyPojo implements P256k1PrivKey {
         privKeyBytes = privKey.toArray(ValueLayout.JAVA_BYTE);
     }
 
-    public byte[] bytes() {
+    PrivKeyPojo(byte[] bytes) {
+        // Make defensive copy, so we are effectively immutable
+        privKeyBytes = bytes.clone();
+    }
+
+    @Override
+    public byte[] getEncoded() {
         if (privKeyBytes == null) throw new IllegalStateException("Private Key has been destroyed");
         byte[] copy = new byte[privKeyBytes.length];
         System.arraycopy(privKeyBytes, 0, copy, 0, privKeyBytes.length);

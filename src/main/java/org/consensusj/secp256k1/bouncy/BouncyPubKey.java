@@ -4,6 +4,8 @@ package org.consensusj.secp256k1.bouncy;
 import org.bouncycastle.math.ec.ECPoint;
 import org.consensusj.secp256k1.api.P256k1PubKey;
 
+import static org.consensusj.secp256k1.bouncy.Bouncy256k1.BC_CURVE;
+
 /**
  *
  */
@@ -14,11 +16,20 @@ public class BouncyPubKey implements P256k1PubKey {
         this.point = point;
     }
 
+    public BouncyPubKey(java.security.spec.ECPoint javaPoint) {
+        this(BC_CURVE.getCurve().createPoint(javaPoint.getAffineX(), javaPoint.getAffineY())) ;
+    }
+
     private byte[] bytes() {
         byte[] bytes = new byte[64];
-        byte[] encoded =  point.getEncoded(false);  // This has a prefix byte
+        byte[] encoded = getEncoded();  // This has a prefix byte
         System.arraycopy(encoded, 1, bytes, 0, bytes.length); // remove prefix byte
         return bytes;
+    }
+
+    @Override
+    public byte[] getEncoded() {
+        return point.getEncoded(false);  // This has a prefix byte
     }
 
     @Override
@@ -29,7 +40,7 @@ public class BouncyPubKey implements P256k1PubKey {
     @Override
     public java.security.spec.ECPoint getW() {
         return new java.security.spec.ECPoint(
-                point.getAffineXCoord().toBigInteger(),
-                point.getAffineYCoord().toBigInteger());
+                point.normalize().getAffineXCoord().toBigInteger(),
+                point.normalize().getAffineYCoord().toBigInteger());
     }
 }

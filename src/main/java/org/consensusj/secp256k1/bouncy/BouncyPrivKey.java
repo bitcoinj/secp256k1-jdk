@@ -17,9 +17,9 @@ public class BouncyPrivKey extends SecP256K1FieldElement implements P256k1PrivKe
         super(val);
     }
     @Override
-    public byte[] bytes() {
+    public byte[] getEncoded() {
         if (isDestroyed) throw new IllegalStateException("is destroyed");
-        return this.getEncoded();
+        return super.getEncoded();
     }
 
     @Override

@@ -5,8 +5,10 @@ import org.consensusj.secp256k1.api.CompressedSignatureData;
 import org.consensusj.secp256k1.api.P256k1PrivKey;
 import org.consensusj.secp256k1.api.P256k1PubKey;
 import org.consensusj.secp256k1.api.SignatureData;
+import org.consensusj.secp256k1.bouncy.BouncyPrivKey;
 import org.consensusj.secp256k1.foreign.Secp256k1Foreign;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -32,7 +34,7 @@ public class Ecdsa {
 
             /* Return a non-zero, in-range private key */
             P256k1PrivKey privKey = secp.ecPrivKeyCreate();
-            //PrivKeyData privKey = new BouncyPrivKey(BigInteger.ONE);
+            //P256k1PrivKey privKey = new BouncyPrivKey(BigInteger.ONE);
 
             /* Public key creation using a valid context with a verified secret key should never fail */
             P256k1PubKey pubkey = secp.ecPubKeyCreate(privKey);
@@ -64,7 +66,7 @@ public class Ecdsa {
             boolean is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).orElseThrow();
 
             System.out.printf("Is the signature valid? %s\n", is_signature_valid);
-            System.out.printf("Secret Key: %s\n", formatter.formatHex(privKey.bytes()));
+            System.out.printf("Secret Key: %s\n", privKey.getS().toString(16));
             System.out.printf("Public Key (as ECPoint): %s\n", pubkey);
             System.out.printf("Public Key (Compressed): %s\n", formatter.formatHex(compressed_pubkey.bytes()));
             System.out.printf("Signature: %s\n", formatter.formatHex(serialized_signature.bytes()));

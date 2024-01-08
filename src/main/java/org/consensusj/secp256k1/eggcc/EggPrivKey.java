@@ -15,7 +15,7 @@ public class EggPrivKey implements P256k1PrivKey {
     }
 
     @Override
-    public BigInteger integer() {
+    public BigInteger getS() {
         return privkey;
     }
 
@@ -25,11 +25,10 @@ public class EggPrivKey implements P256k1PrivKey {
     }
 
     /**
-     * 
-     * @return
+     * @return 32 bytes, big-endian
      */
     @Override
-    public byte[] bytes() {
+    public byte[] getEncoded() {
         byte[] minBytes = privkey.toByteArray(); // return minimum, signed bytes
         if (minBytes.length > 33) throw new IllegalStateException("privKey BigInteger value too large");
         // Convert from signed, variable length to unsigned, fixed 8-byte length.

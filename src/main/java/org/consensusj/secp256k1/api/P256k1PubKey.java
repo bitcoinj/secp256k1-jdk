@@ -14,12 +14,12 @@ public interface P256k1PubKey extends ECPublicKey {
 
     @Override
     default String getAlgorithm() {
-        return null;
+        return "Secp256k1";
     }
 
     @Override
     default String getFormat() {
-        return null;
+        return "Uncompressed SEC";
     }
 
     /**
@@ -58,12 +58,16 @@ public interface P256k1PubKey extends ECPublicKey {
         return compressed;
     }
 
+    default P256K1XOnlyPubKey getXOnly() {
+        return new P256K1XOnlyPubKey(this.getW().getAffineX());
+    }
+
     @Override
     ECPoint getW();
 
     @Override
     default ECParameterSpec getParams() {
-        return null;
+        return Secp256k1.EC_PARAMS;
     }
 
     /**
