@@ -38,6 +38,7 @@ If necessary copy updated, extracted headers into `src/main/java/org/consensusj/
 
 * bitcoin-s fork https://bitcoin-s.org/docs/secp256k1/jni-modify
 * Kotlin multiplatform wrapper: https://github.com/acinq/secp256k1-kmp
+* Samouri port of Sipa's Python reference implementation to Java: https://code.samourai.io/samouraidev/BIP340_Schnorr[BIP340_Schnorr]
 
 == Reporting a vulnerability
 
