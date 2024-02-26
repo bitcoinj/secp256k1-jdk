@@ -20,6 +20,7 @@ public class Schnorr {
     private static final String tag = "my_fancy_protocol";
 
     public static void main(String[] args) {
+        System.out.println("Running secp256k1-jdk Schnorr example...");
         /* Use a java try-with-resources to allocate and cleanup -- secp256k1_context_destroy is automatically called */
         try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
             /* === Key Generation === */

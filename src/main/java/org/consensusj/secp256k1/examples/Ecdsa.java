@@ -28,6 +28,7 @@ public class Ecdsa {
     private static final byte[] msg_hash = hash("Hello, world!");
 
     public static void main(String[] args) {
+        System.out.println("Running secp256k1-jdk Ecdsa example...");
         /* Use a java try-with-resources to allocate and cleanup -- secp256k1_context_destroy is automatically called */
         try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
             /* === Key Generation === */

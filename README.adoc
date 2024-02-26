@@ -1,21 +1,59 @@
 = secp256k1-jdk
 
-`secp256k1-jdk` is a Java library providing Eliptic Curve Cryptography functions using the https://www.secg.org/[SECG] curve
-https://en.bitcoin.it/wiki/Secp256k1[secp256k1]. It defines an API with a Java Interface (API JAR will be JDK 8/9+) and will support multiple implementations. Initial plans are for a `java.lang.foreign` (aka Panama) wrapper of https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], a C
-library implementing various cryptographic functions and also a Bouncy Castle-based implementation.
+`secp256k1-jdk` is a Java library providing Bitcoin-related Elliptic Curve Cryptography functions using the https://www.secg.org/[SECG] curve
+https://en.bitcoin.it/wiki/Secp256k1[secp256k1]. It provides a Java API that enables multiple implementations. The proof-of-concept includes an implementation that adapts https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], a native C
+library implementing elliptic curve operations on the SECP 256K1 curve.
 
-Schnorr Signature support is planned.
+The library supports other JDK-based languages such as Groovy, Kotlin, Scala, and Clojure (as these languages can all use Java classes directly.) In the future, we may provide documentation, examples, and language-specific extensions for one or more additional JVM languages.
 
-We are also hoping to officially support other JDK-based languages such as Kotlin, Scala, and Clojure.
+WARNING:: This prototype software has had limited testing and has not been reviewed. Do not use this software to store private keys for Bitcoin or any other purpose. It is provided AS-IS for experimentation and feedback.
 
-== Building Headers with Nix
+== API
 
-NOTE:: These instructions assume you are using `experimental-features = nix-command flakes`.
+The API is based on the `C-language` API of https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], but adapted
+to modern idiomatic Java and to use Elliptic Curve types from the Java Class Library, such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey] where appropriate.
 
-WARNING:: This is a work-in-progress by a Nix beginner.
+The API is distributed as an API-only JAR (```secp256k1-api-_version_.jar```) and we expect that there will be multiple implementations of the API. The API JAR currently requires JDK 9 or later (but we may change that to an earlier or later version in a future release depending upon feedback from the community.) Implementations of the API may require later versions of the JDK.
 
-. `nix develop`
-. `./extract-headers.sh`
+NOTE:: At this point, we are especially interested in feedback on the API.
+
+== libsecp256k1 Panama Implementation (JDK 22 and later)
+
+The provided proof-of-concept implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp256k1-foreign-_version_.jar```) that requires JDK 22 or later.
+
+Panama has been available as a preview feature of Java since JDK 19, with a final release in https://openjdk.org/projects/jdk/22/[OpenJDK 22] (March 19, 2024.) We anticipate this will be
+the recommended/preferred implementation for use in projects using modern JVMs.
+
+WARNING:: This is a preliminary implementation provided for experimentation and feedback and should not be used in real applications.
+
+== Proposed Bouncy Castle Implementation
+
+An incomplete https://www.bouncycastle.org[Bouncy Castle]-based submodule is included. Bouncy Castle is a well-regarded cryptography library that includes support for the SECP 256K1 curve and is currently used by https://bitcoinj.org[bitcoinj] and other Java-based Bitcoin implementations. We expect this implementation to be completed and made available as a pure-Java implementation for those who are unable to use the native libsecp256k1 implementation and/or Panama.
+
+== libsecp256k1 Implementation for older JDKs
+
+There are currently _no plans_ for an implementation using earlier Java-to-C adapter technologies such as https://docs.oracle.com/en/java/javase/21/docs/specs/jni/index.html[JNI] or https://github.com/java-native-access/jna[JNA]. However, the `secp256k1-jdk` API should support such an implementation. We would be supportive if someone in the community endevours to create an implementation or adapt one of the existing implementations to use the `secp256k1-jdk` API.
+
+== Relation to bitcoinj
+
+This project is hosted by the *bitcoinj* GitHub organization, but *secp256k1-jdk* does not use or require bitcoinj and (at present) *bitcoinj* cannot use secp256k1-jdk for its ECC implementation. bitcoinj is currently being refactored to be more modular, and we would like to have pluggable ECC implementations (and Schnorr signatures!) in the near future, but further refactoring will be required before this can happen.
+
+For information on the in-process refactoring of bitcoinj, see the following:
+
+* https://github.com/bitcoinj/bitcoinj/issues/1874
+* https://github.com/bitcoinj/bitcoinj/blob/master/designdocs/modular-architecture.md
+
+
+== Relation to Java Cryptography Architecture
+
+secp256k1-jdk currently does not use any Java Cryptography Architecture ECC providers nor does it make itself available as a provider. It does use some of the built-in Java ECC interfaces (such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey]) for interoperability and to avoid reinventing the wheel. The SECP 256K1 curve was removed from Java in the JDK 16 release (see https://bugs.openjdk.org/browse/JDK-8251547[JDK-8251547]).
+
+
+== Current Build Status
+
+The current build is using the *Preview* release of *Panama* from JDK 21. JDK 21 is more widely available and better supported by IDEs, Gradle, and other tools. We plan on migrating to JDK 22 very soon.
+
+We are currently using a Nix flake to install the native `libsecp256k1` and using the `-PjavaPath` option to add it to the library path at runtime.
 
 == Building with Gradle Wrapper
 
@@ -33,6 +71,15 @@ If necessary copy updated, extracted headers into `src/main/java/org/consensusj/
 
 . `nix develop`
 . `gradle build`
+
+== Building Headers with Nix
+
+NOTE:: These instructions assume you are using `experimental-features = nix-command flakes`.
+
+WARNING:: This is a work-in-progress by a Nix beginner.
+
+. `nix develop`
+. `./extract-headers.sh`
 
 == Other Java Implementations
 
@@ -52,3 +99,5 @@ See SECURITY.adoc (TBD)
 * https://leanpub.com/javacryptotoolsandtech[Java Cryptography: Tools and Techniques]
 * https://www.novixys.com/blog/generate-bitcoin-addresses-java/ (Obsolete as of JDK 16)
 * https://eprint.iacr.org/2015/1060.pdf[Complete addition formulas for prime order elliptic curves]: Joost Renes1, Craig Costello, and Lejla Batina
+* https://www.chosenplaintext.ca/articles/beginners-guide-constant-time-cryptography.html
+* https://math.berkeley.edu/~ribet/116/
