@@ -1,0 +1,8 @@
+rootProject.name = 'secp256k1-jdk'
+
+include 'secp256k1-api'               // API interface library
+include 'secp256k1-bouncy'            // Bouncy Castle implementation
+include 'secp256k1-foreign'           // Java Foreign Memory & Function ("Panama") implementation
+include 'secp256k1-examples-java'     // Java examples
+include 'secp256k1-sandbox'           // Sandbox (experimental code that may be removed)
+

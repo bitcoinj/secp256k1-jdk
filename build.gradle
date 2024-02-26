@@ -1,49 +1,53 @@
-plugins {
-    id "application"
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    //apply plugin: 'test-report-aggregation'
+
+    version = secp256k1Version     // set in gradle.properties
+    group = 'org.bitcoinj.secp256k1'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation 'org.bouncycastle:bcprov-jdk18on:1.77'   // Bouncy & EggCC-only
+
+        testImplementation("org.bitcoinj:bitcoinj-core:0.17-alpha3");
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.0"
+        testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
+    }
+
+    java {
+        sourceCompatibility = JavaVersion.toVersion("21")
+        targetCompatibility = JavaVersion.toVersion("21")
+    }
+
+    test {
+        useJUnitPlatform()
+        systemProperty "java.library.path", findProperty("javaPath") ?: "/nix/store/j9mf1fh4wbb8c3x1zwqfs218bhml1rbw-secp256k1-0.4.0/lib/"
+        jvmArgs += '--enable-preview'
+        jvmArgs += '--enable-native-access=ALL-UNNAMED'
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 21
+        options.compilerArgs += ['--enable-preview']
+    }
+
+    tasks.withType(JavaExec) {
+        jvmArgs += '--enable-preview'
+        jvmArgs += '--enable-native-access=ALL-UNNAMED'
+    }
 }
 
-java {
-    sourceCompatibility = JavaVersion.toVersion("21")
-    targetCompatibility = JavaVersion.toVersion("21")
-}
-
-repositories {
-    mavenCentral()
-}
-
-group = 'org.consensusj'
+// Currently only Tests are in the root module
+// TODO: Move the tests to various submodules
 
 dependencies {
-    implementation 'org.bouncycastle:bcprov-jdk18on:1.77'   // Bouncy & EggCC-only
-
-    testImplementation("org.bitcoinj:bitcoinj-core:0.17-alpha3");
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.0"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.release = 21
-    options.compilerArgs += ['--enable-preview']
-}
-
-tasks.withType(JavaExec) {
-    jvmArgs += '--enable-preview'
-    jvmArgs += '--enable-native-access=ALL-UNNAMED'
-}
-
-test {
-    useJUnitPlatform()
-    systemProperty "java.library.path", findProperty("javaPath") ?: "/nix/store/j9mf1fh4wbb8c3x1zwqfs218bhml1rbw-secp256k1-0.4.0/lib/"
-    jvmArgs += '--enable-preview'
-    jvmArgs += '--enable-native-access=ALL-UNNAMED'
-}
-
-application {
-//    mainClass = 'org.consensusj.secp256k1.examples.Ecdsa'
-    mainClass = 'org.consensusj.secp256k1.examples.Schnorr'
-}
-
-run {
-    systemProperty "java.library.path", findProperty("javaPath") ?: ""
+    implementation project(':secp256k1-api')
+    implementation project(':secp256k1-bouncy')
+    implementation project(':secp256k1-foreign')
+    implementation project(':secp256k1-sandbox')
 }

@@ -65,7 +65,7 @@ If necessary copy updated, extracted headers into `src/main/java/org/consensusj/
 
 (This assumes a specific hash/version of secp256k1 was installed with nixpkgs)
 
-. `./gradlew -PjavaPath="/nix/store/j9mf1fh4wbb8c3x1zwqfs218bhml1rbw-secp256k1-0.4.0/lib/" run`
+. `./gradlew -PjavaPath="/nix/store/j9mf1fh4wbb8c3x1zwqfs218bhml1rbw-secp256k1-0.4.0/lib/" secp256k1-examples-java:run`
 
 == Building with Nix
 

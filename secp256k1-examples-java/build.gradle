@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    //options.release = 22
+}
+
+ext.moduleName = 'org.bitcoinj.secp256k1.examples-java'
+
+dependencies {
+    implementation project(':secp256k1-api')
+    implementation project(':secp256k1-bouncy')
+    implementation project(':secp256k1-foreign')
+}
+
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes  'Implementation-Title': 'Example secp256k1-jdk Apps',
+                'Automatic-Module-Name': moduleName,
+                'Implementation-Version': archiveVersion.get()
+    }
+}
+
+application {
+//    mainClass = 'org.bitcoinj.secp256k1.examples.Ecdsa'
+    mainClass = 'org.bitcoinj.secp256k1.examples.Schnorr'
+}
+
+run {
+    systemProperty "java.library.path", findProperty("javaPath") ?: ""
+}

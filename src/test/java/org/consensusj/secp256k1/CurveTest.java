@@ -1,11 +1,13 @@
 package org.consensusj.secp256k1;
 
-import org.consensusj.secp256k1.api.P256k1PrivKey;
-import org.consensusj.secp256k1.api.P256k1PubKey;
-import org.consensusj.secp256k1.api.Secp256k1;
-import org.consensusj.secp256k1.bouncy.Bouncy256k1;
-import org.consensusj.secp256k1.bouncy.BouncyPrivKey;
-import org.consensusj.secp256k1.foreign.Secp256k1Foreign;
+import org.bitcoinj.secp256k1.api.P256k1PrivKey;
+import org.bitcoinj.secp256k1.api.P256k1PubKey;
+import org.bitcoinj.secp256k1.api.Secp256k1;
+import org.bitcoinj.secp256k1.bouncy.Bouncy256k1;
+import org.bitcoinj.secp256k1.bouncy.BouncyPrivKey;
+import org.bitcoinj.secp256k1.foreign.jextract.secp256k1_h;
+import org.bitcoinj.secp256k1.foreign.jextract.secp256k1_pubkey;
+import org.bitcoinj.secp256k1.foreign.Secp256k1Foreign;
 import org.junit.jupiter.api.Test;
 
 import java.lang.foreign.Arena;
@@ -17,7 +19,7 @@ import java.util.HexFormat;
 import java.util.Random;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
-import static org.consensusj.secp256k1.secp256k1_h.SECP256K1_EC_COMPRESSED;
+import static org.bitcoinj.secp256k1.foreign.jextract.secp256k1_h.SECP256K1_EC_COMPRESSED;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;

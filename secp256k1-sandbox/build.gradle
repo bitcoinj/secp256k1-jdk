@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    //options.release = 9
+}
+
+ext.moduleName = 'org.bitcoinj.secp256k1.sandbox'
+
+dependencies {
+    api project(':secp256k1-api')
+    api project(':secp256k1-bouncy')
+    api project(':secp256k1-foreign')
+}
+
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes  'Implementation-Title': 'Secp256k1 Sandbox',
+                'Automatic-Module-Name': moduleName,
+                'Implementation-Version': archiveVersion.get()
+    }
+}

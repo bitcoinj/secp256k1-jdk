@@ -1,0 +1,22 @@
+plugins {
+    id 'java-library'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    //options.release = 9
+}
+
+ext.moduleName = 'org.bitcoinj.secp256k1.bouncy'
+
+dependencies {
+    api project(':secp256k1-api')
+}
+
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes  'Implementation-Title': 'Secp256k1 Bouncy Castle Implementation',
+                'Automatic-Module-Name': moduleName,
+                'Implementation-Version': archiveVersion.get()
+    }
+}

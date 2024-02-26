@@ -1,9 +1,8 @@
 package org.consensusj.secp256k1.foreign;
 
-import org.consensusj.secp256k1.api.P256k1PrivKey;
-import org.consensusj.secp256k1.api.P256k1PubKey;
-import org.consensusj.secp256k1.api.Secp256k1;
-import org.consensusj.secp256k1.bouncy.BouncyPrivKey;
+import org.bitcoinj.secp256k1.api.P256k1PubKey;
+import org.bitcoinj.secp256k1.bouncy.BouncyPrivKey;
+import org.bitcoinj.secp256k1.foreign.Secp256k1Foreign;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
