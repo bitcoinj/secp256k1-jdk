@@ -11,8 +11,6 @@ allprojects {
     }
 
     dependencies {
-        implementation 'org.bouncycastle:bcprov-jdk18on:1.77'   // Bouncy & EggCC-only
-
         testImplementation("org.bitcoinj:bitcoinj-core:0.17-alpha3");
         testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.0"
         testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"

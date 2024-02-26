@@ -25,8 +25,8 @@ public class Schnorr {
             /* === Key Generation === */
 
             /* Return a non-zero, in-range private key */
-            //P256K1KeyPair keyPair = secp.ecKeyPairCreate();
-            P256K1KeyPair keyPair = secp.ecKeyPairCreate(new BouncyPrivKey(BigInteger.ONE));
+            P256K1KeyPair keyPair = secp.ecKeyPairCreate();
+            //P256K1KeyPair keyPair = secp.ecKeyPairCreate(new BouncyPrivKey(BigInteger.ONE));
 
             /* Public key creation using a valid context with a verified secret key should never fail */
             P256k1PubKey pubkey = secp.ecPubKeyCreate(keyPair);

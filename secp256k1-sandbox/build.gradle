@@ -12,6 +12,8 @@ dependencies {
     api project(':secp256k1-api')
     api project(':secp256k1-bouncy')
     api project(':secp256k1-foreign')
+
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
 }
 
 jar {
