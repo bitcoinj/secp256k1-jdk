@@ -36,15 +36,15 @@ public interface Secp256k1 extends AutoCloseable {
 
     CompressedPubKeyData ecPubKeySerialize(P256k1PubKey pubKey, int flags);
 
-    Optional<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData);
+    Result<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData);
 
-    Optional<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey);
+    Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey);
 
-    Optional<CompressedSignatureData> ecdsaSignatureSerializeCompact(SignatureData sig);
+    Result<CompressedSignatureData> ecdsaSignatureSerializeCompact(SignatureData sig);
 
-    Optional<SignatureData> ecdsaSignatureParseCompact(CompressedSignatureData serialized_signature);
+    Result<SignatureData> ecdsaSignatureParseCompact(CompressedSignatureData serialized_signature);
 
-    Optional<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey);
+    Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey);
 
     default byte[] taggedSha256(String tag, String message) {
         return  taggedSha256(tag.getBytes(StandardCharsets.UTF_8), message.getBytes(StandardCharsets.UTF_8));
@@ -54,5 +54,5 @@ public interface Secp256k1 extends AutoCloseable {
 
     Object schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair);
 
-    Optional<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
+    Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
 }

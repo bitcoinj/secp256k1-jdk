@@ -46,24 +46,24 @@ public class Ecdsa {
 
             /* Generate an ECDSA signature using the RFC-6979 safe default nonce.
              * Signing with a valid context, verified secret key and the default nonce function should never fail. */
-            SignatureData sig = secp.ecdsaSign(msg_hash, privKey).orElseThrow();
+            SignatureData sig = secp.ecdsaSign(msg_hash, privKey).unwrap();
 
             /* Serialize the signature in a compact form. Should always succeed according to
              the documentation in secp256k1.h. */
-            CompressedSignatureData serialized_signature = secp.ecdsaSignatureSerializeCompact(sig).orElseThrow();
+            CompressedSignatureData serialized_signature = secp.ecdsaSignatureSerializeCompact(sig).unwrap();
 
             /* === Verification === */
 
             /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
-            SignatureData sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).orElseThrow();
+            SignatureData sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).unwrap();
             assert(Arrays.equals(sig.bytes(), sig2.bytes()));
 
             /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
-            P256k1PubKey pubkey2 = secp.ecPubKeyParse(compressed_pubkey).orElseThrow();
+            P256k1PubKey pubkey2 = secp.ecPubKeyParse(compressed_pubkey).unwrap();
             assert(pubkey.getW().equals(pubkey2.getW()));
 
             /* Verify a signature. This will return true if it's valid and false if it's not. */
-            boolean is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).orElseThrow();
+            boolean is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).unwrap();
 
             System.out.printf("Is the signature valid? %s\n", is_signature_valid);
             System.out.printf("Secret Key: %s\n", privKey.getS().toString(16));

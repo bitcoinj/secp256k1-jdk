@@ -30,10 +30,10 @@ public class P256K1XOnlyPubKey {
         return P256k1PubKey.integerTo32Bytes(x);
     }
 
-    public static Optional<P256K1XOnlyPubKey> parse(byte[] serialized) {
+    public static Result<P256K1XOnlyPubKey> parse(byte[] serialized) {
         BigInteger x = new BigInteger(1, serialized);
         return (x.compareTo((Secp256k1.FIELD.getP())) > 0)
-                ? Optional.empty()
-                : Optional.of(new P256K1XOnlyPubKey(x));
+                ? Result.err(-1)
+                : Result.ok(new P256K1XOnlyPubKey(x));
     }
 }

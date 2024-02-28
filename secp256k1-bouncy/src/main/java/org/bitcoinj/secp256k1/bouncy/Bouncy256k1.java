@@ -1,5 +1,6 @@
 package org.bitcoinj.secp256k1.bouncy;
 
+import org.bitcoinj.secp256k1.api.Result;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.ec.CustomNamedCurves;
@@ -109,28 +110,28 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public Optional<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData) {
-        return Optional.empty();
+    public Result<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData) {
+        return Result.err(-1);
     }
 
     @Override
-    public Optional<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
-        return Optional.empty();
+    public Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
+        return Result.err(-1);
     }
 
     @Override
-    public Optional<CompressedSignatureData> ecdsaSignatureSerializeCompact(SignatureData sig) {
-        return Optional.empty();
+    public Result<CompressedSignatureData> ecdsaSignatureSerializeCompact(SignatureData sig) {
+        return Result.err(-1);
     }
 
     @Override
-    public Optional<SignatureData> ecdsaSignatureParseCompact(CompressedSignatureData serialized_signature) {
-        return Optional.empty();
+    public Result<SignatureData> ecdsaSignatureParseCompact(CompressedSignatureData serialized_signature) {
+        return Result.err(-1);
     }
 
     @Override
-    public Optional<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey) {
-        return Optional.empty();
+    public Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey) {
+        return Result.err(-1);
     }
     @Override
     public byte[] taggedSha256(byte[] tag, byte[] message) {
@@ -143,8 +144,8 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public Optional<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
-        return Optional.empty();
+    public Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
+        return Result.err(-1);
     }
 
     @Override
