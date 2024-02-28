@@ -77,7 +77,7 @@ public class AddressTest {
         Address tapRootAddress;
         try (Secp256k1 secp = new Bouncy256k1()) {
             byte[] serial = HexFormat.of().parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
-            P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.parse(serial).orElseThrow();
+            P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.parse(serial).unwrap();
             BigInteger tweakInt = calcTweak(xOnlyKey);
             P256k1PubKey G = new PubKeyPojo(Secp256k1.EC_PARAMS.getGenerator());
             P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);

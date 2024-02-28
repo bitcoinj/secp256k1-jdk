@@ -2,6 +2,7 @@ package org.bitcoinj.secp256k1.foreign;
 
 import org.bitcoinj.secp256k1.api.P256K1KeyPair;
 import org.bitcoinj.secp256k1.api.P256K1XOnlyPubKey;
+import org.bitcoinj.secp256k1.api.Result;
 import org.bitcoinj.secp256k1.api.Secp256k1;
 import org.bitcoinj.secp256k1.api.CompressedPubKeyData;
 import org.bitcoinj.secp256k1.api.CompressedSignatureData;
@@ -238,16 +239,14 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public Optional<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData) {
+    public Result<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData) {
         MemorySegment input = arena.allocateArray(JAVA_BYTE, inputData.bytes());
         MemorySegment pubkey = secp256k1_pubkey.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
         if (return_val != 1) {
             System.out.println("Failed parsing the public key\n");
         }
-        return (return_val == 1)
-                ? Optional.of(new PubKeyPojo(toPoint(pubkey)))
-                : Optional.empty();
+        return Result.checked(return_val, new PubKeyPojo(toPoint(pubkey)));
     }
 
     private MemorySegment pubKeyParse(P256k1PubKey pubKeyData) {
@@ -261,7 +260,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public Optional<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
+    public Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
         /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
          * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
          * Signing with a valid context, verified secret key
@@ -273,28 +272,25 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment privKeySeg = arena.allocateArray(JAVA_BYTE, seckey.getEncoded());
         int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, nullCallback, nullPointer);
         privKeySeg.fill((byte) 0x00);
-        assert(return_val == 1);
-        return Optional.of(new SignaturePojo(sig));
+        return Result.checked(return_val, new SignaturePojo(sig));
     }
 
     @Override
-    public Optional<CompressedSignatureData> ecdsaSignatureSerializeCompact(SignatureData sig) {
+    public Result<CompressedSignatureData> ecdsaSignatureSerializeCompact(SignatureData sig) {
         MemorySegment serialized_signature = secp256k1_ecdsa_signature.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ecdsa_signature_serialize_compact(ctx, serialized_signature, arena.allocateArray(JAVA_BYTE, sig.bytes()));
-        assert(return_val == 1);
-        return Optional.of(new CompressedSignaturePojo(serialized_signature));
+        return Result.checked(return_val, new CompressedSignaturePojo(serialized_signature));
     }
 
     @Override
-    public Optional<SignatureData> ecdsaSignatureParseCompact(CompressedSignatureData serialized_signature) {
+    public Result<SignatureData> ecdsaSignatureParseCompact(CompressedSignatureData serialized_signature) {
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sig, arena.allocateArray(JAVA_BYTE, serialized_signature.bytes()));
-        assert(return_val == 1);
-        return Optional.of(new SignaturePojo(sig));
+        return Result.checked(return_val, new SignaturePojo(sig));
     }
 
     @Override
-    public Optional<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey) {
+    public Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey) {
         /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
          * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
          * Signing with a valid context, verified secret key
@@ -304,7 +300,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
                 arena.allocateArray(JAVA_BYTE, sig.bytes()),
                 msg_hash,
                 pubKeyParse(pubKey));
-        return Optional.of(return_val == 1);
+        return Result.ok(return_val == 1);
     }
 
     @Override
@@ -330,15 +326,15 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public Optional<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
+    public Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
         MemorySegment sigSegment = arena.allocateArray(JAVA_BYTE, signature);
         MemorySegment msgSegment = arena.allocateArray(JAVA_BYTE, msg_hash);
         MemorySegment pubKeySegment = arena.allocateArray(JAVA_BYTE, pubKey.getSerialized()); // 32-byte
         MemorySegment pubKeySegmentOpaque = secp256k1_xonly_pubkey.allocate(arena); // 64-byte opaque
         int r = secp256k1_h.secp256k1_xonly_pubkey_parse(ctx, pubKeySegmentOpaque, pubKeySegment);
-        assert(r == 1);
+        if (r != 1) return Result.err(r);
         int return_val = secp256k1_h.secp256k1_schnorrsig_verify(ctx, sigSegment, msgSegment, msg_hash.length, pubKeySegmentOpaque);
-        return Optional.of(return_val == 1);
+        return Result.ok(return_val == 1);
     }
 
     /**
