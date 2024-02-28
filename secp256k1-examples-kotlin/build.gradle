@@ -1,0 +1,21 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.9.22"
+    id 'application'
+}
+
+dependencies {
+    implementation project(':secp256k1-api')
+    implementation project(':secp256k1-bouncy')
+    implementation project(':secp256k1-foreign')
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
+}
+
+application {
+    //mainClass = 'org.bitcoinj.secp256k1.kotlin.examples.Ecdsa'
+    mainClass = 'org.bitcoinj.secp256k1.kotlin.examples.Schnorr'
+}
+
+run {
+    systemProperty "java.library.path", findProperty("javaPath") ?: ""
+}
+
