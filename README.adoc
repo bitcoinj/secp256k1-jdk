@@ -32,7 +32,7 @@ An incomplete https://www.bouncycastle.org[Bouncy Castle]-based submodule is inc
 
 == libsecp256k1 Implementation for older JDKs
 
-There are currently _no plans_ for an implementation using earlier Java-to-C adapter technologies such as https://docs.oracle.com/en/java/javase/21/docs/specs/jni/index.html[JNI] or https://github.com/java-native-access/jna[JNA]. However, the `secp256k1-jdk` API should support such an implementation. We would be supportive if someone in the community endevours to create an implementation or adapt one of the existing implementations to use the `secp256k1-jdk` API.
+There are currently _no plans_ for an implementation using earlier Java-to-C adapter technologies such as https://docs.oracle.com/en/java/javase/21/docs/specs/jni/index.html[JNI] or https://github.com/java-native-access/jna[JNA]. However, the `secp256k1-jdk` API should support such an implementation. We would be supportive if someone in the community endeavours to create an implementation or adapt one of the existing implementations to use the `secp256k1-jdk` API.
 
 == Relation to bitcoinj
 
@@ -81,11 +81,11 @@ WARNING:: This is a work-in-progress by a Nix beginner.
 . `nix develop`
 . `./extract-headers.sh`
 
-== Other Java Implementations
+== Other Java/JDK Implementations
 
 * bitcoin-s fork https://bitcoin-s.org/docs/secp256k1/jni-modify
 * Kotlin multiplatform wrapper: https://github.com/acinq/secp256k1-kmp
-* Samouri port of Sipa's Python reference implementation to Java: https://code.samourai.io/samouraidev/BIP340_Schnorr[BIP340_Schnorr]
+* Samourai port of Sipa's Python reference implementation to Java: https://code.samourai.io/samouraidev/BIP340_Schnorr[BIP340_Schnorr]
 
 == Reporting a vulnerability
 
@@ -98,6 +98,6 @@ See SECURITY.adoc (TBD)
 * https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki[BIP 340]: Schnorr Signatures for secp256k1
 * https://leanpub.com/javacryptotoolsandtech[Java Cryptography: Tools and Techniques]
 * https://www.novixys.com/blog/generate-bitcoin-addresses-java/ (Obsolete as of JDK 16)
-* https://eprint.iacr.org/2015/1060.pdf[Complete addition formulas for prime order elliptic curves]: Joost Renes1, Craig Costello, and Lejla Batina
+* https://eprint.iacr.org/2015/1060.pdf[Complete addition formulas for prime order elliptic curves]: Joost Renes, Craig Costello, and Lejla Batina
 * https://www.chosenplaintext.ca/articles/beginners-guide-constant-time-cryptography.html
 * https://math.berkeley.edu/~ribet/116/
