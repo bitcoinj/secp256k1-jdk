@@ -1,4 +1,4 @@
-package org.consensusj.secp256k1.api;
+package org.bitcoinj.secp256k1.integration;
 
 import org.bitcoinj.secp256k1.api.P256k1PrivKey;
 import org.bitcoinj.secp256k1.bouncy.BouncyPrivKey;

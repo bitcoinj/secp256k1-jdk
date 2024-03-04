@@ -1,4 +1,4 @@
-allprojects {
+subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
     //apply plugin: 'test-report-aggregation'
@@ -38,14 +38,4 @@ allprojects {
         jvmArgs += '--enable-preview'
         jvmArgs += '--enable-native-access=ALL-UNNAMED'
     }
-}
-
-// Currently only Tests are in the root module
-// TODO: Move the tests to various submodules
-
-dependencies {
-    implementation project(':secp256k1-api')
-    implementation project(':secp256k1-bouncy')
-    implementation project(':secp256k1-foreign')
-    implementation project(':secp256k1-sandbox')
 }
