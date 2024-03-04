@@ -1,0 +1,26 @@
+plugins {
+    id 'java-library'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    //options.release = 9
+}
+
+ext.moduleName = 'org.bitcoinj.secp256k1.bitcoinj'
+
+dependencies {
+    api project(':secp256k1-api')
+    api("org.bitcoinj:bitcoinj-core:0.17-alpha3");
+
+    implementation project(':secp256k1-bouncy')
+    implementation project(':secp256k1-foreign')
+}
+
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes  'Implementation-Title': 'Secp256k1 bitcoinj support',
+                'Automatic-Module-Name': moduleName,
+                'Implementation-Version': archiveVersion.get()
+    }
+}

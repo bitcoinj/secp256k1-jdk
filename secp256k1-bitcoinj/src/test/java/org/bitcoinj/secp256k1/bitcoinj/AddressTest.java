@@ -1,4 +1,4 @@
-package org.consensusj.secp256k1.bitcoinj;
+package org.bitcoinj.secp256k1.bitcoinj;
 
 import org.bitcoinj.base.Address;
 import org.bitcoinj.base.BitcoinNetwork;
