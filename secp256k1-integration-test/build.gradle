@@ -1,0 +1,27 @@
+plugins {
+    id 'java-library'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    //options.release = 21
+}
+
+ext.moduleName = 'org.bitcoinj.secp256k1.integration'
+
+dependencies {
+    implementation project(':secp256k1-api')
+    implementation project(':secp256k1-bouncy')
+    implementation project(':secp256k1-foreign')
+    implementation project(':secp256k1-sandbox')
+
+    //implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
+}
+
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes  'Implementation-Title': 'Secp256k1 Integration Tests',
+                'Automatic-Module-Name': moduleName,
+                'Implementation-Version': archiveVersion.get()
+    }
+}
