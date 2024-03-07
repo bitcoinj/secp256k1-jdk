@@ -30,5 +30,6 @@ application {
 }
 
 run {
-    systemProperty "java.library.path", findProperty("javaPath") ?: ""
+    def userHome = System.getProperty("user.home")
+    systemProperty "java.library.path", findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
 }

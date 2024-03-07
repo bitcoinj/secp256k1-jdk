@@ -59,13 +59,15 @@ We are currently using a Nix flake to install the native `libsecp256k1` and usin
 
 If necessary copy updated, extracted headers into `src/main/java/org/consensusj/secp256k1/`
 
+Make sure you have installed the current version of `secp256k1` with `nix profile install nixpkgs#secp256k1`
+
 . `./gradlew build`
 
 == Running with Gradle Wrapper
 
 (This assumes a specific hash/version of secp256k1 was installed with nixpkgs)
 
-. `./gradlew -PjavaPath="/nix/store/j9mf1fh4wbb8c3x1zwqfs218bhml1rbw-secp256k1-0.4.0/lib/" secp256k1-examples-java:run`
+. `./gradlew secp256k1-examples-java:run`
 
 == Building with Nix
 
