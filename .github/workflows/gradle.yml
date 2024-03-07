@@ -26,5 +26,11 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
+      - name: Install Nix
+        uses: cachix/install-nix-action@v25
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install secp256k1 with Nix
+        run: nix profile install nixpkgs#secp256k1
       - name: Build with Gradle
         run: ./gradlew build -x test  # Skip tests because they will fail without libsecp256k1 installed.
