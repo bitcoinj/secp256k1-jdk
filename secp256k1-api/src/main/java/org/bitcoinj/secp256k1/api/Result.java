@@ -29,10 +29,13 @@ public sealed interface Result<T> {
     default T unwrap() {
         return unwrap("Error");
     }
-   default T unwrap(String message) {
-       return switch(this) {
-           case Ok<T> ok -> ok.result();
-           case Err<T> err -> throw new IllegalStateException(message + ": " + err.code());
-       };
-   }
+    default T unwrap(String message) {
+        if (this instanceof Ok<T> ok) {
+            return ok.result();
+        } else if (this instanceof Err<T> err) {
+           throw new IllegalStateException(message + ": " + err.code());
+        } else {
+            throw new IllegalStateException("Can't get here");
+        }
+    }
 }
