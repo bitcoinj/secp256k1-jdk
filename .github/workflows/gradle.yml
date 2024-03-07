@@ -8,10 +8,9 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        java: ['21']
         distribution: ['temurin']
       fail-fast: false
-    name: ${{ matrix.os }} JDK ${{ matrix.java }}
+    name: ${{ matrix.os }} JDK 22
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
@@ -19,7 +18,11 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: ${{ matrix.distribution }}
-          java-version: ${{ matrix.java }}
+          # Setup JDK 21 & JDK 22 to make JDK 22 available to the Gradle Java Toolchains feature
+          # When installing multiple JDKs, the last JDK installed is the default and will be used to run Gradle itself
+          java-version: |
+            22-ea
+            21
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
