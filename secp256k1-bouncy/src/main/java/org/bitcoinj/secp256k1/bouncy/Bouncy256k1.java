@@ -139,7 +139,7 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public Object schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair) {
+    public byte[] schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair) {
         return null;
     }
 

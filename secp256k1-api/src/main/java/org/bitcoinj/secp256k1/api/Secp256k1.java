@@ -52,7 +52,7 @@ public interface Secp256k1 extends AutoCloseable {
 
     byte[] taggedSha256(byte[] tag, byte[] message);
 
-    Object schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair);
+    byte[] schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair);
 
     Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
 }
