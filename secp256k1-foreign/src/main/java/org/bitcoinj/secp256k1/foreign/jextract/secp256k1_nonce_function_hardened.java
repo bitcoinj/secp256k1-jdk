@@ -2,32 +2,74 @@
 
 package org.bitcoinj.secp256k1.foreign.jextract;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.VarHandle;
-import java.nio.ByteOrder;
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
 import static java.lang.foreign.ValueLayout.*;
+import static java.lang.foreign.MemoryLayout.PathElement.*;
+
 /**
  * {@snippet lang=c :
- * int (*secp256k1_nonce_function_hardened)(unsigned char* nonce32,unsigned char* msg,unsigned long msglen,unsigned char* key32,unsigned char* xonly_pk32,unsigned char* algo,unsigned long algolen,void* data);
+ * typedef int (*secp256k1_nonce_function_hardened)(unsigned char *, const unsigned char *, size_t, const unsigned char *, const unsigned char *, const unsigned char *, size_t, void *)
  * }
  */
-public interface secp256k1_nonce_function_hardened {
+public class secp256k1_nonce_function_hardened {
 
-    int apply(java.lang.foreign.MemorySegment nonce32, java.lang.foreign.MemorySegment msg, long msglen, java.lang.foreign.MemorySegment key32, java.lang.foreign.MemorySegment xonly_pk32, java.lang.foreign.MemorySegment algo, long algolen, java.lang.foreign.MemorySegment data);
-    static MemorySegment allocate(secp256k1_nonce_function_hardened fi, Arena scope) {
-        return RuntimeHelper.upcallStub(constants$12.const$3, fi, constants$12.const$2, scope);
+    secp256k1_nonce_function_hardened() {
+        // Should not be called directly
     }
-    static secp256k1_nonce_function_hardened ofAddress(MemorySegment addr, Arena arena) {
-        MemorySegment symbol = addr.reinterpret(arena, null);
-        return (java.lang.foreign.MemorySegment _nonce32, java.lang.foreign.MemorySegment _msg, long _msglen, java.lang.foreign.MemorySegment _key32, java.lang.foreign.MemorySegment _xonly_pk32, java.lang.foreign.MemorySegment _algo, long _algolen, java.lang.foreign.MemorySegment _data) -> {
-            try {
-                return (int)constants$12.const$4.invokeExact(symbol, _nonce32, _msg, _msglen, _key32, _xonly_pk32, _algo, _algolen, _data);
-            } catch (Throwable ex$) {
-                throw new AssertionError("should not reach here", ex$);
-            }
-        };
+
+    /**
+     * The function pointer signature, expressed as a functional interface
+     */
+    public interface Function {
+        int apply(MemorySegment nonce32, MemorySegment msg, long msglen, MemorySegment key32, MemorySegment xonly_pk32, MemorySegment algo, long algolen, MemorySegment data);
+    }
+
+    private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+        secp256k1_h.C_INT,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_LONG,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_LONG,
+        secp256k1_h.C_POINTER
+    );
+
+    /**
+     * The descriptor of this function pointer
+     */
+    public static FunctionDescriptor descriptor() {
+        return $DESC;
+    }
+
+    private static final MethodHandle UP$MH = secp256k1_h.upcallHandle(secp256k1_nonce_function_hardened.Function.class, "apply", $DESC);
+
+    /**
+     * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+     * The lifetime of the returned segment is managed by {@code arena}
+     */
+    public static MemorySegment allocate(secp256k1_nonce_function_hardened.Function fi, Arena arena) {
+        return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+    }
+
+    private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+    /**
+     * Invoke the upcall stub {@code funcPtr}, with given parameters
+     */
+    public static int invoke(MemorySegment funcPtr,MemorySegment nonce32, MemorySegment msg, long msglen, MemorySegment key32, MemorySegment xonly_pk32, MemorySegment algo, long algolen, MemorySegment data) {
+        try {
+            return (int) DOWN$MH.invokeExact(funcPtr, nonce32, msg, msglen, key32, xonly_pk32, algo, algolen, data);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
     }
 }
-
 

@@ -21,25 +21,30 @@ subprojects {
     }
 
     java {
-        sourceCompatibility = JavaVersion.toVersion("21")
-        targetCompatibility = JavaVersion.toVersion("21")
+        sourceCompatibility = JavaVersion.toVersion("22")
+        targetCompatibility = JavaVersion.toVersion("22")
+        toolchain {
+            // `languageVersion` is used to configure the "Java Toolchain" used for the build. This includes `javac`,
+            // `jlink`, and the `jpackage` tool.
+            //  See `gradle.properties` for the setting of `javaToolchainVersion` and other setting that are used
+            // to find and/or download JDK versions.
+            languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
+            // vendor = JvmVendorSpec.matching(javaToolchainVendor)
+        }
     }
 
     test {
         useJUnitPlatform()
         def userHome = System.getProperty("user.home")
         systemProperty "java.library.path", findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
-        jvmArgs += '--enable-preview'
         jvmArgs += '--enable-native-access=ALL-UNNAMED'
     }
 
     tasks.withType(JavaCompile).configureEach {
-        options.release = 21
-        options.compilerArgs += ['--enable-preview']
+        options.release = 22
     }
 
     tasks.withType(JavaExec) {
-        jvmArgs += '--enable-preview'
         jvmArgs += '--enable-native-access=ALL-UNNAMED'
     }
 }
