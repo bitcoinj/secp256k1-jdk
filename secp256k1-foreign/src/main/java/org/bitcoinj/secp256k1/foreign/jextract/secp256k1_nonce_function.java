@@ -2,32 +2,72 @@
 
 package org.bitcoinj.secp256k1.foreign.jextract;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.VarHandle;
-import java.nio.ByteOrder;
+import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
 import static java.lang.foreign.ValueLayout.*;
+import static java.lang.foreign.MemoryLayout.PathElement.*;
+
 /**
  * {@snippet lang=c :
- * int (*secp256k1_nonce_function)(unsigned char* nonce32,unsigned char* msg32,unsigned char* key32,unsigned char* algo16,void* data,unsigned int attempt);
+ * typedef int (*secp256k1_nonce_function)(unsigned char *, const unsigned char *, const unsigned char *, const unsigned char *, void *, unsigned int)
  * }
  */
-public interface secp256k1_nonce_function {
+public class secp256k1_nonce_function {
 
-    int apply(java.lang.foreign.MemorySegment nonce32, java.lang.foreign.MemorySegment msg32, java.lang.foreign.MemorySegment key32, java.lang.foreign.MemorySegment algo16, java.lang.foreign.MemorySegment data, int attempt);
-    static MemorySegment allocate(secp256k1_nonce_function fi, Arena scope) {
-        return RuntimeHelper.upcallStub(constants$0.const$3, fi, constants$0.const$2, scope);
+    secp256k1_nonce_function() {
+        // Should not be called directly
     }
-    static secp256k1_nonce_function ofAddress(MemorySegment addr, Arena arena) {
-        MemorySegment symbol = addr.reinterpret(arena, null);
-        return (java.lang.foreign.MemorySegment _nonce32, java.lang.foreign.MemorySegment _msg32, java.lang.foreign.MemorySegment _key32, java.lang.foreign.MemorySegment _algo16, java.lang.foreign.MemorySegment _data, int _attempt) -> {
-            try {
-                return (int)constants$0.const$4.invokeExact(symbol, _nonce32, _msg32, _key32, _algo16, _data, _attempt);
-            } catch (Throwable ex$) {
-                throw new AssertionError("should not reach here", ex$);
-            }
-        };
+
+    /**
+     * The function pointer signature, expressed as a functional interface
+     */
+    public interface Function {
+        int apply(MemorySegment nonce32, MemorySegment msg32, MemorySegment key32, MemorySegment algo16, MemorySegment data, int attempt);
+    }
+
+    private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+        secp256k1_h.C_INT,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_INT
+    );
+
+    /**
+     * The descriptor of this function pointer
+     */
+    public static FunctionDescriptor descriptor() {
+        return $DESC;
+    }
+
+    private static final MethodHandle UP$MH = secp256k1_h.upcallHandle(secp256k1_nonce_function.Function.class, "apply", $DESC);
+
+    /**
+     * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+     * The lifetime of the returned segment is managed by {@code arena}
+     */
+    public static MemorySegment allocate(secp256k1_nonce_function.Function fi, Arena arena) {
+        return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+    }
+
+    private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+    /**
+     * Invoke the upcall stub {@code funcPtr}, with given parameters
+     */
+    public static int invoke(MemorySegment funcPtr,MemorySegment nonce32, MemorySegment msg32, MemorySegment key32, MemorySegment algo16, MemorySegment data, int attempt) {
+        try {
+            return (int) DOWN$MH.invokeExact(funcPtr, nonce32, msg32, key32, algo16, data, attempt);
+        } catch (Throwable ex$) {
+            throw new AssertionError("should not reach here", ex$);
+        }
     }
 }
-
 

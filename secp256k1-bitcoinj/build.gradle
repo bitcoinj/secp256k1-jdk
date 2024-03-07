@@ -3,7 +3,7 @@ plugins {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    //options.release = 9
+    //options.release = 22
 }
 
 ext.moduleName = 'org.bitcoinj.secp256k1.bitcoinj'
