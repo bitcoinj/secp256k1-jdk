@@ -9,6 +9,7 @@ import java.util.Arrays;
 /**
  *
  */
+// TODO: Remove API dependency on o.bouncycastle.m.e.c.s.SecP256K1FieldElement
 public class BouncyPrivKey extends SecP256K1FieldElement implements P256k1PrivKey {
 
     private boolean isDestroyed = false;
