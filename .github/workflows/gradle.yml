@@ -33,4 +33,6 @@ jobs:
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
       - name: Build with Gradle
-        run: ./gradlew build -x test  # Skip tests because they will fail without libsecp256k1 installed.
+        run: ./gradlew build
+      - name: Run Java (Schnorr) Example
+        run: ./gradlew secp256k1-examples-java:run
