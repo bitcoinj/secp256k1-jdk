@@ -1,34 +1,40 @@
 = secp256k1-jdk
 
 `secp256k1-jdk` is a Java library providing Bitcoin-related Elliptic Curve Cryptography functions using the https://www.secg.org/[SECG] curve
-https://en.bitcoin.it/wiki/Secp256k1[secp256k1]. It provides a Java API that enables multiple implementations. The proof-of-concept includes an implementation that adapts https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], a native C
-library implementing elliptic curve operations on the SECP 256K1 curve.
+https://en.bitcoin.it/wiki/Secp256k1[secp256k1]. It provides both ECDSA and Schnorr message signing functions.
 
-The library supports other JDK-based languages such as Groovy, Kotlin, Scala, and Clojure (as these languages can all use Java classes directly.) In the future, we may provide documentation, examples, and language-specific extensions for one or more additional JVM languages.
+It provides a Java API that enables multiple implementations. The proof-of-concept includes an implementation that adapts https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], a native C
+library implementing elliptic curve operations on the secp256k1 curve. We also plan to provide an implementation using the popular https://www.bouncycastle.org[Bouncy Castle] library.
+
+The library supports other JDK-based languages such as Kotlin, Groovy, Scala, and Clojure (as these languages can all use Java classes directly.) In the future, we may provide documentation, examples, and language-specific extensions for one or more additional JVM languages. (Kotlin examples are in-progress.)
 
 WARNING:: This prototype software has had limited testing and has not been reviewed. Do not use this software to store private keys for Bitcoin or any other purpose. It is provided AS-IS for experimentation and feedback.
 
 == API
 
 The API is based on the `C-language` API of https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], but adapted
-to modern idiomatic Java and to use Elliptic Curve types from the Java Class Library, such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey] where appropriate.
+to modern, idiomatic, functional-style Java and to use Elliptic Curve types from the Java Class Library, such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey] where appropriate.
 
-The API is distributed as an API-only JAR (```secp256k1-api-_version_.jar```) and we expect that there will be multiple implementations of the API. The API JAR currently requires JDK 9 or later (but we may change that to an earlier or later version in a future release depending upon feedback from the community.) Implementations of the API may require later versions of the JDK.
+The API is distributed as an API-only JAR (```secp256k1-api-_version_.jar```) and we expect that there will be multiple implementations of the API. The API JAR currently requires JDK 17 or later but we may backport it to an earlier version (possibly JDK 11) in a future release depending upon feedback from the community.
 
 NOTE:: At this point, we are especially interested in feedback on the API.
 
-== libsecp256k1 Panama Implementation (JDK 22 and later)
+== libsecp256k1 Panama Implementation (JDK 22+)
 
 The provided proof-of-concept implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp256k1-foreign-_version_.jar```) that requires JDK 22 or later.
 
 Panama has been available as a preview feature of Java since JDK 19, with a final release in https://openjdk.org/projects/jdk/22/[OpenJDK 22] (March 19, 2024.) We anticipate this will be
 the recommended/preferred implementation for use in projects using modern JVMs.
 
+The minimum supported JDK for this module will likely be incremented with each new JDK release, with the idea of a 1.0 release corresponding with JDK 25 (the next LTS release of the JDK.)
+
 WARNING:: This is a preliminary implementation provided for experimentation and feedback and should not be used in real applications.
 
-== Proposed Bouncy Castle Implementation
+== Bouncy Castle Implementation
 
-An incomplete https://www.bouncycastle.org[Bouncy Castle]-based submodule is included. Bouncy Castle is a well-regarded cryptography library that includes support for the SECP 256K1 curve and is currently used by https://bitcoinj.org[bitcoinj] and other Java-based Bitcoin implementations. We expect this implementation to be completed and made available as a pure-Java implementation for those who are unable to use the native libsecp256k1 implementation and/or Panama.
+An incomplete https://www.bouncycastle.org[Bouncy Castle]-based submodule is included. Bouncy Castle is a well-regarded cryptography library that includes support for the secp256k1 curve and is currently used by https://bitcoinj.org[bitcoinj] and other Java-based Bitcoin implementations. We expect this implementation to be completed and made available as a pure-Java implementation for those who are unable to use the native libsecp256k1 implementation and/or Panama.
+
+The Bouncy Castle implementation is currently targeting JDK 17, but if the API is backported to JDK 11, so will the Bouncy Castle implementation.
 
 == libsecp256k1 Implementation for older JDKs
 
@@ -46,39 +52,40 @@ For information on the in-process refactoring of bitcoinj, see the following:
 
 == Relation to Java Cryptography Architecture
 
-secp256k1-jdk currently does not use any Java Cryptography Architecture ECC providers nor does it make itself available as a provider. It does use some of the built-in Java ECC interfaces (such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey]) for interoperability and to avoid reinventing the wheel. The SECP 256K1 curve was removed from Java in the JDK 16 release (see https://bugs.openjdk.org/browse/JDK-8251547[JDK-8251547]).
+secp256k1-jdk currently does not use any Java Cryptography Architecture ECC providers nor does it make itself available as a provider. It does use some of the built-in Java ECC interfaces (such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey]) for interoperability and to avoid reinventing the wheel.
 
+The SECG secp256K1 curve was removed from Java in the JDK 16 release (see https://bugs.openjdk.org/browse/JDK-8251547[JDK-8251547]). It is possible that a secp256k1 JCA provider could be developed, but that is not currently a goal of this project.
 
 == Current Build Status
 
-The current build is using the *Preview* release of *Panama* from JDK 21. JDK 21 is more widely available and better supported by IDEs, Gradle, and other tools. We plan on migrating to JDK 22 very soon.
+The current build requires JDK 22.
 
-We are currently using a Nix flake to install the native `libsecp256k1` and using the `-PjavaPath` option to add it to the library path at runtime.
+We are currently using a Nix flake to install the native `libsecp256k1` and by default the build looks for it in `~/.nix-profile/lib`. You can use the `-PjavaPath` option to Gradle to change the library path, if needed.
 
 == Building with Gradle Wrapper
 
-If necessary copy updated, extracted headers into `src/main/java/org/consensusj/secp256k1/`
-
-Make sure you have installed the current version of `secp256k1` with `nix profile install nixpkgs#secp256k1`
+Make sure you have installed the current version (0.4.1) of `secp256k1` with `nix profile install nixpkgs#secp256k1`
 
 . `./gradlew build`
 
 == Running with Gradle Wrapper
 
-(This assumes a specific hash/version of secp256k1 was installed with nixpkgs)
+(This assumes version 0.4.1 of secp256k1 was installed with nixpkgs)
 
 . `./gradlew secp256k1-examples-java:run`
 
 == Building with Nix
+
+NOTE:: This is currently broken after we switched from using JDK 21 in preview mode to JDK 22. We are waiting for JDK 22 support in Nixpkgs, see: https://github.com/NixOS/nixpkgs/issues/271971)
 
 . `nix develop`
 . `gradle build`
 
 == Building Headers with Nix
 
-NOTE:: These instructions assume you are using `experimental-features = nix-command flakes`.
+NOTE:: This is currently broken after we switched to JDK 22. We are waiting for JDK 22 support in Nixpkgs, see: https://github.com/NixOS/nixpkgs/issues/271971 (JDK 22) and https://github.com/NixOS/nixpkgs/issues/293102 (`jextract`))
 
-WARNING:: This is a work-in-progress by a Nix beginner.
+NOTE:: These instructions assume you are using `experimental-features = nix-command flakes`.
 
 . `nix develop`
 . `./extract-headers.sh`
