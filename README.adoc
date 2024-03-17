@@ -90,11 +90,6 @@ NOTE:: These instructions assume you are using `experimental-features = nix-comm
 . `nix develop`
 . `./extract-headers.sh`
 
-== Other Java/JDK Implementations
-
-* bitcoin-s fork https://bitcoin-s.org/docs/secp256k1/jni-modify
-* Kotlin multiplatform wrapper: https://github.com/acinq/secp256k1-kmp
-* Samourai port of Sipa's Python reference implementation to Java: https://code.samourai.io/samouraidev/BIP340_Schnorr[BIP340_Schnorr]
 
 == Reporting a vulnerability
 
@@ -102,11 +97,35 @@ See SECURITY.adoc (TBD)
 
 == References
 
+=== secp256k1 library
+
 * https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] on GitHub
-* https://fangpenlin.com/posts/2019/10/07/elliptic-curve-cryptography-explained/[Elliptic Curve Cryptography Explained]
+
+
+=== Other Java/JDK Implementations
+
+* bitcoin-s fork https://bitcoin-s.org/docs/secp256k1/jni-modify
+* Sparrow/Drongo JNI: https://github.com/sparrowwallet/drongo/tree/master/src/main/java/org/bitcoin
+* Kotlin multiplatform wrapper: https://github.com/acinq/secp256k1-kmp
+* Samourai port of Sipa's Python reference implementation to Java: https://code.samourai.io/samouraidev/BIP340_Schnorr[BIP340_Schnorr]
+
+=== BIPS
+
 * https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki[BIP 340]: Schnorr Signatures for secp256k1
+
+=== General and Elliptic Curve Cryptography
+
+* https://math.berkeley.edu/~ribet/116/
+* https://www.chosenplaintext.ca/articles/beginners-guide-constant-time-cryptography.html
+* https://fangpenlin.com/posts/2019/10/07/elliptic-curve-cryptography-explained/[Elliptic Curve Cryptography Explained]
+* https://eprint.iacr.org/2015/1060.pdf[Complete addition formulas for prime order elliptic curves]: Joost Renes, Craig Costello, and Lejla Batina
+
+=== Elligator
+
+* https://elligator.org
+* https://dl.acm.org/doi/10.1145/2508859.2516734[Elligator: elliptic-curve points indistinguishable from uniform random strings]
+
+=== Java Cryptography
+
 * https://leanpub.com/javacryptotoolsandtech[Java Cryptography: Tools and Techniques]
 * https://www.novixys.com/blog/generate-bitcoin-addresses-java/ (Obsolete as of JDK 16)
-* https://eprint.iacr.org/2015/1060.pdf[Complete addition formulas for prime order elliptic curves]: Joost Renes, Craig Costello, and Lejla Batina
-* https://www.chosenplaintext.ca/articles/beginners-guide-constant-time-cryptography.html
-* https://math.berkeley.edu/~ribet/116/
