@@ -23,10 +23,10 @@ NOTE:: At this point, we are especially interested in feedback on the API.
 
 The provided proof-of-concept implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp256k1-foreign-_version_.jar```) that requires JDK 22 or later.
 
-Panama has been available as a preview feature of Java since JDK 19, with a final release in https://openjdk.org/projects/jdk/22/[OpenJDK 22] (March 19, 2024.) We anticipate this will be
-the recommended/preferred implementation for use in projects using modern JVMs.
+Panama is available in https://openjdk.org/projects/jdk/22/[OpenJDK 22] and later. We anticipate `secp256k1-foreign` will be
+the recommended/preferred `secp256k1-api` implementation for use in projects using modern JVMs.
 
-The minimum supported JDK for this module will likely be incremented with each new JDK release, with the idea of a 1.0 release corresponding with JDK 25 (the next LTS release of the JDK.)
+The minimum required JDK for this module will likely be incremented with each new JDK release, with a target of requiring JDK 25 (the next LTS release of the JDK) for the 1.0 release of `secp256k1-foreign`.
 
 WARNING:: This is a preliminary implementation provided for experimentation and feedback and should not be used in real applications.
 
