@@ -56,12 +56,12 @@ public class Schnorr {
 
             /* === Verification === */
 
-            P256K1XOnlyPubKey xOnly2 = P256K1XOnlyPubKey.parse(serializedXOnly).unwrap();
+            P256K1XOnlyPubKey xOnly2 = P256K1XOnlyPubKey.parse(serializedXOnly).get();
 
             /* Compute the tagged hash on the received message using the same tag as the signer. */
             byte[] msg_hash2 = secp.taggedSha256(tag, msg);
 
-            boolean is_signature_valid = secp.schnorrSigVerify(signature, msg_hash2, xOnly2).unwrap();
+            boolean is_signature_valid = secp.schnorrSigVerify(signature, msg_hash2, xOnly2).get();
 
             System.out.printf("Is the signature valid? %s\n", is_signature_valid);
             System.out.printf("Secret Key: %s\n", keyPair.getS().toString(16));

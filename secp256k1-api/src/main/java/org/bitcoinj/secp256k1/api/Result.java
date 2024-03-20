@@ -41,10 +41,10 @@ public sealed interface Result<T> {
 
     // TODO: define well-known error codes and messages and map between them
     // TODO: Consider creating an enum (or other type) for results rather than using int.
-    default T unwrap() {
-        return unwrap("Error");
+    default T get() {
+        return get("Error");
     }
-    default T unwrap(String message) {
+    default T get(String message) {
         if (this instanceof Ok<T> ok) {
             return ok.result();
         } else if (this instanceof Err<T> err) {
