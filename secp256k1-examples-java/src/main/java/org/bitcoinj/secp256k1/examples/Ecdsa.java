@@ -28,8 +28,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HexFormat;
 
-import static org.bitcoinj.secp256k1.foreign.jextract.secp256k1_h.SECP256K1_EC_COMPRESSED;
-
 /**
  * Port of secp256k1 sample {@code ecdsa.c} to Java
  */
