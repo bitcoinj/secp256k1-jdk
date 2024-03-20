@@ -33,3 +33,36 @@ run {
     def userHome = System.getProperty("user.home")
     systemProperty "java.library.path", findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
 }
+
+configurations {
+    nativeToolImplementation.extendsFrom implementation
+}
+
+def mainClassName = "org.bitcoinj.secp256k1.examples.Schnorr"
+
+jar {
+    manifest {
+        attributes  'Implementation-Title': 'Schnorr Signature Example',
+                'Main-Class': mainClassName,
+                'Implementation-Version': archiveVersion.get()
+    }
+}
+
+// Compile a native image using GraalVM's native-image tool
+// Graal must be installed at $GRAALVM_HOME
+tasks.register('nativeCompile', Exec) {
+    dependsOn jar
+    workingDir = projectDir
+    executable = "${System.env.GRAALVM_HOME}/bin/native-image"
+    args = ['--verbose',
+            '--no-fallback',
+            '-cp', "${-> configurations.nativeToolImplementation.asPath}", // Lazy configuration resolution
+            '-jar', jar.archiveFile.get(),
+            '-H:Path=build',
+            '-H:Name=schnorr',
+            '-H:+ForeignAPISupport',
+            '-H:+ReportUnsupportedElementsAtRuntime',
+            '-H:+ReportExceptionStackTraces'
+    ]
+}
+
