@@ -17,9 +17,6 @@ package org.bitcoinj.secp256k1.foreign;
 
 import org.bitcoinj.secp256k1.api.CompressedPubKeyData;
 
-import java.lang.foreign.MemorySegment;
-import java.lang.foreign.ValueLayout;
-
 /**
  *
  */

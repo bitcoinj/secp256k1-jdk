@@ -17,10 +17,7 @@ package org.bitcoinj.secp256k1.foreign;
 
 import org.bitcoinj.secp256k1.api.P256k1PrivKey;
 
-import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
-
-import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 
 /**
  *

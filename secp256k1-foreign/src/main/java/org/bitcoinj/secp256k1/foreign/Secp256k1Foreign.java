@@ -15,14 +15,14 @@
  */
 package org.bitcoinj.secp256k1.foreign;
 
-import org.bitcoinj.secp256k1.api.P256K1KeyPair;
-import org.bitcoinj.secp256k1.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp256k1.api.Result;
-import org.bitcoinj.secp256k1.api.Secp256k1;
 import org.bitcoinj.secp256k1.api.CompressedPubKeyData;
 import org.bitcoinj.secp256k1.api.CompressedSignatureData;
+import org.bitcoinj.secp256k1.api.P256K1KeyPair;
+import org.bitcoinj.secp256k1.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp256k1.api.P256k1PrivKey;
 import org.bitcoinj.secp256k1.api.P256k1PubKey;
+import org.bitcoinj.secp256k1.api.Result;
+import org.bitcoinj.secp256k1.api.Secp256k1;
 import org.bitcoinj.secp256k1.api.SignatureData;
 import org.bitcoinj.secp256k1.foreign.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp256k1.foreign.jextract.secp256k1_h;
@@ -36,7 +36,6 @@ import java.lang.foreign.SegmentAllocator;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.security.spec.ECPoint;
-import java.util.Optional;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp256k1.foreign.jextract.secp256k1_h.C_POINTER;

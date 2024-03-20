@@ -15,7 +15,15 @@
  */
 package org.bitcoinj.secp256k1.bouncy;
 
+import org.bitcoinj.secp256k1.api.CompressedPubKeyData;
+import org.bitcoinj.secp256k1.api.CompressedSignatureData;
+import org.bitcoinj.secp256k1.api.P256K1KeyPair;
+import org.bitcoinj.secp256k1.api.P256K1XOnlyPubKey;
+import org.bitcoinj.secp256k1.api.P256k1PrivKey;
+import org.bitcoinj.secp256k1.api.P256k1PubKey;
 import org.bitcoinj.secp256k1.api.Result;
+import org.bitcoinj.secp256k1.api.Secp256k1;
+import org.bitcoinj.secp256k1.api.SignatureData;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.ec.CustomNamedCurves;
@@ -26,18 +34,9 @@ import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.math.ec.FixedPointCombMultiplier;
 import org.bouncycastle.math.ec.FixedPointUtil;
-import org.bitcoinj.secp256k1.api.P256K1KeyPair;
-import org.bitcoinj.secp256k1.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp256k1.api.Secp256k1;
-import org.bitcoinj.secp256k1.api.CompressedPubKeyData;
-import org.bitcoinj.secp256k1.api.CompressedSignatureData;
-import org.bitcoinj.secp256k1.api.P256k1PrivKey;
-import org.bitcoinj.secp256k1.api.P256k1PubKey;
-import org.bitcoinj.secp256k1.api.SignatureData;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.Optional;
 
 /**
  *

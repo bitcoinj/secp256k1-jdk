@@ -16,7 +16,6 @@
 package org.bitcoinj.secp256k1.api;
 
 import java.math.BigInteger;
-import java.util.Optional;
 
 /**
  *

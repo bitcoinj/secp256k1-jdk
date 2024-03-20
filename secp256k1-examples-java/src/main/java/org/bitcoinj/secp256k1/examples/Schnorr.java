@@ -18,10 +18,8 @@ package org.bitcoinj.secp256k1.examples;
 import org.bitcoinj.secp256k1.api.P256K1KeyPair;
 import org.bitcoinj.secp256k1.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp256k1.api.P256k1PubKey;
-import org.bitcoinj.secp256k1.bouncy.BouncyPrivKey;
 import org.bitcoinj.secp256k1.foreign.Secp256k1Foreign;
 
-import java.math.BigInteger;
 import java.util.HexFormat;
 
 /**
