@@ -52,22 +52,22 @@ object Ecdsa {
 
             /* Generate an ECDSA signature using the RFC-6979 safe default nonce.
              * Signing with a valid context, verified secret key and the default nonce function should never fail. */
-            val sig = secp.ecdsaSign(msg_hash, privKey).unwrap()
+            val sig = secp.ecdsaSign(msg_hash, privKey).get()
 
             /* Serialize the signature in a compact form. Should always succeed according to
              the documentation in secp256k1.h. */
-            val serialized_signature = secp.ecdsaSignatureSerializeCompact(sig).unwrap()
+            val serialized_signature = secp.ecdsaSignatureSerializeCompact(sig).get()
 
             /* === Verification === */
 
             /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
-            val sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).unwrap()
+            val sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).get()
             assert(sig.bytes().contentEquals(sig2.bytes()))
             /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
-            val pubkey2 = secp.ecPubKeyParse(compressed_pubkey).unwrap()
+            val pubkey2 = secp.ecPubKeyParse(compressed_pubkey).get()
             assert(pubkey.w == pubkey2.w)
             /* Verify a signature. This will return true if it's valid and false if it's not. */
-            val is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).unwrap()
+            val is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).get()
 
             System.out.printf("Is the signature valid? %s\n", is_signature_valid)
             System.out.printf("Secret Key: %s\n", privKey.s.toString(16))
