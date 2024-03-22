@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        distribution: ['oracle']
+        distribution: ['temurin']
       fail-fast: false
     name: ${{ matrix.os }} JDK 22
     steps:
