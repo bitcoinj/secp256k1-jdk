@@ -26,11 +26,20 @@ import static java.lang.foreign.ValueLayout.*;
 /**
  *
  */
-public class ForeignRegistrationFeature {
+public class ForeignRegistrationFeature implements Feature {
     public void duringSetup(Feature.DuringSetupAccess access) {
         RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.ofVoid());
-        //RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.ofVoid(), Linker.Option.isTrivial());
         RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(JAVA_INT, JAVA_INT, JAVA_INT));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(JAVA_LONG, JAVA_INT));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(JAVA_INT, JAVA_LONG, JAVA_LONG, JAVA_LONG));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(JAVA_INT, JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_LONG));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(JAVA_INT, JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_LONG));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(JAVA_INT, JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_LONG, JAVA_INT));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(JAVA_INT, JAVA_LONG, JAVA_LONG));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.ofVoid(JAVA_LONG, JAVA_LONG));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.ofVoid(JAVA_LONG));
+        RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.ofVoid(JAVA_INT, JAVA_INT));
         RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(ADDRESS, JAVA_INT, JAVA_INT), Linker.Option.firstVariadicArg(1));
         RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.ofVoid(JAVA_INT), Linker.Option.captureCallState("errno"));
     }
