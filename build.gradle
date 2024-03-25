@@ -33,7 +33,7 @@ subprojects {
             //  See `gradle.properties` for the setting of `javaToolchainVersion` and other setting that are used
             // to find and/or download JDK versions.
             languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
-            // vendor = JvmVendorSpec.matching(javaToolchainVendor)
+            vendor = JvmVendorSpec.matching(javaToolchainVendor)
         }
     }
 
