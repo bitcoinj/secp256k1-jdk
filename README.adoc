@@ -74,6 +74,20 @@ Make sure you have installed the current version (0.4.1) of `secp256k1` with `ni
 
 . `./gradlew secp256k1-examples-java:run`
 
+== Build and run a native image (AMD64-only with Graal JDK 22)
+
+To build using GraalVM `native-image`:
+
+. Make sure you have GraalVM 22 or later installed
+. Make sure `GRAALVM_HOME` points to the Graal JDK 22 installation
+. `./gradlew secp256k1-examples-java:nativeCompile`
+
+To run the compiled, native executable:
+
+. `export LD_LIBRARY_PATH="$HOME/.nix-profile/lib:$LD_LIBRARY_PATH"`
+. `./secp256k1-examples-java/build/schnorr`
+. Don't blink!
+
 == Building with Nix
 
 NOTE:: This is currently broken after we switched from using JDK 21 in preview mode to JDK 22. We are waiting for JDK 22 support in Nixpkgs, see: https://github.com/NixOS/nixpkgs/issues/271971)
