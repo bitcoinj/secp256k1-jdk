@@ -58,32 +58,55 @@ The SECG secp256K1 curve was removed from Java in the JDK 16 release (see https:
 
 == Current Build Status
 
-The current build requires JDK 22.
+The current build requires JDK 21 and JDK 22 installed to run.
 
-We are currently using a Nix flake to install the native `libsecp256k1` and by default the build looks for it in `~/.nix-profile/lib`. You can use the `-PjavaPath` option to Gradle to change the library path, if needed.
+The build also requires an installed binary of `secp256k1` version 0.4.1 and we recommend using Nix to install it.
+
+== Installing libsecp256k into your profile with Nix
+
+This assumes you are using Nix with `experimental-features = nix-command flakes`:
+
+. `nix profile install nixpkgs#secp256k1`
+. Verify that the secp256k1 library is in your `~/.nix-profile/lib` directory.
+
+By default, the Gradle build looks for the `secp256k1` library in  `~/.nix-profile/lib`. If you have installed it with
+a different package manager or built it from source you can use the `-PjavaPath` option to Gradle to change the library
+path to your location.
 
 == Building with Gradle Wrapper
 
-Make sure you have installed the current version (0.4.1) of `secp256k1` with `nix profile install nixpkgs#secp256k1`
+* `./gradlew build`
 
-. `./gradlew build`
+== Running the Schnorr Example with Gradle Wrapper
 
-== Running with Gradle Wrapper
+* `./gradlew secp256k1-examples-java:run`
 
-(This assumes version 0.4.1 of secp256k1 was installed with nixpkgs)
+== Build a Start Script and use it to run the Schnorr Example
 
-. `./gradlew secp256k1-examples-java:run`
+Build the script:
+
+* `./gradlew secp256k1-examples-java:installDist`
+
+After running Gradle, switch your shell's default Java to JDK 22 or later, for example if you're using https://sdkman.io[SDKMAN]:
+
+* `sdk use java 22-open`
+
+Set the script's Java options shell variable (this assumes you installed `libsecp2565k1` with Nix):
+
+* `export SECP256K1_EXAMPLES_JAVA_OPTS="-Djava.library.path=$HOME/.nix-profile/lib --enable-native-access=ALL-UNNAMED"`
+
+Run the script:
+
+* `./secp256k1-examples-java/build/install/secp256k1-examples-java/bin/secp256k1-examples-java`
 
 == Building with Nix
 
-NOTE:: This is currently broken after we switched from using JDK 21 in preview mode to JDK 22. We are waiting for JDK 22 support in Nixpkgs, see: https://github.com/NixOS/nixpkgs/issues/271971)
+NOTE:: This is currently broken after we switched from using JDK 21 in preview mode to JDK 22. We are waiting for Gradle 8.7 in Nixpkgs.
 
 . `nix develop`
 . `gradle build`
 
 == Building Headers with Nix
-
-NOTE:: This is currently broken after we switched to JDK 22. We are waiting for JDK 22 support in Nixpkgs, see: https://github.com/NixOS/nixpkgs/issues/271971 (JDK 22) and https://github.com/NixOS/nixpkgs/issues/293102 (`jextract`))
 
 NOTE:: These instructions assume you are using `experimental-features = nix-command flakes`.
 
