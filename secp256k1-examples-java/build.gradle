@@ -7,7 +7,7 @@ tasks.withType(JavaCompile).configureEach {
     //options.release = 22
 }
 
-ext.moduleName = 'org.bitcoinj.secp256k1.examples-java'
+ext.moduleName = 'org.bitcoinj.secp256k1.examples'
 
 dependencies {
     implementation project(':secp256k1-api')
@@ -19,7 +19,6 @@ jar {
     inputs.property("moduleName", moduleName)
     manifest {
         attributes  'Implementation-Title': 'Example secp256k1-jdk Apps',
-                'Automatic-Module-Name': moduleName,
                 'Implementation-Version': archiveVersion.get()
     }
 }

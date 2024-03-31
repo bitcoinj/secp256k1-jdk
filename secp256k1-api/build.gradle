@@ -12,7 +12,6 @@ jar {
     inputs.property("moduleName", moduleName)
     manifest {
         attributes  'Implementation-Title': 'Secp256k1 API',
-                'Automatic-Module-Name': moduleName,
                 'Implementation-Version': archiveVersion.get()
     }
 }

@@ -16,7 +16,6 @@ jar {
     inputs.property("moduleName", moduleName)
     manifest {
         attributes  'Implementation-Title': 'Secp256k1 libsecp256k1 Foreign Function & Memory implementation',
-                'Automatic-Module-Name': moduleName,
                 'Implementation-Version': archiveVersion.get()
     }
 }
