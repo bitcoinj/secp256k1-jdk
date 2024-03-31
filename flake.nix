@@ -1,5 +1,5 @@
 {
-  description = "secp2565k1-java (Java wrapper for secp256k1)";
+  description = "secp2565k1-jdk (Java API & implementations for secp256k1)";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
