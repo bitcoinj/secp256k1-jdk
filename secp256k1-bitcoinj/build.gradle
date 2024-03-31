@@ -20,7 +20,6 @@ jar {
     inputs.property("moduleName", moduleName)
     manifest {
         attributes  'Implementation-Title': 'Secp256k1 bitcoinj support',
-                'Automatic-Module-Name': moduleName,
                 'Implementation-Version': archiveVersion.get()
     }
 }
