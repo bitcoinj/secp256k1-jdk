@@ -49,9 +49,11 @@
 #            ];
           inputsFrom = with pkgs ; [ secp256k1 ];
           packages = with pkgs ; [
-                jdk21       # Migrate to JDK 22 when possible, see https://github.com/NixOS/nixpkgs/issues/271971
-                jextract
-                gradle
+                jdk22                # JDK 22 will be in $JAVA_HOME (and in javaToolchains)
+                jextract             # jextract (Nix package) contains a jlinked executable and bundles its own JDK 22
+                (gradle.override {   # Gradle 8.7 (Nix package) depends-on and directly uses JDK 21 to launch Gradle itself
+                    javaToolchains = [ jdk22 ];     # Put JDK 22 in Gradle's javaToolchain configuration
+                })
             ];
         };
 
