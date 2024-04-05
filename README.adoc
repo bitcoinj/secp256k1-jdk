@@ -60,11 +60,9 @@ The SECG secp256K1 curve was removed from Java in the JDK 16 release (see https:
 
 The current build requires JDK 21 and JDK 22 installed to run.
 
-The build also requires an installed binary of `secp256k1` version 0.4.1 and we recommend using Nix to install it.
-
 == Installing libsecp256k into your profile with Nix
 
-This assumes you are using Nix with `experimental-features = nix-command flakes`:
+We assume you are using Nix with `experimental-features = nix-command flakes`:
 
 . `nix profile install nixpkgs#secp256k1`
 . Verify that the secp256k1 library is in your `~/.nix-profile/lib` directory.
@@ -75,7 +73,9 @@ path to your location.
 
 == Building with Gradle Wrapper
 
-* `./gradlew build`
+Make sure you have installed the current version (0.4.1) of `secp256k1` with `nix profile install nixpkgs#secp256k1`
+
+. `./gradlew build`
 
 == Running the Schnorr Example with Gradle Wrapper
 
@@ -101,17 +101,23 @@ Run the script:
 
 == Building with Nix
 
-NOTE:: This is currently broken after we switched from using JDK 21 in preview mode to JDK 22. We are waiting for Gradle 8.7 in Nixpkgs.
+NOTE:: We currently only support setting up a development environment with Nix. In the future we hope to support a full Nix build.
+
+To start a development shell with all build prerequisites installed and run the Gradle build:
 
 . `nix develop`
 . `gradle build`
 
-== Building Headers with Nix
+== Extracting Headers with Nix
 
-NOTE:: These instructions assume you are using `experimental-features = nix-command flakes`.
+To extract the libsecp256k1 headers into Java classes via `jextract` using the `extract-header.sh` script:
 
 . `nix develop`
 . `./extract-headers.sh`
+
+The extracted headers will be writen to `./build/org/bitcoinj/secp256k1/foreign/jextract`. You can compare the generated headers with the checked-in headers with:
+
+. `diff -r secp256k1-foreign/src/main/java/org/bitcoinj/secp256k1/foreign/jextract build/org/bitcoinj/secp256k1/foreign/jextract`
 
 
 == Reporting a vulnerability
