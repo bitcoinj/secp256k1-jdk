@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp256k1.kotlin.examples
 
-import org.bitcoinj.secp256k1.bouncy.Bouncy256k1
+import org.bitcoinj.secp256k1.foreign.Secp256k1Foreign
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
@@ -35,7 +35,7 @@ object Ecdsa {
     @JvmStatic
     fun main(args: Array<String>) {
         println("Running secp256k1-jdk Ecdsa example...")
-        Bouncy256k1().use { secp ->
+        Secp256k1Foreign().use { secp ->
             /* === Key Generation === */
             /* Return a non-zero, in-range private key */
             val privKey = secp.ecPrivKeyCreate()
