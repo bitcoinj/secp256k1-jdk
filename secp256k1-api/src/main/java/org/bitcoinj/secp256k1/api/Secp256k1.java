@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp256k1.api;
 
+import java.io.Closeable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.ECFieldFp;
@@ -25,7 +26,7 @@ import java.security.spec.EllipticCurve;
 /**
  *
  */
-public interface Secp256k1 extends AutoCloseable {
+public interface Secp256k1 extends Closeable {
 
 
     ECFieldFp FIELD = new ECFieldFp(new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16));
@@ -69,4 +70,9 @@ public interface Secp256k1 extends AutoCloseable {
     byte[] schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair);
 
     Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
+
+    /**
+     * Override close and declare that no checked exceptions are thrown
+     */
+    void close();
 }
