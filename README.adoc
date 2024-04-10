@@ -131,12 +131,17 @@ See SECURITY.adoc (TBD)
 * https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] on GitHub
 
 
-=== Other Java/JDK Implementations
+=== Other JDK Implementations of secp256k1
 
 * bitcoin-s fork https://bitcoin-s.org/docs/secp256k1/jni-modify
 * Sparrow/Drongo JNI: https://github.com/sparrowwallet/drongo/tree/master/src/main/java/org/bitcoin
 * Kotlin multiplatform wrapper: https://github.com/acinq/secp256k1-kmp
 * Samourai port of Sipa's Python reference implementation to Java: https://code.samourai.io/samouraidev/BIP340_Schnorr[BIP340_Schnorr]
+
+=== Other JDK implementations of Elliptic Curve Cryptography
+
+* https://www.bouncycastle.org/java.html[Bouncy Castle]
+* https://mail.openjdk.org/pipermail/announce/2024-March/000347.html[OpenJDK Project Brisbane] - uses Foreign Function & Memory API to encapsulate the FIPS 140 validated OpenSSL library.
 
 === BIPS
 
@@ -154,7 +159,7 @@ See SECURITY.adoc (TBD)
 * https://elligator.org
 * https://dl.acm.org/doi/10.1145/2508859.2516734[Elligator: elliptic-curve points indistinguishable from uniform random strings]
 
-=== Java Cryptography
+=== Java Cryptography Books & Articles
 
 * https://leanpub.com/javacryptotoolsandtech[Java Cryptography: Tools and Techniques]
 * https://www.novixys.com/blog/generate-bitcoin-addresses-java/ (Obsolete as of JDK 16)
