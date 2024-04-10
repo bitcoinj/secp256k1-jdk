@@ -1,3 +1,8 @@
+package org.bitcoinj.secp256k1.foreign;
+
+import org.bitcoinj.secp256k1.api.Secp256k1;
+import org.bitcoinj.secp256k1.api.Secp256k1Provider;
+
 /*
  * Copyright 2023-2024 secp256k1-jdk Developers.
  *
@@ -13,8 +18,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module org.bitcoinj.secp256k1.api {
-    exports org.bitcoinj.secp256k1.api;
+public class ForeignProvider implements Secp256k1Provider {
+    @Override
+    public String name() {
+        return "ffm";
+    }
 
-    uses org.bitcoinj.secp256k1.api.Secp256k1Provider;
+    @Override
+    public Secp256k1 get() {
+        return new Secp256k1Foreign();
+    }
 }

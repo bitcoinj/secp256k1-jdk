@@ -14,6 +14,5 @@
  * limitations under the License.
  */
 module org.bitcoinj.secp256k1.examples {
-    requires org.bitcoinj.secp256k1.foreign;
     requires org.bitcoinj.secp256k1.api;
 }

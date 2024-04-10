@@ -16,7 +16,7 @@
 package org.bitcoinj.secp256k1.kotlin.examples
 
 import org.bitcoinj.secp256k1.api.P256K1XOnlyPubKey
-import org.bitcoinj.secp256k1.foreign.Secp256k1Foreign
+import org.bitcoinj.secp256k1.api.Secp256k1
 import java.util.*
 
 /**
@@ -31,7 +31,7 @@ object Schnorr {
     @JvmStatic
     fun main(args: Array<String>) {
         println("Running secp256k1-jdk Schnorr example...")
-        Secp256k1Foreign().use { secp ->
+        Secp256k1.getByName("ffm").use { secp ->
             /* === Key Generation === */
             /* Return a non-zero, in-range private key */
             val keyPair = secp.ecKeyPairCreate()
