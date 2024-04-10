@@ -18,4 +18,6 @@ module org.bitcoinj.secp256k1.foreign {
 
     exports org.bitcoinj.secp256k1.foreign;
     exports org.bitcoinj.secp256k1.foreign.jextract;
+
+    provides org.bitcoinj.secp256k1.api.Secp256k1Provider with org.bitcoinj.secp256k1.foreign.ForeignProvider;
 }

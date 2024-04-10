@@ -19,9 +19,8 @@ import org.bitcoinj.secp256k1.api.CompressedPubKeyData;
 import org.bitcoinj.secp256k1.api.CompressedSignatureData;
 import org.bitcoinj.secp256k1.api.P256k1PrivKey;
 import org.bitcoinj.secp256k1.api.P256k1PubKey;
+import org.bitcoinj.secp256k1.api.Secp256k1;
 import org.bitcoinj.secp256k1.api.SignatureData;
-import org.bitcoinj.secp256k1.foreign.Secp256k1Foreign;
-import org.bitcoinj.secp256k1.foreign.jextract.secp256k1_h;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -42,7 +41,7 @@ public class Ecdsa {
     public static void main(String[] args) {
         System.out.println("Running secp256k1-jdk Ecdsa example...");
         /* Use a java try-with-resources to allocate and cleanup -- secp256k1_context_destroy is automatically called */
-        try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
+        try (Secp256k1 secp = Secp256k1.get()) {
             /* === Key Generation === */
 
             /* Return a non-zero, in-range private key */
@@ -53,7 +52,7 @@ public class Ecdsa {
             P256k1PubKey pubkey = secp.ecPubKeyCreate(privKey);
 
             /* Serialize the pubkey in a compressed form(33 bytes). */
-            CompressedPubKeyData compressed_pubkey = secp.ecPubKeySerialize(pubkey, secp256k1_h.SECP256K1_EC_COMPRESSED());
+            CompressedPubKeyData compressed_pubkey = secp.ecPubKeySerialize(pubkey, (int)2L /* secp256k1_h.SECP256K1_EC_COMPRESSED() */);
 
             /* === Signing === */
 

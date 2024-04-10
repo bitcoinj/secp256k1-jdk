@@ -18,7 +18,7 @@ package org.bitcoinj.secp256k1.examples;
 import org.bitcoinj.secp256k1.api.P256K1KeyPair;
 import org.bitcoinj.secp256k1.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp256k1.api.P256k1PubKey;
-import org.bitcoinj.secp256k1.foreign.Secp256k1Foreign;
+import org.bitcoinj.secp256k1.api.Secp256k1;
 
 import java.util.HexFormat;
 
@@ -34,7 +34,7 @@ public class Schnorr {
     public static void main(String[] args) {
         System.out.println("Running secp256k1-jdk Schnorr example...");
         /* Use a java try-with-resources to allocate and cleanup -- secp256k1_context_destroy is automatically called */
-        try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
+        try (Secp256k1 secp = Secp256k1.get()) {
             /* === Key Generation === */
 
             /* Return a non-zero, in-range private key */

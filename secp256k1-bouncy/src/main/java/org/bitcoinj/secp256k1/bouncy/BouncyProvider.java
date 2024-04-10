@@ -13,8 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-module org.bitcoinj.secp256k1.api {
-    exports org.bitcoinj.secp256k1.api;
+package org.bitcoinj.secp256k1.bouncy;
 
-    uses org.bitcoinj.secp256k1.api.Secp256k1Provider;
+import org.bitcoinj.secp256k1.api.Secp256k1;
+import org.bitcoinj.secp256k1.api.Secp256k1Provider;
+
+/**
+ *
+ */
+public class BouncyProvider implements Secp256k1Provider {
+    @Override
+    public String name() {
+        return "bouncy-castle";
+    }
+
+    @Override
+    public Secp256k1 get() {
+        return new Bouncy256k1();
+    }
 }

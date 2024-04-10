@@ -28,7 +28,6 @@ import org.bitcoinj.secp256k1.bouncy.Bouncy256k1;
 import org.bitcoinj.secp256k1.bouncy.BouncyPrivKey;
 import org.bitcoinj.secp256k1.bouncy.BouncyPubKey;
 import org.bitcoinj.secp256k1.foreign.PubKeyPojo;
-import org.bitcoinj.secp256k1.foreign.Secp256k1Foreign;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,7 +50,7 @@ public class AddressTest {
     @ParameterizedTest(name = "key {0} -> Address {1}")
     void createAddressTest(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
-        try (Secp256k1 secp = new Secp256k1Foreign()) {
+        try (Secp256k1 secp = Secp256k1.get()) {
             P256K1KeyPair keyPair = secp.ecKeyPairCreate(new BouncyPrivKey(key));
             WitnessMaker maker = new WitnessMaker(secp);
 //            P256K1XOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
@@ -111,7 +110,7 @@ public class AddressTest {
     @Test
     void createAddressTest2() throws Exception {
         Address tapRootAddress;
-        try (Secp256k1 secp = new Secp256k1Foreign()) {
+        try (Secp256k1 secp = Secp256k1.get()) {
             BigInteger internalPubKey = new BigInteger("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d", 16);
             byte[] compressed = new byte[33];
             compressed[0] = 0x02;

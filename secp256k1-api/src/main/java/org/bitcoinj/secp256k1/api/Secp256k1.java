@@ -75,4 +75,21 @@ public interface Secp256k1 extends Closeable {
      * Override close and declare that no checked exceptions are thrown
      */
     void close();
+
+    /**
+     * Get the default implementation
+     * @return A Secp256k1 instance using the <i>default</i> implementation
+     */
+    static Secp256k1 get() {
+        return Secp256k1Provider.find().get();
+    }
+
+    /**
+     * Get implementation by name
+     * @param name implementation name
+     * @return A Secp256k1 instance using the <i>default</i> implementation
+     */
+    static Secp256k1 getByName(String name) {
+        return Secp256k1Provider.byName(name).get();
+    }
 }
