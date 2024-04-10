@@ -39,15 +39,10 @@ subprojects {
         useJUnitPlatform()
         def userHome = System.getProperty("user.home")
         systemProperty "java.library.path", findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
-        jvmArgs += '--enable-native-access=ALL-UNNAMED'
     }
 
     tasks.withType(JavaCompile).configureEach {
         options.release = 22
-    }
-
-    tasks.withType(JavaExec) {
-        jvmArgs += '--enable-native-access=ALL-UNNAMED'
     }
 }
 
