@@ -46,8 +46,8 @@ import static org.bitcoinj.secp256k1.foreign.jextract.secp256k1_h.secp256k1_schn
  *
  */
 public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
-    public final Arena arena;
-    public final MemorySegment ctx;
+    private final Arena arena;
+    private final MemorySegment ctx;
     /* package */ static final Arena globalArena = Arena.ofAuto();
     /* package */ static final MemorySegment secp256k1StaticContext = secp256k1_h.secp256k1_context_static();
     /**
