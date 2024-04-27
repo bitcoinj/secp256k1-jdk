@@ -46,9 +46,9 @@ There are currently _no plans_ for an implementation using earlier Java-to-C ada
 
 == Relation to bitcoinj
 
-This project is hosted by the *bitcoinj* GitHub organization, but *secp256k1-jdk* does not use or require bitcoinj and (at present) *bitcoinj* cannot use secp256k1-jdk for its ECC implementation. bitcoinj is currently being refactored to be more modular, and we would like to have pluggable ECC implementations (and Schnorr signatures!) in the near future, but further refactoring will be required before this can happen.
+This project is hosted by the https://github.com/bitcoinj[bitcoinj organization] on GitHub, but `secp256k1-jdk` does not use or require the *bitcoinj* library (https://bitcoinj.org[website] / https://github.com/bitcoinj[GitHub]) and *bitcoinj* doesn't (yet) use `secp256k1-jdk` for its ECC implementation. *bitcoinj* is currently being refactored to be more modular, and we would like to have pluggable ECC implementations (and Schnorr signatures!) in the near future, but further refactoring will be required before this can happen.
 
-For information on the in-process refactoring of bitcoinj, see the following:
+For information on the in-process refactoring of *bitcoinj*, see the following:
 
 * https://github.com/bitcoinj/bitcoinj/issues/1874
 * https://github.com/bitcoinj/bitcoinj/blob/master/designdocs/modular-architecture.md
