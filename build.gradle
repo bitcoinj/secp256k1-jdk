@@ -2,7 +2,7 @@ plugins {
     id 'com.github.hierynomus.license'      version '0.16.1' apply false
 }
 
-subprojects {
+allprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
     //apply plugin: 'test-report-aggregation'
@@ -23,6 +23,8 @@ subprojects {
     }
 
     java {
+        withJavadocJar()
+        withSourcesJar()
         sourceCompatibility = JavaVersion.toVersion("22")
         targetCompatibility = JavaVersion.toVersion("22")
         toolchain {
@@ -47,4 +49,5 @@ subprojects {
 }
 
 apply from: 'gradle/licenseCheck.gradle'
+apply from: 'gradle/maven-publish.gradle'
 

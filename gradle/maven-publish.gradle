@@ -1,0 +1,12 @@
+allprojects {
+    apply plugin: 'maven-publish'
+
+    publishing {
+        publications {
+            jar(MavenPublication) {
+                from components.java
+            }
+
+        }
+    }
+}
