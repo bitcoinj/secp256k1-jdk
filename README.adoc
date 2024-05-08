@@ -62,7 +62,8 @@ The SECG secp256K1 curve was removed from Java in the JDK 16 release (see https:
 
 == Current Build Status
 
-The current build requires JDK 21 and JDK 22 installed to run.
+The build requires JDK 22 installed to run.  (If you are using a version of Gradle earlier than 8.8, you will need to
+use an earlier JDK version to run Gradle and the Gradle Toolchains feature will use JDK 22 for the build itself.)
 
 == Installing libsecp256k into your profile with Nix
 
@@ -77,7 +78,7 @@ path to your location.
 
 == Building with Gradle Wrapper
 
-Make sure you have installed the current version (0.4.1) of `secp256k1` with `nix profile install nixpkgs#secp256k1`
+Make sure you have installed version (0.4.1) of `secp256k1` with `nix profile install nixpkgs#secp256k1`
 
 . `./gradlew build`
 
@@ -90,10 +91,6 @@ Make sure you have installed the current version (0.4.1) of `secp256k1` with `ni
 Build the script:
 
 * `./gradlew secp256k1-examples-java:installDist`
-
-After running Gradle, switch your shell's default Java to JDK 22 or later, for example if you're using https://sdkman.io[SDKMAN]:
-
-* `sdk use java 22-open`
 
 Set the script's Java options shell variable (this assumes you installed `libsecp2565k1` with Nix):
 
@@ -153,6 +150,7 @@ See SECURITY.adoc (TBD)
 
 === General and Elliptic Curve Cryptography
 
+* https://andrea.corbellini.name/2015/05/17/elliptic-curve-cryptography-a-gentle-introduction/[Elliptic Curve Cryptography: a gentle introduction]
 * https://math.berkeley.edu/~ribet/116/
 * https://www.chosenplaintext.ca/articles/beginners-guide-constant-time-cryptography.html
 * https://fangpenlin.com/posts/2019/10/07/elliptic-curve-cryptography-explained/[Elliptic Curve Cryptography Explained]
