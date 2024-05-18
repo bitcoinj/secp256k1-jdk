@@ -118,7 +118,7 @@ public class AddressTest {
             System.arraycopy(xbytes, 0, compressed, 1, 32);
             ECKey ecKey = ECKey.fromPublicOnly(compressed);
             P256k1PubKey pubkey = new BouncyPubKey(ecKey.getPubKeyPoint());
-            P256K1XOnlyPubKey xOnlyKey = new P256K1XOnlyPubKey(internalPubKey);
+            P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.of(internalPubKey);
             BigInteger tweakInt = calcTweak(xOnlyKey);
             P256k1PubKey G = new PubKeyPojo(Secp256k1.EC_PARAMS.getGenerator());
             P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);

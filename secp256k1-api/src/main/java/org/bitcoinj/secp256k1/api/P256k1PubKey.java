@@ -74,7 +74,7 @@ public interface P256k1PubKey extends ECPublicKey {
     }
 
     default P256K1XOnlyPubKey getXOnly() {
-        return new P256K1XOnlyPubKey(this.getW().getAffineX());
+        return P256K1XOnlyPubKey.of(this.getW().getAffineX());
     }
 
     @Override
