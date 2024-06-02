@@ -1,0 +1,26 @@
+allprojects {
+    apply plugin: 'maven-publish'
+
+    publishing {
+        publications {
+            jar(MavenPublication) {
+                from components.java
+            }
+
+        }
+        repositories {
+            def secpJdkGitLabProjectId = "55956336"
+            maven {
+                url "https://gitlab.com/api/v4/projects/${secpJdkGitLabProjectId}/packages/maven"
+                name "GitLab"
+                credentials(HttpHeaderCredentials) {
+                    name = 'Private-Token'
+                    value = project.findProperty("gitLabMavenToken")
+                }
+                authentication {
+                    header(HttpHeaderAuthentication)
+                }
+            }
+        }
+    }
+}
