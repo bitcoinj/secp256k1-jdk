@@ -100,6 +100,20 @@ Run the script:
 
 * `./secp256k1-examples-java/build/install/secp256k1-examples-java/bin/secp256k1-examples-java`
 
+== Build and run a native image (AMD64-only with Graal JDK 22)
+
+To build using GraalVM `native-image`:
+
+. Make sure you have GraalVM 22 or later installed
+. Make sure `GRAALVM_HOME` points to the Graal JDK 22 installation
+. `./gradlew secp256k1-examples-java:nativeCompile`
+
+To run the compiled, native executable:
+
+. `export LD_LIBRARY_PATH="$HOME/.nix-profile/lib:$LD_LIBRARY_PATH"`
+. `./secp256k1-examples-java/build/schnorr`
+. Don't blink!
+
 == Building with Nix
 
 NOTE:: We currently only support setting up a development environment with Nix. In the future we hope to support a full Nix build.

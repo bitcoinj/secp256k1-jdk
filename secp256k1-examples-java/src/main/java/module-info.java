@@ -15,4 +15,5 @@
  */
 module org.bitcoinj.secp256k1.examples {
     requires org.bitcoinj.secp256k1.api;
+    requires org.graalvm.nativeimage;
 }

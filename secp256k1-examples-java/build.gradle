@@ -13,6 +13,9 @@ dependencies {
     implementation project(':secp256k1-api')
     runtimeOnly project(':secp256k1-bouncy')
     runtimeOnly project(':secp256k1-foreign')
+
+    // This is only needed for ForeignRegistrationFeature and the native-image build
+    implementation group: 'org.graalvm.sdk', name: 'nativeimage', version: '24.0.0'
 }
 
 jar {
@@ -34,3 +37,38 @@ run {
     systemProperty "java.library.path", findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
     jvmArgs += '--enable-native-access=org.bitcoinj.secp256k1.foreign'
 }
+
+configurations {
+    nativeToolImplementation.extendsFrom implementation
+}
+
+def mainClassName = "org.bitcoinj.secp256k1.examples.Schnorr"
+
+jar {
+    manifest {
+        attributes  'Implementation-Title': 'Schnorr Signature Example',
+                'Main-Class': mainClassName,
+                'Implementation-Version': archiveVersion.get()
+    }
+}
+
+// Compile a native image using GraalVM's native-image tool
+// Graal must be installed at $GRAALVM_HOME
+tasks.register('nativeCompile', Exec) {
+    dependsOn jar
+    workingDir = projectDir
+    executable = "${System.env.GRAALVM_HOME}/bin/native-image"
+    args = ['--verbose',
+            '--no-fallback',
+            '-cp', "${-> configurations.nativeToolImplementation.asPath}", // Lazy configuration resolution
+            '-jar', jar.archiveFile.get(),
+            '-H:Path=build',
+            '-H:Name=schnorr',
+            '-H:+ForeignAPISupport',
+            '--features=org.bitcoinj.secp256k1.examples.ForeignRegistrationFeature',
+            '--enable-native-access=ALL-UNNAMED',
+            '-H:+ReportUnsupportedElementsAtRuntime',
+            '-H:+ReportExceptionStackTraces'
+    ]
+}
+
