@@ -8,6 +8,10 @@ tasks.withType(JavaCompile).configureEach {
 
 ext.moduleName = 'org.bitcoinj.secp256k1.api'
 
+dependencies {
+    api("org.jspecify:jspecify:1.0.0")
+}
+
 jar {
     inputs.property("moduleName", moduleName)
     manifest {
