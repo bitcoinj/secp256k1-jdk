@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp256k1.examples {
     requires org.bitcoinj.secp256k1.api;
+    requires org.jspecify;
 }

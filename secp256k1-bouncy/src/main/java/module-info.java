@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp256k1.bouncy {
     requires org.bitcoinj.secp256k1.api;
     requires org.bouncycastle.provider;
+    requires org.jspecify;
 
     provides org.bitcoinj.secp256k1.api.Secp256k1Provider with org.bitcoinj.secp256k1.bouncy.BouncyProvider;
 }
