@@ -11,7 +11,7 @@ ext.moduleName = 'org.bitcoinj.secp256k1.sandbox'
 dependencies {
     api project(':secp256k1-api')
     api project(':secp256k1-bouncy')
-    api project(':secp256k1-foreign')
+    api project(':secp256k1-ffm')
 }
 
 jar {
