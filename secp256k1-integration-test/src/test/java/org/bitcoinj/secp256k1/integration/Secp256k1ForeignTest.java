@@ -17,7 +17,7 @@ package org.bitcoinj.secp256k1.integration;
 
 import org.bitcoinj.secp256k1.api.P256k1PubKey;
 import org.bitcoinj.secp256k1.bouncy.BouncyPrivKey;
-import org.bitcoinj.secp256k1.foreign.Secp256k1Foreign;
+import org.bitcoinj.secp256k1.ffm.Secp256k1Foreign;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

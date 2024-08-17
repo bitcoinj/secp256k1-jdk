@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation project(':secp256k1-api')
     runtimeOnly project(':secp256k1-bouncy')
-    runtimeOnly project(':secp256k1-foreign')
+    runtimeOnly project(':secp256k1-ffm')
 }
 
 tasks.withType(JavaCompile).configureEach {

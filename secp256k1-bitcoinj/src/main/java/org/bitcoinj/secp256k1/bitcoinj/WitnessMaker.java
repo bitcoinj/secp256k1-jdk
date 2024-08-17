@@ -18,7 +18,7 @@ package org.bitcoinj.secp256k1.bitcoinj;
 import org.bitcoinj.secp256k1.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp256k1.api.P256k1PubKey;
 import org.bitcoinj.secp256k1.api.Secp256k1;
-import org.bitcoinj.secp256k1.foreign.PubKeyPojo;
+import org.bitcoinj.secp256k1.ffm.PubKeyPojo;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;

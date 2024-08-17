@@ -27,7 +27,7 @@ import org.bitcoinj.secp256k1.api.Secp256k1;
 import org.bitcoinj.secp256k1.bouncy.Bouncy256k1;
 import org.bitcoinj.secp256k1.bouncy.BouncyPrivKey;
 import org.bitcoinj.secp256k1.bouncy.BouncyPubKey;
-import org.bitcoinj.secp256k1.foreign.PubKeyPojo;
+import org.bitcoinj.secp256k1.ffm.PubKeyPojo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
