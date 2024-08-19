@@ -5,7 +5,7 @@
 # `nix profile install jextract`)
 INC_PATH="$HOME/.nix-profile/include/"
 mkdir -p build
-jextract --target-package org.bitcoinj.secp256k1.foreign.jextract \
+jextract --target-package org.bitcoinj.secp.ffm.jextract \
         --output build \
         --use-system-load-library \
         -lsecp256k1 \

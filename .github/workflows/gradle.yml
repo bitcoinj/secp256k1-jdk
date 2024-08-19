@@ -38,6 +38,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
       - name: Run Java (Schnorr) Example
-        run: ./gradlew secp256k1-examples-java:run
+        run: ./gradlew secp-examples-java:run
       - name: Run Kotlin (Schnorr) Example
-        run: ./gradlew secp256k1-examples-kotlin:run
+        run: ./gradlew secp-examples-kotlin:run
