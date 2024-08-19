@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    //options.release = 22
+}
+
+ext.moduleName = 'org.bitcoinj.secp.examples'
+
+dependencies {
+    implementation project(':secp-api')
+    runtimeOnly project(':secp-bouncy')
+    runtimeOnly project(':secp-ffm')
+}
+
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes  'Implementation-Title': 'Example secp256k1-jdk Apps',
+                'Implementation-Version': archiveVersion.get()
+    }
+}
+
+application {
+    mainModule = 'org.bitcoinj.secp.examples'
+//    mainClass = 'org.bitcoinj.secp.examples.Ecdsa'
+    mainClass = 'org.bitcoinj.secp.examples.Schnorr'
+}
+
+run {
+    def userHome = System.getProperty("user.home")
+    systemProperty "java.library.path", findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
+    jvmArgs += '--enable-native-access=org.bitcoinj.secp.ffm'
+}

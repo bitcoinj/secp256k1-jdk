@@ -7,8 +7,8 @@ subprojects {
     apply plugin: 'groovy'
     //apply plugin: 'test-report-aggregation'
 
-    version = secp256k1Version     // set in gradle.properties
-    group = 'org.bitcoinj.secp256k1'
+    version = secpVersion     // set in gradle.properties
+    group = 'org.bitcoinj.secp'
 
     repositories {
         mavenCentral()

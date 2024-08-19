@@ -19,7 +19,7 @@ WARNING:: This prototype software has had limited testing and has not been revie
 The API is based on the `C-language` API of https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], but adapted
 to modern, idiomatic, functional-style Java and to use Elliptic Curve types from the Java Class Library, such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey] where appropriate.
 
-The API is distributed as an API-only JAR (```secp256k1-api-_version_.jar```) and we expect that there will be multiple implementations of the API. The API JAR currently requires JDK 17 or later but we may backport it to an earlier version (possibly JDK 11) in a future release depending upon feedback from the community.
+The API is distributed as an API-only JAR (```secp-api-_version_.jar```) and we expect that there will be multiple implementations of the API. The API JAR currently requires JDK 17 or later but we may backport it to an earlier version (possibly JDK 11) in a future release depending upon feedback from the community.
 
 NOTE:: At this point, we are especially interested in feedback on the API.
 
@@ -27,10 +27,10 @@ NOTE:: At this point, we are especially interested in feedback on the API.
 
 The provided proof-of-concept implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp256k1-foreign-_version_.jar```) that requires JDK 22 or later.
 
-Panama is available in https://openjdk.org/projects/jdk/22/[OpenJDK 22] and later. We anticipate `secp256k1-foreign` will be
-the recommended/preferred `secp256k1-api` implementation for use in projects using modern JVMs.
+Panama is available in https://openjdk.org/projects/jdk/22/[OpenJDK 22] and later. We anticipate `secp256k1-ffm` will be
+the recommended/preferred `secp-api` implementation for use in projects using modern JVMs.
 
-The minimum required JDK for this module will likely be incremented with each new JDK release, with a target of requiring JDK 25 (the next LTS release of the JDK) for the 1.0 release of `secp256k1-foreign`.
+The minimum required JDK for this module will likely be incremented with each new JDK release, with a target of requiring JDK 25 (the next LTS release of the JDK) for the 1.0 release of `secp256k1-ffm`.
 
 WARNING:: This is a preliminary implementation provided for experimentation and feedback and should not be used in real applications.
 
@@ -116,9 +116,9 @@ To extract the libsecp256k1 headers into Java classes via `jextract` using the `
 . `nix develop`
 . `./extract-headers.sh`
 
-The extracted headers will be writen to `./build/org/bitcoinj/secp256k1/foreign/jextract`. You can compare the generated headers with the checked-in headers with:
+The extracted headers will be writen to `./build/org/bitcoinj/secp/ffm/jextract`. You can compare the generated headers with the checked-in headers with:
 
-. `diff -r secp256k1-foreign/src/main/java/org/bitcoinj/secp256k1/foreign/jextract build/org/bitcoinj/secp256k1/foreign/jextract`
+. `diff -r secp-ffm/src/main/java/org/bitcoinj/secp/ffm/jextract build/org/bitcoinj/secp/ffm/jextract`
 
 
 == Reporting a vulnerability
