@@ -77,11 +77,11 @@ public class Ecdsa {
             /* Verify a signature. This will return true if it's valid and false if it's not. */
             boolean is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).get();
 
-            System.out.printf("Is the signature valid? %s\n", is_signature_valid);
-            System.out.printf("Secret Key: %s\n", privKey.getS().toString(16));
-            System.out.printf("Public Key (as ECPoint): %s\n", pubkey);
-            System.out.printf("Public Key (Compressed): %s\n", formatter.formatHex(compressed_pubkey.bytes()));
-            System.out.printf("Signature: %s\n", formatter.formatHex(serialized_signature.bytes()));
+            System.out.println("Is the signature valid? " + is_signature_valid);
+            System.out.println("Secret Key: " + privKey.getS().toString(16));
+            System.out.println("Public Key (as ECPoint): " + pubkey);
+            System.out.println("Public Key (Compressed): " + formatter.formatHex(compressed_pubkey.bytes()));
+            System.out.println("Signature: " + formatter.formatHex(serialized_signature.bytes()));
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for
