@@ -25,12 +25,24 @@ jar {
 
 application {
     mainModule = 'org.bitcoinj.secp.examples'
-//    mainClass = 'org.bitcoinj.secp.examples.Ecdsa'
     mainClass = 'org.bitcoinj.secp.examples.Schnorr'
 }
 
+def userHome = System.getProperty("user.home")
+def javaLibraryPath = findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
+
 run {
-    def userHome = System.getProperty("user.home")
-    systemProperty "java.library.path", findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
+    systemProperty "java.library.path", javaLibraryPath
+    jvmArgs += '--enable-native-access=org.bitcoinj.secp.ffm'
+}
+
+tasks.register('runEcdsa', JavaExec) {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(22)
+    }
+    systemProperty "java.library.path", javaLibraryPath
+    classpath = sourceSets.main.runtimeClasspath
+    mainModule = 'org.bitcoinj.secp.examples'
+    mainClass = 'org.bitcoinj.secp.examples.Ecdsa'
     jvmArgs += '--enable-native-access=org.bitcoinj.secp.ffm'
 }
