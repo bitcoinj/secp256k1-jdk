@@ -25,12 +25,12 @@ NOTE:: At this point, we are especially interested in feedback on the API.
 
 == libsecp256k1 Panama Implementation (JDK 22+)
 
-The provided proof-of-concept implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp256k1-foreign-_version_.jar```) that requires JDK 22 or later.
+The provided proof-of-concept implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp-ffm-_version_.jar```) that requires JDK 22 or later.
 
-Panama is available in https://openjdk.org/projects/jdk/22/[OpenJDK 22] and later. We anticipate `secp256k1-ffm` will be
+Panama is available in https://openjdk.org/projects/jdk/22/[OpenJDK 22] and later. We anticipate `secp-ffm` will be
 the recommended/preferred `secp-api` implementation for use in projects using modern JVMs.
 
-The minimum required JDK for this module will likely be incremented with each new JDK release, with a target of requiring JDK 25 (the next LTS release of the JDK) for the 1.0 release of `secp256k1-ffm`.
+The minimum required JDK for this module will likely be incremented with each new JDK release, with a target of requiring JDK 25 (the next LTS release of the JDK) for the 1.0 release of `secp-ffm`.
 
 WARNING:: This is a preliminary implementation provided for experimentation and feedback and should not be used in real applications.
 
@@ -84,21 +84,21 @@ Make sure you have installed version (0.5.0) of `secp256k1` with `nix profile in
 
 == Running the Schnorr Example with Gradle Wrapper
 
-* `./gradlew secp256k1-examples-java:run`
+* `./gradlew secp-examples-java:run`
 
 == Build a Start Script and use it to run the Schnorr Example
 
 Build the script:
 
-* `./gradlew secp256k1-examples-java:installDist`
+* `./gradlew secp-examples-java:installDist`
 
 Set the script's Java options shell variable (this assumes you installed `libsecp2565k1` with Nix):
 
-* `export SECP256K1_EXAMPLES_JAVA_OPTS="-Djava.library.path=$HOME/.nix-profile/lib --enable-native-access=ALL-UNNAMED"`
+* `export SECP_EXAMPLES_JAVA_OPTS="-Djava.library.path=$HOME/.nix-profile/lib --enable-native-access=org.bitcoinj.secp.ffm"`
 
 Run the script:
 
-* `./secp256k1-examples-java/build/install/secp256k1-examples-java/bin/secp256k1-examples-java`
+* `./secp-examples-java/build/install/secp-examples-java/bin/secp-examples-java`
 
 == Building with Nix
 
