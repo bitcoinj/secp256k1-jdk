@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.api;
 
 import java.math.BigInteger;
+import java.util.HexFormat;
 
 /**
  *
@@ -55,6 +56,7 @@ public interface P256K1XOnlyPubKey {
      * Default implementation. Currently used by all known implementations
      */
     class P256K1XOnlyPubKeyImpl implements P256K1XOnlyPubKey {
+        private static final HexFormat formatter = HexFormat.of();
         private final BigInteger x;
 
         public P256K1XOnlyPubKeyImpl(P256k1PubKey pubKey) {
@@ -77,6 +79,14 @@ public interface P256K1XOnlyPubKey {
         @Override
         public byte[] getSerialized() {
             return P256k1PubKey.integerTo32Bytes(x);
+        }
+
+        /**
+         * @return A hex string representing the default binary serialization format
+         */
+        @Override
+        public String toString() {
+            return formatter.formatHex(getSerialized());
         }
     }
 }

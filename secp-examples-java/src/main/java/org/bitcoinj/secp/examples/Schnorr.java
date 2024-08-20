@@ -65,7 +65,7 @@ public class Schnorr {
 
             System.out.printf("Is the signature valid? %s\n", is_signature_valid);
             System.out.printf("Secret Key: %s\n", keyPair.getS().toString(16));
-            System.out.printf("Public Key (as ECPoint): %s\n", formatter.formatHex(xOnly2.getSerialized()));
+            System.out.printf("Public Key (as ECPoint): %s\n", xOnly2);
             System.out.printf("Signature: %s\n", formatter.formatHex(signature));
 
             /* It's best practice to try to clear secrets from memory after using them.
