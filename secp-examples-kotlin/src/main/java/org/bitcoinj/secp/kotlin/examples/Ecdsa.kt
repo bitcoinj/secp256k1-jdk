@@ -69,11 +69,11 @@ object Ecdsa {
             /* Verify a signature. This will return true if it's valid and false if it's not. */
             val is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).get()
 
-            System.out.printf("Is the signature valid? %s\n", is_signature_valid)
-            System.out.printf("Secret Key: %s\n", privKey.s.toString(16))
-            System.out.printf("Public Key (as ECPoint): %s\n", pubkey)
-            System.out.printf("Public Key (Compressed): %s\n", formatter.formatHex(compressed_pubkey.bytes()))
-            System.out.printf("Signature: %s\n", formatter.formatHex(serialized_signature.bytes()))
+            println("Is the signature valid? $is_signature_valid")
+            println("Secret Key: ${privKey.s.toString(16)}")
+            println("Public Key (as ECPoint): $pubkey")
+            println("Public Key (Compressed): ${formatter.formatHex(compressed_pubkey.bytes())}")
+            println("Signature: ${formatter.formatHex(serialized_signature.bytes())}")
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for

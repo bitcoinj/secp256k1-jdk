@@ -58,10 +58,10 @@ object Schnorr {
 
             val is_signature_valid = secp.schnorrSigVerify(signature, msg_hash2, xOnly2).get()
 
-            System.out.printf("Is the signature valid? %s\n", is_signature_valid)
-            System.out.printf("Secret Key: %s\n", keyPair.s.toString(16))
-            System.out.printf("Public Key (as ECPoint): %s\n", xOnly2)
-            System.out.printf("Signature: %s\n", formatter.formatHex(signature))
+            println("Is the signature valid? $is_signature_valid")
+            println("Secret Key: ${keyPair.s.toString(16)}")
+            println("Public Key (as ECPoint): $xOnly2")
+            println("Signature: ${formatter.formatHex(signature)}")
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for
