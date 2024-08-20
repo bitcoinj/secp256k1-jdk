@@ -78,7 +78,7 @@ path to your location.
 
 == Building with Gradle Wrapper
 
-Make sure you have installed version (0.4.1) of `secp256k1` with `nix profile install nixpkgs#secp256k1`
+Make sure you have installed version (0.5.0) of `secp256k1` with `nix profile install nixpkgs#secp256k1`
 
 . `./gradlew build`
 
