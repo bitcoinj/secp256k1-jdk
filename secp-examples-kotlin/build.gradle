@@ -18,7 +18,7 @@ kotlin {
 }
 
 application {
-    mainClass = 'org.bitcoinj.secp.kotlin.examples.Schnorr'
+    mainClass = 'org.bitcoinj.secp.kotlin.examples.SchnorrKt'
 }
 
 def userHome = System.getProperty("user.home")
@@ -35,6 +35,6 @@ tasks.register('runEcdsa', JavaExec) {
     }
     systemProperty "java.library.path", javaLibraryPath
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'org.bitcoinj.secp.kotlin.examples.Ecdsa'
+    mainClass = 'org.bitcoinj.secp.kotlin.examples.EcdsaKt'
     jvmArgs += '--enable-native-access=ALL-UNNAMED'
 }
