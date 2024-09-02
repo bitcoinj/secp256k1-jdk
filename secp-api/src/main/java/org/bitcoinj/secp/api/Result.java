@@ -65,9 +65,9 @@ public /* sealed */ interface Result<T> {
         return get("Error");
     }
     default T get(String message) {
-        if (this instanceof Ok<T>) {
+        if (this instanceof Ok) {
             return ((Ok<T>) this).result();
-        } else if (this instanceof Err<T>) {
+        } else if (this instanceof Err) {
            throw new IllegalStateException(message + ": " + ((Err<T>)this).code());
         } else {
             throw new IllegalStateException("Can't get here");
