@@ -21,8 +21,28 @@ package org.bitcoinj.secp.api;
  * occurred the error code is in {@link Err#code()}.
  */
 public sealed interface Result<T> {
-    record Ok<T>(T result) implements Result<T> {}
-    record Err<T>(int code) implements Result<T> {}
+    final class Ok<T> implements Result<T> {
+        private final T result;
+
+        public Ok(T result) {
+            this.result = result;
+        }
+
+        public T result() {
+            return result;
+        }
+    }
+    final class Err<T> implements Result<T> {
+        private final int code;
+
+        public Err(int code) {
+            this.code = code;
+        }
+
+        public int code() {
+            return code;
+        }
+    }
 
     static <T> Result<T> ok(T result) {
         return new Ok<>(result);
