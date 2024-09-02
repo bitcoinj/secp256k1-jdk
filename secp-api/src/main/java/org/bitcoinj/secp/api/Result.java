@@ -20,7 +20,7 @@ package org.bitcoinj.secp.api;
  * If result is {@code Ok} the success result is in {@link Ok#result()}, if a failure
  * occurred the error code is in {@link Err#code()}.
  */
-public sealed interface Result<T> {
+public /* sealed */ interface Result<T> {
     final class Ok<T> implements Result<T> {
         private final T result;
 
