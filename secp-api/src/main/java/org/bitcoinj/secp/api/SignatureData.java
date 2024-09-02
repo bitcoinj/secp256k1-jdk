@@ -18,6 +18,6 @@ package org.bitcoinj.secp.api;
 /**
  *
  */
-public interface SignatureData {
-    public byte[] bytes();
+public interface SignatureData extends ByteArray {
+    byte[] bytes();
 }

@@ -19,14 +19,11 @@ import java.math.BigInteger;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
-import java.util.HexFormat;
 
 /**
  *
  */
 public interface P256k1PubKey extends ECPublicKey {
-    HexFormat hf = HexFormat.of();
-
     @Override
     default String getAlgorithm() {
         return "Secp256k1";
