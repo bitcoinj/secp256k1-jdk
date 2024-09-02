@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp.ffm;
 
+import org.bitcoinj.secp.api.ByteArray;
 import org.bitcoinj.secp.api.SignatureData;
 
 import java.lang.foreign.MemorySegment;
