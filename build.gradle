@@ -23,8 +23,6 @@ subprojects {
     }
 
     java {
-        sourceCompatibility = JavaVersion.toVersion("22")
-        targetCompatibility = JavaVersion.toVersion("22")
         toolchain {
             // `languageVersion` is used to configure the "Java Toolchain" used for the build. This includes `javac`,
             // `jlink`, and the `jpackage` tool.
