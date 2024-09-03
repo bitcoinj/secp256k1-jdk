@@ -50,7 +50,7 @@ public class BouncyPubKey implements P256k1PubKey {
 
     @Override
     public String toString() {
-        return ByteArray.HEX_FORMAT.formatHex(bytes());
+        return ByteArray.toHexString(bytes());
     }
 
     @Override
