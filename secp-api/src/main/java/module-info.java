@@ -18,7 +18,6 @@ module org.bitcoinj.secp.api {
     requires org.jspecify;
 
     exports org.bitcoinj.secp.api;
-    exports org.bitcoinj.secp.api.internal; /* TEMPORARY */
 
     uses org.bitcoinj.secp.api.Secp256k1Provider;
 }

@@ -24,7 +24,6 @@ import java.util.Arrays;
  * An effectively-immutable byte array.
  */
 public interface ByteArray extends Comparable<ByteArray> {
-    HexFormat HEX_FORMAT = new HexFormat();
 
     /**
      * @return the bytes as an array
@@ -35,7 +34,7 @@ public interface ByteArray extends Comparable<ByteArray> {
      * @return the bytes as a hex-formatted string
      */
     default String formatHex() {
-        return HEX_FORMAT.formatHex(bytes());
+        return toHexString(bytes());
     }
 
     /**
@@ -55,6 +54,16 @@ public interface ByteArray extends Comparable<ByteArray> {
      * @return hex-formatted String
      */
     static String toHexString(byte[] bytes) {
-        return HEX_FORMAT.formatHex(bytes);
+        return ByteArrayBase.HEX_FORMAT.formatHex(bytes);
+    }
+
+    /**
+     * Abstract Base Class for creating ByteArray Implementations
+     */
+    abstract class ByteArrayBase implements ByteArray {
+        private static final HexFormat HEX_FORMAT = new HexFormat();
+
+        @Override
+        public abstract byte[] bytes();
     }
 }
