@@ -2,7 +2,10 @@ plugins {
     id 'com.github.hierynomus.license'      version '0.16.1' apply false
 }
 
-subprojects {
+// Projects to be published with maven-publish
+ext.publishedProjects = ['secp-api', 'secp-ffm', 'secp-bouncy']
+
+subprojects { sub ->
     apply plugin: 'java'
     apply plugin: 'groovy'
     //apply plugin: 'test-report-aggregation'
@@ -23,6 +26,10 @@ subprojects {
     }
 
     java {
+        if (sub.name in publishedProjects) {
+            withJavadocJar()
+        }
+        withSourcesJar()
         toolchain {
             // `languageVersion` is used to configure the "Java Toolchain" used for the build. This includes `javac`,
             // `jlink`, and the `jpackage` tool.
@@ -45,4 +52,5 @@ subprojects {
 }
 
 apply from: 'gradle/licenseCheck.gradle'
+apply from: 'gradle/maven-publish.gradle'
 
