@@ -19,7 +19,7 @@ WARNING:: This prototype software has had limited testing and has not been revie
 The API is based on the `C-language` API of https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], but adapted
 to modern, idiomatic, functional-style Java and to use Elliptic Curve types from the Java Class Library, such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey] where appropriate.
 
-The API is distributed as an API-only JAR (```secp-api-_version_.jar```) and we expect that there will be multiple implementations of the API. The API JAR currently requires JDK 17 or later but we may backport it to an earlier version (possibly JDK 11) in a future release depending upon feedback from the community.
+The API is distributed as an API-only JAR (```secp-api-_version_.jar```) and we expect that there will be multiple implementations of the API. The API JAR currently requires JDK 9 or later but we may backport it to JDK 8 in a future release depending upon feedback from the community.
 
 NOTE:: At this point, we are especially interested in feedback on the API.
 
@@ -38,7 +38,7 @@ WARNING:: This is a preliminary implementation provided for experimentation and 
 
 An incomplete https://www.bouncycastle.org[Bouncy Castle]-based submodule is included. Bouncy Castle is a well-regarded cryptography library that includes support for the secp256k1 curve and is currently used by https://bitcoinj.org[bitcoinj] and other Java-based Bitcoin implementations. We expect this implementation to be completed and made available as a pure-Java implementation for those who are unable to use the native libsecp256k1 implementation and/or Panama.
 
-The Bouncy Castle implementation is currently targeting JDK 17, but if the API is backported to JDK 11, so will the Bouncy Castle implementation.
+The Bouncy Castle implementation is currently targeting JDK 9, but if the API is backported to JDK 8, so will the Bouncy Castle implementation.
 
 == libsecp256k1 Implementation for older JDKs
 
