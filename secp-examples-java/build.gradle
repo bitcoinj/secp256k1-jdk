@@ -38,7 +38,7 @@ run {
 
 tasks.register('runEcdsa', JavaExec) {
     javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(22)
+        languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
     }
     systemProperty "java.library.path", javaLibraryPath
     classpath = sourceSets.main.runtimeClasspath
