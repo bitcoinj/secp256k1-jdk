@@ -10,7 +10,7 @@ jobs:
         os: [ubuntu-latest, macOS-latest]
         distribution: ['temurin']
       fail-fast: false
-    name: ${{ matrix.os }} JDK 22
+    name: ${{ matrix.os }} JDK 23
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
@@ -18,11 +18,9 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: ${{ matrix.distribution }}
-          # Setup JDK 21 & JDK 22 to make JDK 22 available to the Gradle Java Toolchains feature
           # When installing multiple JDKs, the last JDK installed is the default and will be used to run Gradle itself
           java-version: |
-            22
-            21
+            23
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -36,6 +34,6 @@ jobs:
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew -PjavaToolchainVersion=23 build
       - name: Run Java & Kotlin Examples
-        run: ./gradlew run runEcdsa
+        run: ./gradlew -PjavaToolchainVersion=23 run runEcdsa

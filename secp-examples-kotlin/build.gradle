@@ -14,7 +14,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 kotlin {
-    jvmToolchain(22)
+    jvmToolchain(javaToolchainVersion as int)
 }
 
 application {
@@ -31,7 +31,7 @@ run {
 
 tasks.register('runEcdsa', JavaExec) {
     javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(22)
+        languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
     }
     systemProperty "java.library.path", javaLibraryPath
     classpath = sourceSets.main.runtimeClasspath
