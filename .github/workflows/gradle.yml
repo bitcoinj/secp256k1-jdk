@@ -34,6 +34,6 @@ jobs:
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
       - name: Build with Gradle
-        run: ./gradlew -PjavaToolchainVersion=23 build
+        run: ./gradlew build
       - name: Run Java & Kotlin Examples
-        run: ./gradlew -PjavaToolchainVersion=23 run runEcdsa
+        run: ./gradlew run runEcdsa
