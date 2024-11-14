@@ -62,8 +62,9 @@ The SECG secp256K1 curve was removed from Java in the JDK 16 release (see https:
 
 == Current Build Status
 
-The build requires JDK 22 installed to run.  (If you are using a version of Gradle earlier than 8.8, you will need to
-use an earlier JDK version to run Gradle and the Gradle Toolchains feature will use JDK 22 for the build itself.)
+The build requires JDK 23 installed to run. Gradle 8.11 should be used and is provided by the included Gradle Wrapper.
+
+(It may be possible to build with JDK 22 and/or an earlier Gradle if you configure the "Java Toolchains" configuration correctly, but as JDK 22 is unsupported you should migrate to JDK 23 as soon as possible.)
 
 == Installing libsecp256k into your profile with Nix
 
