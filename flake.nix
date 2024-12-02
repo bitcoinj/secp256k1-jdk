@@ -53,7 +53,7 @@
                 # current jextract in nixpkgs is broken, see: https://github.com/NixOS/nixpkgs/issues/354591
                 # jextract             # jextract (Nix package) contains a jlinked executable and bundles its own JDK
                 (gradle.override {   # Gradle 8.x (Nix package) depends-on and directly uses JDK XX to launch Gradle itself
-                    javaToolchains = [ jdk23 ];     # Put JDK 23 in Gradle's javaToolchain configuration
+                    javaToolchains = [ temurin-bin-23 ]; # Put JDK 23 in Gradle's javaToolchain configuration
                 })
             ];
         };
