@@ -3,7 +3,7 @@ name: Gradle Build
 on: [push, pull_request]
 
 jobs:
-  build:
+  build_gradle:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -32,3 +32,23 @@ jobs:
         run: ./gradlew build
       - name: Run Java & Kotlin Examples
         run: ./gradlew run runEcdsa
+
+
+  build_nix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-14]
+      fail-fast: false
+    name: ${{ matrix.os }} Nix
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install secp256k1 with Nix
+        run: nix profile install nixpkgs#secp256k1
+      - name: Build in Nix development shell
+        run: nix develop -c gradle build run runEcdsa
