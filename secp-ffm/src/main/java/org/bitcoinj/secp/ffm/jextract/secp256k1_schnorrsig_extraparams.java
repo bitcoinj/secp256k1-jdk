@@ -19,13 +19,17 @@ package org.bitcoinj.secp.ffm.jextract;
 
 import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
+import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
  * {@snippet lang=c :
- * struct {
+ * struct secp256k1_schnorrsig_extraparams {
  *     unsigned char magic[4];
  *     secp256k1_nonce_function_hardened noncefp;
  *     void *ndata;
@@ -43,7 +47,7 @@ public class secp256k1_schnorrsig_extraparams {
         MemoryLayout.paddingLayout(4),
         secp256k1_h.C_POINTER.withName("noncefp"),
         secp256k1_h.C_POINTER.withName("ndata")
-    ).withName("$anon$82:9");
+    ).withName("secp256k1_schnorrsig_extraparams");
 
     /**
      * The layout of this struct
@@ -64,7 +68,7 @@ public class secp256k1_schnorrsig_extraparams {
         return magic$LAYOUT;
     }
 
-    private static final long magic$OFFSET = 0;
+    private static final long magic$OFFSET = $LAYOUT.byteOffset(groupElement("magic"));
 
     /**
      * Offset for field:
@@ -129,6 +133,67 @@ public class secp256k1_schnorrsig_extraparams {
         magic$ELEM_HANDLE.set(struct, 0L, index0, fieldValue);
     }
 
+    /**
+     * {@snippet lang=c :
+     * secp256k1_nonce_function_hardened noncefp
+     * }
+     */
+    public static class noncefp {
+
+        noncefp() {
+            // Should not be called directly
+        }
+
+        /**
+         * The function pointer signature, expressed as a functional interface
+         */
+        public interface Function {
+            int apply(MemorySegment _x0, MemorySegment _x1, long _x2, MemorySegment _x3, MemorySegment _x4, MemorySegment _x5, long _x6, MemorySegment _x7);
+        }
+
+        private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_LONG,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_LONG,
+            secp256k1_h.C_POINTER
+        );
+
+        /**
+         * The descriptor of this function pointer
+         */
+        public static FunctionDescriptor descriptor() {
+            return $DESC;
+        }
+
+        private static final MethodHandle UP$MH = secp256k1_h.upcallHandle(noncefp.Function.class, "apply", $DESC);
+
+        /**
+         * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
+         * The lifetime of the returned segment is managed by {@code arena}
+         */
+        public static MemorySegment allocate(noncefp.Function fi, Arena arena) {
+            return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
+        }
+
+        private static final MethodHandle DOWN$MH = Linker.nativeLinker().downcallHandle($DESC);
+
+        /**
+         * Invoke the upcall stub {@code funcPtr}, with given parameters
+         */
+        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1, long _x2, MemorySegment _x3, MemorySegment _x4, MemorySegment _x5, long _x6, MemorySegment _x7) {
+            try {
+                return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2, _x3, _x4, _x5, _x6, _x7);
+            } catch (Throwable ex$) {
+                throw new AssertionError("should not reach here", ex$);
+            }
+        }
+    }
+
     private static final AddressLayout noncefp$LAYOUT = (AddressLayout)$LAYOUT.select(groupElement("noncefp"));
 
     /**
@@ -141,7 +206,7 @@ public class secp256k1_schnorrsig_extraparams {
         return noncefp$LAYOUT;
     }
 
-    private static final long noncefp$OFFSET = 8;
+    private static final long noncefp$OFFSET = $LAYOUT.byteOffset(groupElement("noncefp"));
 
     /**
      * Offset for field:
@@ -185,7 +250,7 @@ public class secp256k1_schnorrsig_extraparams {
         return ndata$LAYOUT;
     }
 
-    private static final long ndata$OFFSET = 16;
+    private static final long ndata$OFFSET = $LAYOUT.byteOffset(groupElement("ndata"));
 
     /**
      * Offset for field:

@@ -19,13 +19,17 @@ package org.bitcoinj.secp.ffm.jextract;
 
 import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
+import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
  * {@snippet lang=c :
- * struct {
+ * struct secp256k1_keypair {
  *     unsigned char data[96];
  * }
  * }
@@ -38,7 +42,7 @@ public class secp256k1_keypair {
 
     private static final GroupLayout $LAYOUT = MemoryLayout.structLayout(
         MemoryLayout.sequenceLayout(96, secp256k1_h.C_CHAR).withName("data")
-    ).withName("$anon$33:9");
+    ).withName("secp256k1_keypair");
 
     /**
      * The layout of this struct
@@ -59,7 +63,7 @@ public class secp256k1_keypair {
         return data$LAYOUT;
     }
 
-    private static final long data$OFFSET = 0;
+    private static final long data$OFFSET = $LAYOUT.byteOffset(groupElement("data"));
 
     /**
      * Offset for field:
