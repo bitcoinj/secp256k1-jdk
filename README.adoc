@@ -23,11 +23,11 @@ The API is distributed as an API-only JAR (```secp-api-_version_.jar```) and we 
 
 NOTE:: At this point, we are especially interested in feedback on the API.
 
-== libsecp256k1 Panama Implementation (JDK 22+)
+== libsecp256k1 Panama Implementation (JDK 23+)
 
-The provided proof-of-concept implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp-ffm-_version_.jar```) that requires JDK 22 or later.
+The provided proof-of-concept implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp-ffm-_version_.jar```) that requires JDK 23 or later.
 
-Panama is available in https://openjdk.org/projects/jdk/22/[OpenJDK 22] and later. We anticipate `secp-ffm` will be
+Panama was released as part of https://openjdk.org/projects/jdk/22/[OpenJDK 22]. We anticipate `secp-ffm` will be
 the recommended/preferred `secp-api` implementation for use in projects using modern JVMs.
 
 The minimum required JDK for this module will likely be incremented with each new JDK release, with a target of requiring JDK 25 (the next LTS release of the JDK) for the 1.0 release of `secp-ffm`.
@@ -62,9 +62,7 @@ The SECG secp256K1 curve was removed from Java in the JDK 16 release (see https:
 
 == Current Build Status
 
-The build requires JDK 23 installed to run. Gradle 8.11 should be used and is provided by the included Gradle Wrapper.
-
-(It may be possible to build with JDK 22 and/or an earlier Gradle if you configure the "Java Toolchains" configuration correctly, but as JDK 22 is unsupported you should migrate to JDK 23 as soon as possible.)
+The build requires JDK 23 installed to run. Gradle 8.12 should be used and is provided by the included Gradle Wrapper.
 
 == Installing libsecp256k into your profile with Nix
 
