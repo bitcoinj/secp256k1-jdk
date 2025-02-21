@@ -12,12 +12,12 @@ dependencies {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = 22
+    options.release = 23
 }
 
 kotlin {
     jvmToolchain(javaToolchainVersion as int)
-    compilerOptions.jvmTarget = JvmTarget.JVM_22
+    compilerOptions.jvmTarget = JvmTarget.JVM_23
 }
 
 application {
