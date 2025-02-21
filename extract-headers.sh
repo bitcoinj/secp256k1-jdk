@@ -1,7 +1,7 @@
 #!/bin/sh
 # This script assumes you are using Nix Packages with `experimental-features = nix-command flakes`
 # and have used `nix profile install secp256k1` to install the secp256k1 library and headers.
-# It also assumes you have `jextract` version 22 in your `$PATH`. (To install with Nix, use
+# It also assumes you have `jextract` version 23 in your `$PATH`. (To install with Nix, use
 # `nix profile install jextract`)
 INC_PATH="$HOME/.nix-profile/include/"
 mkdir -p build

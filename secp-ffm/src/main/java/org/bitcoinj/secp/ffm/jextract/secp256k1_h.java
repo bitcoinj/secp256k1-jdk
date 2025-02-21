@@ -19,10 +19,13 @@ package org.bitcoinj.secp.ffm.jextract;
 
 import java.lang.invoke.*;
 import java.lang.foreign.*;
+import java.nio.ByteOrder;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import static java.lang.foreign.ValueLayout.*;
+import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 public class secp256k1_h {
 
@@ -41,8 +44,7 @@ public class secp256k1_h {
     }
 
     static MemorySegment findOrThrow(String symbol) {
-        return SYMBOL_LOOKUP.find(symbol)
-            .orElseThrow(() -> new UnsatisfiedLinkError("unresolved symbol: " + symbol));
+        return SYMBOL_LOOKUP.findOrThrow(symbol);
     }
 
     static MethodHandle upcallHandle(Class<?> fi, String name, FunctionDescriptor fdesc) {
@@ -75,16 +77,16 @@ public class secp256k1_h {
     static final SymbolLookup SYMBOL_LOOKUP = SymbolLookup.loaderLookup()
             .or(Linker.nativeLinker().defaultLookup());
 
-    public static final ValueLayout.OfBoolean C_BOOL = ValueLayout.JAVA_BOOLEAN;
-    public static final ValueLayout.OfByte C_CHAR = ValueLayout.JAVA_BYTE;
-    public static final ValueLayout.OfShort C_SHORT = ValueLayout.JAVA_SHORT;
-    public static final ValueLayout.OfInt C_INT = ValueLayout.JAVA_INT;
-    public static final ValueLayout.OfLong C_LONG_LONG = ValueLayout.JAVA_LONG;
-    public static final ValueLayout.OfFloat C_FLOAT = ValueLayout.JAVA_FLOAT;
-    public static final ValueLayout.OfDouble C_DOUBLE = ValueLayout.JAVA_DOUBLE;
-    public static final AddressLayout C_POINTER = ValueLayout.ADDRESS
-            .withTargetLayout(MemoryLayout.sequenceLayout(java.lang.Long.MAX_VALUE, JAVA_BYTE));
-    public static final ValueLayout.OfLong C_LONG = ValueLayout.JAVA_LONG;
+    public static final ValueLayout.OfBoolean C_BOOL = (ValueLayout.OfBoolean) Linker.nativeLinker().canonicalLayouts().get("bool");
+    public static final ValueLayout.OfByte C_CHAR =(ValueLayout.OfByte)Linker.nativeLinker().canonicalLayouts().get("char");
+    public static final ValueLayout.OfShort C_SHORT = (ValueLayout.OfShort) Linker.nativeLinker().canonicalLayouts().get("short");
+    public static final ValueLayout.OfInt C_INT = (ValueLayout.OfInt) Linker.nativeLinker().canonicalLayouts().get("int");
+    public static final ValueLayout.OfLong C_LONG_LONG = (ValueLayout.OfLong) Linker.nativeLinker().canonicalLayouts().get("long long");
+    public static final ValueLayout.OfFloat C_FLOAT = (ValueLayout.OfFloat) Linker.nativeLinker().canonicalLayouts().get("float");
+    public static final ValueLayout.OfDouble C_DOUBLE = (ValueLayout.OfDouble) Linker.nativeLinker().canonicalLayouts().get("double");
+    public static final AddressLayout C_POINTER = ((AddressLayout) Linker.nativeLinker().canonicalLayouts().get("void*"))
+            .withTargetLayout(MemoryLayout.sequenceLayout(java.lang.Long.MAX_VALUE, C_CHAR));
+    public static final ValueLayout.OfLong C_LONG = (ValueLayout.OfLong) Linker.nativeLinker().canonicalLayouts().get("long");
     private static final int SECP256K1_TAG_PUBKEY_EVEN = (int)2L;
     /**
      * {@snippet lang=c :
@@ -242,15 +244,15 @@ public class secp256k1_h {
     private static class secp256k1_selftest {
         public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(    );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_selftest"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_selftest");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
      * Function descriptor for:
      * {@snippet lang=c :
-     * extern void secp256k1_selftest()
+     * extern void secp256k1_selftest(void)
      * }
      */
     public static FunctionDescriptor secp256k1_selftest$descriptor() {
@@ -260,15 +262,26 @@ public class secp256k1_h {
     /**
      * Downcall method handle for:
      * {@snippet lang=c :
-     * extern void secp256k1_selftest()
+     * extern void secp256k1_selftest(void)
      * }
      */
     public static MethodHandle secp256k1_selftest$handle() {
         return secp256k1_selftest.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern void secp256k1_selftest(void)
+     * }
+     */
+    public static MemorySegment secp256k1_selftest$address() {
+        return secp256k1_selftest.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
-     * extern void secp256k1_selftest()
+     * extern void secp256k1_selftest(void)
      * }
      */
     public static void secp256k1_selftest() {
@@ -289,9 +302,9 @@ public class secp256k1_h {
             secp256k1_h.C_INT
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_context_create"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_create");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -313,6 +326,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_context_create$handle() {
         return secp256k1_context_create.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern secp256k1_context *secp256k1_context_create(unsigned int flags)
+     * }
+     */
+    public static MemorySegment secp256k1_context_create$address() {
+        return secp256k1_context_create.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern secp256k1_context *secp256k1_context_create(unsigned int flags)
@@ -336,9 +360,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_context_clone"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_clone");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -360,6 +384,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_context_clone$handle() {
         return secp256k1_context_clone.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern secp256k1_context *secp256k1_context_clone(const secp256k1_context *ctx)
+     * }
+     */
+    public static MemorySegment secp256k1_context_clone$address() {
+        return secp256k1_context_clone.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern secp256k1_context *secp256k1_context_clone(const secp256k1_context *ctx)
@@ -382,9 +417,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_context_destroy"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_destroy");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -406,6 +441,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_context_destroy$handle() {
         return secp256k1_context_destroy.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern void secp256k1_context_destroy(secp256k1_context *ctx)
+     * }
+     */
+    public static MemorySegment secp256k1_context_destroy$address() {
+        return secp256k1_context_destroy.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern void secp256k1_context_destroy(secp256k1_context *ctx)
@@ -430,9 +476,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_context_set_illegal_callback"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_set_illegal_callback");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -454,6 +500,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_context_set_illegal_callback$handle() {
         return secp256k1_context_set_illegal_callback.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern void secp256k1_context_set_illegal_callback(secp256k1_context *ctx, void (*fun)(const char *, void *), const void *data)
+     * }
+     */
+    public static MemorySegment secp256k1_context_set_illegal_callback$address() {
+        return secp256k1_context_set_illegal_callback.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern void secp256k1_context_set_illegal_callback(secp256k1_context *ctx, void (*fun)(const char *, void *), const void *data)
@@ -478,9 +535,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_context_set_error_callback"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_set_error_callback");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -502,6 +559,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_context_set_error_callback$handle() {
         return secp256k1_context_set_error_callback.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern void secp256k1_context_set_error_callback(secp256k1_context *ctx, void (*fun)(const char *, void *), const void *data)
+     * }
+     */
+    public static MemorySegment secp256k1_context_set_error_callback$address() {
+        return secp256k1_context_set_error_callback.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern void secp256k1_context_set_error_callback(secp256k1_context *ctx, void (*fun)(const char *, void *), const void *data)
@@ -519,101 +587,6 @@ public class secp256k1_h {
         }
     }
 
-    private static class secp256k1_scratch_space_create {
-        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
-            secp256k1_h.C_POINTER,
-            secp256k1_h.C_POINTER,
-            secp256k1_h.C_LONG
-        );
-
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_scratch_space_create"),
-                    DESC);
-    }
-
-    /**
-     * Function descriptor for:
-     * {@snippet lang=c :
-     * extern secp256k1_scratch_space *secp256k1_scratch_space_create(const secp256k1_context *ctx, size_t size)
-     * }
-     */
-    public static FunctionDescriptor secp256k1_scratch_space_create$descriptor() {
-        return secp256k1_scratch_space_create.DESC;
-    }
-
-    /**
-     * Downcall method handle for:
-     * {@snippet lang=c :
-     * extern secp256k1_scratch_space *secp256k1_scratch_space_create(const secp256k1_context *ctx, size_t size)
-     * }
-     */
-    public static MethodHandle secp256k1_scratch_space_create$handle() {
-        return secp256k1_scratch_space_create.HANDLE;
-    }
-    /**
-     * {@snippet lang=c :
-     * extern secp256k1_scratch_space *secp256k1_scratch_space_create(const secp256k1_context *ctx, size_t size)
-     * }
-     */
-    public static MemorySegment secp256k1_scratch_space_create(MemorySegment ctx, long size) {
-        var mh$ = secp256k1_scratch_space_create.HANDLE;
-        try {
-            if (TRACE_DOWNCALLS) {
-                traceDowncall("secp256k1_scratch_space_create", ctx, size);
-            }
-            return (MemorySegment)mh$.invokeExact(ctx, size);
-        } catch (Throwable ex$) {
-           throw new AssertionError("should not reach here", ex$);
-        }
-    }
-
-    private static class secp256k1_scratch_space_destroy {
-        public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(
-            secp256k1_h.C_POINTER,
-            secp256k1_h.C_POINTER
-        );
-
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_scratch_space_destroy"),
-                    DESC);
-    }
-
-    /**
-     * Function descriptor for:
-     * {@snippet lang=c :
-     * extern void secp256k1_scratch_space_destroy(const secp256k1_context *ctx, secp256k1_scratch_space *scratch)
-     * }
-     */
-    public static FunctionDescriptor secp256k1_scratch_space_destroy$descriptor() {
-        return secp256k1_scratch_space_destroy.DESC;
-    }
-
-    /**
-     * Downcall method handle for:
-     * {@snippet lang=c :
-     * extern void secp256k1_scratch_space_destroy(const secp256k1_context *ctx, secp256k1_scratch_space *scratch)
-     * }
-     */
-    public static MethodHandle secp256k1_scratch_space_destroy$handle() {
-        return secp256k1_scratch_space_destroy.HANDLE;
-    }
-    /**
-     * {@snippet lang=c :
-     * extern void secp256k1_scratch_space_destroy(const secp256k1_context *ctx, secp256k1_scratch_space *scratch)
-     * }
-     */
-    public static void secp256k1_scratch_space_destroy(MemorySegment ctx, MemorySegment scratch) {
-        var mh$ = secp256k1_scratch_space_destroy.HANDLE;
-        try {
-            if (TRACE_DOWNCALLS) {
-                traceDowncall("secp256k1_scratch_space_destroy", ctx, scratch);
-            }
-            mh$.invokeExact(ctx, scratch);
-        } catch (Throwable ex$) {
-           throw new AssertionError("should not reach here", ex$);
-        }
-    }
-
     private static class secp256k1_ec_pubkey_parse {
         public static final FunctionDescriptor DESC = FunctionDescriptor.of(
             secp256k1_h.C_INT,
@@ -623,9 +596,9 @@ public class secp256k1_h {
             secp256k1_h.C_LONG
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_pubkey_parse"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_parse");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -647,6 +620,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_pubkey_parse$handle() {
         return secp256k1_ec_pubkey_parse.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_parse(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *input, size_t inputlen)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_pubkey_parse$address() {
+        return secp256k1_ec_pubkey_parse.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_pubkey_parse(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *input, size_t inputlen)
@@ -674,9 +658,9 @@ public class secp256k1_h {
             secp256k1_h.C_INT
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_pubkey_serialize"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_serialize");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -698,6 +682,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_pubkey_serialize$handle() {
         return secp256k1_ec_pubkey_serialize.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_serialize(const secp256k1_context *ctx, unsigned char *output, size_t *outputlen, const secp256k1_pubkey *pubkey, unsigned int flags)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_pubkey_serialize$address() {
+        return secp256k1_ec_pubkey_serialize.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_pubkey_serialize(const secp256k1_context *ctx, unsigned char *output, size_t *outputlen, const secp256k1_pubkey *pubkey, unsigned int flags)
@@ -723,9 +718,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_pubkey_cmp"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_cmp");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -747,6 +742,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_pubkey_cmp$handle() {
         return secp256k1_ec_pubkey_cmp.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_cmp(const secp256k1_context *ctx, const secp256k1_pubkey *pubkey1, const secp256k1_pubkey *pubkey2)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_pubkey_cmp$address() {
+        return secp256k1_ec_pubkey_cmp.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_pubkey_cmp(const secp256k1_context *ctx, const secp256k1_pubkey *pubkey1, const secp256k1_pubkey *pubkey2)
@@ -764,6 +770,66 @@ public class secp256k1_h {
         }
     }
 
+    private static class secp256k1_ec_pubkey_sort {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_sort");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_sort(const secp256k1_context *ctx, const secp256k1_pubkey **pubkeys, size_t n_pubkeys)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_ec_pubkey_sort$descriptor() {
+        return secp256k1_ec_pubkey_sort.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_sort(const secp256k1_context *ctx, const secp256k1_pubkey **pubkeys, size_t n_pubkeys)
+     * }
+     */
+    public static MethodHandle secp256k1_ec_pubkey_sort$handle() {
+        return secp256k1_ec_pubkey_sort.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_sort(const secp256k1_context *ctx, const secp256k1_pubkey **pubkeys, size_t n_pubkeys)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_pubkey_sort$address() {
+        return secp256k1_ec_pubkey_sort.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_sort(const secp256k1_context *ctx, const secp256k1_pubkey **pubkeys, size_t n_pubkeys)
+     * }
+     */
+    public static int secp256k1_ec_pubkey_sort(MemorySegment ctx, MemorySegment pubkeys, long n_pubkeys) {
+        var mh$ = secp256k1_ec_pubkey_sort.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_ec_pubkey_sort", ctx, pubkeys, n_pubkeys);
+            }
+            return (int)mh$.invokeExact(ctx, pubkeys, n_pubkeys);
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
     private static class secp256k1_ecdsa_signature_parse_compact {
         public static final FunctionDescriptor DESC = FunctionDescriptor.of(
             secp256k1_h.C_INT,
@@ -772,9 +838,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_parse_compact"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_parse_compact");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -796,6 +862,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ecdsa_signature_parse_compact$handle() {
         return secp256k1_ecdsa_signature_parse_compact.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdsa_signature_parse_compact(const secp256k1_context *ctx, secp256k1_ecdsa_signature *sig, const unsigned char *input64)
+     * }
+     */
+    public static MemorySegment secp256k1_ecdsa_signature_parse_compact$address() {
+        return secp256k1_ecdsa_signature_parse_compact.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ecdsa_signature_parse_compact(const secp256k1_context *ctx, secp256k1_ecdsa_signature *sig, const unsigned char *input64)
@@ -822,9 +899,9 @@ public class secp256k1_h {
             secp256k1_h.C_LONG
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_parse_der"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_parse_der");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -846,6 +923,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ecdsa_signature_parse_der$handle() {
         return secp256k1_ecdsa_signature_parse_der.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdsa_signature_parse_der(const secp256k1_context *ctx, secp256k1_ecdsa_signature *sig, const unsigned char *input, size_t inputlen)
+     * }
+     */
+    public static MemorySegment secp256k1_ecdsa_signature_parse_der$address() {
+        return secp256k1_ecdsa_signature_parse_der.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ecdsa_signature_parse_der(const secp256k1_context *ctx, secp256k1_ecdsa_signature *sig, const unsigned char *input, size_t inputlen)
@@ -872,9 +960,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_serialize_der"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_serialize_der");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -896,6 +984,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ecdsa_signature_serialize_der$handle() {
         return secp256k1_ecdsa_signature_serialize_der.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdsa_signature_serialize_der(const secp256k1_context *ctx, unsigned char *output, size_t *outputlen, const secp256k1_ecdsa_signature *sig)
+     * }
+     */
+    public static MemorySegment secp256k1_ecdsa_signature_serialize_der$address() {
+        return secp256k1_ecdsa_signature_serialize_der.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ecdsa_signature_serialize_der(const secp256k1_context *ctx, unsigned char *output, size_t *outputlen, const secp256k1_ecdsa_signature *sig)
@@ -921,9 +1020,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_serialize_compact"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_serialize_compact");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -945,6 +1044,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ecdsa_signature_serialize_compact$handle() {
         return secp256k1_ecdsa_signature_serialize_compact.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdsa_signature_serialize_compact(const secp256k1_context *ctx, unsigned char *output64, const secp256k1_ecdsa_signature *sig)
+     * }
+     */
+    public static MemorySegment secp256k1_ecdsa_signature_serialize_compact$address() {
+        return secp256k1_ecdsa_signature_serialize_compact.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ecdsa_signature_serialize_compact(const secp256k1_context *ctx, unsigned char *output64, const secp256k1_ecdsa_signature *sig)
@@ -971,9 +1081,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ecdsa_verify"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_verify");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -995,6 +1105,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ecdsa_verify$handle() {
         return secp256k1_ecdsa_verify.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdsa_verify(const secp256k1_context *ctx, const secp256k1_ecdsa_signature *sig, const unsigned char *msghash32, const secp256k1_pubkey *pubkey)
+     * }
+     */
+    public static MemorySegment secp256k1_ecdsa_verify$address() {
+        return secp256k1_ecdsa_verify.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ecdsa_verify(const secp256k1_context *ctx, const secp256k1_ecdsa_signature *sig, const unsigned char *msghash32, const secp256k1_pubkey *pubkey)
@@ -1020,9 +1141,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_normalize"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_normalize");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1044,6 +1165,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ecdsa_signature_normalize$handle() {
         return secp256k1_ecdsa_signature_normalize.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdsa_signature_normalize(const secp256k1_context *ctx, secp256k1_ecdsa_signature *sigout, const secp256k1_ecdsa_signature *sigin)
+     * }
+     */
+    public static MemorySegment secp256k1_ecdsa_signature_normalize$address() {
+        return secp256k1_ecdsa_signature_normalize.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ecdsa_signature_normalize(const secp256k1_context *ctx, secp256k1_ecdsa_signature *sigout, const secp256k1_ecdsa_signature *sigin)
@@ -1162,9 +1294,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ecdsa_sign"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_sign");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1186,6 +1318,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ecdsa_sign$handle() {
         return secp256k1_ecdsa_sign.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdsa_sign(const secp256k1_context *ctx, secp256k1_ecdsa_signature *sig, const unsigned char *msghash32, const unsigned char *seckey, secp256k1_nonce_function noncefp, const void *ndata)
+     * }
+     */
+    public static MemorySegment secp256k1_ecdsa_sign$address() {
+        return secp256k1_ecdsa_sign.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ecdsa_sign(const secp256k1_context *ctx, secp256k1_ecdsa_signature *sig, const unsigned char *msghash32, const unsigned char *seckey, secp256k1_nonce_function noncefp, const void *ndata)
@@ -1210,9 +1353,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_seckey_verify"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_seckey_verify");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1234,6 +1377,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_seckey_verify$handle() {
         return secp256k1_ec_seckey_verify.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_seckey_verify(const secp256k1_context *ctx, const unsigned char *seckey)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_seckey_verify$address() {
+        return secp256k1_ec_seckey_verify.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_seckey_verify(const secp256k1_context *ctx, const unsigned char *seckey)
@@ -1259,9 +1413,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_pubkey_create"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_create");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1283,6 +1437,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_pubkey_create$handle() {
         return secp256k1_ec_pubkey_create.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_create(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *seckey)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_pubkey_create$address() {
+        return secp256k1_ec_pubkey_create.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_pubkey_create(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *seckey)
@@ -1307,9 +1472,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_seckey_negate"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_seckey_negate");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1331,6 +1496,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_seckey_negate$handle() {
         return secp256k1_ec_seckey_negate.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_seckey_negate(const secp256k1_context *ctx, unsigned char *seckey)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_seckey_negate$address() {
+        return secp256k1_ec_seckey_negate.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_seckey_negate(const secp256k1_context *ctx, unsigned char *seckey)
@@ -1355,9 +1531,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_privkey_negate"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_privkey_negate");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1379,6 +1555,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_privkey_negate$handle() {
         return secp256k1_ec_privkey_negate.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_privkey_negate(const secp256k1_context *ctx, unsigned char *seckey)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_privkey_negate$address() {
+        return secp256k1_ec_privkey_negate.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_privkey_negate(const secp256k1_context *ctx, unsigned char *seckey)
@@ -1403,9 +1590,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_pubkey_negate"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_negate");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1427,6 +1614,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_pubkey_negate$handle() {
         return secp256k1_ec_pubkey_negate.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_negate(const secp256k1_context *ctx, secp256k1_pubkey *pubkey)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_pubkey_negate$address() {
+        return secp256k1_ec_pubkey_negate.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_pubkey_negate(const secp256k1_context *ctx, secp256k1_pubkey *pubkey)
@@ -1452,9 +1650,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_seckey_tweak_add"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_seckey_tweak_add");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1476,6 +1674,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_seckey_tweak_add$handle() {
         return secp256k1_ec_seckey_tweak_add.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_seckey_tweak_add(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_seckey_tweak_add$address() {
+        return secp256k1_ec_seckey_tweak_add.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_seckey_tweak_add(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
@@ -1501,9 +1710,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_privkey_tweak_add"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_privkey_tweak_add");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1525,6 +1734,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_privkey_tweak_add$handle() {
         return secp256k1_ec_privkey_tweak_add.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_privkey_tweak_add(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_privkey_tweak_add$address() {
+        return secp256k1_ec_privkey_tweak_add.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_privkey_tweak_add(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
@@ -1550,9 +1770,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_pubkey_tweak_add"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_tweak_add");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1574,6 +1794,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_pubkey_tweak_add$handle() {
         return secp256k1_ec_pubkey_tweak_add.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_pubkey_tweak_add$address() {
+        return secp256k1_ec_pubkey_tweak_add.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_pubkey_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *tweak32)
@@ -1599,9 +1830,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_seckey_tweak_mul"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_seckey_tweak_mul");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1623,6 +1854,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_seckey_tweak_mul$handle() {
         return secp256k1_ec_seckey_tweak_mul.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_seckey_tweak_mul(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_seckey_tweak_mul$address() {
+        return secp256k1_ec_seckey_tweak_mul.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_seckey_tweak_mul(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
@@ -1648,9 +1890,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_privkey_tweak_mul"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_privkey_tweak_mul");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1672,6 +1914,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_privkey_tweak_mul$handle() {
         return secp256k1_ec_privkey_tweak_mul.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_privkey_tweak_mul(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_privkey_tweak_mul$address() {
+        return secp256k1_ec_privkey_tweak_mul.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_privkey_tweak_mul(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
@@ -1697,9 +1950,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_pubkey_tweak_mul"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_tweak_mul");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1721,6 +1974,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_pubkey_tweak_mul$handle() {
         return secp256k1_ec_pubkey_tweak_mul.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_tweak_mul(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_pubkey_tweak_mul$address() {
+        return secp256k1_ec_pubkey_tweak_mul.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_pubkey_tweak_mul(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *tweak32)
@@ -1745,9 +2009,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_context_randomize"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_randomize");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1769,6 +2033,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_context_randomize$handle() {
         return secp256k1_context_randomize.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_context_randomize(secp256k1_context *ctx, const unsigned char *seed32)
+     * }
+     */
+    public static MemorySegment secp256k1_context_randomize$address() {
+        return secp256k1_context_randomize.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_context_randomize(secp256k1_context *ctx, const unsigned char *seed32)
@@ -1795,9 +2070,9 @@ public class secp256k1_h {
             secp256k1_h.C_LONG
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_ec_pubkey_combine"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_combine");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1819,6 +2094,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_ec_pubkey_combine$handle() {
         return secp256k1_ec_pubkey_combine.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ec_pubkey_combine(const secp256k1_context *ctx, secp256k1_pubkey *out, const secp256k1_pubkey *const *ins, size_t n)
+     * }
+     */
+    public static MemorySegment secp256k1_ec_pubkey_combine$address() {
+        return secp256k1_ec_pubkey_combine.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_ec_pubkey_combine(const secp256k1_context *ctx, secp256k1_pubkey *out, const secp256k1_pubkey *const *ins, size_t n)
@@ -1847,9 +2133,9 @@ public class secp256k1_h {
             secp256k1_h.C_LONG
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_tagged_sha256"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_tagged_sha256");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1871,6 +2157,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_tagged_sha256$handle() {
         return secp256k1_tagged_sha256.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_tagged_sha256(const secp256k1_context *ctx, unsigned char *hash32, const unsigned char *tag, size_t taglen, const unsigned char *msg, size_t msglen)
+     * }
+     */
+    public static MemorySegment secp256k1_tagged_sha256$address() {
+        return secp256k1_tagged_sha256.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_tagged_sha256(const secp256k1_context *ctx, unsigned char *hash32, const unsigned char *tag, size_t taglen, const unsigned char *msg, size_t msglen)
@@ -1896,9 +2193,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_parse"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_parse");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1920,6 +2217,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_xonly_pubkey_parse$handle() {
         return secp256k1_xonly_pubkey_parse.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_xonly_pubkey_parse(const secp256k1_context *ctx, secp256k1_xonly_pubkey *pubkey, const unsigned char *input32)
+     * }
+     */
+    public static MemorySegment secp256k1_xonly_pubkey_parse$address() {
+        return secp256k1_xonly_pubkey_parse.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_xonly_pubkey_parse(const secp256k1_context *ctx, secp256k1_xonly_pubkey *pubkey, const unsigned char *input32)
@@ -1945,9 +2253,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_serialize"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_serialize");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -1969,6 +2277,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_xonly_pubkey_serialize$handle() {
         return secp256k1_xonly_pubkey_serialize.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_xonly_pubkey_serialize(const secp256k1_context *ctx, unsigned char *output32, const secp256k1_xonly_pubkey *pubkey)
+     * }
+     */
+    public static MemorySegment secp256k1_xonly_pubkey_serialize$address() {
+        return secp256k1_xonly_pubkey_serialize.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_xonly_pubkey_serialize(const secp256k1_context *ctx, unsigned char *output32, const secp256k1_xonly_pubkey *pubkey)
@@ -1994,9 +2313,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_cmp"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_cmp");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2018,6 +2337,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_xonly_pubkey_cmp$handle() {
         return secp256k1_xonly_pubkey_cmp.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_xonly_pubkey_cmp(const secp256k1_context *ctx, const secp256k1_xonly_pubkey *pk1, const secp256k1_xonly_pubkey *pk2)
+     * }
+     */
+    public static MemorySegment secp256k1_xonly_pubkey_cmp$address() {
+        return secp256k1_xonly_pubkey_cmp.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_xonly_pubkey_cmp(const secp256k1_context *ctx, const secp256k1_xonly_pubkey *pk1, const secp256k1_xonly_pubkey *pk2)
@@ -2044,9 +2374,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_from_pubkey"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_from_pubkey");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2068,6 +2398,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_xonly_pubkey_from_pubkey$handle() {
         return secp256k1_xonly_pubkey_from_pubkey.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_xonly_pubkey_from_pubkey(const secp256k1_context *ctx, secp256k1_xonly_pubkey *xonly_pubkey, int *pk_parity, const secp256k1_pubkey *pubkey)
+     * }
+     */
+    public static MemorySegment secp256k1_xonly_pubkey_from_pubkey$address() {
+        return secp256k1_xonly_pubkey_from_pubkey.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_xonly_pubkey_from_pubkey(const secp256k1_context *ctx, secp256k1_xonly_pubkey *xonly_pubkey, int *pk_parity, const secp256k1_pubkey *pubkey)
@@ -2094,9 +2435,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_tweak_add"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_tweak_add");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2118,6 +2459,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_xonly_pubkey_tweak_add$handle() {
         return secp256k1_xonly_pubkey_tweak_add.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_xonly_pubkey_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, const secp256k1_xonly_pubkey *internal_pubkey, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_xonly_pubkey_tweak_add$address() {
+        return secp256k1_xonly_pubkey_tweak_add.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_xonly_pubkey_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, const secp256k1_xonly_pubkey *internal_pubkey, const unsigned char *tweak32)
@@ -2145,9 +2497,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_tweak_add_check"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_tweak_add_check");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2169,6 +2521,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_xonly_pubkey_tweak_add_check$handle() {
         return secp256k1_xonly_pubkey_tweak_add_check.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_xonly_pubkey_tweak_add_check(const secp256k1_context *ctx, const unsigned char *tweaked_pubkey32, int tweaked_pk_parity, const secp256k1_xonly_pubkey *internal_pubkey, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_xonly_pubkey_tweak_add_check$address() {
+        return secp256k1_xonly_pubkey_tweak_add_check.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_xonly_pubkey_tweak_add_check(const secp256k1_context *ctx, const unsigned char *tweaked_pubkey32, int tweaked_pk_parity, const secp256k1_xonly_pubkey *internal_pubkey, const unsigned char *tweak32)
@@ -2194,9 +2557,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_keypair_create"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_create");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2218,6 +2581,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_keypair_create$handle() {
         return secp256k1_keypair_create.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_keypair_create(const secp256k1_context *ctx, secp256k1_keypair *keypair, const unsigned char *seckey)
+     * }
+     */
+    public static MemorySegment secp256k1_keypair_create$address() {
+        return secp256k1_keypair_create.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_keypair_create(const secp256k1_context *ctx, secp256k1_keypair *keypair, const unsigned char *seckey)
@@ -2243,9 +2617,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_keypair_sec"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_sec");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2267,6 +2641,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_keypair_sec$handle() {
         return secp256k1_keypair_sec.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_keypair_sec(const secp256k1_context *ctx, unsigned char *seckey, const secp256k1_keypair *keypair)
+     * }
+     */
+    public static MemorySegment secp256k1_keypair_sec$address() {
+        return secp256k1_keypair_sec.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_keypair_sec(const secp256k1_context *ctx, unsigned char *seckey, const secp256k1_keypair *keypair)
@@ -2292,9 +2677,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_keypair_pub"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_pub");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2316,6 +2701,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_keypair_pub$handle() {
         return secp256k1_keypair_pub.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_keypair_pub(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const secp256k1_keypair *keypair)
+     * }
+     */
+    public static MemorySegment secp256k1_keypair_pub$address() {
+        return secp256k1_keypair_pub.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_keypair_pub(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const secp256k1_keypair *keypair)
@@ -2342,9 +2738,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_keypair_xonly_pub"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_xonly_pub");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2366,6 +2762,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_keypair_xonly_pub$handle() {
         return secp256k1_keypair_xonly_pub.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_keypair_xonly_pub(const secp256k1_context *ctx, secp256k1_xonly_pubkey *pubkey, int *pk_parity, const secp256k1_keypair *keypair)
+     * }
+     */
+    public static MemorySegment secp256k1_keypair_xonly_pub$address() {
+        return secp256k1_keypair_xonly_pub.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_keypair_xonly_pub(const secp256k1_context *ctx, secp256k1_xonly_pubkey *pubkey, int *pk_parity, const secp256k1_keypair *keypair)
@@ -2391,9 +2798,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_keypair_xonly_tweak_add"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_xonly_tweak_add");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2415,6 +2822,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_keypair_xonly_tweak_add$handle() {
         return secp256k1_keypair_xonly_tweak_add.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_keypair_xonly_tweak_add(const secp256k1_context *ctx, secp256k1_keypair *keypair, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_keypair_xonly_tweak_add$address() {
+        return secp256k1_keypair_xonly_tweak_add.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_keypair_xonly_tweak_add(const secp256k1_context *ctx, secp256k1_keypair *keypair, const unsigned char *tweak32)
@@ -2487,9 +2905,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_schnorrsig_sign32"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_schnorrsig_sign32");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2511,6 +2929,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_schnorrsig_sign32$handle() {
         return secp256k1_schnorrsig_sign32.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_schnorrsig_sign32(const secp256k1_context *ctx, unsigned char *sig64, const unsigned char *msg32, const secp256k1_keypair *keypair, const unsigned char *aux_rand32)
+     * }
+     */
+    public static MemorySegment secp256k1_schnorrsig_sign32$address() {
+        return secp256k1_schnorrsig_sign32.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_schnorrsig_sign32(const secp256k1_context *ctx, unsigned char *sig64, const unsigned char *msg32, const secp256k1_keypair *keypair, const unsigned char *aux_rand32)
@@ -2538,9 +2967,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_schnorrsig_sign"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_schnorrsig_sign");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2562,6 +2991,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_schnorrsig_sign$handle() {
         return secp256k1_schnorrsig_sign.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_schnorrsig_sign(const secp256k1_context *ctx, unsigned char *sig64, const unsigned char *msg32, const secp256k1_keypair *keypair, const unsigned char *aux_rand32)
+     * }
+     */
+    public static MemorySegment secp256k1_schnorrsig_sign$address() {
+        return secp256k1_schnorrsig_sign.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_schnorrsig_sign(const secp256k1_context *ctx, unsigned char *sig64, const unsigned char *msg32, const secp256k1_keypair *keypair, const unsigned char *aux_rand32)
@@ -2590,9 +3030,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_schnorrsig_sign_custom"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_schnorrsig_sign_custom");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2614,6 +3054,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_schnorrsig_sign_custom$handle() {
         return secp256k1_schnorrsig_sign_custom.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_schnorrsig_sign_custom(const secp256k1_context *ctx, unsigned char *sig64, const unsigned char *msg, size_t msglen, const secp256k1_keypair *keypair, secp256k1_schnorrsig_extraparams *extraparams)
+     * }
+     */
+    public static MemorySegment secp256k1_schnorrsig_sign_custom$address() {
+        return secp256k1_schnorrsig_sign_custom.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_schnorrsig_sign_custom(const secp256k1_context *ctx, unsigned char *sig64, const unsigned char *msg, size_t msglen, const secp256k1_keypair *keypair, secp256k1_schnorrsig_extraparams *extraparams)
@@ -2641,9 +3092,9 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(
-                    secp256k1_h.findOrThrow("secp256k1_schnorrsig_verify"),
-                    DESC);
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_schnorrsig_verify");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
 
     /**
@@ -2665,6 +3116,17 @@ public class secp256k1_h {
     public static MethodHandle secp256k1_schnorrsig_verify$handle() {
         return secp256k1_schnorrsig_verify.HANDLE;
     }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_schnorrsig_verify(const secp256k1_context *ctx, const unsigned char *sig64, const unsigned char *msg, size_t msglen, const secp256k1_xonly_pubkey *pubkey)
+     * }
+     */
+    public static MemorySegment secp256k1_schnorrsig_verify$address() {
+        return secp256k1_schnorrsig_verify.ADDR;
+    }
+
     /**
      * {@snippet lang=c :
      * extern int secp256k1_schnorrsig_verify(const secp256k1_context *ctx, const unsigned char *sig64, const unsigned char *msg, size_t msglen, const secp256k1_xonly_pubkey *pubkey)
