@@ -11,6 +11,7 @@ jobs:
       - uses: gradle/actions/wrapper-validation@v3
 
   build_gradle:
+    needs: validate_gradle_wrapper
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
