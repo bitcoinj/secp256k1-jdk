@@ -3,6 +3,13 @@ name: Gradle Build
 on: [push, pull_request]
 
 jobs:
+  validate_gradle_wrapper:
+    name: "Validate Gradle Wrapper"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gradle/actions/wrapper-validation@v3
+
   build_gradle:
     runs-on: ${{ matrix.os }}
     strategy:
