@@ -28,25 +28,7 @@
         inherit (pkgs) stdenv;
       in {
         # define default devshell
-#        devShells.default = inputs'.devshell.legacyPackages.mkShell {
         devShells.default = pkgs.mkShell {
-          # setup some environment variables
-#          env = with lib;
-#            mkMerge [
-#              [
-#                # Configure nix to use nixpkgs
-#                {
-#                  name = "NIX_PATH";
-#                  value = "nixpkgs=${toString pkgs.path}";
-#                }
-#              ]
-#              (mkIf stdenv.isLinux [
-#                {
-#                  name = "JAVA_HOME";
-#                  eval = "$DEVSHELL_DIR/lib/openjdk";
-#                }
-#              ])
-#            ];
           inputsFrom = with pkgs ; [ secp256k1 ];
           packages = with pkgs ; [
                 jdk23                # JDK 23 will be in $JAVA_HOME (and in javaToolchains)
