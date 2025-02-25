@@ -1,0 +1,29 @@
+# Build on NixOS using the devshell from `flake.nix` and secp256k1 installed via `nix profile install`
+nixos-devshell:
+  image: nixos/nix:latest
+  variables:
+    NIXPKGS_URL: "github:NixOS/nixpkgs/nixos-unstable"
+  before_script:
+    # Configure Nix to use a binary cache and enable experimental features
+    - nix-env -iA nixpkgs.cachix
+    - cachix use nix-community
+    - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+    - nix profile install nixpkgs#secp256k1
+  script:
+    - nix develop .#minimum -c gradle build run runEcdsa
+  cache:
+    key: "${CI_COMMIT_REF_SLUG}"
+    paths:
+      - /nix/store
+      - ~/.gradle/
+
+# Build on Trixie using Debian's OpenJDK 23, Gradle via the Wrapper and secp256k1 installed via nix profile install`.
+trixie-gradlew:
+  image: debian:trixie-slim
+  before_script:
+    - apt-get update
+    - apt-get -y install openjdk-23-jdk-headless nix-setup-systemd
+    - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+    - nix profile install nixpkgs#secp256k1
+  script:
+    - ./gradlew build run runEcdsa
