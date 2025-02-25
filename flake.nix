@@ -27,7 +27,7 @@
       perSystem = { config, self', inputs', pkgs, system, lib, ... }: let
         inherit (pkgs) stdenv;
       in {
-        # define default devshell
+        # define default devshell, with a richer collection of tools intended for interactive development
         devShells.default = pkgs.mkShell {
           inputsFrom = with pkgs ; [ secp256k1 ];
           packages = with pkgs ; [
@@ -36,6 +36,15 @@
                 # jextract                 # jextract (Nix package) contains a jlinked executable and bundles its own JDK
                 (gradle.override {         # Gradle 8.x (Nix package) runs using an internally-linked JDK
                     java = jdk23;          # Run Gradle with this JDK
+                })
+            ];
+        };
+        # define minimum devshell, with the minimum necessary to do a CI build
+        devShells.minimum = pkgs.mkShell {
+          inputsFrom = with pkgs ; [ secp256k1 ];
+          packages = with pkgs ; [
+                (gradle.override {         # Gradle 8.x (Nix package) runs using an internally-linked JDK
+                    java = jdk23_headless; # Run Gradle with this JDK
                 })
             ];
         };
