@@ -37,9 +37,9 @@ jobs:
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew -PapiModuleJavaCompatibility=8 build
       - name: Run Java & Kotlin Examples
-        run: ./gradlew run runEcdsa
+        run: ./gradlew -PapiModuleJavaCompatibility=8 run runEcdsa
 
 
   build_nix:
@@ -59,4 +59,4 @@ jobs:
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
       - name: Build in Nix development shell
-        run: nix develop -c gradle build run runEcdsa
+        run: nix develop -c gradle -PapiModuleJavaCompatibility=8 build run runEcdsa
