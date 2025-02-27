@@ -10,7 +10,7 @@ ext.moduleName = 'org.bitcoinj.secp.bouncy'
 
 dependencies {
     api project(':secp-api')
-    api 'org.bouncycastle:bcprov-jdk18on:1.78.1'  // TODO: Make this a non-API dependency, see BouncyPrivKey
+    api 'org.bouncycastle:bcprov-jdk18on:1.80'  // TODO: Make this a non-API dependency, see BouncyPrivKey
 }
 
 jar {
