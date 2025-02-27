@@ -10,7 +10,7 @@ nixos-devshell:
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
     - nix profile install nixpkgs#secp256k1
   script:
-    - nix develop .#minimum -c gradle build run runEcdsa
+    - nix develop .#minimum -c gradle -PapiModuleJavaCompatibility=8 build run runEcdsa
   cache:
     key: "${CI_COMMIT_REF_SLUG}"
     paths:
@@ -26,4 +26,4 @@ trixie-gradlew:
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
     - nix profile install nixpkgs#secp256k1
   script:
-    - ./gradlew build run runEcdsa
+    - ./gradlew -PapiModuleJavaCompatibility=8 build run runEcdsa

@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Predicate;
+import java.util.stream.StreamSupport;
 
 /**
  *
@@ -65,8 +66,7 @@ public interface Secp256k1Provider {
      */
     static Optional<Secp256k1Provider> findFirst(Predicate<Secp256k1Provider> filter) {
         ServiceLoader<Secp256k1Provider> loader = ServiceLoader.load(Secp256k1Provider.class);
-        return loader.stream()
-                .map(ServiceLoader.Provider::get)
+        return StreamSupport.stream(loader.spliterator(), false)
                 .filter(filter)
                 .findFirst();
     }
@@ -76,7 +76,7 @@ public interface Secp256k1Provider {
      * @param provider a candidate provider
      * @return true if it should be "found"
      */
-    private static boolean defaultFilter(Secp256k1Provider provider) {
+    /* private */ static boolean defaultFilter(Secp256k1Provider provider) {
         return provider.name().equals("ffm");
     }
 }
