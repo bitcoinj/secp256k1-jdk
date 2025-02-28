@@ -1,6 +1,7 @@
 = secp256k1-jdk
 
-image:https://github.com/bitcoinj/secp256k1-jdk/workflows/Gradle%20Build/badge.svg[GitHub Build Status,link=https://github.com/bitcoinj/secp256k1-jdk/actions]
+image:https://github.com/bitcoinj/secp256k1-jdk/workflows/Gradle%20Build/badge.svg[GitHub Build Status,link=https://github.com/bitcoinj/secp256k1-jdk/actions] image:https://gitlab.com/bitcoinj/secp256k1-jdk/badges/master/pipeline.svg[GitLab Build Status,link=https://gitlab.com/bitcoinj/secp256k1-jdk/-/pipelines]
+
 
 image::https://img.shields.io/badge/Matrix%20Chat-Join%20secp256k1--jdk--developers%20-blue[Join the secp256k1-jdk-developers Matrix room, link=https://matrix.to/#/#secp256k1-jdk-developers:matrix.org]
 
