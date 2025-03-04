@@ -27,3 +27,15 @@ jar {
                 'Implementation-Version': archiveVersion.get()
     }
 }
+
+tasks.register('java8Jar', Jar) {
+    dependsOn tasks.jar                 // Depend on the original Java 9 JAR
+    archiveBaseName = "${project.name}-java8"
+    from zipTree(tasks.jar.archiveFile) // Unpack the original JAR
+    exclude 'module-info.class'         // Remove the module-info.class file
+
+    // Copy the original manifest
+    manifest {
+        from tasks.jar.manifest
+    }
+}

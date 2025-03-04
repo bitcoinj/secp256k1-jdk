@@ -7,8 +7,18 @@ subprojects { sub ->
             publications {
                 jar(MavenPublication) {
                     from components.java
+                    if (sub.name in publishedJava8Projects) {
+                        tasks.register('java8Jar', Jar) {
+                            dependsOn tasks.jar
+                            archiveBaseName = "${sub.name}-java8"
+                            from zipTree(tasks.jar.archiveFile)
+                            exclude 'module-info.class'
+                        }
+                        artifacts {
+                            archives tasks.java8Jar
+                        }
+                    }
                 }
-
             }
             repositories {
                 def secpJdkGitLabProjectId = "55956336"
