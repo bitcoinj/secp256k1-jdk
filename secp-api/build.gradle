@@ -1,20 +1,12 @@
 plugins {
     id 'java-library'
-    id 'org.beryx.jar' version '2.0.0'
 }
 
 tasks.withType(JavaCompile).configureEach {
-    // IDEs and other tools will see `9` by default, but CI and release builds
-    // will set `-PapiModuleJavaCompatibility=8` to generate a Java 8 JAR
-    // and the `org.beryx.jar` plugin will put `module-info.jar` in the Java 8 JAR.
-    options.release = (findProperty('apiModuleJavaCompatibility') ?: 9) as int
+    options.release = 9
 }
 
 ext.moduleName = 'org.bitcoinj.secp.api'
-
-moduleConfig {
-    version = project.version
-}
 
 dependencies {
     api("org.jspecify:jspecify:1.0.0")
