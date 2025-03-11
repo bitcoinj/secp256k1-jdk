@@ -8,14 +8,9 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
-
-    gitignore = {
-      url = "github:hercules-ci/gitignore.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = inputs @ { flake-parts, gitignore, ... }:
+  outputs = inputs @ { flake-parts, ... }:
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
@@ -46,12 +41,8 @@
 
         # define flake output packages
         packages = let
-          # useful for filtering src trees based on gitignore
-          inherit (gitignore.lib) gitignoreSource;
-
           # common properties across the derivations
           version = "0.0.1";
-          src = gitignoreSource ./.;
         in {
            # TBD
         };
