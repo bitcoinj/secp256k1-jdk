@@ -9,18 +9,13 @@
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
 
-    devshell = {
-      url = "github:numtide/devshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     gitignore = {
       url = "github:hercules-ci/gitignore.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs @ { flake-parts, devshell , gitignore, ... }:
+  outputs = inputs @ { flake-parts, gitignore, ... }:
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
