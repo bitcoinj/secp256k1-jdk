@@ -73,7 +73,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
     
     public Secp256k1Foreign(int flags, boolean randomize) {
-        arena = Arena.ofShared();
+        arena = Arena.ofConfined();     // Changed from `ofShared` for use in Graal native-image tools
         /* Before we can call actual API functions, we need to create a "context". */
         ctx = secp256k1_h.secp256k1_context_create(flags);
 
