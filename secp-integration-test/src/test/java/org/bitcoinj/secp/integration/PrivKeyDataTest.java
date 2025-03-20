@@ -17,7 +17,6 @@ package org.bitcoinj.secp.integration;
 
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.bouncy.BouncyPrivKey;
-import org.bitcoinj.secp.eggcc.EggPrivKey;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,13 +33,4 @@ public class PrivKeyDataTest {
         BigInteger privInt = priv.getS();
         Assertions.assertEquals(BigInteger.ONE, privInt);
     }
-
-    @Test
-    void testEggPriv() {
-        P256k1PrivKey priv = new EggPrivKey(BigInteger.ONE);
-
-        BigInteger privInt = priv.getS();
-        Assertions.assertEquals(BigInteger.ONE, privInt);
-    }
-
 }
