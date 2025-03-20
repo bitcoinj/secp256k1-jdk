@@ -12,7 +12,6 @@ dependencies {
     implementation project(':secp-api')
     implementation project(':secp-bouncy')
     implementation project(':secp-ffm')
-    implementation project(':secp-sandbox')
 }
 
 jar {
