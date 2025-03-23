@@ -18,7 +18,7 @@ jobs:
         os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-14]
         distribution: ['temurin']
       fail-fast: false
-    name: ${{ matrix.os }} JDK 23
+    name: ${{ matrix.os }} JDK 24 (via Gradle Java toolchains)
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
@@ -28,6 +28,7 @@ jobs:
           distribution: ${{ matrix.distribution }}
           # When installing multiple JDKs, the last JDK installed is the default and will be used to run Gradle itself
           java-version: |
+            24
             23
           cache: 'gradle'
       - name: Install Nix
@@ -37,9 +38,9 @@ jobs:
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew -PjavaToolchainVersion=24 build
       - name: Run Java & Kotlin Examples
-        run: ./gradlew run runEcdsa
+        run: ./gradlew -PjavaToolchainVersion=24 run runEcdsa
 
 
   build_nix:
