@@ -19,3 +19,7 @@ jar {
                 'Implementation-Version': archiveVersion.get()
     }
 }
+
+test {
+    jvmArgs += '--enable-native-access=ALL-UNNAMED'
+}
