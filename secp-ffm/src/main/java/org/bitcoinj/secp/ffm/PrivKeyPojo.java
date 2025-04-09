@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.api.P256k1PrivKey;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
@@ -28,7 +29,7 @@ import java.util.Arrays;
 public class PrivKeyPojo implements P256k1PrivKey {
 
     /** private key or null if key was destroyed */
-    private byte[] privKeyBytes;
+    private byte @Nullable [] privKeyBytes;
 
     /**
      * Package private to ensure it is only created from a valid private key
@@ -53,14 +54,17 @@ public class PrivKeyPojo implements P256k1PrivKey {
     }
 
     public BigInteger integer() {
+        if (privKeyBytes == null) throw new IllegalStateException("Private Key has been destroyed");
         return new BigInteger(1, privKeyBytes);
     }
 
     @Override
     public void destroy() {
         // TODO: Make sure the zeroing is not optimized out by the compiler or JIT
-        Arrays.fill( privKeyBytes, (byte) 0x00 );
-        privKeyBytes = null;
+        if (privKeyBytes != null) {
+            Arrays.fill( privKeyBytes, (byte) 0x00 );
+            privKeyBytes = null;
+        }
     }
 
     @Override
