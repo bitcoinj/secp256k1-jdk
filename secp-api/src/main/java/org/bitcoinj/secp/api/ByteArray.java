@@ -18,6 +18,7 @@ package org.bitcoinj.secp.api;
 import org.bitcoinj.secp.api.internal.ByteUtils;
 import org.bitcoinj.secp.api.internal.HexFormat;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
@@ -46,6 +47,22 @@ public interface ByteArray extends Comparable<ByteArray> {
     @Override
     default int compareTo(ByteArray o) {
         return ByteUtils.arrayUnsignedComparator().compare(bytes(), o.bytes());
+    }
+
+    /**
+     * Utility to convert big-endian {@code byte[]} to integer
+     * @param bytes bytes
+     * @return integer representation of big-endian bytes
+     */
+    static BigInteger toInteger(byte[] bytes) {
+        int signum = 0;
+        for (byte b : bytes) {
+            if (b != 0) {
+                signum = 1;
+                break;
+            }
+        }
+        return new BigInteger(signum, bytes);
     }
 
     /**
