@@ -40,14 +40,7 @@ public interface P256k1PubKey extends ECPublicKey {
      */
     @Override
     default byte[] getEncoded() {
-        ECPoint point = getW();
-        byte[] x = integerTo32Bytes(point.getAffineX());
-        byte[] y = integerTo32Bytes(point.getAffineY());
-        byte[] encoded = new byte[65];
-        encoded[0] = 0x04;
-        System.arraycopy(x, 0, encoded, 1, 32);
-        System.arraycopy(y, 0, encoded, 33, 32);
-        return encoded;
+        return getUncompressed();
     }
 
     default byte[] getSerialized(boolean compressed) {
@@ -68,6 +61,17 @@ public interface P256k1PubKey extends ECPublicKey {
                 1,
                 32);
         return compressed;
+    }
+
+    default byte[] getUncompressed() {
+        ECPoint point = getW();
+        byte[] x = integerTo32Bytes(point.getAffineX());
+        byte[] y = integerTo32Bytes(point.getAffineY());
+        byte[] encoded = new byte[65];
+        encoded[0] = 0x04;
+        System.arraycopy(x, 0, encoded, 1, 32);
+        System.arraycopy(y, 0, encoded, 33, 32);
+        return encoded;
     }
 
     default P256K1XOnlyPubKey getXOnly() {
