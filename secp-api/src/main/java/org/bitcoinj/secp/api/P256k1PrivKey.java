@@ -25,16 +25,6 @@ import java.security.spec.ECParameterSpec;
  */
 public interface P256k1PrivKey extends ECPrivateKey {
 
-    /* package */ static BigInteger toInteger(byte[] bytes) {
-        int signum = 0;
-        for (byte b : bytes) {
-            if (b != 0) {
-                signum = 1;
-                break;
-            }
-        }
-        return new BigInteger(signum, bytes);
-    }
 
     @Override
     default String getAlgorithm() {
@@ -54,7 +44,7 @@ public interface P256k1PrivKey extends ECPrivateKey {
 
     @Override
     default BigInteger getS() {
-        return toInteger(getEncoded());
+        return ByteArray.toInteger(getEncoded());
     }
 
     @Override

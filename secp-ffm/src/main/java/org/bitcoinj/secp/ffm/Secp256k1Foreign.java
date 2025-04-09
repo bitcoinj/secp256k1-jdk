@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp.ffm;
 
+import org.bitcoinj.secp.api.ByteArray;
 import org.bitcoinj.secp.api.CompressedPubKeyData;
 import org.bitcoinj.secp.api.CompressedSignatureData;
 import org.bitcoinj.secp.api.P256K1KeyPair;
@@ -147,8 +148,8 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         System.arraycopy(uncompressed_bytes,  1, xbytes, 0, 32);
         System.arraycopy(uncompressed_bytes, 33, ybytes, 0, 32);
         // TODO: How to handle point at infinity?
-        BigInteger x = P256k1PrivKey.toInteger(xbytes);
-        BigInteger y = P256k1PrivKey.toInteger(ybytes);
+        BigInteger x = ByteArray.toInteger(xbytes);
+        BigInteger y = ByteArray.toInteger(ybytes);
         return new ECPoint(x, y);
     }
 
