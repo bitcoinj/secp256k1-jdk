@@ -48,21 +48,21 @@ public interface P256K1XOnlyPubKey {
      * @return an instance of the default implementation
      */
     static P256K1XOnlyPubKey of(BigInteger x) {
-        return new P256K1XOnlyPubKeyImpl(x);
+        return new P256K1XOnlyPubKeyBigInteger(x);
     }
 
     /**
      * Default implementation. Currently used by all known implementations
      */
-    class P256K1XOnlyPubKeyImpl implements P256K1XOnlyPubKey {
+    class P256K1XOnlyPubKeyBigInteger implements P256K1XOnlyPubKey {
         private final BigInteger x;
 
-        public P256K1XOnlyPubKeyImpl(P256k1PubKey pubKey) {
+        public P256K1XOnlyPubKeyBigInteger(P256k1PubKey pubKey) {
             // Avoid using pubKey.getXOnly() and possible infinite recursion
             this.x = pubKey.getW().getAffineX();
         }
 
-        public P256K1XOnlyPubKeyImpl(BigInteger x) {
+        public P256K1XOnlyPubKeyBigInteger(BigInteger x) {
             this.x = x;
         }
 
