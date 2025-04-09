@@ -83,6 +83,18 @@ public interface P256k1PubKey extends ECPublicKey {
     }
 
     /**
+     * Since we can't provide a default implementation of {@link Object#toString()}, we can
+     * at least make the default implementation easily available to implementations.
+     * @return string representation of the key
+     */
+    default String toStringDefault() {
+        ECPoint point = getW();
+        return point.equals(ECPoint.POINT_INFINITY)
+                ? "POINT_INFINITY"
+                : point.getAffineX().toString(16) + "," + point.getAffineY().toString(16);
+    }
+
+    /**
      * Convert a BigInteger to a fixed-length byte array
      * @param i an unsigned BigInteger containing a valid Secp256k1 field value
      * @return a 32-byte, big-endian unsigned integer value
