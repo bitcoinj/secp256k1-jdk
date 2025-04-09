@@ -35,9 +35,6 @@ public class PubKeyPojo implements P256k1PubKey {
 
     @Override
     public String toString() {
-        ECPoint point = getW();
-        return point.equals(ECPoint.POINT_INFINITY)
-                ? "POINT_INFINITY"
-                : point.getAffineX().toString(16) + "," + point.getAffineY().toString(16);
+        return toStringDefault();
     }
 }

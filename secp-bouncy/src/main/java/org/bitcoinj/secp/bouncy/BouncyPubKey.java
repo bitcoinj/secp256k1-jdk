@@ -16,7 +16,6 @@
 package org.bitcoinj.secp.bouncy;
 
 
-import org.bitcoinj.secp.api.ByteArray;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bouncycastle.math.ec.ECPoint;
 
@@ -50,7 +49,7 @@ public class BouncyPubKey implements P256k1PubKey {
 
     @Override
     public String toString() {
-        return ByteArray.toHexString(bytes());
+        return toStringDefault();
     }
 
     @Override
