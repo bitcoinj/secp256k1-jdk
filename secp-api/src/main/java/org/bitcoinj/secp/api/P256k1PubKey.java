@@ -43,7 +43,12 @@ public interface P256k1PubKey extends ECPublicKey {
         return getCompressed();
     }
 
-    default byte[] getSerialized(boolean compressed) {
+    /**
+     * Return encoded key in either compressed or uncompressed SEC format.
+     * @param compressed Use compressed variant of format
+     * @return public key in SEC format
+     */
+    default byte[] getEncoded(boolean compressed) {
         return compressed
                 ? getCompressed()
                 : getUncompressed();
