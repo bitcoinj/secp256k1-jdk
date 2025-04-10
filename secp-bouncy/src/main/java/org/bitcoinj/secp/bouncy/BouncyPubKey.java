@@ -15,9 +15,9 @@
  */
 package org.bitcoinj.secp.bouncy;
 
-
 import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bouncycastle.math.ec.ECPoint;
+
+import java.security.spec.ECPoint;
 
 import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
 
@@ -25,13 +25,13 @@ import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
  *
  */
 public class BouncyPubKey implements P256k1PubKey {
-    private final ECPoint point;
+    private final org.bouncycastle.math.ec.ECPoint point;
 
-    public BouncyPubKey(ECPoint point) {
+    public BouncyPubKey(org.bouncycastle.math.ec.ECPoint point) {
         this.point = point;
     }
 
-    public BouncyPubKey(java.security.spec.ECPoint javaPoint) {
+    public BouncyPubKey(ECPoint javaPoint) {
         this(BC_CURVE.getCurve().createPoint(javaPoint.getAffineX(), javaPoint.getAffineY())) ;
     }
 
@@ -53,8 +53,8 @@ public class BouncyPubKey implements P256k1PubKey {
     }
 
     @Override
-    public java.security.spec.ECPoint getW() {
-        return new java.security.spec.ECPoint(
+    public ECPoint getW() {
+        return new ECPoint(
                 point.normalize().getAffineXCoord().toBigInteger(),
                 point.normalize().getAffineYCoord().toBigInteger());
     }
