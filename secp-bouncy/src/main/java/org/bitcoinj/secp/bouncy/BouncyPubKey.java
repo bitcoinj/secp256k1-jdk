@@ -44,7 +44,11 @@ public class BouncyPubKey implements P256k1PubKey {
 
     @Override
     public byte[] getEncoded() {
-        return point.getEncoded(true);  // This has a prefix byte, default encoding is compressed
+        return point.getEncoded(true);        //  default encoding is compressed
+    }
+
+    public byte[] getEncoded(boolean compressed) {
+        return point.getEncoded(compressed);  // This has a prefix byte
     }
 
     @Override
