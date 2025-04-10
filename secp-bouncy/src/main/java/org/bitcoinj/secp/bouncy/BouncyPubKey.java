@@ -22,7 +22,7 @@ import java.security.spec.ECPoint;
 import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
 
 /**
- *
+ * Bouncy Castle implementation of {@link P256k1PubKey}.
  */
 public class BouncyPubKey implements P256k1PubKey {
     private final org.bouncycastle.math.ec.ECPoint point;
