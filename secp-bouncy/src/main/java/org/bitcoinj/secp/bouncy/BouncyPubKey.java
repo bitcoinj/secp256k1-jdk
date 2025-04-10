@@ -48,14 +48,15 @@ public class BouncyPubKey implements P256k1PubKey {
     }
 
     @Override
-    public String toString() {
-        return toStringDefault();
-    }
-
-    @Override
     public ECPoint getW() {
         return new ECPoint(
                 point.normalize().getAffineXCoord().toBigInteger(),
                 point.normalize().getAffineYCoord().toBigInteger());
     }
+
+    @Override
+    public String toString() {
+        return toStringDefault();
+    }
+
 }
