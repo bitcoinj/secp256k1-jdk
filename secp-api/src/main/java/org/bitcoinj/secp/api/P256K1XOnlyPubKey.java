@@ -52,6 +52,14 @@ public interface P256K1XOnlyPubKey {
     }
 
     /**
+     * @param xBytes X in its standard {@code byte[]} format
+     * @return an instance of the default implementation
+     */
+    static P256K1XOnlyPubKey of(byte[] xBytes) {
+        return new P256K1XOnlyPubKeyBytes(xBytes);
+    }
+
+    /**
      * Default implementation. Currently used by all known implementations
      */
     class P256K1XOnlyPubKeyBigInteger implements P256K1XOnlyPubKey {
@@ -77,6 +85,52 @@ public interface P256K1XOnlyPubKey {
         @Override
         public byte[] getSerialized() {
             return P256k1PubKey.integerTo32Bytes(x);
+        }
+
+        /**
+         * @return A hex string representing the default binary serialization format
+         */
+        @Override
+        public String toString() {
+            return ByteArray.toHexString(getSerialized());
+        }
+    }
+
+    /**
+     * Simple implementation using {code @byte[]} as internal storage.
+     */
+    class P256K1XOnlyPubKeyBytes implements P256K1XOnlyPubKey, ByteArray {
+        private final byte[] x;
+
+        public P256K1XOnlyPubKeyBytes(P256k1PubKey pubKey) {
+            // Avoid using pubKey.getXOnly() and possible infinite recursion
+            this.x = pubKey.getXOnly().getSerialized();
+        }
+
+        public P256K1XOnlyPubKeyBytes(byte[] xBytes) {
+            // Defensive copy
+            x = new byte[xBytes.length];
+            System.arraycopy(xBytes, 0, x, 0, x.length);
+        }
+
+        @Override
+        public BigInteger getX() {
+            return ByteArray.toInteger(x);
+        }
+
+        @Override
+        public byte[] bytes() {
+            // Defensive copy
+            byte[] result = new byte[x.length];
+            System.arraycopy(x, 0, result, 0, x.length);
+            return result;
+        }
+        /**
+         * @return Big-endian, 32 bytes
+         */
+        @Override
+        public byte[] getSerialized() {
+            return bytes();
         }
 
         /**
