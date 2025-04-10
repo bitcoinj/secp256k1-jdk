@@ -31,22 +31,22 @@ public interface P256k1PubKey extends ECPublicKey {
 
     @Override
     default String getFormat() {
-        return "Uncompressed SEC";
+        return "Compressed SEC";
     }
 
     /**
-     * Return key in primary encoded format (uncompressed for now)
-     * @return public key in uncompressed format
+     * Return key in primary encoded format (compressed)
+     * @return public key in compressed format
      */
     @Override
     default byte[] getEncoded() {
-        return getUncompressed();
+        return getCompressed();
     }
 
     default byte[] getSerialized(boolean compressed) {
         return compressed
                 ? getCompressed()
-                : getEncoded();
+                : getUncompressed();
     }
 
     default byte[] getCompressed() {
