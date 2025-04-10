@@ -230,7 +230,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             case 258 -> true;         // SECP256K1_EC_COMPRESSED())
             default -> throw new IllegalArgumentException();
         };
-        return new CompressedPubKeyPojo(pubKey.getSerialized(compressed));
+        return new CompressedPubKeyPojo(pubKey.getEncoded(compressed));
     }
 
     /* package */ static MemorySegment pubKeySerializeSegment(MemorySegment pubKeySegment, int flags) {
