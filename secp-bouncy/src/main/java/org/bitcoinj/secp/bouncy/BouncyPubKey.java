@@ -32,7 +32,21 @@ public class BouncyPubKey implements P256k1PubKey {
     }
 
     public BouncyPubKey(ECPoint javaPoint) {
-        this(BC_CURVE.getCurve().createPoint(javaPoint.getAffineX(), javaPoint.getAffineY())) ;
+        this(toBouncy(javaPoint));
+    }
+
+    private static ECPoint toJCA(org.bouncycastle.math.ec.ECPoint bcPoint) {
+        return bcPoint.isInfinity()
+                ? java.security.spec.ECPoint.POINT_INFINITY
+                : new java.security.spec.ECPoint(
+                    bcPoint.normalize().getAffineXCoord().toBigInteger(),
+                    bcPoint.normalize().getAffineYCoord().toBigInteger());
+    }
+
+    private static org.bouncycastle.math.ec.ECPoint toBouncy(ECPoint point) {
+        return point == ECPoint.POINT_INFINITY
+                ? BC_CURVE.getCurve().getInfinity()
+                : BC_CURVE.getCurve().createPoint(point.getAffineX(), point.getAffineY());
     }
 
     private byte[] bytes() {
@@ -53,9 +67,12 @@ public class BouncyPubKey implements P256k1PubKey {
 
     @Override
     public ECPoint getW() {
-        return new ECPoint(
-                point.normalize().getAffineXCoord().toBigInteger(),
-                point.normalize().getAffineYCoord().toBigInteger());
+        return toJCA(point);
+    }
+
+    // Return Bouncy Castle ECPoint type (used by tests)
+    org.bouncycastle.math.ec.ECPoint getBouncyPoint() {
+        return point;
     }
 
     @Override
