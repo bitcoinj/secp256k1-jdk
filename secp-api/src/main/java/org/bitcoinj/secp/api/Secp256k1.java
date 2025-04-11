@@ -18,13 +18,32 @@ package org.bitcoinj.secp.api;
 import java.io.Closeable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECFieldFp;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 
 /**
- *
+ * A Java interface for <i>Elliptic Curve Cryptography</i> using the <a href="https://www.secg.org">SECG</a> curve
+ * <a href="https://en.bitcoin.it/wiki/Secp256k1">secp256k1</a>.
+ * <p>
+ * The API is based on the C-language API of <a href="https://github.com/bitcoin-core/secp256k1">libsecp256k1</a>, but
+ * is here adapted to modern, idiomatic, functional-style Java and use Elliptic Curve <i>types</i> from the Java Class Library,
+ * such as {@link ECPublicKey} via the specialized {@link P256k1PubKey} subclass.
+ * <p>
+ * Two implementations are being developed.
+ * <ul>
+ *     <li>
+ *      Module {@code org.bitcoinj.secp.ffm}: Using a
+ *      <a href="https://openjdk.org/jeps/454">Java Foreign Function and Memory API</a> interface to the
+ *      <a href="https://github.com/bitcoin-core/secp256k1">secp256k1</a> library.
+ *     </li>
+ *     <li>
+ *      Module {@code org.bitcoinj.secp.bouncy}: Using the <a href="https://www.bouncycastle.org">Bouncy Castle</a>
+ *      Java library.
+ *     </li>
+ * </ul>
  */
 public interface Secp256k1 extends Closeable {
 
