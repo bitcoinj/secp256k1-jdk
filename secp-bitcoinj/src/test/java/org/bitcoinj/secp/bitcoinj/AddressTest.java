@@ -22,10 +22,10 @@ import org.bitcoinj.base.SegwitAddress;
 import org.bitcoinj.crypto.ECKey;
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
+import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Secp256k1;
 import org.bitcoinj.secp.bouncy.Bouncy256k1;
-import org.bitcoinj.secp.bouncy.BouncyPrivKey;
 import org.bitcoinj.secp.bouncy.BouncyPubKey;
 import org.bitcoinj.secp.ffm.PubKeyPojo;
 import org.junit.jupiter.api.Assertions;
@@ -51,7 +51,7 @@ public class AddressTest {
     void createAddressTest(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
         try (Secp256k1 secp = Secp256k1.get()) {
-            P256K1KeyPair keyPair = secp.ecKeyPairCreate(new BouncyPrivKey(key));
+            P256K1KeyPair keyPair = secp.ecKeyPairCreate(P256k1PrivKey.of(key));
             WitnessMaker maker = new WitnessMaker(secp);
 //            P256K1XOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
 //            BigInteger tweakInt = calcTweak(xOnlyKey);
@@ -70,7 +70,7 @@ public class AddressTest {
     void createAddressTestBouncy(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
         try (Secp256k1 secp = new Bouncy256k1()) {
-            P256K1KeyPair keyPair = secp.ecKeyPairCreate(new BouncyPrivKey(key));
+            P256K1KeyPair keyPair = secp.ecKeyPairCreate(P256k1PrivKey.of(key));
             WitnessMaker maker = new WitnessMaker(secp);
 //            P256K1XOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
 //            BigInteger tweakInt = calcTweak(xOnlyKey);

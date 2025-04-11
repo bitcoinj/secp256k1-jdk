@@ -16,8 +16,8 @@
 package org.bitcoinj.secp.integration;
 
 import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.bouncy.Bouncy256k1;
-import org.bitcoinj.secp.bouncy.BouncyPrivKey;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +30,7 @@ public class Bouncy256k1Test {
     @Test
     void pubKeyAdditionTestTwo() {
         try (Bouncy256k1 secp = new Bouncy256k1()) {
-            P256k1PubKey pubKey = secp.ecKeyPairCreate(new BouncyPrivKey(BigInteger.ONE)).getPublic();
+            P256k1PubKey pubKey = secp.ecKeyPairCreate(P256k1PrivKey.of(BigInteger.ONE)).getPublic();
             P256k1PubKey added = secp.ecPubKeyCombine(pubKey, pubKey);
             P256k1PubKey multiplied = secp.ecPubKeyTweakMul(pubKey, BigInteger.valueOf(2));
             Assertions.assertEquals(added.getW(), multiplied.getW());
