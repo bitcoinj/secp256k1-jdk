@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp.integration;
 
+import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bitcoinj.secp.bouncy.BouncyPrivKey;
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ public class Secp256k1ForeignTest {
     @Test
     void pubKeyAdditionTestOne() {
         try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
-            P256k1PubKey pubKey = secp.ecKeyPairCreate(new BouncyPrivKey(BigInteger.ONE)).getPublic();
+            P256k1PubKey pubKey = secp.ecKeyPairCreate(P256k1PrivKey.of(BigInteger.ONE)).getPublic();
             P256k1PubKey added = secp.ecPubKeyCombine(pubKey);
             P256k1PubKey multiplied = secp.ecPubKeyTweakMul(pubKey, BigInteger.valueOf(1));
             Assertions.assertEquals(added.getW(), multiplied.getW());
@@ -40,7 +40,7 @@ public class Secp256k1ForeignTest {
     @Test
     void pubKeyAdditionTestTwo() {
         try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
-            P256k1PubKey pubKey = secp.ecKeyPairCreate(new BouncyPrivKey(BigInteger.ONE)).getPublic();
+            P256k1PubKey pubKey = secp.ecKeyPairCreate(P256k1PrivKey.of(BigInteger.ONE)).getPublic();
             P256k1PubKey added = secp.ecPubKeyCombine(pubKey, pubKey);
             P256k1PubKey multiplied = secp.ecPubKeyTweakMul(pubKey, BigInteger.valueOf(2));
             Assertions.assertEquals(added.getW(), multiplied.getW());
