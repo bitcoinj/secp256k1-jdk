@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-///
 /// Implementation of [org.bitcoinj.secp.api] using [libsecp256k1](https://github.com/bitcoin-core/secp256k1)
 /// and [Java Foreign Function & Memory API](https://openjdk.org/jeps/454).
 ///
@@ -30,5 +29,4 @@
 /// release of [org.bitcoinj.secp.ffm] will require JDK 25 LTS or later. [org.bitcoinj.secp.ffm] is the
 /// recommended implementation of [org.bitcoinj.secp.api] for applications running on recent JDK versions and platforms supported
 /// by **libsecp256k1**.
-///
 package org.bitcoinj.secp.ffm;
