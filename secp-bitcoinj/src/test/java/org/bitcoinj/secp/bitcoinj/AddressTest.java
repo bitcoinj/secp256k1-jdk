@@ -20,6 +20,7 @@ import org.bitcoinj.base.BitcoinNetwork;
 import org.bitcoinj.base.Network;
 import org.bitcoinj.base.SegwitAddress;
 import org.bitcoinj.crypto.ECKey;
+import org.bitcoinj.secp.api.P256K1FieldElement;
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.api.P256k1PrivKey;
@@ -114,7 +115,7 @@ public class AddressTest {
             BigInteger internalPubKey = new BigInteger("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d", 16);
             byte[] compressed = new byte[33];
             compressed[0] = 0x02;
-            byte[] xbytes = P256k1PubKey.integerTo32Bytes(internalPubKey);
+            byte[] xbytes = P256K1FieldElement.integerTo32Bytes(internalPubKey);
             System.arraycopy(xbytes, 0, compressed, 1, 32);
             ECKey ecKey = ECKey.fromPublicOnly(compressed);
             P256k1PubKey pubkey = new BouncyPubKey(ecKey.getPubKeyPoint());
