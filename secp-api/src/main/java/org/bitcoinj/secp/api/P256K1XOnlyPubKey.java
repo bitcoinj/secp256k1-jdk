@@ -84,7 +84,7 @@ public interface P256K1XOnlyPubKey {
          */
         @Override
         public byte[] getSerialized() {
-            return P256k1PubKey.integerTo32Bytes(x);
+            return P256K1FieldElement.integerTo32Bytes(x);
         }
 
         /**

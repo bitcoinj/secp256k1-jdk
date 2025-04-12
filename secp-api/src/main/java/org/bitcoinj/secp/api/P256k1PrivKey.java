@@ -22,7 +22,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.spec.ECParameterSpec;
 import java.util.Arrays;
 
-import static org.bitcoinj.secp.api.P256k1PubKey.integerTo32Bytes;
+import static org.bitcoinj.secp.api.P256K1FieldElement.integerTo32Bytes;
 
 /**
  *  Verified private secret key
