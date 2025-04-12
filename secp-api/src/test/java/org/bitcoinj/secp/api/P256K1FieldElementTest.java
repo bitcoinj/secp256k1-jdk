@@ -19,8 +19,10 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -41,5 +43,19 @@ public class P256K1FieldElementTest {
 
         // p or greater is out of range
         assertFalse(P256K1FieldElement.isInRange(p));
+    }
+
+    @Test
+    void testCheckInRangeValid() {
+        assertDoesNotThrow(
+            () -> P256K1FieldElement.checkInRange(BigInteger.ONE)
+        );
+    }
+
+    @Test
+    void testCheckInRangeInvalid() {
+        assertThrows(IllegalArgumentException.class,
+            () -> P256K1FieldElement.checkInRange(p)
+        );
     }
 }

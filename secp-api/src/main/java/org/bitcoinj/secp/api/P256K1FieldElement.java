@@ -32,14 +32,24 @@ public interface P256K1FieldElement {
     }
 
     /**
+     * Throw {@link IllegalArgumentException} if an integer is not in the inclusive range {@code 0} to {@code P - 1}, where {@code P} is
+     * the prime of the SECP256K1 prime finite field.
+     * @param x
+     */
+    static void checkInRange(BigInteger x) {
+        if (!isInRange(x)) {
+            throw new IllegalArgumentException("BigInteger is not a valid P256K1FieldElement: " + x);
+        }
+    }
+
+    /**
      * Convert a BigInteger to a fixed-length byte array
      * @param i an unsigned BigInteger containing a valid Secp256k1 field value
      * @return a 32-byte, big-endian unsigned integer value
      */
     static byte[] integerTo32Bytes(BigInteger i) {
-        // TODO: Check for negative or greater than p?
+        checkInRange(i);
         byte[] minBytes = i.toByteArray(); // return minimum, signed bytes
-        if (minBytes.length > 33) throw new IllegalStateException("privKey BigInteger value too large");
         // Convert from signed, variable length to unsigned, fixed 32-byte length.
         byte[] result = new byte[32];
         System.arraycopy(minBytes,                                  // src
