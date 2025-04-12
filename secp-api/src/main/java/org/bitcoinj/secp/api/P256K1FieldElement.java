@@ -34,12 +34,14 @@ public interface P256K1FieldElement {
     /**
      * Throw {@link IllegalArgumentException} if an integer is not in the inclusive range {@code 0} to {@code P - 1}, where {@code P} is
      * the prime of the SECP256K1 prime finite field.
-     * @param x
+     * @param x unvalidated integer
+     * @return a validated integer
      */
-    static void checkInRange(BigInteger x) {
+    static BigInteger checkInRange(BigInteger x) {
         if (!isInRange(x)) {
             throw new IllegalArgumentException("BigInteger is not a valid P256K1FieldElement: " + x);
         }
+        return x;
     }
 
     /**

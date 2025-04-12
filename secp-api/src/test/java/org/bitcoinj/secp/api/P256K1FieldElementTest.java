@@ -50,6 +50,7 @@ public class P256K1FieldElementTest {
         assertDoesNotThrow(
             () -> P256K1FieldElement.checkInRange(BigInteger.ONE)
         );
+        assertEquals(BigInteger.ONE, P256K1FieldElement.checkInRange(BigInteger.ONE));
     }
 
     @Test
