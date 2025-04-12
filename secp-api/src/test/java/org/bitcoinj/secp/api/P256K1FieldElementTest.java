@@ -32,6 +32,12 @@ public class P256K1FieldElementTest {
     static BigInteger p = Secp256k1.FIELD.getP();
 
     @Test
+    void testDefaultImplementation() {
+        P256K1FieldElement element = P256K1FieldElement.of(BigInteger.ONE);
+        assertEquals(BigInteger.ONE, element.toBigInteger());
+    }
+
+    @Test
     void testIsInRange() {
         // Less than zero is not in range
         assertFalse(P256K1FieldElement.isInRange(BigInteger.ONE.negate()));
