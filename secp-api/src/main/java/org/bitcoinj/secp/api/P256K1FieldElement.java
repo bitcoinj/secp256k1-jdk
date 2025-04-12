@@ -21,6 +21,21 @@ import java.math.BigInteger;
  * Interface for numbers that are valid elements of the P256K1 field
  */
 public interface P256K1FieldElement {
+
+    /**
+     * @return the field element as a {@code BigInteger}
+     */
+    BigInteger toBigInteger();
+
+    /**
+     * Construct a {@code P256K1FieldElement} from a BigInteger
+     * @param i integer
+     * @return valid element
+     */
+    static P256K1FieldElement of(BigInteger i) {
+        return new P256K1FieldElementDefault(i);
+    }
+
     /**
      * Check if an integer is in the inclusive range {@code 0} to {@code P - 1}, where {@code P} is
      * the prime of the SECP256K1 prime finite field.
@@ -61,5 +76,18 @@ public interface P256K1FieldElement {
                 minBytes.length == 33 ? 0 : 32 - minBytes.length,   // dest pos
                 minBytes.length == 33 ? 32 : minBytes.length);      // num bytes to copy
         return result;
+    }
+
+    class P256K1FieldElementDefault implements P256K1FieldElement {
+        private final byte[] value;
+
+        P256K1FieldElementDefault(BigInteger i) {
+            value = integerTo32Bytes(i);
+        }
+
+        @Override
+        public BigInteger toBigInteger() {
+            return ByteArray.toInteger(value);
+        }
     }
 }
