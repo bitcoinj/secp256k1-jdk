@@ -26,7 +26,7 @@ import java.math.BigInteger;
 /**
  *
  */
-public class Bouncy256k1Test {
+public class PubKeyAdditionTest {
     @Test
     void pubKeyAdditionTestTwo() {
         try (Secp256k1 secp = Secp256k1.getByName("bouncy-castle")) {
