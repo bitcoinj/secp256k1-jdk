@@ -31,6 +31,7 @@ public class Secp256k1ForeignTest {
     void pubKeyAdditionTestOne() {
         try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
             P256k1PubKey pubKey = secp.ecKeyPairCreate(P256k1PrivKey.of(BigInteger.ONE)).getPublic();
+            // TODO: For some reason this method only exists in FFM implementation
             P256k1PubKey added = secp.ecPubKeyCombine(pubKey);
             P256k1PubKey multiplied = secp.ecPubKeyTweakMul(pubKey, BigInteger.valueOf(1));
             Assertions.assertEquals(added.getW(), multiplied.getW());
