@@ -20,4 +20,17 @@ package org.bitcoinj.secp.api;
  */
 public interface SignatureData extends ByteArray {
     byte[] bytes();
+
+    class SignatureDataImpl implements SignatureData {
+        private final byte[] signature;
+
+        public SignatureDataImpl(byte[] signature) {
+            this.signature = signature;
+        }
+
+        @Override
+        public byte[] bytes() {
+            return signature.clone();
+        }
+    }
 }

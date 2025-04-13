@@ -15,6 +15,8 @@
  */
 package org.bitcoinj.secp.bouncy;
 
+import org.bitcoinj.secp.api.P256K1FieldElement;
+import org.bitcoinj.secp.api.P256K1Point;
 import org.bitcoinj.secp.api.P256k1PubKey;
 
 import java.security.spec.ECPoint;
@@ -38,12 +40,12 @@ public class BouncyPubKey implements P256k1PubKey {
     private static ECPoint toJCA(org.bouncycastle.math.ec.ECPoint bcPoint) {
         return bcPoint.isInfinity()
                 ? java.security.spec.ECPoint.POINT_INFINITY
-                : new java.security.spec.ECPoint(
+                : new P256K1Point.P256K1ECPoint(
                     bcPoint.normalize().getAffineXCoord().toBigInteger(),
                     bcPoint.normalize().getAffineYCoord().toBigInteger());
     }
 
-    private static org.bouncycastle.math.ec.ECPoint toBouncy(ECPoint point) {
+    public static org.bouncycastle.math.ec.ECPoint toBouncy(ECPoint point) {
         return point == ECPoint.POINT_INFINITY
                 ? BC_CURVE.getCurve().getInfinity()
                 : BC_CURVE.getCurve().createPoint(point.getAffineX(), point.getAffineY());
@@ -68,6 +70,13 @@ public class BouncyPubKey implements P256k1PubKey {
     @Override
     public ECPoint getW() {
         return toJCA(point);
+    }
+
+    @Override
+    public P256K1Point.Uncompressed getPoint() {
+        return P256K1Point.P256K1PointImpl.of(
+                P256K1FieldElement.of(point.normalize().getAffineXCoord().toBigInteger()),
+                P256K1FieldElement.of(point.normalize().getAffineYCoord().toBigInteger()));
     }
 
     // Return Bouncy Castle ECPoint type (used by tests)
