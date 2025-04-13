@@ -52,7 +52,7 @@ public class Ecdsa {
             P256k1PubKey pubkey = secp.ecPubKeyCreate(privKey);
 
             /* Serialize the pubkey in a compressed form (33 bytes). */
-            CompressedPubKeyData compressed_pubkey = secp.ecPubKeySerialize(pubkey, (int)2L /* secp256k1_h.SECP256K1_EC_COMPRESSED() */);
+            byte[] compressed_pubkey = secp.ecPubKeySerialize(pubkey, (int)2L /* secp256k1_h.SECP256K1_EC_COMPRESSED() */);
 
             /* === Signing === */
 
@@ -80,7 +80,7 @@ public class Ecdsa {
             System.out.println("Is the signature valid? " + is_signature_valid);
             System.out.println("Secret Key: " + privKey.getS().toString(16));
             System.out.println("Public Key (as ECPoint): " + pubkey);
-            System.out.println("Public Key (Compressed): " + formatter.formatHex(compressed_pubkey.bytes()));
+            System.out.println("Public Key (Compressed): " + formatter.formatHex(compressed_pubkey));
             System.out.println("Signature: " + formatter.formatHex(serialized_signature.bytes()));
 
             /* It's best practice to try to clear secrets from memory after using them.

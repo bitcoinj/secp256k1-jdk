@@ -16,6 +16,8 @@
 package org.bitcoinj.secp.api;
 
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Interface for numbers that are valid elements of the P256K1 field
@@ -26,6 +28,10 @@ public interface P256K1FieldElement {
      * @return the field element as a {@code BigInteger}
      */
     BigInteger toBigInteger();
+
+    default byte[] toBytes() {
+        return toBigInteger().toByteArray();
+    }
 
     /**
      * Construct a {@code P256K1FieldElement} from a BigInteger
@@ -78,6 +84,8 @@ public interface P256K1FieldElement {
         return result;
     }
 
+    boolean isOdd();
+
     class P256K1FieldElementDefault implements P256K1FieldElement {
         private final byte[] value;
 
@@ -88,6 +96,23 @@ public interface P256K1FieldElement {
         @Override
         public BigInteger toBigInteger() {
             return ByteArray.toInteger(value);
+        }
+
+        @Override
+        public boolean isOdd() {
+            return ByteArray.toInteger(value).mod(BigInteger.TWO).equals(BigInteger.ONE);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            P256K1FieldElementDefault that = (P256K1FieldElementDefault) o;
+            return Objects.deepEquals(value, that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(value);
         }
     }
 }

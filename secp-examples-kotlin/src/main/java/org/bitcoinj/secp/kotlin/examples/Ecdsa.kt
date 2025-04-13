@@ -70,7 +70,7 @@ fun main() {
         println("Is the signature valid? $is_signature_valid")
         println("Secret Key: ${privKey.s.toString(16)}")
         println("Public Key (as ECPoint): $pubkey")
-        println("Public Key (Compressed): ${formatter.formatHex(compressed_pubkey.bytes())}")
+        println("Public Key (Compressed): ${formatter.formatHex(compressed_pubkey)}")
         println("Signature: ${formatter.formatHex(serialized_signature.bytes())}")
 
         /* It's best practice to try to clear secrets from memory after using them.
