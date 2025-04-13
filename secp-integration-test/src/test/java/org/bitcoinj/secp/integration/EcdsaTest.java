@@ -43,10 +43,7 @@ public class EcdsaTest {
     private static final byte[] msg_hash = hash("Hello, world!");
 
     public static Stream<Secp256k1> secpImplementations() {
-        var providerList = List.of("ffm", "bouncy-castle");
-        return Secp256k1Provider
-                .findAll(p -> providerList.contains(p.name()))
-                .map(Secp256k1Provider::get);
+        return Secp256k1Provider.all().map(Secp256k1Provider::get);
     }
 
     @MethodSource("secpImplementations")
