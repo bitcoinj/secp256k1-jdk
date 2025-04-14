@@ -178,7 +178,7 @@ public class Bouncy256k1 implements Secp256k1 {
     public Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
         java.security.spec.ECPoint jPoint = pubKey.getW();
-        org.bouncycastle.math.ec.ECPoint pubPoint = BouncyPubKey.toBouncy(jPoint);
+        org.bouncycastle.math.ec.ECPoint pubPoint = BC.fromECPoint(jPoint);
         ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_CURVE);
         signer.init(false, params);
         BouncySignature signature = (BouncySignature) sig;

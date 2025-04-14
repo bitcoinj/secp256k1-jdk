@@ -21,8 +21,6 @@ import org.bitcoinj.secp.api.P256k1PubKey;
 
 import java.security.spec.ECPoint;
 
-import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
-
 /**
  * Bouncy Castle implementation of {@link P256k1PubKey}.
  */
@@ -34,21 +32,7 @@ public class BouncyPubKey implements P256k1PubKey {
     }
 
     public BouncyPubKey(ECPoint javaPoint) {
-        this(toBouncy(javaPoint));
-    }
-
-    private static ECPoint toJCA(org.bouncycastle.math.ec.ECPoint bcPoint) {
-        return bcPoint.isInfinity()
-                ? java.security.spec.ECPoint.POINT_INFINITY
-                : new P256K1Point.P256K1ECPoint(
-                    bcPoint.normalize().getAffineXCoord().toBigInteger(),
-                    bcPoint.normalize().getAffineYCoord().toBigInteger());
-    }
-
-    public static org.bouncycastle.math.ec.ECPoint toBouncy(ECPoint point) {
-        return point == ECPoint.POINT_INFINITY
-                ? BC_CURVE.getCurve().getInfinity()
-                : BC_CURVE.getCurve().createPoint(point.getAffineX(), point.getAffineY());
+        this(BC.fromECPoint(javaPoint));
     }
 
     private byte[] bytes() {
@@ -69,7 +53,7 @@ public class BouncyPubKey implements P256k1PubKey {
 
     @Override
     public ECPoint getW() {
-        return toJCA(point);
+        return BC.toECPoint(point);
     }
 
     @Override
