@@ -43,7 +43,7 @@ public class OpaqueKeyPair implements P256K1KeyPair {
         int return_val = secp256k1_h.secp256k1_keypair_pub(secp256k1_h.secp256k1_context_static(), pubKeySegment, keyPairSegment);
         assert(return_val == 1);
         ECPoint pubKeyPoint = Secp256k1Foreign.toPoint(pubKeySegment);
-        return new PubKeyPojo(pubKeyPoint);
+        return new P256k1PubKey.P256k1PubKeyImpl(pubKeyPoint);
     }
 
     public byte[] getOpaque() {

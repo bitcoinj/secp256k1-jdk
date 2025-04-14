@@ -109,4 +109,42 @@ public interface P256k1PubKey extends ECPublicKey {
                 : point.getAffineX().toString(16) + "," + point.getAffineY().toString(16);
     }
 
+    static P256k1PubKey ofPoint(ECPoint ecPoint) {
+        return new P256k1PubKeyImpl(ecPoint);
+    }
+    static P256k1PubKey ofPoint(P256K1Point.Uncompressed point) {
+        return new P256k1PubKeyImpl(point);
+    }
+
+    /**
+     *
+     */
+    class P256k1PubKeyImpl implements P256k1PubKey {
+        private final ECPoint point;
+
+        public P256k1PubKeyImpl(P256K1Point.Uncompressed point) {
+            this(new P256K1Point.P256K1ECPoint(point.x(), point.y()));
+        }
+
+        public P256k1PubKeyImpl(P256K1Point.P256K1ECPoint ecPoint) {
+            point = ecPoint;
+        }
+        public P256k1PubKeyImpl(ECPoint ecPoint) {
+            point = ecPoint;
+        }
+        @Override
+        public ECPoint getW() {
+            return point;
+        }
+
+        @Override
+        public P256K1Point.Uncompressed getPoint() {
+            return P256K1Point.P256K1PointUncompressed.of(getW());
+        }
+
+        @Override
+        public String toString() {
+            return toStringDefault();
+        }
+    }
 }

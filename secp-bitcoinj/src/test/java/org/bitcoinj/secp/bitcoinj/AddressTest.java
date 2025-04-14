@@ -26,9 +26,8 @@ import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Secp256k1;
+import org.bitcoinj.secp.bouncy.BC;
 import org.bitcoinj.secp.bouncy.Bouncy256k1;
-import org.bitcoinj.secp.bouncy.BouncyPubKey;
-import org.bitcoinj.secp.ffm.PubKeyPojo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -92,9 +91,9 @@ public class AddressTest {
             byte[] serial = HexFormat.of().parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
             P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.parse(serial).get();
             BigInteger tweakInt = calcTweak(xOnlyKey);
-            P256k1PubKey G = new PubKeyPojo(Secp256k1.EC_PARAMS.getGenerator());
+            P256k1PubKey G = new P256k1PubKey.P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
             P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-            P256k1PubKey Q = secp.ecPubKeyCombine(new PubKeyPojo(new ECPoint(xOnlyKey.getX(), BigInteger.ZERO)), P2);
+            P256k1PubKey Q = secp.ecPubKeyCombine(new P256k1PubKey.P256k1PubKeyImpl(new ECPoint(xOnlyKey.getX(), BigInteger.ZERO)), P2);
             byte[] witnessProgram = Q.getXOnly().getSerialized();
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
@@ -118,10 +117,10 @@ public class AddressTest {
             byte[] xbytes = P256K1FieldElement.integerTo32Bytes(internalPubKey);
             System.arraycopy(xbytes, 0, compressed, 1, 32);
             ECKey ecKey = ECKey.fromPublicOnly(compressed);
-            P256k1PubKey pubkey = new BouncyPubKey(ecKey.getPubKeyPoint());
+            P256k1PubKey pubkey = BC.toP256K1PubKey(ecKey.getPubKeyPoint());
             P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.of(internalPubKey);
             BigInteger tweakInt = calcTweak(xOnlyKey);
-            P256k1PubKey G = new PubKeyPojo(Secp256k1.EC_PARAMS.getGenerator());
+            P256k1PubKey G = new P256k1PubKey.P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
             P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
             P256k1PubKey Q = secp.ecPubKeyCombine(pubkey, P2);
             byte[] witnessProgram = Q.getXOnly().getSerialized();

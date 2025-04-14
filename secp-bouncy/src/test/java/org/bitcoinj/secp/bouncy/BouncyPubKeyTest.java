@@ -15,19 +15,21 @@
  */
 package org.bitcoinj.secp.bouncy;
 
+import org.bitcoinj.secp.api.P256K1FieldElement;
+import org.bitcoinj.secp.api.P256k1PubKey;
 import org.junit.jupiter.api.Test;
 
 import java.security.spec.ECPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *  Tests for BouncyPubKey.
  */
 public class BouncyPubKeyTest {
     org.bouncycastle.math.ec.ECPoint BOUNCY_INFINITY = Bouncy256k1.BC_CURVE.getCurve().getInfinity();
-    ECPoint JAVA_INFINITY = ECPoint.POINT_INFINITY;
 
     @Test
     public void convertRandomPoint() {
@@ -37,7 +39,7 @@ public class BouncyPubKeyTest {
             point = secp.ecPubKeyCreate(secp.ecPrivKeyCreate()).getW();
         }
         assertNotNull(point);
-        org.bouncycastle.math.ec.ECPoint bcPoint = new BouncyPubKey(point).getBouncyPoint();
+        org.bouncycastle.math.ec.ECPoint bcPoint = BC.fromECPoint(point);
 
         assertNotNull(bcPoint);
         assertEquals(point.getAffineX(), bcPoint.getAffineXCoord().toBigInteger());
@@ -46,11 +48,8 @@ public class BouncyPubKeyTest {
 
     @Test
     public void infinityConversionTest() {
-        BouncyPubKey key1 = new BouncyPubKey(JAVA_INFINITY);
-        BouncyPubKey key2 = new BouncyPubKey(BOUNCY_INFINITY);
-
-        assertEquals(key1.getW(), key2.getW());
-        assertEquals(JAVA_INFINITY, key1.getW());
-        assertEquals(JAVA_INFINITY, key2.getW());
+        assertThrows(IllegalArgumentException.class,
+                () -> BC.toP256K1PubKey(BOUNCY_INFINITY)
+        );
     }
 }

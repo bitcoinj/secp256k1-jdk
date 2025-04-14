@@ -20,7 +20,6 @@ import org.bitcoinj.secp.api.CompressedPubKeyData;
 import org.bitcoinj.secp.api.CompressedSignatureData;
 import org.bitcoinj.secp.api.P256K1FieldElement;
 import org.bitcoinj.secp.api.P256K1KeyPair;
-import org.bitcoinj.secp.api.P256K1Point;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
@@ -124,7 +123,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment pubKey = ecPubKeyCreate(privkeySegment);
         privkeySegment.fill((byte) 0x00);
         // Return serialized pubkey
-        return new PubKeyPojo(toPoint(pubKey));
+        return new P256k1PubKey.P256k1PubKeyImpl(toPoint(pubKey));
     }
 
     /* package */ MemorySegment ecPubKeyCreate(MemorySegment privkeySegment) {
@@ -191,7 +190,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             throw new IllegalStateException("Tweak_mul failed");
         }
-        return new PubKeyPojo(toPoint(pubKeySeg));
+        return new P256k1PubKey.P256k1PubKeyImpl(toPoint(pubKeySeg));
     }
 
     @Override
@@ -204,7 +203,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
         }
-        return new PubKeyPojo(toPoint(resultKeySeg));
+        return new P256k1PubKey.P256k1PubKeyImpl(toPoint(resultKeySeg));
     }
 
     public P256k1PubKey ecPubKeyCombine(P256k1PubKey key1) {
@@ -215,7 +214,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
         }
-        return new PubKeyPojo(toPoint(resultKeySeg));
+        return new P256k1PubKey.P256k1PubKeyImpl(toPoint(resultKeySeg));
     }
 
 
@@ -274,7 +273,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             System.out.println("Failed parsing the public key\n");
         }
-        return Result.checked(return_val, new PubKeyPojo(toPoint(pubkey)));
+        return Result.checked(return_val, new P256k1PubKey.P256k1PubKeyImpl(toPoint(pubkey)));
     }
 
     private MemorySegment pubKeyParse(P256k1PubKey pubKeyData) {
