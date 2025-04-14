@@ -79,13 +79,13 @@ public class Bouncy256k1 implements Secp256k1 {
     }
     
     @Override
-    public BouncyPrivKey ecPrivKeyCreate() {
+    public P256k1PrivKey ecPrivKeyCreate() {
         ECKeyPairGenerator generator = new ECKeyPairGenerator();
         ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(BC_CURVE, secureRandom);
         generator.init(keygenParams);
         AsymmetricCipherKeyPair keypair = generator.generateKeyPair();
         ECPrivateKeyParameters privParams = (ECPrivateKeyParameters) keypair.getPrivate();
-        return new BouncyPrivKey(privParams.getD());
+        return P256k1PrivKey.of(privParams.getD());
     }
 
     @Override
@@ -98,14 +98,14 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public P256K1KeyPair ecKeyPairCreate() {
-        BouncyPrivKey priv = ecPrivKeyCreate();
+        P256k1PrivKey priv = ecPrivKeyCreate();
         BouncyPubKey pub = ecPubKeyCreate(priv);
         return new BouncyKeyPair(priv, pub);
     }
 
     @Override
     public P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey) {
-        BouncyPrivKey priv = new BouncyPrivKey(privKey.getS());
+        P256k1PrivKey priv = P256k1PrivKey.of(privKey.getS());
         BouncyPubKey pub = ecPubKeyCreate(priv);
         return new BouncyKeyPair(priv, pub);
     }
