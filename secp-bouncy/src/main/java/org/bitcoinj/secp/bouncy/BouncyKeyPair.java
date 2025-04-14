@@ -17,6 +17,7 @@ package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256k1PrivKey;
+import org.bitcoinj.secp.api.P256k1PubKey;
 
 /**
  *
@@ -24,15 +25,15 @@ import org.bitcoinj.secp.api.P256k1PrivKey;
 public class BouncyKeyPair implements P256K1KeyPair {
 
     private final P256k1PrivKey privKey;
-    private final BouncyPubKey pubKey;
+    private final P256k1PubKey pubKey;
 
-    public BouncyKeyPair(P256k1PrivKey privKey, BouncyPubKey pubKey) {
+    public BouncyKeyPair(P256k1PrivKey privKey, P256k1PubKey pubKey) {
         this.privKey = privKey;
         this.pubKey = pubKey;
 
     }
     @Override
-    public BouncyPubKey getPublic() {
+    public P256k1PubKey getPublic() {
         return pubKey;
     }
     

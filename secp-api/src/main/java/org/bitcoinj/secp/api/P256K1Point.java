@@ -93,6 +93,10 @@ public interface P256K1Point {
                     P256K1FieldElement.of(point.getAffineY()));
         }
 
+        public static P256K1PointUncompressed of(BigInteger x, BigInteger y) {
+            return new P256K1PointUncompressed(P256K1FieldElement.of(x), P256K1FieldElement.of(y));
+        }
+
         @Override
         public P256K1FieldElement x() {
             return x;

@@ -89,24 +89,24 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public BouncyPubKey ecPubKeyCreate(P256k1PrivKey seckey) {
+    public P256k1PubKey ecPubKeyCreate(P256k1PrivKey seckey) {
         ECPoint G = BC_CURVE.getG();
         BigInteger secInt = seckey.getS();
         ECPoint pub = new FixedPointCombMultiplier().multiply(G, secInt).normalize();
-        return new BouncyPubKey(pub);
+        return BC.toP256K1PubKey(pub);
     }
 
     @Override
     public P256K1KeyPair ecKeyPairCreate() {
         P256k1PrivKey priv = ecPrivKeyCreate();
-        BouncyPubKey pub = ecPubKeyCreate(priv);
+        P256k1PubKey pub = ecPubKeyCreate(priv);
         return new BouncyKeyPair(priv, pub);
     }
 
     @Override
     public P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey) {
         P256k1PrivKey priv = P256k1PrivKey.of(privKey.getS());
-        BouncyPubKey pub = ecPubKeyCreate(priv);
+        P256k1PubKey pub = ecPubKeyCreate(priv);
         return new BouncyKeyPair(priv, pub);
     }
 
@@ -114,7 +114,7 @@ public class Bouncy256k1 implements Secp256k1 {
     public P256k1PubKey ecPubKeyTweakMul(P256k1PubKey pubKey, BigInteger scalarMultiplier) {
         ECPoint pubKeyBC = BC_CURVE.getCurve().createPoint(pubKey.getW().getAffineX(), pubKey.getW().getAffineY());
         ECPoint pub = new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier).normalize();
-        return new BouncyPubKey(pub);
+        return BC.toP256K1PubKey(pub);
     }
 
     @Override
@@ -122,12 +122,11 @@ public class Bouncy256k1 implements Secp256k1 {
         ECPoint pubKey1BC = BC_CURVE.getCurve().createPoint(key1.getW().getAffineX(), key1.getW().getAffineY());
         ECPoint pubKey2BC = BC_CURVE.getCurve().createPoint(key2.getW().getAffineX(), key2.getW().getAffineY());
         ECPoint result = pubKey1BC.add(pubKey2BC);
-        return new BouncyPubKey(result);
+        return BC.toP256K1PubKey(result);
     }
 
     @Override
     public byte[] ecPubKeySerialize(P256k1PubKey pubKey, int flags) {
-        if (!(pubKey instanceof BouncyPubKey)) throw new IllegalArgumentException("Not a bouncy key");
         boolean compressed;
         switch(flags) {
             case 2: compressed = false; break;          // SECP256K1_EC_UNCOMPRESSED())
@@ -145,8 +144,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public Result<P256k1PubKey> ecPubKeyParse(byte[] inputData) {
         org.bouncycastle.math.ec.ECPoint bcPoint = BC_CURVE.getCurve().decodePoint(inputData);
-        BouncyPubKey pubKey = new BouncyPubKey(bcPoint);
-        return Result.ok(pubKey);
+        return Result.ok(BC.toP256K1PubKey(bcPoint));
     }
 
     // TODO: Add constructor to create SignatureData from r and s
@@ -211,9 +209,9 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public Result<byte[]> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey) {
-        ECPoint point = new BouncyPubKey(pubKey.getW()).getBouncyPoint();
+        ECPoint point = BC.fromECPoint(pubKey.getW());
         ECPoint ssPoint = point.multiply(secKey.getS()).normalize();
-        byte[] hashed = ecdhHash(new BouncyPubKey(ssPoint));
+        byte[] hashed = ecdhHash(BC.toP256K1PubKey(ssPoint));
         return Result.ok(hashed);
     }
     
