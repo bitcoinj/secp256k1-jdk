@@ -27,9 +27,10 @@ import java.security.spec.ECPoint;
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 
 /**
- *
+ * @deprecated Use {@link P256K1KeyPair}  (@code P256K1KeyPair#P256K1KeyPairImpl}
  */
-public class OpaqueKeyPair implements P256K1KeyPair {
+@Deprecated
+class OpaqueKeyPair implements P256K1KeyPair {
     private final byte[] opaque;
 
     public OpaqueKeyPair(byte[] opaque) {

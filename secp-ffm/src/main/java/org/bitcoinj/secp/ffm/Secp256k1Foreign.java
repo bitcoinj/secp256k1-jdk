@@ -163,6 +163,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         do {
             seckey = fill_random(arena, 32);
         } while (secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, seckey) != 1);
+        // TODO: Parse keyPairSeg into standard P256K1KeyPairImpl
         P256K1KeyPair keyPair = new OpaqueKeyPair(keyPairSeg.toArray(JAVA_BYTE));
         keyPairSeg.fill((byte) 0x00);
         return keyPair;
@@ -174,6 +175,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment seckey = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
         int return_val = secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, seckey);
         assert(return_val == 1);
+        // TODO: Parse keyPairSeg into standard P256K1KeyPairImpl
         P256K1KeyPair keyPair = new OpaqueKeyPair(keyPairSeg.toArray(JAVA_BYTE));
         keyPairSeg.fill((byte) 0x00);
         return keyPair;
@@ -336,6 +338,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment sig = arena.allocate(64);
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, messageHash);
         MemorySegment auxiliary_rand = fill_random(arena, 32);
+        // TODO: Serialize standard P256K1KeyPair/P256K1KeyPairImpl here
         MemorySegment keypair = arena.allocateFrom(JAVA_BYTE, ((OpaqueKeyPair) keyPair).getOpaque());
 
         int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keypair, auxiliary_rand);
