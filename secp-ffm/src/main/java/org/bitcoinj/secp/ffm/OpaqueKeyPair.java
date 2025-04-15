@@ -51,7 +51,7 @@ public class OpaqueKeyPair implements P256K1KeyPair {
     }
 
     public P256k1PrivKey getPrivate() {
-        return new PrivKeyPojo(getEncoded());
+        return P256k1PrivKey.of(getEncoded());
     }
 
     @Override
