@@ -27,9 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HexFormat;
 
-/**
- * Port of secp256k1 sample {@code ecdsa.c} to Java
- */
+/// Java version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [ecdsa.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/ecdsa.c).
 public class Ecdsa {
     private static final HexFormat formatter = HexFormat.of();
     /* Instead of signing the message directly, we must sign a 32-byte hash.
