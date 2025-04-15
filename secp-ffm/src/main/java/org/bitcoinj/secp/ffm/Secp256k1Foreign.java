@@ -18,6 +18,7 @@ package org.bitcoinj.secp.ffm;
 import org.bitcoinj.secp.api.ByteArray;
 import org.bitcoinj.secp.api.CompressedPubKeyData;
 import org.bitcoinj.secp.api.CompressedSignatureData;
+import org.bitcoinj.secp.api.P256K1FieldElement;
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.api.P256k1PrivKey;
@@ -182,7 +183,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     @Override
     public P256k1PubKey ecPubKeyTweakMul(P256k1PubKey pubKey, BigInteger scalarMultiplier) {
         MemorySegment pubKeySeg = pubKeyParse(pubKey);
-        byte[] tweakBytes = P256k1PubKey.integerTo32Bytes(scalarMultiplier);
+        byte[] tweakBytes = P256K1FieldElement.integerTo32Bytes(scalarMultiplier);
         MemorySegment tweakSeg = arena.allocateFrom(JAVA_BYTE, tweakBytes);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_tweak_mul(ctx, pubKeySeg, tweakSeg);
         if (return_val != 1) {

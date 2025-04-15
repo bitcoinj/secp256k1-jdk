@@ -38,7 +38,7 @@ public interface P256K1XOnlyPubKey {
      */
     static Result<P256K1XOnlyPubKey> parse(byte[] serialized) {
         BigInteger x = new BigInteger(1, serialized);
-        return (x.compareTo((Secp256k1.FIELD.getP())) > 0)
+        return !P256K1FieldElement.isInRange(x)
                 ? Result.err(-1)
                 : Result.ok(P256K1XOnlyPubKey.of(x));
     }
@@ -84,7 +84,7 @@ public interface P256K1XOnlyPubKey {
          */
         @Override
         public byte[] getSerialized() {
-            return P256k1PubKey.integerTo32Bytes(x);
+            return P256K1FieldElement.integerTo32Bytes(x);
         }
 
         /**
