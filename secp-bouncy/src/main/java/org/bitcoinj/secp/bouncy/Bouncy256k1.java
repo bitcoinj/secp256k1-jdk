@@ -17,6 +17,7 @@ package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.api.CompressedPubKeyData;
 import org.bitcoinj.secp.api.CompressedSignatureData;
+import org.bitcoinj.secp.api.P256K1FieldElement;
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.api.P256k1PrivKey;
@@ -157,7 +158,8 @@ public class Bouncy256k1 implements Secp256k1 {
         signer.init(true, privKey);
         BigInteger[] components = signer.generateSignature(msg_hash_data);
         //return new ECDSASignature(components[0], components[1]).toCanonicalised();
-        SignatureData signatureData = new BouncySignature(components[0], components[1]);
+        SignatureData signatureData = new SignatureData.SignatureDataImpl(
+                P256K1FieldElement.of(components[0]), P256K1FieldElement.of(components[1]));
         return Result.ok(signatureData);
     }
 
@@ -173,16 +175,15 @@ public class Bouncy256k1 implements Secp256k1 {
 
     // TODO: Add getters to SignatureData to return r and s
     @Override
-    public Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey) {
+    public Result<Boolean> ecdsaVerify(SignatureData signature, byte[] msg_hash_data, P256k1PubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
         java.security.spec.ECPoint jPoint = pubKey.getW();
         org.bouncycastle.math.ec.ECPoint pubPoint = BC.fromECPoint(jPoint);
         ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_CURVE);
         signer.init(false, params);
-        BouncySignature signature = (BouncySignature) sig;
         boolean result;
         try {
-            result = signer.verifySignature(msg_hash_data, signature.r(), signature.s());
+            result = signer.verifySignature(msg_hash_data, signature.r().toBigInteger(), signature.s().toBigInteger());
         } catch (NullPointerException e) {
             // Bouncy Castle contains a bug that can cause NPEs given specially crafted signatures. Those signatures
             // are inherently invalid/attack sigs so we just fail them here rather than crash the thread.
