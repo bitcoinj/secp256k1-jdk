@@ -157,9 +157,8 @@ public class Bouncy256k1 implements Secp256k1 {
         ECPrivateKeyParameters privKey = new ECPrivateKeyParameters(privateKeyForSigning, BC_CURVE);
         signer.init(true, privKey);
         BigInteger[] components = signer.generateSignature(msg_hash_data);
-        //return new ECDSASignature(components[0], components[1]).toCanonicalised();
-        SignatureData signatureData = new SignatureData.SignatureDataImpl(
-                P256K1FieldElement.of(components[0]), P256K1FieldElement.of(components[1]));
+        SignatureData signatureData = SignatureData.of(P256K1FieldElement.of(components[0]),
+                P256K1FieldElement.of(components[1]));
         return Result.ok(signatureData);
     }
 

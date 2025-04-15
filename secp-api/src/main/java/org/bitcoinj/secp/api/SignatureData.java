@@ -26,16 +26,24 @@ public interface SignatureData extends ByteArray {
     P256K1FieldElement r();
     P256K1FieldElement s();
 
+    static SignatureData of(byte[] bytes) {
+        return new SignatureDataImpl(bytes);
+    }
+
+    static SignatureData of(P256K1FieldElement r, P256K1FieldElement s) {
+        return new SignatureDataImpl(r,s);
+    }
+
     class SignatureDataImpl implements SignatureData {
         private final P256K1FieldElement r;
         private final P256K1FieldElement s;
 
-        public SignatureDataImpl(P256K1FieldElement r, P256K1FieldElement s) {
+        SignatureDataImpl(P256K1FieldElement r, P256K1FieldElement s) {
             this.r = r;
             this.s = s;
         }
 
-        public SignatureDataImpl(byte[] signature) {
+        SignatureDataImpl(byte[] signature) {
             if (signature.length != 64) {
                 throw new IllegalArgumentException("Sig Not 64 bytes");
             }
