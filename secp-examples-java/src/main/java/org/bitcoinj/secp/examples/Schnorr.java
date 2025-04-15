@@ -22,9 +22,7 @@ import org.bitcoinj.secp.api.Secp256k1;
 
 import java.util.HexFormat;
 
-/**
- *
- */
+/// Java version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [schnorr.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/schnorr.c).
 public class Schnorr {
     private static final HexFormat formatter = HexFormat.of();
 
