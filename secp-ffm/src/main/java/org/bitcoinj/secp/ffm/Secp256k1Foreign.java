@@ -17,7 +17,6 @@ package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.api.ByteArray;
 import org.bitcoinj.secp.api.CompressedPubKeyData;
-import org.bitcoinj.secp.api.CompressedSignatureData;
 import org.bitcoinj.secp.api.P256K1FieldElement;
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
@@ -303,16 +302,14 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public Result<CompressedSignatureData> ecdsaSignatureSerializeCompact(SignatureData sig) {
-        MemorySegment serialized_signature = secp256k1_ecdsa_signature.allocate(arena);
-        int return_val = secp256k1_h.secp256k1_ecdsa_signature_serialize_compact(ctx, serialized_signature, arena.allocateFrom(JAVA_BYTE, sig.bytes()));
-        return Result.checked(return_val, new CompressedSignaturePojo(serialized_signature));
+    public byte[] ecdsaSignatureSerializeCompact(SignatureData sig) {
+        return sig.bytes();
     }
 
     @Override
-    public Result<SignatureData> ecdsaSignatureParseCompact(CompressedSignatureData serialized_signature) {
+    public Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature) {
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
-        int return_val = secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sig, arena.allocateFrom(JAVA_BYTE, serialized_signature.bytes()));
+        int return_val = secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sig, arena.allocateFrom(JAVA_BYTE, serialized_signature));
         return Result.checked(return_val, SignatureData.of(sig.toArray(JAVA_BYTE)));
     }
 

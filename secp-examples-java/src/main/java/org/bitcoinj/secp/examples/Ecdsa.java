@@ -16,7 +16,6 @@
 package org.bitcoinj.secp.examples;
 
 import org.bitcoinj.secp.api.CompressedPubKeyData;
-import org.bitcoinj.secp.api.CompressedSignatureData;
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Secp256k1;
@@ -60,7 +59,7 @@ public class Ecdsa {
 
             /* Serialize the signature in a compact form. Should always succeed according to
              the documentation in secp256k1.h. */
-            CompressedSignatureData serialized_signature = secp.ecdsaSignatureSerializeCompact(sig).get();
+            byte[] serialized_signature = secp.ecdsaSignatureSerializeCompact(sig);
 
             /* === Verification === */
 
@@ -79,7 +78,7 @@ public class Ecdsa {
             IO.println("Secret Key: " + privKey.getS().toString(16));
             IO.println("Public Key (as ECPoint): " + pubkey);
             IO.println("Public Key (Compressed): " + formatter.formatHex(compressed_pubkey));
-            IO.println("Signature: " + formatter.formatHex(serialized_signature.bytes()));
+            IO.println("Signature: " + formatter.formatHex(serialized_signature));
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for

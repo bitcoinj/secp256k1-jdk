@@ -16,7 +16,6 @@
 package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.api.CompressedPubKeyData;
-import org.bitcoinj.secp.api.CompressedSignatureData;
 import org.bitcoinj.secp.api.P256K1FieldElement;
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
@@ -163,16 +162,16 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public Result<CompressedSignatureData> ecdsaSignatureSerializeCompact(SignatureData sig) {
-        return Result.err(-1);
+    public byte[] ecdsaSignatureSerializeCompact(SignatureData sig) {
+        return sig.bytes();
     }
 
+    // TODO: Return Result.err when parsing fails
     @Override
-    public Result<SignatureData> ecdsaSignatureParseCompact(CompressedSignatureData serialized_signature) {
-        return Result.err(-1);
+    public Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature) {
+        return Result.ok(SignatureData.of(serialized_signature));
     }
 
-    // TODO: Add getters to SignatureData to return r and s
     @Override
     public Result<Boolean> ecdsaVerify(SignatureData signature, byte[] msg_hash_data, P256k1PubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
