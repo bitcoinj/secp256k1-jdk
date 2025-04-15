@@ -36,6 +36,9 @@ public interface SignatureData extends ByteArray {
         }
 
         public SignatureDataImpl(byte[] signature) {
+            if (signature.length != 64) {
+                throw new IllegalArgumentException("Sig Not 64 bytes");
+            }
             this.r = P256K1FieldElement.of(Arrays.copyOfRange(signature, 0, 32));
             this.s = P256K1FieldElement.of(Arrays.copyOfRange(signature, 32, 64));
         }
