@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp.ffm;
 
+import org.bitcoinj.secp.api.P256K1Point;
 import org.bitcoinj.secp.api.P256k1PubKey;
 
 import java.security.spec.ECPoint;
@@ -31,6 +32,11 @@ public class PubKeyPojo implements P256k1PubKey {
     @Override
     public ECPoint getW() {
         return point;
+    }
+
+    @Override
+    public P256K1Point.Uncompressed getPoint() {
+        return P256K1Point.P256K1PointUncompressed.of(getW());
     }
 
     @Override

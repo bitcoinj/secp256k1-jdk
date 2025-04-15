@@ -13,35 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.ffm;
+package org.bitcoinj.secp.bouncy;
 
-import org.bitcoinj.secp.api.P256K1Point;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SignatureData;
 
-import java.lang.foreign.MemorySegment;
-import java.security.spec.ECPoint;
+import java.math.BigInteger;
 
 /**
- *
+ * There's nothing inherently Bouncy about this, needs to migrate to API module.
  */
-/* package */ class PubKeySegment implements P256k1PubKey {
-    final MemorySegment segment;
+public class BouncySignature implements SignatureData {
+    private final BigInteger r;
+    private final BigInteger s;
 
-    PubKeySegment(MemorySegment segment) {
-        this.segment = segment;
-    }
-
-    MemorySegment segment() {
-        return segment;
-    }
-
-    @Override
-    public ECPoint getW() {
-        return null;
+    public BouncySignature(BigInteger r, BigInteger s) {
+        this.r = r;
+        this.s = s;
     }
 
     @Override
-    public P256K1Point.Uncompressed getPoint() {
-        return null;
+    public byte[] bytes() {
+        return new byte[0];
+    }
+
+    public BigInteger r() {
+        return r;
+    }
+
+    public BigInteger s() {
+        return s;
     }
 }
