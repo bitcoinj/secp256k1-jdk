@@ -20,15 +20,11 @@ import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Secp256k1;
 import org.bitcoinj.secp.api.Secp256k1Provider;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.HexFormat;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -57,7 +53,7 @@ public class PubKeyTest {
         System.out.println(HexFormat.of().formatHex(pubKeyUncompressed));
         assertArrayEquals(ONE_SERIALIZED, pubKeyUncompressed);
 
-        P256K1Point.Uncompressed uPoint = pubKey.getPoint();
+        P256K1Point.Uncompressed uPoint = pubKey.point();
         P256K1Point.Compressed cPoint = uPoint.compress();
         P256K1Point.Uncompressed roundTripPoint = secp.ecPointUncompress(cPoint);
 

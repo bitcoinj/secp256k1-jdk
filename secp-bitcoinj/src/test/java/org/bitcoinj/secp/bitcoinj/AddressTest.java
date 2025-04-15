@@ -94,7 +94,7 @@ public class AddressTest {
             P256k1PubKey G = new P256k1PubKey.P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
             P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
             P256k1PubKey Q = secp.ecPubKeyCombine(new P256k1PubKey.P256k1PubKeyImpl(new ECPoint(xOnlyKey.getX(), BigInteger.ZERO)), P2);
-            byte[] witnessProgram = Q.getXOnly().serialize();
+            byte[] witnessProgram = Q.xOnly().serialize();
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
         Assertions.assertEquals("bc1p87m65znsydcvkaqf9ysanum8aca8j3kvadxrs6agqztm9fpxsfus698zka", tapRootAddress.toString());
@@ -123,7 +123,7 @@ public class AddressTest {
             P256k1PubKey G = new P256k1PubKey.P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
             P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
             P256k1PubKey Q = secp.ecPubKeyCombine(pubkey, P2);
-            byte[] witnessProgram = Q.getXOnly().serialize();
+            byte[] witnessProgram = Q.xOnly().serialize();
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
         System.out.println(tapRootAddress);

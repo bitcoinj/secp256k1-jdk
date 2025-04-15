@@ -104,7 +104,7 @@ public interface P256K1XOnlyPubKey {
 
         public P256K1XOnlyPubKeyBytes(P256k1PubKey pubKey) {
             // Avoid using pubKey.getXOnly() and possible infinite recursion
-            this.x = pubKey.getXOnly().serialize();
+            this.x = pubKey.xOnly().serialize();
         }
 
         public P256K1XOnlyPubKeyBytes(byte[] xBytes) {
