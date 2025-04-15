@@ -20,6 +20,7 @@ import org.bitcoinj.secp.api.CompressedPubKeyData;
 import org.bitcoinj.secp.api.CompressedSignatureData;
 import org.bitcoinj.secp.api.P256K1FieldElement;
 import org.bitcoinj.secp.api.P256K1KeyPair;
+import org.bitcoinj.secp.api.P256K1Point;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
@@ -226,15 +227,20 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
      * @return
      */
     @Override
-    public CompressedPubKeyData ecPubKeySerialize(P256k1PubKey pubKey, int flags) {
+    public byte[] ecPubKeySerialize(P256k1PubKey pubKey, int flags) {
         boolean compressed = switch(flags) {
             case 2 -> false;           // SECP256K1_EC_UNCOMPRESSED())
             case 258 -> true;         // SECP256K1_EC_COMPRESSED())
             default -> throw new IllegalArgumentException();
         };
-        return new CompressedPubKeyPojo(pubKey.getEncoded(compressed));
+        return pubKey.getEncoded(compressed);
     }
 
+//    @Override
+//    public P256K1Point.Uncompressed ecPointUncompress(P256K1Point.Compressed compressedPoint) {
+//        return compressedPoint.uncompress();
+//    }
+    
     /* package */ static MemorySegment pubKeySerializeSegment(MemorySegment pubKeySegment, int flags) {
         int byteSize = switch(flags) {
             case 2 -> 65;           // SECP256K1_EC_UNCOMPRESSED())
@@ -257,7 +263,12 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public Result<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData) {
-        MemorySegment input = arena.allocateFrom(JAVA_BYTE, inputData.bytes());
+        return ecPubKeyParse(inputData.bytes());
+    }
+
+    @Override
+    public Result<P256k1PubKey> ecPubKeyParse(byte[] inputData) {
+        MemorySegment input = arena.allocateFrom(JAVA_BYTE, inputData);
         MemorySegment pubkey = secp256k1_pubkey.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
         if (return_val != 1) {

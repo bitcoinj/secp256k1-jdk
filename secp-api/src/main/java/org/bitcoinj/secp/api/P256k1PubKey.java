@@ -82,8 +82,15 @@ public interface P256k1PubKey extends ECPublicKey {
         return P256K1XOnlyPubKey.of(this.getW().getAffineX());
     }
 
+    /**
+     * Returns this key as a {@link org.bitcoinj.secp.api.P256K1Point.P256K1ECPoint} or, if it is
+     * the "point at infinity" it returns {@link ECPoint#POINT_INFINITY}
+     * @return point as {@code ECPoint} or subclass.
+     */
     @Override
     ECPoint getW();
+
+    P256K1Point.Uncompressed getPoint();
 
     @Override
     default ECParameterSpec getParams() {
