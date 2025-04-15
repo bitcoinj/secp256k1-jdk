@@ -132,7 +132,7 @@ public class Bouncy256k1 implements Secp256k1 {
             case 258: compressed = true; break;         // SECP256K1_EC_COMPRESSED())
             default: throw new  IllegalArgumentException();
         }
-        return pubKey.getEncoded(compressed);
+        return pubKey.serialize(compressed);
     }
 
     @Override
