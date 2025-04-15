@@ -15,9 +15,11 @@
  */
 package org.bitcoinj.secp.api;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,38 +33,47 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class P256K1FieldElementTest {
     static BigInteger p = Secp256k1.FIELD.getP();
 
-    @Test
-    void testDefaultImplementation() {
-        P256K1FieldElement element = P256K1FieldElement.of(BigInteger.ONE);
-        assertEquals(BigInteger.ONE, element.toBigInteger());
+    static List<BigInteger> inRangeFieldInts() {
+        return List.of(BigInteger.ZERO, BigInteger.ONE, p.subtract(BigInteger.ONE));
     }
 
-    @Test
-    void testIsInRange() {
-        // Less than zero is not in range
-        assertFalse(P256K1FieldElement.isInRange(BigInteger.ONE.negate()));
-
-        // Zero to p - 1 is in range
-        assertTrue(P256K1FieldElement.isInRange(BigInteger.ZERO));
-        assertTrue(P256K1FieldElement.isInRange(BigInteger.ONE));
-        assertTrue(P256K1FieldElement.isInRange(p.subtract(BigInteger.ONE)));
-
-        // p or greater is out of range
-        assertFalse(P256K1FieldElement.isInRange(p));
+    static List<BigInteger> outOfRangeFieldInts() {
+        return List.of(BigInteger.ONE.negate(), p);
     }
 
-    @Test
-    void testCheckInRangeValid() {
+    @MethodSource("inRangeFieldInts")
+    @ParameterizedTest(name = "n: {0}")
+    void testDefaultImplementation(BigInteger n) {
+        P256K1FieldElement element = P256K1FieldElement.of(n);
+        assertEquals(n, element.toBigInteger());
+    }
+
+    @MethodSource("inRangeFieldInts")
+    @ParameterizedTest(name = "n: {0}")
+    void testIsInRange(BigInteger n) {
+        assertTrue(P256K1FieldElement.isInRange(n));
+    }
+
+    @MethodSource("outOfRangeFieldInts")
+    @ParameterizedTest(name = "n: {0}")
+    void testIsOutOfRange(BigInteger n) {
+        assertFalse(P256K1FieldElement.isInRange(n));
+    }
+
+    @MethodSource("inRangeFieldInts")
+    @ParameterizedTest(name = "n: {0}")
+    void testCheckInRangeValid(BigInteger n) {
         assertDoesNotThrow(
-            () -> P256K1FieldElement.checkInRange(BigInteger.ONE)
+            () -> P256K1FieldElement.checkInRange(n)
         );
-        assertEquals(BigInteger.ONE, P256K1FieldElement.checkInRange(BigInteger.ONE));
+        assertEquals(n, P256K1FieldElement.checkInRange(n));
     }
 
-    @Test
-    void testCheckInRangeInvalid() {
+    @MethodSource("outOfRangeFieldInts")
+    @ParameterizedTest(name = "n: {0}")
+    void testCheckInRangeInvalid(BigInteger n) {
         assertThrows(IllegalArgumentException.class,
-            () -> P256K1FieldElement.checkInRange(p)
+            () -> P256K1FieldElement.checkInRange(n)
         );
     }
 }
