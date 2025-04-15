@@ -99,14 +99,14 @@ public class Bouncy256k1 implements Secp256k1 {
     public P256K1KeyPair ecKeyPairCreate() {
         P256k1PrivKey priv = ecPrivKeyCreate();
         P256k1PubKey pub = ecPubKeyCreate(priv);
-        return new BouncyKeyPair(priv, pub);
+        return new P256K1KeyPair.P256K1KeyPairImpl(priv, pub);
     }
 
     @Override
     public P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey) {
         P256k1PrivKey priv = P256k1PrivKey.of(privKey.getS());
         P256k1PubKey pub = ecPubKeyCreate(priv);
-        return new BouncyKeyPair(priv, pub);
+        return new P256K1KeyPair.P256K1KeyPairImpl(priv, pub);
     }
 
     @Override
