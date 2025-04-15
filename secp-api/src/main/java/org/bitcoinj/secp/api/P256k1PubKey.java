@@ -23,22 +23,38 @@ import java.security.spec.ECPoint;
  *
  */
 public interface P256k1PubKey extends ECPublicKey {
+    /**
+     * Return associated cryptographic algorithm. This implements the {@link java.security.Key} interface.
+     * @return string indicating algorithm
+     */
     @Override
     default String getAlgorithm() {
         return "Secp256k1";
     }
 
+    /**
+     * Return default encoding (serialization) format. This implements the {@link java.security.Key} interface.
+     * @return string indicating format
+     */
     @Override
     default String getFormat() {
         return "Compressed SEC";
     }
 
     /**
-     * Return key in primary encoded format (compressed)
+     * Return serialized key. This implements the {@link java.security.Key} interface and is an alias for {@link #serialize()}.
      * @return public key in compressed format
      */
     @Override
     default byte[] getEncoded() {
+        return serialize();
+    }
+
+    /**
+     * Serialize key in primary encoded format (compressed)
+     * @return public key in compressed format
+     */
+    default byte[] serialize() {
         return getCompressed();
     }
 
@@ -47,7 +63,7 @@ public interface P256k1PubKey extends ECPublicKey {
      * @param compressed Use compressed variant of format
      * @return public key in SEC format
      */
-    default byte[] getEncoded(boolean compressed) {
+    default byte[] serialize(boolean compressed) {
         return compressed
                 ? getCompressed()
                 : getUncompressed();

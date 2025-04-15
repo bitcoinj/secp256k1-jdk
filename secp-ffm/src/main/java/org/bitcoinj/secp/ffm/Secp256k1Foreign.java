@@ -232,7 +232,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             case 258 -> true;         // SECP256K1_EC_COMPRESSED())
             default -> throw new IllegalArgumentException();
         };
-        return pubKey.getEncoded(compressed);
+        return pubKey.serialize(compressed);
     }
 
 //    @Override
