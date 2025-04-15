@@ -16,7 +16,7 @@
 package org.bitcoinj.secp.api;
 
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.FieldSource;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -32,35 +32,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class P256K1FieldElementTest {
     static BigInteger p = Secp256k1.FIELD.getP();
+    static List<BigInteger> inRangeFieldInts = List.of(BigInteger.ZERO,BigInteger.ONE, p.subtract(BigInteger.ONE));
+    static List<BigInteger> outOfRangeFieldInts =List.of(BigInteger.ONE.negate(), p);
 
-    static List<BigInteger> inRangeFieldInts() {
-        return List.of(BigInteger.ZERO, BigInteger.ONE, p.subtract(BigInteger.ONE));
-    }
-
-    static List<BigInteger> outOfRangeFieldInts() {
-        return List.of(BigInteger.ONE.negate(), p);
-    }
-
-    @MethodSource("inRangeFieldInts")
+    @FieldSource("inRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testDefaultImplementation(BigInteger n) {
         P256K1FieldElement element = P256K1FieldElement.of(n);
         assertEquals(n, element.toBigInteger());
     }
 
-    @MethodSource("inRangeFieldInts")
+    @FieldSource("inRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testIsInRange(BigInteger n) {
         assertTrue(P256K1FieldElement.isInRange(n));
     }
 
-    @MethodSource("outOfRangeFieldInts")
+    @FieldSource("outOfRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testIsOutOfRange(BigInteger n) {
         assertFalse(P256K1FieldElement.isInRange(n));
     }
 
-    @MethodSource("inRangeFieldInts")
+    @FieldSource("inRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testCheckInRangeValid(BigInteger n) {
         assertDoesNotThrow(
@@ -69,7 +63,7 @@ public class P256K1FieldElementTest {
         assertEquals(n, P256K1FieldElement.checkInRange(n));
     }
 
-    @MethodSource("outOfRangeFieldInts")
+    @FieldSource("outOfRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testCheckInRangeInvalid(BigInteger n) {
         assertThrows(IllegalArgumentException.class,
