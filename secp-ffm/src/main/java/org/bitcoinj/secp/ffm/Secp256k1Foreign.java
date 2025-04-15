@@ -111,7 +111,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         do {
             seckey = fill_random(arena, 32);
         } while (secp256k1_h.secp256k1_ec_seckey_verify(ctx, seckey) != 1);
-        P256k1PrivKey privKey = new PrivKeyPojo(seckey);
+        P256k1PrivKey privKey = P256k1PrivKey.of(seckey.toArray(JAVA_BYTE));
         seckey.fill((byte) 0x00);   
         return privKey;
     }

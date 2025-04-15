@@ -66,6 +66,10 @@ public interface P256k1PrivKey extends ECPrivateKey {
         return new P256k1PrivKeyDefault(p);
     }
 
+    static P256k1PrivKey of(byte[] bytes) {
+        return new P256k1PrivKeyDefault(bytes);
+    }
+
     /**
      * Destroy must be implemented and must not throw (checked) exceptions
      */
