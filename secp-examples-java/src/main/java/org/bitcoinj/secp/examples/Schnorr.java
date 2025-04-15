@@ -42,7 +42,7 @@ public class Schnorr {
             /* Public key creation using a valid context with a verified secret key should never fail */
             P256k1PubKey pubkey = secp.ecPubKeyCreate(keyPair);
 
-            P256K1XOnlyPubKey xOnly = pubkey.getXOnly();
+            P256K1XOnlyPubKey xOnly = pubkey.xOnly();
 
             byte[] serializedXOnly = xOnly.serialize();
 

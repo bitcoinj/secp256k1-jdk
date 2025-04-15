@@ -94,7 +94,11 @@ public interface P256k1PubKey extends ECPublicKey {
         return encoded;
     }
 
-    default P256K1XOnlyPubKey getXOnly() {
+    /**
+     * Return the x-only public key.
+     * @return x-only pubkey
+     */
+    default P256K1XOnlyPubKey xOnly() {
         return P256K1XOnlyPubKey.of(this.getW().getAffineX());
     }
 
@@ -106,7 +110,7 @@ public interface P256k1PubKey extends ECPublicKey {
     @Override
     ECPoint getW();
 
-    P256K1Point.Uncompressed getPoint();
+    P256K1Point.Uncompressed point();
 
     @Override
     default ECParameterSpec getParams() {
@@ -154,7 +158,7 @@ public interface P256k1PubKey extends ECPublicKey {
         }
 
         @Override
-        public P256K1Point.Uncompressed getPoint() {
+        public P256K1Point.Uncompressed point() {
             return P256K1Point.P256K1PointUncompressed.of(getW());
         }
 
