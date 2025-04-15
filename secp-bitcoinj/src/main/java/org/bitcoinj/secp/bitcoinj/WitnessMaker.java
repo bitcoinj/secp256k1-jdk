@@ -45,13 +45,13 @@ public class WitnessMaker {
         P256k1PubKey G = new P256k1PubKey.P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
         P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
         P256k1PubKey Q = secp.ecPubKeyCombine(pubKey, P2);
-        return Q.getXOnly().getSerialized();
+        return Q.getXOnly().serialize();
     }
 
     public static BigInteger calcTweak(P256K1XOnlyPubKey xOnlyPubKey) {
         var digest = newDigest();
         digest.update(tweakPrefix);
-        byte[] hash = digest.digest(xOnlyPubKey.getSerialized());
+        byte[] hash = digest.digest(xOnlyPubKey.serialize());
         return new BigInteger(1, hash);
     }
 

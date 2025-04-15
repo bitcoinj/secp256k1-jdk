@@ -15,7 +15,6 @@
  */
 package org.bitcoinj.secp.api;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
@@ -63,8 +62,8 @@ public interface SignatureData extends ByteArray {
         @Override
         public byte[] bytes() {
             byte[] signature = new byte[64];
-            System.arraycopy(r.toBytes(), 0, signature, 0, 32);
-            System.arraycopy(s.toBytes(), 0, signature, 32, 32);
+            System.arraycopy(r.serialize(), 0, signature, 0, 32);
+            System.arraycopy(s.serialize(), 0, signature, 32, 32);
             return signature;
         }
     }

@@ -56,7 +56,7 @@ public interface P256K1Point {
             compressed[0] = isOdd()
                     ? (byte) 0x03      // odd
                     : (byte) 0x02;     // even;
-            System.arraycopy(x().toBytes(),
+            System.arraycopy(x().serialize(),
                     0,
                     compressed,
                     1,

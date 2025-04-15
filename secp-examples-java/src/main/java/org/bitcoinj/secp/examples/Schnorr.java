@@ -44,7 +44,7 @@ public class Schnorr {
 
             P256K1XOnlyPubKey xOnly = pubkey.getXOnly();
 
-            byte[] serializedXOnly = xOnly.getSerialized();
+            byte[] serializedXOnly = xOnly.serialize();
 
             /* === Signing === */
 

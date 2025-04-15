@@ -350,7 +350,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     public Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
         MemorySegment sigSegment = arena.allocateFrom(JAVA_BYTE, signature);
         MemorySegment msgSegment = arena.allocateFrom(JAVA_BYTE, msg_hash);
-        MemorySegment pubKeySegment = arena.allocateFrom(JAVA_BYTE, pubKey.getSerialized()); // 32-byte
+        MemorySegment pubKeySegment = arena.allocateFrom(JAVA_BYTE, pubKey.serialize()); // 32-byte
         MemorySegment pubKeySegmentOpaque = secp256k1_xonly_pubkey.allocate(arena); // 64-byte opaque
         int r = secp256k1_h.secp256k1_xonly_pubkey_parse(ctx, pubKeySegmentOpaque, pubKeySegment);
         if (r != 1) return Result.err(r);
