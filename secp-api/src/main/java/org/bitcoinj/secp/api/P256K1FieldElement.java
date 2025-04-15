@@ -37,7 +37,11 @@ public interface P256K1FieldElement {
      * @return valid element
      */
     static P256K1FieldElement of(BigInteger i) {
-        return new P256K1FieldElementDefault(i);
+        return new P256K1FieldElementDefault(checkInRange(i));
+    }
+
+    static P256K1FieldElement of(byte[] i) {
+        return new P256K1FieldElementDefault(checkInRange(i));
     }
 
     /**
@@ -60,6 +64,11 @@ public interface P256K1FieldElement {
         if (!isInRange(x)) {
             throw new IllegalArgumentException("BigInteger is not a valid P256K1FieldElement: " + x);
         }
+        return x;
+    }
+
+    static byte[] checkInRange(byte[] x) {
+        // TBD
         return x;
     }
 
@@ -89,6 +98,10 @@ public interface P256K1FieldElement {
 
         P256K1FieldElementDefault(BigInteger i) {
             value = integerTo32Bytes(i);
+        }
+
+        P256K1FieldElementDefault(byte[] bytes) {
+            value = bytes;
         }
 
         @Override

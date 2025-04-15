@@ -15,22 +15,46 @@
  */
 package org.bitcoinj.secp.api;
 
+import java.math.BigInteger;
+import java.util.Arrays;
+
 /**
  *
  */
 public interface SignatureData extends ByteArray {
-    byte[] bytes();
+
+    P256K1FieldElement r();
+    P256K1FieldElement s();
 
     class SignatureDataImpl implements SignatureData {
-        private final byte[] signature;
+        private final P256K1FieldElement r;
+        private final P256K1FieldElement s;
+
+        public SignatureDataImpl(P256K1FieldElement r, P256K1FieldElement s) {
+            this.r = r;
+            this.s = s;
+        }
 
         public SignatureDataImpl(byte[] signature) {
-            this.signature = signature;
+            this.r = P256K1FieldElement.of(Arrays.copyOfRange(signature, 0, 32));
+            this.s = P256K1FieldElement.of(Arrays.copyOfRange(signature, 32, 64));
         }
+
+        public P256K1FieldElement r() {
+            return r;
+        }
+
+        public P256K1FieldElement s() {
+            return s;
+        }
+
 
         @Override
         public byte[] bytes() {
-            return signature.clone();
+            byte[] signature = new byte[64];
+            System.arraycopy(r.toBytes(), 0, signature, 0, 32);
+            System.arraycopy(s.toBytes(), 0, signature, 32, 32);
+            return signature;
         }
     }
 }
