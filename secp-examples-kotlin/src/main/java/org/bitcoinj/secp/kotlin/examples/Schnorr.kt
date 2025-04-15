@@ -39,7 +39,7 @@ fun main() {
 
         val xOnly = pubkey.xOnly
 
-        val serializedXOnly = xOnly.getSerialized()
+        val serializedXOnly = xOnly.serialize()
 
         /* === Signing === */
         val msg_hash = secp.taggedSha256(tag, msg)

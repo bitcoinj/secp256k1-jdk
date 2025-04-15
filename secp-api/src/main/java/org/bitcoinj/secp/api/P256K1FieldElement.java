@@ -32,7 +32,7 @@ public interface P256K1FieldElement {
     /**
      * @return the serialized field element (32 bytes unsigned)
      */
-    byte[] toBytes();
+    byte[] serialize();
 
     /**
      * Construct a {@code P256K1FieldElement} from a BigInteger
@@ -115,7 +115,7 @@ public interface P256K1FieldElement {
         }
 
         @Override
-        public byte[] toBytes() {
+        public byte[] serialize() {
             return value.clone();
         }
 

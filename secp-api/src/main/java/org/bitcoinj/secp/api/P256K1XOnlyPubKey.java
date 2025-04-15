@@ -29,7 +29,7 @@ public interface P256K1XOnlyPubKey {
     /**
      * @return Big-endian, 32 bytes
      */
-    byte[] getSerialized();
+    byte[] serialize();
 
     /**
      * Parses a serialized x-only pubkey and returns an instance of the default implementation
@@ -83,7 +83,7 @@ public interface P256K1XOnlyPubKey {
          * @return Big-endian, 32 bytes
          */
         @Override
-        public byte[] getSerialized() {
+        public byte[] serialize() {
             return P256K1FieldElement.integerTo32Bytes(x);
         }
 
@@ -92,7 +92,7 @@ public interface P256K1XOnlyPubKey {
          */
         @Override
         public String toString() {
-            return ByteArray.toHexString(getSerialized());
+            return ByteArray.toHexString(serialize());
         }
     }
 
@@ -104,7 +104,7 @@ public interface P256K1XOnlyPubKey {
 
         public P256K1XOnlyPubKeyBytes(P256k1PubKey pubKey) {
             // Avoid using pubKey.getXOnly() and possible infinite recursion
-            this.x = pubKey.getXOnly().getSerialized();
+            this.x = pubKey.getXOnly().serialize();
         }
 
         public P256K1XOnlyPubKeyBytes(byte[] xBytes) {
@@ -129,7 +129,7 @@ public interface P256K1XOnlyPubKey {
          * @return Big-endian, 32 bytes
          */
         @Override
-        public byte[] getSerialized() {
+        public byte[] serialize() {
             return bytes();
         }
 
@@ -138,7 +138,7 @@ public interface P256K1XOnlyPubKey {
          */
         @Override
         public String toString() {
-            return ByteArray.toHexString(getSerialized());
+            return ByteArray.toHexString(serialize());
         }
     }
 }
