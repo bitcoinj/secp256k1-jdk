@@ -41,6 +41,7 @@ import java.security.spec.ECPoint;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
+import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.NULL;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 
@@ -351,6 +352,17 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (r != 1) return Result.err(r);
         int return_val = secp256k1_h.secp256k1_schnorrsig_verify(ctx, sigSegment, msgSegment, msg_hash.length, pubKeySegmentOpaque);
         return Result.ok(return_val == 1);
+    }
+
+    @Override
+    public Result<byte[]> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey) {
+        MemorySegment pubKeySeg = pubKeyParse(pubKey);  // Get pubkey in 64-byte internal format
+        MemorySegment secKeySeg = arena.allocateFrom(JAVA_BYTE, secKey.getEncoded());
+        MemorySegment output = arena.allocate(32);
+        int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, secKeySeg, NULL(), NULL());
+        return success == 1
+                ? Result.ok(output.toArray(JAVA_BYTE))
+                : Result.err(-1);
     }
 
     /**

@@ -36,6 +36,8 @@ import org.bouncycastle.math.ec.FixedPointCombMultiplier;
 import org.bouncycastle.math.ec.FixedPointUtil;
 
 import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 /**
@@ -160,6 +162,25 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
         return Result.err(-1);
+    }
+
+    @Override
+    public Result<byte[]> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey) {
+        ECPoint point = new BouncyPubKey(pubKey.getW()).getBouncyPoint();
+        ECPoint ssPoint = point.multiply(secKey.getS()).normalize();
+        byte[] hashed = ecdhHash(new BouncyPubKey(ssPoint));
+        return Result.ok(hashed);
+    }
+    
+    private byte[] ecdhHash(P256k1PubKey sspk) {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);  // Can't happen.
+        }
+        digest.update(sspk.getCompressed());
+        return digest.digest();
     }
 
     @Override

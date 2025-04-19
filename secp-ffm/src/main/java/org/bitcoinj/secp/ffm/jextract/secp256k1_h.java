@@ -3143,6 +3143,159 @@ public class secp256k1_h {
            throw new AssertionError("should not reach here", ex$);
         }
     }
+
+    private static class secp256k1_ecdh_hash_function_sha256$constants {
+        public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
+        public static final MemorySegment SEGMENT = secp256k1_h.findOrThrow("secp256k1_ecdh_hash_function_sha256").reinterpret(LAYOUT.byteSize());
+    }
+
+    /**
+     * Layout for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ecdh_hash_function secp256k1_ecdh_hash_function_sha256
+     * }
+     */
+    public static AddressLayout secp256k1_ecdh_hash_function_sha256$layout() {
+        return secp256k1_ecdh_hash_function_sha256$constants.LAYOUT;
+    }
+
+    /**
+     * Segment for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ecdh_hash_function secp256k1_ecdh_hash_function_sha256
+     * }
+     */
+    public static MemorySegment secp256k1_ecdh_hash_function_sha256$segment() {
+        return secp256k1_ecdh_hash_function_sha256$constants.SEGMENT;
+    }
+
+    /**
+     * Getter for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ecdh_hash_function secp256k1_ecdh_hash_function_sha256
+     * }
+     */
+    public static MemorySegment secp256k1_ecdh_hash_function_sha256() {
+        return secp256k1_ecdh_hash_function_sha256$constants.SEGMENT.get(secp256k1_ecdh_hash_function_sha256$constants.LAYOUT, 0L);
+    }
+
+    /**
+     * Setter for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ecdh_hash_function secp256k1_ecdh_hash_function_sha256
+     * }
+     */
+    public static void secp256k1_ecdh_hash_function_sha256(MemorySegment varValue) {
+        secp256k1_ecdh_hash_function_sha256$constants.SEGMENT.set(secp256k1_ecdh_hash_function_sha256$constants.LAYOUT, 0L, varValue);
+    }
+
+    private static class secp256k1_ecdh_hash_function_default$constants {
+        public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
+        public static final MemorySegment SEGMENT = secp256k1_h.findOrThrow("secp256k1_ecdh_hash_function_default").reinterpret(LAYOUT.byteSize());
+    }
+
+    /**
+     * Layout for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ecdh_hash_function secp256k1_ecdh_hash_function_default
+     * }
+     */
+    public static AddressLayout secp256k1_ecdh_hash_function_default$layout() {
+        return secp256k1_ecdh_hash_function_default$constants.LAYOUT;
+    }
+
+    /**
+     * Segment for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ecdh_hash_function secp256k1_ecdh_hash_function_default
+     * }
+     */
+    public static MemorySegment secp256k1_ecdh_hash_function_default$segment() {
+        return secp256k1_ecdh_hash_function_default$constants.SEGMENT;
+    }
+
+    /**
+     * Getter for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ecdh_hash_function secp256k1_ecdh_hash_function_default
+     * }
+     */
+    public static MemorySegment secp256k1_ecdh_hash_function_default() {
+        return secp256k1_ecdh_hash_function_default$constants.SEGMENT.get(secp256k1_ecdh_hash_function_default$constants.LAYOUT, 0L);
+    }
+
+    /**
+     * Setter for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ecdh_hash_function secp256k1_ecdh_hash_function_default
+     * }
+     */
+    public static void secp256k1_ecdh_hash_function_default(MemorySegment varValue) {
+        secp256k1_ecdh_hash_function_default$constants.SEGMENT.set(secp256k1_ecdh_hash_function_default$constants.LAYOUT, 0L, varValue);
+    }
+
+    private static class secp256k1_ecdh {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdh");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdh(const secp256k1_context *ctx, unsigned char *output, const secp256k1_pubkey *pubkey, const unsigned char *seckey, secp256k1_ecdh_hash_function hashfp, void *data)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_ecdh$descriptor() {
+        return secp256k1_ecdh.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdh(const secp256k1_context *ctx, unsigned char *output, const secp256k1_pubkey *pubkey, const unsigned char *seckey, secp256k1_ecdh_hash_function hashfp, void *data)
+     * }
+     */
+    public static MethodHandle secp256k1_ecdh$handle() {
+        return secp256k1_ecdh.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdh(const secp256k1_context *ctx, unsigned char *output, const secp256k1_pubkey *pubkey, const unsigned char *seckey, secp256k1_ecdh_hash_function hashfp, void *data)
+     * }
+     */
+    public static MemorySegment secp256k1_ecdh$address() {
+        return secp256k1_ecdh.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_ecdh(const secp256k1_context *ctx, unsigned char *output, const secp256k1_pubkey *pubkey, const unsigned char *seckey, secp256k1_ecdh_hash_function hashfp, void *data)
+     * }
+     */
+    public static int secp256k1_ecdh(MemorySegment ctx, MemorySegment output, MemorySegment pubkey, MemorySegment seckey, MemorySegment hashfp, MemorySegment data) {
+        var mh$ = secp256k1_ecdh.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_ecdh", ctx, output, pubkey, seckey, hashfp, data);
+            }
+            return (int)mh$.invokeExact(ctx, output, pubkey, seckey, hashfp, data);
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
     private static final MemorySegment NULL = MemorySegment.ofAddress(0L);
     /**
      * {@snippet lang=c :
