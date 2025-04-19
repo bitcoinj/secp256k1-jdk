@@ -10,4 +10,5 @@ jextract --target-package org.bitcoinj.secp.ffm.jextract \
         --use-system-load-library \
         -lsecp256k1 \
         --header-class-name secp256k1_h \
-        $INC_PATH/secp256k1_schnorrsig.h
+        $INC_PATH/secp256k1_schnorrsig.h \
+        $INC_PATH/secp256k1_ecdh.h
