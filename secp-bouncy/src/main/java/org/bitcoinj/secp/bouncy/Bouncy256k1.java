@@ -89,9 +89,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public P256k1PubKey ecPubKeyCreate(P256k1PrivKey seckey) {
-        ECPoint G = BC_CURVE.getG();
-        BigInteger secInt = seckey.getS();
-        ECPoint pub = new FixedPointCombMultiplier().multiply(G, secInt).normalize();
+        ECPoint pub = BC_CURVE.getG().multiply(seckey.getS()).normalize();
         return BC.toP256K1PubKey(pub);
     }
 
@@ -184,7 +182,7 @@ public class Bouncy256k1 implements Secp256k1 {
         }
         return Result.ok(result);
     }
-    
+
     @Override
     public byte[] taggedSha256(byte[] tag, byte[] message) {
         return new byte[0];
