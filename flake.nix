@@ -21,11 +21,11 @@
         devShells.default = pkgs.mkShell {
           inputsFrom = with pkgs ; [ secp256k1 ];
           packages = with pkgs ; [
-                jdk23                      # JDK 23 will be in PATH
+                jdk24                      # JDK 24 will be in PATH
                 # current jextract in nixpkgs is broken, see: https://github.com/NixOS/nixpkgs/issues/354591
                 # jextract                 # jextract (Nix package) contains a jlinked executable and bundles its own JDK
                 (gradle.override {         # Gradle 8.x (Nix package) runs using an internally-linked JDK
-                    java = jdk23;          # Run Gradle with this JDK
+                    java = jdk24;          # Run Gradle with this JDK
                 })
             ];
         };
@@ -34,7 +34,7 @@
           inputsFrom = with pkgs ; [ secp256k1 ];
           packages = with pkgs ; [
                 (gradle.override {         # Gradle 8.x (Nix package) runs using an internally-linked JDK
-                    java = jdk23_headless; # Run Gradle with this JDK
+                    java = jdk24_headless; # Run Gradle with this JDK
                 })
             ];
         };
