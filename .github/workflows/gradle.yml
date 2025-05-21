@@ -60,4 +60,4 @@ jobs:
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
       - name: Build in Nix development shell
-        run: nix develop -c gradle build run runEcdsa
+        run: nix develop -c gradle -PjavaToolchainVersion=24 build run runEcdsa
