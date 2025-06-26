@@ -2,3 +2,5 @@
 .gradle/
 build/
 secp-*/bin/
+.direnv/
+.envrc
