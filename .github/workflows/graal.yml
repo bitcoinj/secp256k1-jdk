@@ -35,6 +35,8 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
+      - name: Install coreutils (sha256sum, stat) with Nix
+        run: nix profile install nixpkgs#coreutils
       - name: Build (JIT) with Gradle
         run: ./gradlew -PjavaToolchainVersion=25 build
       - name: Run Java & Kotlin Examples
@@ -46,6 +48,10 @@ jobs:
           export LD_LIBRARY_PATH="$HOME/.nix-profile/lib"
           export DYLD_LIBRARY_PATH="$HOME/.nix-profile/lib"
           ./secp-examples-java/build/schnorr-example
+      - name: Print output size and sha256sum
+        run: |
+          stat --format="%s %n" ./secp-examples-java/build/schnorr-example
+          sha256sum             ./secp-examples-java/build/schnorr-example
 
   build_nix:
     runs-on: ${{ matrix.os }}
@@ -63,6 +69,8 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
+      - name: Install coreutils (sha256sum, stat) with Nix
+        run: nix profile install nixpkgs#coreutils
       - name: Build in Nix development shell
         run: nix develop -c gradle build secp-examples-java:nativeCompile
       - name: Run Schnorr Native Example
@@ -70,3 +78,7 @@ jobs:
           export LD_LIBRARY_PATH="$HOME/.nix-profile/lib"
           export DYLD_LIBRARY_PATH="$HOME/.nix-profile/lib"
           ./secp-examples-java/build/schnorr-example
+      - name: Print output size and sha256sum
+        run: |
+          stat --format="%s %n" ./secp-examples-java/build/schnorr-example
+          sha256sum             ./secp-examples-java/build/schnorr-example
