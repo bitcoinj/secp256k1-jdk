@@ -78,6 +78,7 @@ tasks.register('nativeCompileSchnorr', Exec) {
             '-H:Name=schnorr-example',
             '-H:+ForeignAPISupport',
             '-H:+SharedArenaSupport',
+            '-H:-CheckToolchain',  // Needed in Nix Dev Shell
             '--features=org.bitcoinj.secp.examples.ForeignRegistrationFeature',
             '--enable-native-access=ALL-UNNAMED',
             '-H:+ReportUnsupportedElementsAtRuntime',
@@ -105,6 +106,7 @@ tasks.register('nativeCompileEcdsa', Exec) {
             '-H:Name=ecdsa-example',
             '-H:+ForeignAPISupport',
             '-H:+SharedArenaSupport',
+            '-H:-CheckToolchain',  // Needed in Nix Dev Shell
             '--features=org.bitcoinj.secp.examples.ForeignRegistrationFeature',
             '--enable-native-access=ALL-UNNAMED',
             '-H:+ReportUnsupportedElementsAtRuntime',

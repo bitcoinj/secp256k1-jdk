@@ -22,16 +22,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1750776420,
-        "narHash": "sha256-/CG+w0o0oJ5itVklOoLbdn2dGB0wbZVOoDm4np6w09A=",
-        "owner": "nixos",
+        "lastModified": 1754243666,
+        "narHash": "sha256-fzDOhSmHlxZacSXW4ECfKIPSgWDkFVBcH8yfeh4u5yI=",
+        "owner": "nixpkgs-jdk-ea",
         "repo": "nixpkgs",
-        "rev": "30a61f056ac492e3b7cdcb69c1e6abdcf00e39cf",
+        "rev": "9e52b39c8487b1a66b5f9155a9b005f89e05c24a",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
+        "owner": "nixpkgs-jdk-ea",
+        "ref": "msgilligan/graalvm-oracle-25ea",
         "repo": "nixpkgs",
         "type": "github"
       }
