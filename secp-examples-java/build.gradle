@@ -3,10 +3,6 @@ plugins {
     id 'application'
 }
 
-tasks.withType(JavaCompile).configureEach {
-    //options.release = 23
-}
-
 ext.moduleName = 'org.bitcoinj.secp.examples'
 
 dependencies {
