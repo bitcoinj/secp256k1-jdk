@@ -17,4 +17,5 @@
 module org.bitcoinj.secp.examples {
     requires org.bitcoinj.secp.api;
     requires org.jspecify;
+    requires org.graalvm.nativeimage;
 }
