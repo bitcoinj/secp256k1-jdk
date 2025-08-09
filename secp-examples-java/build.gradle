@@ -9,6 +9,9 @@ dependencies {
     implementation project(':secp-api')
     runtimeOnly project(':secp-bouncy')
     runtimeOnly project(':secp-ffm')
+
+    // This is only needed for ForeignRegistrationFeature and the native-image build
+    implementation group: 'org.graalvm.sdk', name: 'nativeimage', version: '24.2.2'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -20,6 +23,7 @@ jar {
     inputs.property("moduleName", moduleName)
     manifest {
         attributes  'Implementation-Title': 'Example secp256k1-jdk Apps',
+                'Main-Class': application.mainClass,
                 'Implementation-Version': archiveVersion.get()
     }
 }
@@ -37,6 +41,11 @@ run {
     jvmArgs += '--enable-native-access=org.bitcoinj.secp.ffm'
 }
 
+configurations {
+    nativeToolImplementation.extendsFrom implementation
+    nativeToolRuntimeOnly.extendsFrom runtimeOnly
+}
+
 tasks.register('runEcdsa', JavaExec) {
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
@@ -46,4 +55,62 @@ tasks.register('runEcdsa', JavaExec) {
     mainModule = 'org.bitcoinj.secp.examples'
     mainClass = 'org.bitcoinj.secp.examples.Ecdsa'
     jvmArgs += '--enable-native-access=org.bitcoinj.secp.ffm'
+}
+
+tasks.register('nativeCompile') {
+    dependsOn 'nativeCompileSchnorr', 'nativeCompileEcdsa'
+}
+
+// Compile a native image using GraalVM's native-image tool
+// Graal must be installed at $GRAALVM_HOME
+tasks.register('nativeCompileSchnorr', Exec) {
+    dependsOn jar
+    workingDir = projectDir
+    executable = "${System.env.GRAALVM_HOME}/bin/native-image"
+    args = ['--verbose',
+            '--no-fallback',
+            '--module', 'org.bitcoinj.secp.examples/org.bitcoinj.secp.examples.Schnorr',
+            '--module-path', jar.archiveFile.get(),
+            '--module-path', "${-> configurations.nativeToolImplementation.asPath}", // Lazy configuration resolution
+            '--module-path', "${-> configurations.nativeToolRuntimeOnly.asPath}",   // Lazy configuration resolution
+            '--add-modules', 'org.bitcoinj.secp.ffm',
+            '--enable-native-access=org.bitcoinj.secp.ffm',
+            '-H:Path=build',
+            '-H:Name=schnorr-example',
+            '-H:+ForeignAPISupport',
+            '-H:+SharedArenaSupport',
+            '-H:-CheckToolchain',
+            '--features=org.bitcoinj.secp.examples.ForeignRegistrationFeature',
+            '--enable-native-access=ALL-UNNAMED',
+            '-H:+ReportUnsupportedElementsAtRuntime',
+            '-H:+ReportExceptionStackTraces'
+    ]
+}
+
+// Compile a native image using GraalVM's native-image tool
+// Graal must be installed at $GRAALVM_HOME
+// THIS IS NOT WORKING YET, THERE'S A PROBLEM AT RUNTIME:
+// "Cannot perform downcall with leaf type (long,long,long,long,long)int as it was not registered at compilation time"
+tasks.register('nativeCompileEcdsa', Exec) {
+    dependsOn jar
+    workingDir = projectDir
+    executable = "${System.env.GRAALVM_HOME}/bin/native-image"
+    args = ['--verbose',
+            '--no-fallback',
+            '--module', 'org.bitcoinj.secp.examples/org.bitcoinj.secp.examples.Ecdsa',
+            '--module-path', jar.archiveFile.get(),
+            '--module-path', "${-> configurations.nativeToolImplementation.asPath}", // Lazy configuration resolution
+            '--module-path', "${-> configurations.nativeToolRuntimeOnly.asPath}",   // Lazy configuration resolution
+            '--add-modules', 'org.bitcoinj.secp.ffm',
+            '--enable-native-access=org.bitcoinj.secp.ffm',
+            '-H:Path=build',
+            '-H:Name=ecdsa-example',
+            '-H:+ForeignAPISupport',
+            '-H:+SharedArenaSupport',
+            '-H:-CheckToolchain',
+            '--features=org.bitcoinj.secp.examples.ForeignRegistrationFeature',
+            '--enable-native-access=ALL-UNNAMED',
+            '-H:+ReportUnsupportedElementsAtRuntime',
+            '-H:+ReportExceptionStackTraces'
+    ]
 }
