@@ -18,7 +18,7 @@ jobs:
         os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-14]
         distribution: ['temurin']
       fail-fast: false
-    name: ${{ matrix.os }} JDK 24 (via Gradle Java toolchains)
+    name: ${{ matrix.os }} JDK 25-ea (via Gradle Java toolchains)
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
@@ -28,8 +28,7 @@ jobs:
           distribution: ${{ matrix.distribution }}
           # When installing multiple JDKs, the last JDK installed is the default and will be used to run Gradle itself
           java-version: |
-            24
-            23
+            25-ea
           cache: 'gradle'
       - name: Install Nix
         uses: cachix/install-nix-action@v30
