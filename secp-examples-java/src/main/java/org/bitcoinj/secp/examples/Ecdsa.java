@@ -29,15 +29,15 @@ import java.util.HexFormat;
 
 /// Java version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [ecdsa.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/ecdsa.c).
 public class Ecdsa {
-    private static final HexFormat formatter = HexFormat.of();
+    final HexFormat formatter = HexFormat.of();
     /* Instead of signing the message directly, we must sign a 32-byte hash.
      * Here the message is "Hello, world!" and the hash function is SHA-256.
      * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116
      */
-    private static final byte[] msg_hash = hash("Hello, world!");
+    final byte[] msg_hash = hash("Hello, world!");
 
-    public static void main(String[] args) {
-        System.out.println("Running secp256k1-jdk Ecdsa example...");
+    void main() {
+        IO.println("Running secp256k1-jdk Ecdsa example...");
         /* Use a java try-with-resources to allocate and cleanup -- secp256k1_context_destroy is automatically called */
         try (Secp256k1 secp = Secp256k1.get()) {
             /* === Key Generation === */
@@ -75,11 +75,11 @@ public class Ecdsa {
             /* Verify a signature. This will return true if it's valid and false if it's not. */
             boolean is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).get();
 
-            System.out.println("Is the signature valid? " + is_signature_valid);
-            System.out.println("Secret Key: " + privKey.getS().toString(16));
-            System.out.println("Public Key (as ECPoint): " + pubkey);
-            System.out.println("Public Key (Compressed): " + formatter.formatHex(compressed_pubkey.bytes()));
-            System.out.println("Signature: " + formatter.formatHex(serialized_signature.bytes()));
+            IO.println("Is the signature valid? " + is_signature_valid);
+            IO.println("Secret Key: " + privKey.getS().toString(16));
+            IO.println("Public Key (as ECPoint): " + pubkey);
+            IO.println("Public Key (Compressed): " + formatter.formatHex(compressed_pubkey.bytes()));
+            IO.println("Signature: " + formatter.formatHex(serialized_signature.bytes()));
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for

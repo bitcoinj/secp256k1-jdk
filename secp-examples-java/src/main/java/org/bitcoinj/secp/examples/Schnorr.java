@@ -24,13 +24,13 @@ import java.util.HexFormat;
 
 /// Java version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [schnorr.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/schnorr.c).
 public class Schnorr {
-    private static final HexFormat formatter = HexFormat.of();
+    final HexFormat formatter = HexFormat.of();
 
-    private static final String msg = "Hello, world!";
-    private static final String tag = "my_fancy_protocol";
+    final String msg = "Hello, world!";
+    final String tag = "my_fancy_protocol";
 
-    public static void main(String[] args) {
-        System.out.println("Running secp256k1-jdk Schnorr example...");
+    void main() {
+        IO.println("Running secp256k1-jdk Schnorr example...");
         /* Use a java try-with-resources to allocate and cleanup -- secp256k1_context_destroy is automatically called */
         try (Secp256k1 secp = Secp256k1.get()) {
             /* === Key Generation === */
@@ -61,10 +61,10 @@ public class Schnorr {
 
             boolean is_signature_valid = secp.schnorrSigVerify(signature, msg_hash2, xOnly2).get();
 
-            System.out.println("Is the signature valid? " + is_signature_valid);
-            System.out.println("Secret Key: " + keyPair.getS().toString(16));
-            System.out.println("Public Key (as ECPoint): " + xOnly2);
-            System.out.println("Signature: " + formatter.formatHex(signature));
+            IO.println("Is the signature valid? " + is_signature_valid);
+            IO.println("Secret Key: " + keyPair.getS().toString(16));
+            IO.println("Public Key (as ECPoint): " + xOnly2);
+            IO.println("Signature: " + formatter.formatHex(signature));
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for
