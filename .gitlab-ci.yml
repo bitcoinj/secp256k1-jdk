@@ -1,5 +1,6 @@
 # Build on NixOS using the devshell from `flake.nix` and secp256k1 installed via `nix profile install`
 nixos-devshell:
+  timeout: 3h   # long timeout because there is no cached build of graalvm-oracle_25-ea
   image: nixos/nix:latest
   variables:
     NIXPKGS_URL: "github:NixOS/nixpkgs/nixos-unstable"
@@ -10,7 +11,7 @@ nixos-devshell:
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
     - nix profile install nixpkgs#secp256k1
   script:
-    - nix develop .#minimum -c gradle build run runEcdsa
+    - nix develop .#minimum -c gradle -PjavaToolchainVersion=25 build run runEcdsa
   cache:
     key: "${CI_COMMIT_REF_SLUG}"
     paths:
@@ -24,9 +25,10 @@ trixie-gradlew:
     - apt-get update
     - apt-get -y install nix-setup-systemd
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-    - nix profile install nixpkgs#secp256k1 nixpkgs#jdk24
+    - nix profile install nixpkgs#secp256k1
+    - NIXPKGS_ALLOW_UNFREE=1 nix profile install github:nixpkgs-jdk-ea/nixpkgs/jdk-ea-25#graalvmPackages.graalvm-oracle_25-ea --impure
   script:
-    - export JAVA_HOME=$(nix eval --raw nixpkgs#jdk24.outPath)
+    - export JAVA_HOME=$(NIXPKGS_ALLOW_UNFREE=1 nix eval --raw nixpkgs#graalvmPackages.graalvm-oracle_25-ea.outPath --impure)
     - ./gradlew build run runEcdsa
 
 # Build on Forky using Debian's OpenJDK 25, Gradle via the Wrapper and secp256k1 installed via `nix profile install`.
