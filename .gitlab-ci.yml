@@ -29,10 +29,10 @@ trixie-gradlew:
     - export JAVA_HOME=$(nix eval --raw nixpkgs#jdk24.outPath)
     - ./gradlew build run runEcdsa
 
-# Build on Forky (Sid) using Debian's OpenJDK 25, Gradle via the Wrapper and secp256k1 installed via `nix profile install`.
+# Build on Forky using Debian's OpenJDK 25, Gradle via the Wrapper and secp256k1 installed via `nix profile install`.
 # If we're lucky, Forky might even get a Debian Gradle we can use. If so, we can make a Forky build that doesn't need Nix.
 forky-gradlew:
-  image: debian:sid-slim
+  image: debian:forky-slim
   before_script:
     - apt-get update
     - apt-get -y install openjdk-25-jdk-headless nix-setup-systemd
