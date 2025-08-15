@@ -2,7 +2,7 @@
   description = "secp2565k1-jdk (Java API & implementations for secp256k1)";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/master"; # graalvm-oracle_25-ea is currently on master, not nixpkgs-unstable yet
+    nixpkgs.url = "github:nixpkgs-jdk-ea/nixpkgs/jdk-ea-25"; # graalvm-oracle_25-ea and gradle-9.1.0-rc-1 on this branch
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";

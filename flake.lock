@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1749398372,
-        "narHash": "sha256-tYBdgS56eXYaWVW3fsnPQ/nFlgWi/Z2Ymhyu21zVM98=",
+        "lastModified": 1754487366,
+        "narHash": "sha256-pHYj8gUBapuUzKV/kN/tR3Zvqc7o6gdFB9XKXIp1SQ8=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "9305fe4e5c2a6fcf5ba6a3ff155720fbe4076569",
+        "rev": "af66ad14b28a127c5c0f3bbb298218fc63528a18",
         "type": "github"
       },
       "original": {
@@ -22,16 +22,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1755190542,
-        "narHash": "sha256-71zXJs9TB3i9ONw2KMYrYopqwzxXRPpkc+4ZKctBSR8=",
-        "owner": "nixos",
+        "lastModified": 1755294638,
+        "narHash": "sha256-7aRhVDC0jNFacHTzLcOAYouNjhv02RkF5gOilChPhuM=",
+        "owner": "nixpkgs-jdk-ea",
         "repo": "nixpkgs",
-        "rev": "6386f3bca9d45ffe4f4dcbe005fe48b45d9b5d03",
+        "rev": "9ddc163fd44fb56c498388c51581f482b4168853",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "master",
+        "owner": "nixpkgs-jdk-ea",
+        "ref": "jdk-ea-25",
         "repo": "nixpkgs",
         "type": "github"
       }
