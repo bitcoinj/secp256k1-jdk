@@ -1,4 +1,4 @@
-name: Gradle Build
+name: GraalVM Build
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -16,31 +16,36 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-14]
-        distribution: ['temurin']
+        java: [ '25-ea' ]
+        distribution: [ 'graalvm' ]
       fail-fast: false
-    name: ${{ matrix.os }} JDK 25-ea (via Gradle Java toolchains)
+    name: ${{ matrix.os }} ${{ matrix.java }} (via setup-graalvm)
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
         with:
           distribution: ${{ matrix.distribution }}
-          # When installing multiple JDKs, the last JDK installed is the default and will be used to run Gradle itself
-          java-version: |
-            25-ea
-          cache: 'gradle'
+          java-version: ${{ matrix.java }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install Nix
         uses: cachix/install-nix-action@v30
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
-      - name: Build with Gradle
+      - name: Build (JIT) with Gradle
         run: ./gradlew -PjavaToolchainVersion=25 build
       - name: Run Java & Kotlin Examples
-        run: ./gradlew -PjavaToolchainVersion=25 run runEcdsa
-
+        run: ./gradlew -PjavaToolchainVersion=25 build run runEcdsa
+      - name: Build Native Image with Gradle
+        run: ./gradlew -PjavaToolchainVersion=25 build secp-examples-java:nativeCompile
+      - name: Run Schnorr Native Example
+        run: |
+          export LD_LIBRARY_PATH="$HOME/.nix-profile/lib"
+          export DYLD_LIBRARY_PATH="$HOME/.nix-profile/lib"
+          ./secp-examples-java/build/schnorr-example
 
   build_nix:
     runs-on: ${{ matrix.os }}
@@ -59,4 +64,9 @@ jobs:
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
       - name: Build in Nix development shell
-        run: nix develop -c gradle -PjavaToolchainVersion=25 build run runEcdsa
+        run: nix develop -c gradle -PjavaToolchainVersion=25 build secp-examples-java:nativeCompile
+      - name: Run Schnorr Native Example
+        run: |
+          export LD_LIBRARY_PATH="$HOME/.nix-profile/lib"
+          export DYLD_LIBRARY_PATH="$HOME/.nix-profile/lib"
+          ./secp-examples-java/build/schnorr-example
