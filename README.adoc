@@ -100,6 +100,29 @@ Run the script:
 
 * `./secp-examples-java/build/install/secp-examples-java/bin/secp-examples-java`
 
+== Build and run a native image (Currently targets GraalVM for JDK 25-ea)
+
+To build using GraalVM `native-image`:
+
+. Make sure you have GraalVM 25 (EA 31) or later installed
+. Make sure `GRAALVM_HOME` points to the Graal JDK 25 installation
+. `./gradlew secp-examples-java:nativeCompileSchnorr`
+
+To run the compiled, native executable:
+
+On Linux set up `LD_LIBRARY_PATH`:
+
+. `export LD_LIBRARY_PATH="$HOME/.nix-profile/lib:$LD_LIBRARY_PATH"`
+
+On macOS set up `DYLD_LIBRARY_PATH`:
+
+. `export DYLD_LIBRARY_PATH="$HOME/.nix-profile/lib:$DYLD_LIBRARY_PATH"`
+
+Run the native image binary:
+
+. `./secp-examples-java/build/schnorr-example`
+. Don't blink!
+
 == Building with Nix
 
 NOTE:: We currently only support setting up a development environment with Nix. In the future we hope to support a full Nix build.
