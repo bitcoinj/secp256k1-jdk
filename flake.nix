@@ -16,6 +16,9 @@
 
       perSystem = { config, self', inputs', pkgs, system, lib, ... }: let
         inherit (pkgs) stdenv;
+        sharedShellHook = ''
+            echo "Welcome to secp256k1-jdk!"
+        '';
       in {
         # define default devshell, with a richer collection of tools intended for interactive development
         devShells.default = pkgs.mkShell {
@@ -28,6 +31,7 @@
                     java = jdk24;          # Run Gradle with this JDK
                 })
             ];
+          shellHook = sharedShellHook;
         };
         # define minimum devshell, with the minimum necessary to do a CI build
         devShells.minimum = pkgs.mkShell {
@@ -37,6 +41,7 @@
                     java = jdk24_headless; # Run Gradle with this JDK
                 })
             ];
+          shellHook = sharedShellHook;
         };
 
         # define flake output packages
