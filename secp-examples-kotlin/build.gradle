@@ -20,11 +20,7 @@ application {
     mainClass = 'org.bitcoinj.secp.kotlin.examples.SchnorrKt'
 }
 
-def userHome = System.getProperty("user.home")
-def javaLibraryPath = findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
-
 run {
-    systemProperty "java.library.path", javaLibraryPath
     jvmArgs += '--enable-native-access=ALL-UNNAMED'
 }
 
@@ -32,7 +28,6 @@ tasks.register('runEcdsa', JavaExec) {
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
     }
-    systemProperty "java.library.path", javaLibraryPath
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.bitcoinj.secp.kotlin.examples.EcdsaKt'
     jvmArgs += '--enable-native-access=ALL-UNNAMED'

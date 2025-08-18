@@ -42,8 +42,6 @@ subprojects { sub ->
 
     test {
         useJUnitPlatform()
-        def userHome = System.getProperty("user.home")
-        systemProperty "java.library.path", findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
     }
 
     tasks.withType(JavaCompile).configureEach {

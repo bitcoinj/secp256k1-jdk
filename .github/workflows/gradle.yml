@@ -36,6 +36,10 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
+      - name: Set library path
+        run: |
+          echo "LD_LIBRARY_PATH=$HOME/.nix-profile/lib:${LD_LIBRARY_PATH:-}" >> $GITHUB_ENV
+          echo "DYLD_LIBRARY_PATH=$HOME/.nix-profile/lib:${DYLD_LIBRARY_PATH:-}" >> $GITHUB_ENV
       - name: Build with Gradle
         run: ./gradlew -PjavaToolchainVersion=25 build
       - name: Run Java & Kotlin Examples
