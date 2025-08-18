@@ -17,6 +17,11 @@
       perSystem = { config, self', inputs', pkgs, system, lib, ... }: let
         inherit (pkgs) stdenv;
         sharedShellHook = ''
+            if [[ "$(uname)" == "Darwin" ]]; then
+              export DYLD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$DYLD_LIBRARY_PATH"
+            else
+              export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$LD_LIBRARY_PATH"
+            fi
             echo "Welcome to secp256k1-jdk!"
         '';
       in {

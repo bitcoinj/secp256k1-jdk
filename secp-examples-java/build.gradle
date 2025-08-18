@@ -29,11 +29,7 @@ application {
     mainClass = 'org.bitcoinj.secp.examples.Schnorr'
 }
 
-def userHome = System.getProperty("user.home")
-def javaLibraryPath = findProperty("javaPath") ?: "${userHome}/.nix-profile/lib"
-
 run {
-    systemProperty "java.library.path", javaLibraryPath
     jvmArgs += '--enable-native-access=org.bitcoinj.secp.ffm'
 }
 
@@ -41,7 +37,6 @@ tasks.register('runEcdsa', JavaExec) {
     javaLauncher = javaToolchains.launcherFor {
         languageVersion = JavaLanguageVersion.of(javaToolchainVersion)
     }
-    systemProperty "java.library.path", javaLibraryPath
     classpath = sourceSets.main.runtimeClasspath
     mainModule = 'org.bitcoinj.secp.examples'
     mainClass = 'org.bitcoinj.secp.examples.Ecdsa'
