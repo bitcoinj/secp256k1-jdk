@@ -26,6 +26,7 @@ trixie-gradlew:
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
     - nix profile install nixpkgs#secp256k1 nixpkgs#jdk24
   script:
+    - export LD_LIBRARY_PATH=$HOME/.nix-profile/lib:${LD_LIBRARY_PATH:-}
     - export JAVA_HOME=$(nix eval --raw nixpkgs#jdk24.outPath)
     - ./gradlew build run runEcdsa
 
@@ -39,4 +40,5 @@ forky-gradlew:
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
     - nix profile install nixpkgs#secp256k1
   script:
+    - export LD_LIBRARY_PATH=$HOME/.nix-profile/lib:${LD_LIBRARY_PATH:-}
     - ./gradlew -PjavaToolchainVersion=25 build run runEcdsa
