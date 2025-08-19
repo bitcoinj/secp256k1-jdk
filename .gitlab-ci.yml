@@ -30,15 +30,12 @@ trixie-gradlew:
     - export JAVA_HOME=$(nix eval --raw nixpkgs#jdk24.outPath)
     - ./gradlew build run runEcdsa
 
-# Build on Forky using Debian's OpenJDK 25, Gradle via the Wrapper and secp256k1 installed via `nix profile install`.
-# If we're lucky, Forky might even get a Debian Gradle we can use. If so, we can make a Forky build that doesn't need Nix.
+# Build on Forky using Debian's OpenJDK 25 and libsecp256k1 with Gradle installed via the Wrapper.
+# If we're lucky, Forky might even get a Debian Gradle we can use. If so, we can stop using the Wrapper.
 forky-gradlew:
   image: debian:forky-slim
   before_script:
     - apt-get update
-    - apt-get -y install openjdk-25-jdk-headless nix-setup-systemd
-    - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-    - nix profile install nixpkgs#secp256k1
+    - apt-get -y install openjdk-25-jdk-headless libsecp256k1-2 libsecp256k1-dev
   script:
-    - export LD_LIBRARY_PATH=$HOME/.nix-profile/lib:${LD_LIBRARY_PATH:-}
     - ./gradlew -PjavaToolchainVersion=25 build run runEcdsa
