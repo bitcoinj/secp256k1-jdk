@@ -1,5 +1,5 @@
-# Build on NixOS using the devshell from `flake.nix` and secp256k1 installed via `nix profile install`
-nixos-devshell:
+# Build on minimal Nix image using the devshell from `flake.nix`
+nix-devshell:
   image: nixos/nix:latest
   variables:
     NIXPKGS_URL: "github:NixOS/nixpkgs/nixos-unstable"
@@ -8,7 +8,6 @@ nixos-devshell:
     - nix-env -iA nixpkgs.cachix
     - cachix use nix-community
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-    - nix profile install nixpkgs#secp256k1
   script:
     - nix develop .#minimum -c gradle build run runEcdsa
   cache:
