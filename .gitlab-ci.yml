@@ -24,10 +24,11 @@ trixie-gradlew:
     - apt-get update
     - apt-get -y install nix-setup-systemd
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-    - nix profile install nixpkgs#secp256k1 nixpkgs#jdk24
+    - nix profile install nixpkgs#secp256k1
+    - NIXPKGS_ALLOW_UNFREE=1 nix profile install github:nixpkgs-jdk-ea/nixpkgs/jdk-ea-25#graalvmPackages.graalvm-oracle_25-ea --impure
   script:
     - export LD_LIBRARY_PATH=$HOME/.nix-profile/lib:${LD_LIBRARY_PATH:-}
-    - export JAVA_HOME=$(nix eval --raw nixpkgs#jdk24.outPath)
+    - export JAVA_HOME=$(NIXPKGS_ALLOW_UNFREE=1 nix eval --raw nixpkgs#graalvmPackages.graalvm-oracle_25-ea.outPath --impure)
     - ./gradlew build run runEcdsa
 
 # Build on Forky using Debian's OpenJDK 25, Gradle via the Wrapper and secp256k1 installed via `nix profile install`.
