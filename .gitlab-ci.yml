@@ -17,18 +17,24 @@ nixos-devshell:
       - /nix/store
       - ~/.gradle/
 
-# Build on Trixie using Nix to install OpenJDK 24 and secp256k1 with Gradle installed via the Wrapper.
-trixie-gradlew:
+# Build on Trixie using a Nix devshell.
+trixie-devshell:
   image: debian:trixie-slim
   before_script:
     - apt-get update
     - apt-get -y install nix-setup-systemd
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-    - nix profile install nixpkgs#secp256k1 nixpkgs#jdk24
   script:
-    - export LD_LIBRARY_PATH=$HOME/.nix-profile/lib:${LD_LIBRARY_PATH:-}
-    - export JAVA_HOME=$(nix eval --raw nixpkgs#jdk24.outPath)
-    - ./gradlew build run runEcdsa
+    - nix develop .#minimum -c gradle build run runEcdsa
+
+# Build on Trixie using Debian's OpenJDK 25 and libsecp256k1 with Gradle installed via the Wrapper.
+trixie-gradlew:
+  image: debian:trixie-slim
+  before_script:
+    - apt-get update
+    - apt-get -y install openjdk-25-jdk-headless libsecp256k1-2 libsecp256k1-dev
+  script:
+    - ./gradlew -PjavaToolchainVersion=25 build run runEcdsa
 
 # Build on Forky using Debian's OpenJDK 25 and libsecp256k1 with Gradle installed via the Wrapper.
 # If we're lucky, Forky might even get a Debian Gradle we can use. If so, we can stop using the Wrapper.
