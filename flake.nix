@@ -19,6 +19,9 @@
         sharedShellHook = ''
             if [[ "$(uname)" == "Darwin" ]]; then
               export DYLD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$DYLD_LIBRARY_PATH"
+              # Set SECP256K1_LIBRARY_PATH as a fallback variable for when macOS System Integrity Protection
+              # nulls out DYLD_LIBRARY_PATH before launching Gradle
+              export SECP256K1_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}"
             else
               export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$LD_LIBRARY_PATH"
             fi

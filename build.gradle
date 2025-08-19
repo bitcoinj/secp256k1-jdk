@@ -48,6 +48,25 @@ subprojects { sub ->
         // Default release version, secp-api and secp-bouncy override this to set an earlier release.
         options.release = 24
     }
+
+    // Workaround for System Integrity Protection on macOS that can set `DYLD_LIBRARY_PATH` to `null` when
+    // Gradle is launched with `/bin/sh` (for example by `gradlew`)
+    def secpLibPath = System.getenv('LD_LIBRARY_PATH') ?: System.getenv('DYLD_LIBRARY_PATH') ?: System.getenv('SECP256K1_LIBRARY_PATH')
+    if (secpLibPath == null || secpLibPath == "") {
+        println "\nA path to libsecp256k1 must be configured via an environment variable.\n"
+        println "On Linux this should be LD_LIBRARY_PATH.\n"
+        println "On macOS this is usually DYLD_LIBRARY_PATH, but System Integrity Protection may be setting this to `null`,"
+        println "so on macOS we use SECP256K1_LIBRARY_PATH as a fallback to handle this case.\n"
+        throw new IllegalArgumentException("A path to libsecp256k1 must be configured via an environment variable.")
+    }
+
+    tasks.withType(JavaExec).configureEach {
+        systemProperty "java.library.path", secpLibPath
+    }
+
+    tasks.withType(Test).configureEach {
+        systemProperty "java.library.path", secpLibPath
+    }
 }
 
 apply from: 'gradle/licenseCheck.gradle'
