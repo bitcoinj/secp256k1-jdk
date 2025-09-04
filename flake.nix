@@ -23,6 +23,8 @@
             else
               export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$LD_LIBRARY_PATH"
             fi
+            # setup GRAALVM_HOME
+            export GRAALVM_HOME=${graalvm}
             echo "Welcome to secp256k1-jdk!"
         '';
       in {
