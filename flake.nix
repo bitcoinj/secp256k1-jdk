@@ -10,13 +10,19 @@
     };
   };
 
-  outputs = inputs @ { flake-parts, ... }:
+  outputs = inputs @ { nixpkgs, flake-parts, ... }:
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
       perSystem = { config, self', inputs', pkgs, system, lib, ... }: let
         inherit (pkgs) stdenv;
-        graalvm = pkgs.graalvmPackages.graalvm-ce;
+        allowedUnfree = [ "graalvm-oracle" ]; # list of allowed unfree packages
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfreePredicate = pkg:
+            builtins.elem (pkgs.lib.getName pkg) allowedUnfree;
+        };
+        graalvm = pkgs.graalvmPackages.graalvm-oracle_25-ea;
         sharedShellHook = ''
             if [[ "$(uname)" == "Darwin" ]]; then
               export DYLD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$DYLD_LIBRARY_PATH"
