@@ -45,6 +45,7 @@
                 # jextract                 # jextract (Nix package) contains a jlinked executable and bundles its own JDK
                 (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
                     java = jdk;            # Run Gradle with this JDK
+                    javaToolchains = [ graalvm ];   # Add graalvm via toolchains so we can have Java 25
                 })
             ];
           shellHook = sharedShellHook;
@@ -56,6 +57,7 @@
                 graalvm                    # This JDK will be in PATH
                 (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
                     java = jdk-headless;   # Run Gradle with this JDK
+                    javaToolchains = [ graalvm ];   # Add graalvm via toolchains so we can have Java 25
                 })
             ];
           shellHook = sharedShellHook;
