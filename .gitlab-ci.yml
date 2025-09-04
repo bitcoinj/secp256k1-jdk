@@ -1,5 +1,6 @@
 # Build on minimal Nix image using the devshell from `flake.nix`
 nix-devshell:
+  timeout: 3h   # long timeout in case of unexpected rebuilds of packages from source
   image: nixos/nix:latest
   variables:
     NIXPKGS_URL: "github:NixOS/nixpkgs/nixos-unstable"
