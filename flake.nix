@@ -22,6 +22,8 @@
           config.allowUnfreePredicate = pkg:
             builtins.elem (pkgs.lib.getName pkg) allowedUnfree;
         };
+        jdk = pkgs.jdk24;
+        jdk-headless = pkgs.jdk24_headless;
         graalvm = pkgs.graalvmPackages.graalvm-oracle_25-ea;
         sharedShellHook = ''
             if [[ "$(uname)" == "Darwin" ]]; then
@@ -42,7 +44,7 @@
                 # current jextract in nixpkgs is broken, see: https://github.com/NixOS/nixpkgs/issues/354591
                 # jextract                 # jextract (Nix package) contains a jlinked executable and bundles its own JDK
                 (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
-                    java = jdk24;          # Run Gradle with this JDK
+                    java = jdk;            # Run Gradle with this JDK
                 })
             ];
           shellHook = sharedShellHook;
@@ -53,7 +55,7 @@
           packages = with pkgs ; [
                 graalvm                    # This JDK will be in PATH
                 (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
-                    java = jdk24_headless; # Run Gradle with this JDK
+                    java = jdk-headless;   # Run Gradle with this JDK
                 })
             ];
           shellHook = sharedShellHook;
