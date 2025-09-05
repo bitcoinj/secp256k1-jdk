@@ -2,7 +2,7 @@
   description = "secp2565k1-jdk (Java API & implementations for secp256k1)";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixpkgs-jdk-ea/nixpkgs/jdk-ea-25";
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -42,7 +42,7 @@
                 # current jextract in nixpkgs is broken, see: https://github.com/NixOS/nixpkgs/issues/354591
                 # jextract                 # jextract (Nix package) contains a jlinked executable and bundles its own JDK
                 (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
-                    java = jdk24;          # Run Gradle with this JDK
+                    java = graalvm;        # Run Gradle with this JDK
                 })
             ];
           shellHook = sharedShellHook;
@@ -53,7 +53,7 @@
           packages = with pkgs ; [
                 graalvm                    # This JDK will be in PATH
                 (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
-                    java = jdk24_headless; # Run Gradle with this JDK
+                    java = graalvm;        # Run Gradle with this JDK
                 })
             ];
           shellHook = sharedShellHook;

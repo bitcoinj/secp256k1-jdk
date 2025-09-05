@@ -41,9 +41,9 @@ jobs:
           echo "LD_LIBRARY_PATH=$HOME/.nix-profile/lib:${LD_LIBRARY_PATH:-}" >> $GITHUB_ENV
           echo "DYLD_LIBRARY_PATH=$HOME/.nix-profile/lib:${DYLD_LIBRARY_PATH:-}" >> $GITHUB_ENV
       - name: Build with Gradle
-        run: ./gradlew -PjavaToolchainVersion=25 build
+        run: ./gradlew build
       - name: Run Java & Kotlin Examples
-        run: ./gradlew -PjavaToolchainVersion=25 run runEcdsa
+        run: ./gradlew run runEcdsa
 
 
   build_nix:

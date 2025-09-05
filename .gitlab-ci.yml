@@ -34,7 +34,7 @@ trixie-gradlew:
     - apt-get update
     - apt-get -y install openjdk-25-jdk-headless libsecp256k1-2 libsecp256k1-dev
   script:
-    - ./gradlew -PjavaToolchainVersion=25 build run runEcdsa
+    - ./gradlew build run runEcdsa
 
 # Build on Forky using Debian's OpenJDK 25 and libsecp256k1 with Gradle installed via the Wrapper.
 # If we're lucky, Forky might even get a Debian Gradle we can use. If so, we can stop using the Wrapper.
@@ -44,4 +44,4 @@ forky-gradlew:
     - apt-get update
     - apt-get -y install openjdk-25-jdk-headless libsecp256k1-2 libsecp256k1-dev
   script:
-    - ./gradlew -PjavaToolchainVersion=25 build run runEcdsa
+    - ./gradlew build run runEcdsa
