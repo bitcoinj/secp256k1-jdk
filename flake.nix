@@ -2,7 +2,7 @@
   description = "secp2565k1-jdk (Java API & implementations for secp256k1)";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixpkgs-jdk-ea/nixpkgs/jdk-ea-25";  # Nixpkgs URL with Gradle 9.1.0-rc-x available
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
