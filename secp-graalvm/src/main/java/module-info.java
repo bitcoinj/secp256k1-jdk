@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 @org.jspecify.annotations.NullMarked
-module org.bitcoinj.secp.examples {
-    requires org.bitcoinj.secp.api;
-    requires org.bitcoinj.secp.graalvm;
+module org.bitcoinj.secp.graalvm {
+    requires org.graalvm.nativeimage;
     requires org.jspecify;
 }

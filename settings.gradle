@@ -3,6 +3,7 @@ rootProject.name = 'secp256k1-jdk'
 include 'secp-api'               // API interface library
 include 'secp-bouncy'            // Bouncy Castle implementation
 include 'secp-ffm'               // Java Foreign Memory & Function ("Panama") implementation
+include 'secp-graalvm'           // GraalVM Foreign Function Registration support
 include 'secp-bitcoinj'          // bitcoinj integration utilities and tests (P2TR address generation, etc.)
 include 'secp-integration-test'  // Integration tests of API implementations (ffm and bouncy)
 include 'secp-examples-java'     // Java examples
