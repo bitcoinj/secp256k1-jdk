@@ -27,6 +27,7 @@ jar {
 application {
     mainModule = 'org.bitcoinj.secp.examples'
     mainClass = 'org.bitcoinj.secp.examples.Schnorr'
+    applicationName = 'schnorr-example'
 }
 
 run {
