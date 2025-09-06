@@ -34,6 +34,7 @@
             echo "Welcome to secp256k1-jdk!"
         '';
       in {
+        _module.args.pkgs = pkgs;
         # define default devshell, with a richer collection of tools intended for interactive development
         devShells.default = pkgs.mkShell {
           inputsFrom = with pkgs ; [ secp256k1 ];
