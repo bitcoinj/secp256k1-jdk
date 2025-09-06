@@ -60,7 +60,5 @@ jobs:
         uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install secp256k1 with Nix
-        run: nix profile install nixpkgs#secp256k1
       - name: Build in Nix development shell
         run: nix develop -c gradle build run runEcdsa
