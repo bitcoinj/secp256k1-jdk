@@ -61,55 +61,127 @@ secp256k1-jdk currently does not use any Java Cryptography Architecture ECC prov
 
 The SECG secp256K1 curve was removed from Java in the JDK 16 release (see https://bugs.openjdk.org/browse/JDK-8251547[JDK-8251547]). It is possible that a secp256k1 JCA provider could be developed, but that is not currently a goal of this project.
 
-== Current Build Status
+== Building secp256k1-jdk
 
-The build requires JDK 24 installed to run. Gradle 8.14 should be used and is provided by the included Gradle Wrapper.
+The build requires JDK 25. Gradle 9.1.0 or later is required and is provided by the included Gradle Wrapper and the Nix devShell. You must also install the native `secp256k1` library.
 
-== Installing libsecp256k into your profile with Nix
+=== Installing OpenJDK 25 or GraalVM JDK 25
 
-We assume you are using Nix with `experimental-features = nix-command flakes`:
+The `nativeCompile` Gradle task uses `$GRAALVM_HOME` to find the `native-image` binary. The Nix devShell sets this up automatically, but if you install GraalVM using one of the other mechanisms verify `GRAALVM_HOME` is set correctly.
 
-. `nix profile install nixpkgs#secp256k1`
-. Verify that the secp256k1 library is in your `~/.nix-profile/lib` directory.
+==== Using the Nix devShell
 
-By default, the Gradle build looks for the `secp256k1` library in  `~/.nix-profile/lib`. If you have installed it with
-a different package manager or built it from source you can use the `-PjavaPath` option to Gradle to change the library
-path to your location.
+When using the Nix devShell, GraalVM JDK 25 is installed automatically.
 
-== Building with Gradle Wrapper
+==== Using APT
 
-Make sure you have installed version 0.6.0 of `secp256k1` with `nix profile install nixpkgs#secp256k1` (or equivalent.)
+* `apt-get -y install openjdk-25-jdk`
+
+There is no APT package for GraalVM, see https://www.graalvm.org/downloads/[GraalVM Download].
+
+==== Using SDKMAN!
+
+SDKMAN! currently has early access (release candidate) builds of both OpenJDK and GraalVM available.
+
+* `sdk install java 25.ea.36-open`
+
+or for GraalVM builds:
+
+* `sdk install java 25.ea.36-graal`
+
+==== Using Homebrew
+
+Note: Homebrew does not have OpenJDK 25 or GraalVM JDK 25 yet, but when it is updated you can try:
+
+* `brew install openjdk`
+
+or for GraalVM builds:
+
+* `brew install graalvm-jdk`
+
+=== Installing libsecp256k
+
+==== Using the Nix devShell
+
+The Nix devshell sets up everything correctly, so simply run `nix develop` and you can build and run.
+
+==== Using APT
+
+* `apt-get -y install libsecp256k1-dev`
+
+This will correctly set up `LD_LIBRARY_PATH` and you can build and run.
+
+==== Using Homebrew
+
+. `brew install secp256k1`
+. `export DYLD_LIBRARY_PATH="$(brew --prefix secp256k1)/lib:$DYLD_LIBRARY_PATH"`
+. `export JAVA_TOOL_OPTIONS="-Djava.library.path=$(brew --prefix secp256k1)/lib"`
+
+Step 2 sets up `DYLD_LIBRARY_PATH` correctly, but `DYLD_LIBRARY_PATH` https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/RuntimeProtections/RuntimeProtections.html[is cleared] by macOS https://support.apple.com/en-us/102149[System Integrity Protection] before running protected executables (notably the shell binaries typically used to start Gradle) so step 3 sets `JAVA_TOOL_OPTIONS` which Gradle and processes spawned by Gradle will pick up the correct library path.
+
+==== Other mechanisms
+
+Other mechanisms should work as long as you set up `LD_LIBRARY_PATH` and/or `DYLD_LIBRARY_PATH` properly and are mindful of System Integrity Protection on macOS.
+
+==== Bundling libsecp256k1 in a JAR at runtime
+
+This will be provided in a future release, see https://github.com/bitcoinj/secp256k1-jdk/issues/137[Issue #137]
+
+=== Building with Gradle Wrapper
 
 . `./gradlew build`
 
-== Running the Schnorr Example with Gradle Wrapper
+==== Running the Schnorr Example with Gradle Wrapper
 
 * `./gradlew secp-examples-java:run`
 
-== Build a Start Script and use it to run the Schnorr Example
+==== Build a Start Script and use it to run the Schnorr Example
 
 Build the script:
 
 * `./gradlew secp-examples-java:installDist`
 
-Set the script's Java options shell variable (this assumes you installed `libsecp2565k1` with Nix):
+Set the script's Java options shell variable:
 
-* `export SECP_EXAMPLES_JAVA_OPTS="-Djava.library.path=$HOME/.nix-profile/lib --enable-native-access=org.bitcoinj.secp.ffm"`
+On Linux use `LD_LIBRARY_PATH`:
+
+* `export SECP_EXAMPLES_JAVA_OPTS="-Djava.library.path=$LD_LIBRARY_PATH --enable-native-access=org.bitcoinj.secp.ffm"`
+
+on macOS use `DYLD_LIBRARY_PATH`:
+
+* `export SECP_EXAMPLES_JAVA_OPTS="-Djava.library.path=$DYLD_LIBRARY_PATH --enable-native-access=org.bitcoinj.secp.ffm"`
 
 Run the script:
 
-* `./secp-examples-java/build/install/secp-examples-java/bin/secp-examples-java`
+* `./secp-examples-java/build/install/schnorr-example/bin/schnorr-example`
 
-== Building with Nix
+==== Build and run a native image (Using GraalVM 25-ea)
 
-NOTE:: We currently only support setting up a development environment with Nix. In the future we hope to support a full Nix build.
+To build using GraalVM `native-image`:
+
+. Make sure you have GraalVM 25 (EA 31) or later installed
+. Make sure `GRAALVM_HOME` points to the Graal JDK 25 installation
+. `./gradlew secp-examples-java:nativeCompile`
+
+Run the native image binary:
+
+. `./secp-examples-java/build/schnorr-example`
+. Don't blink!
+
+=== Building with Nix
+
+NOTE:: We currently only support setting up a development shell with Nix. In the future we hope to support a full Nix build.
 
 To start a development shell with all build prerequisites installed and run the Gradle build:
 
 . `nix develop`
 . `gradle build`
 
-== Extracting Headers with Nix
+The other targets described in the "Building with the Gradle Wrapper" section work in the Nix devShell, but you should use `gradle` rather than `./gradlew`, of course.
+
+=== Extracting Headers with Nix
+
+This is currently unsupported.
 
 To extract the libsecp256k1 headers into Java classes via `jextract` using the `extract-header.sh` script:
 
@@ -119,7 +191,6 @@ To extract the libsecp256k1 headers into Java classes via `jextract` using the `
 The extracted headers will be writen to `./build/org/bitcoinj/secp/ffm/jextract`. You can compare the generated headers with the checked-in headers with:
 
 . `diff -r secp-ffm/src/main/java/org/bitcoinj/secp/ffm/jextract build/org/bitcoinj/secp/ffm/jextract`
-
 
 == Reporting a vulnerability
 
