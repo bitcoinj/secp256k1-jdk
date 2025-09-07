@@ -30,16 +30,17 @@ jobs:
           java-version: |
             25-ea
           cache: 'gradle'
-      - name: Install Nix
-        uses: cachix/install-nix-action@v30
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install secp256k1 with Nix
-        run: nix profile install nixpkgs#secp256k1
-      - name: Set library path
+      - name: Install secp256k1 with APT
+        if: runner.os == 'Linux'
         run: |
-          echo "LD_LIBRARY_PATH=$HOME/.nix-profile/lib:${LD_LIBRARY_PATH:-}" >> $GITHUB_ENV
-          echo "DYLD_LIBRARY_PATH=$HOME/.nix-profile/lib:${DYLD_LIBRARY_PATH:-}" >> $GITHUB_ENV
+          sudo apt install -y libsecp256k1-dev
+          echo "LD_LIBRARY_PATH=/usr/lib/$(uname -m)-linux-gnu" >> $GITHUB_ENV
+      - name: Install secp256k1 with Homebrew
+        if: runner.os == 'macOS'
+        run: |
+          brew install secp256k1
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
+          echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
       - name: Build with Gradle
         run: ./gradlew build
       - name: Run Java & Kotlin Examples
