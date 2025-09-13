@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
 }
 
-ext.moduleName = 'org.bitcoinj.secp256k1.ffm'
+ext.moduleName = 'org.bitcoinj.secp.ffm'
 
 dependencies {
     api project(':secp-api')
