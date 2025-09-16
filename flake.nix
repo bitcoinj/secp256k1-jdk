@@ -22,7 +22,7 @@
           config.allowUnfreePredicate = pkg:
             builtins.elem (pkgs.lib.getName pkg) allowedUnfree;
         };
-        graalvm = pkgs.graalvmPackages.graalvm-oracle_25-ea;
+        graalvm = pkgs.graalvmPackages.graalvm-oracle_25;
         sharedShellHook = ''
             if [[ "$(uname)" == "Darwin" ]]; then
               export DYLD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$DYLD_LIBRARY_PATH"

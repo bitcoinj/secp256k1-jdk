@@ -155,11 +155,11 @@ Run the script:
 
 * `./secp-examples-java/build/install/schnorr-example/bin/schnorr-example`
 
-==== Build and run a native image (Using GraalVM 25-ea)
+==== Build and run a native image (Using GraalVM 25)
 
 To build using GraalVM `native-image`:
 
-. Make sure you have GraalVM 25 (EA 31) or later installed
+. Make sure you have GraalVM 25 or later installed
 . Make sure `GRAALVM_HOME` points to the Graal JDK 25 installation
 . `./gradlew secp-examples-java:nativeCompile`
 
