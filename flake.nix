@@ -16,13 +16,10 @@
 
       perSystem = { config, self', inputs', pkgs, system, lib, ... }: let
         inherit (pkgs) stdenv;
-        allowedUnfree = [ "graalvm-oracle" ]; # list of allowed unfree packages
         pkgs = import nixpkgs {
           inherit system;
-          config.allowUnfreePredicate = pkg:
-            builtins.elem (pkgs.lib.getName pkg) allowedUnfree;
         };
-        graalvm = pkgs.graalvmPackages.graalvm-oracle_25;
+        graalvm = pkgs.graalvmPackages.graalvm-ce;
         sharedShellHook = ''
             if [[ "$(uname)" == "Darwin" ]]; then
               export DYLD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$DYLD_LIBRARY_PATH"
