@@ -2,7 +2,7 @@
   description = "secp2565k1-jdk (Java API & implementations for secp256k1)";
 
   inputs = {
-    nixpkgs.url = "github:nixpkgs-jdk-ea/nixpkgs/jdk-ea-25";
+    nixpkgs.url = "github:nixos/nixpkgs/master";
 
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
