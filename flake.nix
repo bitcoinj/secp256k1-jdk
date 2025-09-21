@@ -3,18 +3,18 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-
-    flake-parts = {
-      url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs-lib.follows = "nixpkgs";
-    };
   };
 
-  outputs = inputs @ { nixpkgs, flake-parts, ... }:
-    flake-parts.lib.mkFlake {inherit inputs;} {
-      systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
-
-      perSystem = { config, self', inputs', pkgs, system, lib, ... }: let
+  outputs = inputs @ { nixpkgs, ... }:
+    let
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
+      forEachSystem = f: builtins.listToAttrs (map (system: {
+        name = system;
+        value = f system;
+      }) systems);
+    in {
+      devShells = forEachSystem(system:
+        let
         inherit (pkgs) stdenv;
         pkgs = import nixpkgs {
           inherit system;
@@ -30,9 +30,9 @@
             export GRAALVM_HOME=${graalvm}
             echo "Welcome to secp256k1-jdk!"
         '';
-      in {
+        in {
         # define default devshell, with a richer collection of tools intended for interactive development
-        devShells.default = pkgs.mkShell {
+        default = pkgs.mkShell {
           inputsFrom = with pkgs ; [ secp256k1 ];
           packages = with pkgs ; [
                 graalvm                    # This JDK will be in PATH
@@ -45,7 +45,7 @@
           shellHook = sharedShellHook;
         };
         # define minimum devshell, with the minimum necessary to do a CI build
-        devShells.minimum = pkgs.mkShell {
+        minimum = pkgs.mkShell {
           inputsFrom = with pkgs ; [ secp256k1 ];
           packages = with pkgs ; [
                 graalvm                    # This JDK will be in PATH
@@ -55,14 +55,13 @@
             ];
           shellHook = sharedShellHook;
         };
-
-        # define flake output packages
-        packages = let
-          # common properties across the derivations
-          version = "0.0.1";
-        in {
-           # TBD
-        };
+      });
+      # define flake output packages
+      packages = let
+        # common properties across the derivations
+        version = "0.0.1";
+      in {
+        # TBD
       };
-    };
+  };
 }
