@@ -28,7 +28,7 @@ jobs:
           distribution: ${{ matrix.distribution }}
           # When installing multiple JDKs, the last JDK installed is the default and will be used to run Gradle itself
           java-version: |
-            25-ea
+            25
           cache: 'gradle'
       - name: Install secp256k1 with APT
         if: runner.os == 'Linux'
