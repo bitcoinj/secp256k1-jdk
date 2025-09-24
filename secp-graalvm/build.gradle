@@ -6,7 +6,7 @@ ext.moduleName = 'org.bitcoinj.secp.graalvm'
 
 dependencies {
     api("org.jspecify:jspecify:1.0.0")
-    implementation 'org.graalvm.sdk:nativeimage:24.2.2'
+    implementation 'org.graalvm.sdk:nativeimage:25.0.0'
 }
 
 jar {
