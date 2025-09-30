@@ -16,7 +16,6 @@
 @org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp.bitcoinj {
     requires org.bitcoinj.secp.api;
-    requires org.bitcoinj.secp.ffm;
     requires org.jspecify;
     requires org.bitcoinj.core;
     requires org.bouncycastle.provider;

@@ -8,8 +8,8 @@ dependencies {
     api project(':secp-api')
     api("org.bitcoinj:bitcoinj-core:0.17");
 
-    implementation project(':secp-bouncy')
-    implementation project(':secp-ffm')
+    runtimeOnly project(':secp-bouncy')
+    runtimeOnly project(':secp-ffm')
 }
 
 jar {
