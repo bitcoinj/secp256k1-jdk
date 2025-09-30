@@ -15,7 +15,6 @@
  */
 package org.bitcoinj.secp.examples;
 
-import org.bitcoinj.secp.api.CompressedPubKeyData;
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Secp256k1;
