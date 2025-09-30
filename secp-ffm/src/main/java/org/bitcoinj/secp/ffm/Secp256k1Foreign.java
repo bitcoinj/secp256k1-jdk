@@ -16,7 +16,6 @@
 package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.api.ByteArray;
-import org.bitcoinj.secp.api.CompressedPubKeyData;
 import org.bitcoinj.secp.api.P256K1FieldElement;
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
@@ -257,11 +256,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         /* Should be the same size as the size of the output. */
         assert(lenSegment.get(secp256k1_h.size_t, 0) == serialized_pubkey.byteSize());
         return  serialized_pubkey;
-    }
-
-    @Override
-    public Result<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData) {
-        return ecPubKeyParse(inputData.bytes());
     }
 
     @Override

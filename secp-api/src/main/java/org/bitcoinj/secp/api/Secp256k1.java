@@ -76,8 +76,6 @@ public interface Secp256k1 extends Closeable {
         return pub.getPoint();
     }
 
-    Result<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData);
-
     Result<P256k1PubKey> ecPubKeyParse(byte[] inputData);
 
     Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey);

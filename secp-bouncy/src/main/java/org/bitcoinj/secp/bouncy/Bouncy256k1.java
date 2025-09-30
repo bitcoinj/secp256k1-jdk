@@ -15,7 +15,6 @@
  */
 package org.bitcoinj.secp.bouncy;
 
-import org.bitcoinj.secp.api.CompressedPubKeyData;
 import org.bitcoinj.secp.api.P256K1FieldElement;
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
@@ -134,11 +133,6 @@ public class Bouncy256k1 implements Secp256k1 {
             default: throw new  IllegalArgumentException();
         }
         return pubKey.getEncoded(compressed);
-    }
-
-    @Override
-    public Result<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData) {
-        return ecPubKeyParse(inputData.bytes());
     }
 
     @Override
