@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.bouncy;
+package org.bitcoinj.secp.bitcoinj;
 
+import org.bitcoinj.crypto.ECKey;
 import org.bitcoinj.secp.api.P256K1Point;
 import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bouncycastle.crypto.params.ECDomainParameters;
 
 import java.security.spec.ECPoint;
 
-import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
-
 /**
- * Bouncy Castle conversion methods
+ * Bouncy Castle conversion methods for use in bitcoinj during the secp256k1-jdk conversion process only.
  */
 interface BC {
+    /** The parameters of the secp256k1 curve that Bitcoin uses. */
+    ECDomainParameters BC_CURVE = ECKey.ecDomainParameters();
 
     static P256k1PubKey toP256K1PubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
