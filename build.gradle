@@ -3,7 +3,7 @@ plugins {
 }
 
 // Projects to be published with maven-publish
-ext.publishedProjects = ['secp-api', 'secp-ffm', 'secp-bouncy']
+ext.publishedProjects = ['secp-api', 'secp-ffm', 'secp-bouncy', 'secp-graalvm']
 
 subprojects { sub ->
     apply plugin: 'java'
