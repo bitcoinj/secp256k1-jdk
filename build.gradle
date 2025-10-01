@@ -1,6 +1,7 @@
 plugins {
     id 'com.github.hierynomus.license'      version '0.16.1' apply false
     id 'io.freefair.aggregate-javadoc'      version '9.0.0'
+    id 'org.beryx.jlink'                    version '3.1.4-rc' apply false
 }
 
 // Projects to be published with maven-publish
