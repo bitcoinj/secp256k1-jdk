@@ -45,6 +45,12 @@ jobs:
         run: ./gradlew build
       - name: Run Java & Kotlin Examples
         run: ./gradlew run runEcdsa
+      - name: Print Sha256Sums (Linux)
+        if: runner.os == 'Linux'
+        run: sha256sum secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*
+      - name: Print Sha256Sums (macOS)
+        if: runner.os == 'macOS'
+        run: shasum -a 256 secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*
 
 
   build_nix:
@@ -63,3 +69,9 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build in Nix development shell
         run: nix develop -c gradle build run runEcdsa
+      - name: Print Sha256Sums (Linux)
+        if: runner.os == 'Linux'
+        run: sha256sum secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*
+      - name: Print Sha256Sums (macOS)
+        if: runner.os == 'macOS'
+        run: shasum -a 256 secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*
