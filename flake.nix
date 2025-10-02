@@ -19,6 +19,7 @@
         pkgs = import nixpkgs {
           inherit system;
         };
+        jdk = pkgs.jdk25;
         graalvm = pkgs.graalvmPackages.graalvm-ce;
         sharedShellHook = ''
             if [[ "$(uname)" == "Darwin" ]]; then
@@ -35,11 +36,14 @@
         default = pkgs.mkShell {
           buildInputs = with pkgs ; [ secp256k1 zlib ];
           packages = with pkgs ; [
-                graalvm                    # This JDK will be in PATH
+                jdk                        # This JDK will be in PATH
                 # current jextract in nixpkgs is broken, see: https://github.com/NixOS/nixpkgs/issues/354591
                 # jextract                 # jextract (Nix package) contains a jlinked executable and bundles its own JDK
                 (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
-                    java = graalvm;        # Run Gradle with this JDK
+                    java = jdk;            # Run Gradle with this JDK
+                    javaToolchains = [     # Make these JDKs available via the Gradle javaToolchains feature
+                      graalvm
+                    ];
                 })
             ];
           shellHook = sharedShellHook;
