@@ -33,7 +33,7 @@
         in {
         # define default devshell, with a richer collection of tools intended for interactive development
         default = pkgs.mkShell {
-          inputsFrom = with pkgs ; [ secp256k1 ];
+          buildInputs = with pkgs ; [ secp256k1 ];
           packages = with pkgs ; [
                 graalvm                    # This JDK will be in PATH
                 # current jextract in nixpkgs is broken, see: https://github.com/NixOS/nixpkgs/issues/354591
@@ -46,7 +46,7 @@
         };
         # define minimum devshell, with the minimum necessary to do a CI build
         minimum = pkgs.mkShell {
-          inputsFrom = with pkgs ; [ secp256k1 ];
+          buildInputs = with pkgs ; [ secp256k1 ];
           packages = with pkgs ; [
                 graalvm                    # This JDK will be in PATH
                 (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
