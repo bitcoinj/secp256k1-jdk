@@ -18,8 +18,6 @@ package org.bitcoinj.secp.integration;
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.bouncy.Bouncy256k1;
-import org.bitcoinj.secp.ffm.Secp256k1Foreign;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -35,7 +33,7 @@ public class CurveTest {
 
     @Test
     void pubKeyCalc() {
-        try (var secp = new Secp256k1Foreign(); var bouncy = new Bouncy256k1()) {
+        try (var secp = Secp256k1.getByName("ffm"); var bouncy = Secp256k1.getByName("bouncy-castle")) {
             P256k1PrivKey privkey = P256k1PrivKey.of(BigInteger.ONE);
 
             // Create pubkeys with both implementations

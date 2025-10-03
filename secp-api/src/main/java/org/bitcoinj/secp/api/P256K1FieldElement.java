@@ -16,6 +16,8 @@
 package org.bitcoinj.secp.api;
 
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Interface for numbers that are valid elements of the P256K1 field
@@ -28,11 +30,20 @@ public interface P256K1FieldElement {
     BigInteger toBigInteger();
 
     /**
+     * @return the serialized field element (32 bytes unsigned)
+     */
+    byte[] serialize();
+
+    /**
      * Construct a {@code P256K1FieldElement} from a BigInteger
      * @param i integer
      * @return valid element
      */
     static P256K1FieldElement of(BigInteger i) {
+        return new P256K1FieldElementDefault(i);
+    }
+
+    static P256K1FieldElement of(byte[] i) {
         return new P256K1FieldElementDefault(i);
     }
 
@@ -59,6 +70,13 @@ public interface P256K1FieldElement {
         return x;
     }
 
+    static byte[] checkInRange(byte[] x) {
+        if (x.length != 32) {
+            throw new IllegalArgumentException("P256K1FieldElement must have 32 bytes, found : " + x.length);
+        }
+        return x;
+    }
+
     /**
      * Convert a BigInteger to a fixed-length byte array
      * @param i an unsigned BigInteger containing a valid Secp256k1 field value
@@ -78,16 +96,44 @@ public interface P256K1FieldElement {
         return result;
     }
 
+    boolean isOdd();
+
     class P256K1FieldElementDefault implements P256K1FieldElement {
         private final byte[] value;
 
         P256K1FieldElementDefault(BigInteger i) {
-            value = integerTo32Bytes(i);
+            value = integerTo32Bytes(checkInRange(i));
+        }
+
+        P256K1FieldElementDefault(byte[] bytes) {
+            value = checkInRange(bytes);
         }
 
         @Override
         public BigInteger toBigInteger() {
             return ByteArray.toInteger(value);
+        }
+
+        @Override
+        public byte[] serialize() {
+            return value.clone();
+        }
+
+        @Override
+        public boolean isOdd() {
+            return ByteArray.toInteger(value).mod(BigInteger.TWO).equals(BigInteger.ONE);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            P256K1FieldElementDefault that = (P256K1FieldElementDefault) o;
+            return Objects.deepEquals(value, that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(value);
         }
     }
 }
