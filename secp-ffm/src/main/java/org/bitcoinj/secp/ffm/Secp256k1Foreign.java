@@ -278,16 +278,24 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
+        return ecdsaSign(msg_hash_data, seckey, secp256k1_h.NULL());
+    }
+
+    public Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey, byte[] ndata) {
+        // TODO: validate ndata is exactly 32-bytes long
+        return ecdsaSign(msg_hash_data, seckey, arena.allocateFrom(JAVA_BYTE, ndata));
+    }
+
+    private Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey, MemorySegment ndataSegment) {
         /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
          * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
          * Signing with a valid context, verified secret key
          * and the default nonce function should never fail. */
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, msg_hash_data);
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
-        MemorySegment nullCallback =  secp256k1_h.NULL(); // Double-check this (normally you shouldn't use a NULL pointer for a null callback)
-        MemorySegment nullPointer = secp256k1_h.NULL();
+        MemorySegment nonceFpNull =  secp256k1_h.NULL(); // Double-check this (normally you shouldn't use a NULL pointer for a null callback)
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, seckey.getEncoded());
-        int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, nullCallback, nullPointer);
+        int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, nonceFpNull, ndataSegment);
         privKeySeg.fill((byte) 0x00);
         return Result.checked(return_val, new SignaturePojo(sig));
     }
