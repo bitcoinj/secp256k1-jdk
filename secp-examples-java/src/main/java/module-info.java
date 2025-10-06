@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Java Examples.
+ */
 @org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp.examples {
     requires org.bitcoinj.secp.api;

@@ -15,8 +15,9 @@
  */
 package org.bitcoinj.secp.bouncy;
 
-import org.bitcoinj.secp.api.P256K1Point;
 import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.internal.P256K1ECPoint;
+import org.bitcoinj.secp.api.internal.P256K1PointUncompressed;
 
 import java.security.spec.ECPoint;
 
@@ -32,15 +33,15 @@ interface BC {
         return  P256k1PubKey.ofPoint(BC.toECPoint(bcPoint));
     }
 
-    static P256K1Point.P256K1PointUncompressed toP256K1Point(org.bouncycastle.math.ec.ECPoint bcPoint) {
+    static P256K1PointUncompressed toP256K1Point(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
-        return P256K1Point.P256K1PointUncompressed.of(bcPoint.getAffineXCoord().toBigInteger(), bcPoint.getAffineYCoord().toBigInteger());
+        return P256K1PointUncompressed.of(bcPoint.getAffineXCoord().toBigInteger(), bcPoint.getAffineYCoord().toBigInteger());
     }
 
     static ECPoint toECPoint(org.bouncycastle.math.ec.ECPoint bcPoint) {
         return bcPoint.isInfinity()
                 ? ECPoint.POINT_INFINITY
-                : new P256K1Point.P256K1ECPoint(
+                : new P256K1ECPoint(
                     bcPoint.normalize().getAffineXCoord().toBigInteger(),
                     bcPoint.normalize().getAffineYCoord().toBigInteger());
     }

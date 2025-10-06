@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Implementation of {@link org.bitcoinj.secp.api.Secp256k1} using secp256k1 via Java FFM.
+ */
 @org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp.ffm {
     requires org.bitcoinj.secp.api;

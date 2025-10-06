@@ -15,24 +15,25 @@
  */
 package org.bitcoinj.secp.api;
 
+import org.bitcoinj.secp.api.internal.ByteArrayBase;
 import org.bitcoinj.secp.api.internal.ByteUtils;
-import org.bitcoinj.secp.api.internal.HexFormat;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 
 /**
- * An effectively-immutable byte array.
+ * An effectively-immutable sequence of bytes.
  */
 public interface ByteArray extends Comparable<ByteArray> {
 
     /**
+     * Get the bytes as an array
      * @return the bytes as an array
      */
     byte[] bytes();
 
     /**
-     * @return the bytes as a hex-formatted string
+     * Format the bytes as a hex string
+     * @return hex-formatted string
      */
     default String formatHex() {
         return toHexString(bytes());
@@ -72,15 +73,5 @@ public interface ByteArray extends Comparable<ByteArray> {
      */
     static String toHexString(byte[] bytes) {
         return ByteArrayBase.HEX_FORMAT.formatHex(bytes);
-    }
-
-    /**
-     * Abstract Base Class for creating ByteArray Implementations
-     */
-    abstract class ByteArrayBase implements ByteArray {
-        private static final HexFormat HEX_FORMAT = new HexFormat();
-
-        @Override
-        public abstract byte[] bytes();
     }
 }

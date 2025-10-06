@@ -15,56 +15,40 @@
  */
 package org.bitcoinj.secp.api;
 
-import java.util.Arrays;
+import org.bitcoinj.secp.api.internal.SignatureDataImpl;
 
 /**
- *
+ * An secp256k1 ECDSA signature.
  */
 public interface SignatureData extends ByteArray {
-
+    /**
+     * Get field element R
+     * @return R
+     */
     P256K1FieldElement r();
+
+    /**
+     * Get field element S
+     * @return S
+     */
     P256K1FieldElement s();
 
+    /**
+     * Create an ECDSA signature from serialized bytes
+     * @param bytes bytes
+     * @return signature
+     */
     static SignatureData of(byte[] bytes) {
         return new SignatureDataImpl(bytes);
     }
 
+    /**
+     * Create an ECDSA signature from R and S values
+     * @param r R
+     * @param s S
+     * @return signature
+     */
     static SignatureData of(P256K1FieldElement r, P256K1FieldElement s) {
         return new SignatureDataImpl(r,s);
-    }
-
-    class SignatureDataImpl implements SignatureData {
-        private final P256K1FieldElement r;
-        private final P256K1FieldElement s;
-
-        SignatureDataImpl(P256K1FieldElement r, P256K1FieldElement s) {
-            this.r = r;
-            this.s = s;
-        }
-
-        SignatureDataImpl(byte[] signature) {
-            if (signature.length != 64) {
-                throw new IllegalArgumentException("Sig Not 64 bytes");
-            }
-            this.r = P256K1FieldElement.of(Arrays.copyOfRange(signature, 0, 32));
-            this.s = P256K1FieldElement.of(Arrays.copyOfRange(signature, 32, 64));
-        }
-
-        public P256K1FieldElement r() {
-            return r;
-        }
-
-        public P256K1FieldElement s() {
-            return s;
-        }
-
-
-        @Override
-        public byte[] bytes() {
-            byte[] signature = new byte[64];
-            System.arraycopy(r.serialize(), 0, signature, 0, 32);
-            System.arraycopy(s.serialize(), 0, signature, 32, 32);
-            return signature;
-        }
     }
 }

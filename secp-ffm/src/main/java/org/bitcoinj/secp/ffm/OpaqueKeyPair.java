@@ -18,6 +18,7 @@ package org.bitcoinj.secp.ffm;
 import org.bitcoinj.secp.api.P256K1KeyPair;
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.internal.P256k1PubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_pubkey;
 
@@ -44,7 +45,7 @@ class OpaqueKeyPair implements P256K1KeyPair {
         int return_val = secp256k1_h.secp256k1_keypair_pub(secp256k1_h.secp256k1_context_static(), pubKeySegment, keyPairSegment);
         assert(return_val == 1);
         ECPoint pubKeyPoint = Secp256k1Foreign.toPoint(pubKeySegment);
-        return new P256k1PubKey.P256k1PubKeyImpl(pubKeyPoint);
+        return new P256k1PubKeyImpl(pubKeyPoint);
     }
 
     public byte[] getOpaque() {

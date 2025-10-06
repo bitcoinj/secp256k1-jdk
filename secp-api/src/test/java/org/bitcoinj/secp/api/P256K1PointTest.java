@@ -15,6 +15,8 @@
  */
 package org.bitcoinj.secp.api;
 
+import org.bitcoinj.secp.api.internal.P256K1ECPoint;
+import org.bitcoinj.secp.api.internal.P256K1PointUncompressed;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -33,7 +35,7 @@ public class P256K1PointTest {
 
     @Test
     void testDefaultImpl() {
-        P256K1Point.Uncompressed uncompressed = new P256K1Point.P256K1PointUncompressed(ONE, MAX);
+        P256K1Point.Uncompressed uncompressed = new P256K1PointUncompressed(ONE, MAX);
         assertEquals(ONE, uncompressed.x());
         assertEquals(MAX, uncompressed.y());
 
@@ -44,7 +46,7 @@ public class P256K1PointTest {
 
     @Test
     void testECPointSubclass() {
-        P256K1Point.P256K1ECPoint p = new P256K1Point.P256K1ECPoint(ONE, MAX);
+        P256K1ECPoint p = new P256K1ECPoint(ONE, MAX);
         assertEquals(ONE, p.x());
         assertEquals(MAX, p.y());
         assertEquals(BigInteger.ONE, p.getAffineX());

@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Module to assist GraalVM with native image generation.
+ */
 @org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp.graalvm {
     requires org.graalvm.nativeimage;

@@ -13,26 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.bouncy;
+package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.Secp256k1Provider;
+import org.bitcoinj.secp.api.P256K1KeyPair;
+import org.bitcoinj.secp.api.P256k1PrivKey;
+import org.bitcoinj.secp.api.P256k1PubKey;
 
 /**
- * Provider implementations providing name and access to {@link Bouncy256k1}.
+ *
  */
-public class BouncyProvider implements Secp256k1Provider {
-    /**
-     * Default constructor.
-     */
-    public BouncyProvider() {}
-    @Override
-    public String name() {
-        return "bouncy-castle";
+public class P256K1KeyPairImpl implements P256K1KeyPair {
+
+    private final P256k1PrivKey privKey;
+    private final P256k1PubKey pubKey;
+
+    public P256K1KeyPairImpl(P256k1PrivKey privKey, P256k1PubKey pubKey) {
+        this.privKey = privKey;
+        this.pubKey = pubKey;
+
     }
 
     @Override
-    public Secp256k1 get() {
-        return new Bouncy256k1();
+    public P256k1PubKey getPublic() {
+        return pubKey;
+    }
+
+    @Override
+    public byte[] getEncoded() {
+        return privKey.getEncoded();
+    }
+
+    @Override
+    public void destroy() {
+        privKey.destroy();
     }
 }

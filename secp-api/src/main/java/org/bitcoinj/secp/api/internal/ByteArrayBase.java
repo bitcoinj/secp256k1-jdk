@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Bouncy Castle implementation of {@link org.bitcoinj.secp.api.Secp256k1}
- */
-@org.jspecify.annotations.NullMarked
-module org.bitcoinj.secp.bouncy {
-    requires org.bitcoinj.secp.api;
-    requires org.bouncycastle.provider;
-    requires org.jspecify;
+package org.bitcoinj.secp.api.internal;
 
-    provides org.bitcoinj.secp.api.Secp256k1Provider with org.bitcoinj.secp.bouncy.BouncyProvider;
+import org.bitcoinj.secp.api.ByteArray;
+
+/**
+ * Abstract Base Class for creating ByteArray Implementations
+ */
+public abstract class ByteArrayBase implements ByteArray {
+    public static final HexFormat HEX_FORMAT = new HexFormat();
+
+    @Override
+    public abstract byte[] bytes();
 }
