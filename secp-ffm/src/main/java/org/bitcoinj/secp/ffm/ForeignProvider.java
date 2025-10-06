@@ -1,10 +1,5 @@
-package org.bitcoinj.secp.ffm;
-
-import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.Secp256k1Provider;
-
 /*
- * Copyright 2023-2024 secp256k1-jdk Developers.
+ * Copyright 2023-2025 secp256k1-jdk Developers.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +13,11 @@ import org.bitcoinj.secp.api.Secp256k1Provider;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.bitcoinj.secp.ffm;
+
+import org.bitcoinj.secp.api.Secp256k1;
+import org.bitcoinj.secp.api.Secp256k1Provider;
+
 public class ForeignProvider implements Secp256k1Provider {
     @Override
     public String name() {

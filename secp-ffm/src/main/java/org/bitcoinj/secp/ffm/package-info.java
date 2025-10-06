@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 secp256k1-jdk Developers.
+ * Copyright 2023-2025 secp256k1-jdk Developers.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /// Implementation of [org.bitcoinj.secp.api] using [libsecp256k1](https://github.com/bitcoin-core/secp256k1)
 /// and [Java Foreign Function & Memory API](https://openjdk.org/jeps/454).
 ///
