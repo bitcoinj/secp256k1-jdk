@@ -7,7 +7,6 @@ ext.publishedProjects = ['secp-api', 'secp-ffm', 'secp-bouncy', 'secp-graalvm']
 
 subprojects { sub ->
     apply plugin: 'java'
-    apply plugin: 'groovy'
     //apply plugin: 'test-report-aggregation'
 
     version = secpVersion     // set in gradle.properties
