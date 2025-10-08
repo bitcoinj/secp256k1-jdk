@@ -52,6 +52,30 @@ jobs:
         if: runner.os == 'macOS'
         run: shasum -a 256 secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*
 
+  javadoc_artifact:
+    needs: build_gradle
+    runs-on: ubuntu-24.04
+    name: Publish Aggregated Javadoc artifact
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v5
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 25
+          cache: 'gradle'
+      - name: Install secp256k1 with APT
+        run: |
+          sudo apt install -y libsecp256k1-dev
+          echo "LD_LIBRARY_PATH=/usr/lib/$(uname -m)-linux-gnu" >> $GITHUB_ENV
+      - name: Build Aggregate Modular Javadoc with Gradle
+        run: ./gradlew javadoc
+      - name: Upload Javadoc as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: secp256k1-jdk-javadoc
+          path: build/docs/javadoc/
 
   build_nix:
     runs-on: ${{ matrix.os }}
