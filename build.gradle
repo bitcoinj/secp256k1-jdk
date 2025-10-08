@@ -1,9 +1,16 @@
 plugins {
     id 'com.github.hierynomus.license'      version '0.16.1' apply false
+    id 'io.freefair.aggregate-javadoc'      version '9.0.0'
 }
 
 // Projects to be published with maven-publish
 ext.publishedProjects = ['secp-api', 'secp-ffm', 'secp-bouncy', 'secp-graalvm']
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
 
 subprojects { sub ->
     apply plugin: 'java'
@@ -11,10 +18,6 @@ subprojects { sub ->
 
     version = secpVersion     // set in gradle.properties
     group = 'org.bitcoinj.secp'
-
-    repositories {
-        mavenCentral()
-    }
 
     dependencies {
         testImplementation 'org.junit.jupiter:junit-jupiter:5.14.0'
@@ -49,6 +52,14 @@ subprojects { sub ->
     }
 }
 
+// Aggregated Javadoc depends upon subprojects in publishedProjects
+dependencies {
+    subprojects {
+        if (it.name in publishedProjects) {
+            javadoc it
+        }
+    }
+}
+
 apply from: 'gradle/licenseCheck.gradle'
 apply from: 'gradle/maven-publish.gradle'
-
