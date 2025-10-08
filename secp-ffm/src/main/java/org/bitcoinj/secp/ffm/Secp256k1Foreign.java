@@ -24,6 +24,7 @@ import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Result;
 import org.bitcoinj.secp.api.Secp256k1;
 import org.bitcoinj.secp.api.SignatureData;
+import org.bitcoinj.secp.api.internal.P256K1KeyPairImpl;
 import org.bitcoinj.secp.api.internal.P256k1PubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
@@ -42,6 +43,7 @@ import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.NULL;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
+import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_keypair_pub;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 
 /**
@@ -165,7 +167,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             seckey = fill_random(arena, 32);
         } while (secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, seckey) != 1);
         // TODO: Parse keyPairSeg into standard P256K1KeyPairImpl
-        P256K1KeyPair keyPair = new OpaqueKeyPair(keyPairSeg.toArray(JAVA_BYTE));
+        P256K1KeyPair keyPair = toKeyPair(keyPairSeg);
         keyPairSeg.fill((byte) 0x00);
         return keyPair;
     }
@@ -177,7 +179,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         int return_val = secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, seckey);
         assert(return_val == 1);
         // TODO: Parse keyPairSeg into standard P256K1KeyPairImpl
-        P256K1KeyPair keyPair = new OpaqueKeyPair(keyPairSeg.toArray(JAVA_BYTE));
+        P256K1KeyPair keyPair = toKeyPair(keyPairSeg);
         keyPairSeg.fill((byte) 0x00);
         return keyPair;
     }
@@ -340,11 +342,31 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, messageHash);
         MemorySegment auxiliary_rand = fill_random(arena, 32);
         // TODO: Serialize standard P256K1KeyPair/P256K1KeyPairImpl here
-        MemorySegment keypair = arena.allocateFrom(JAVA_BYTE, ((OpaqueKeyPair) keyPair).getOpaque());
+        MemorySegment keyPairSeg = keyPairToSegment(keyPair);
 
-        int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keypair, auxiliary_rand);
+        int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keyPairSeg, auxiliary_rand);
         assert(return_val == 1);
         return sig.toArray(JAVA_BYTE);
+    }
+
+    private MemorySegment keyPairToSegment(P256K1KeyPair keyPair) {
+        byte[] privBytes = keyPair.getEncoded();
+        MemorySegment privSeg = arena.allocateFrom(JAVA_BYTE, privBytes);
+        MemorySegment keyPairSeg = secp256k1_keypair.allocate(arena);
+        secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, privSeg);
+        return keyPairSeg;
+    }
+
+    private P256K1KeyPair toKeyPair(MemorySegment keyPairSegment) {
+        MemorySegment pubKeySegment = secp256k1_pubkey.allocate(Secp256k1Foreign.globalArena);
+        int return_val = secp256k1_h.secp256k1_keypair_pub(ctx, pubKeySegment, keyPairSegment);
+        assert(return_val == 1);
+        P256k1PubKey pubKey = new P256k1PubKeyImpl(toPoint(pubKeySegment));
+        MemorySegment privKeySegment = Secp256k1Foreign.globalArena.allocate(32);
+        int return_val2 = secp256k1_h.secp256k1_keypair_sec(ctx, privKeySegment, keyPairSegment);
+        assert(return_val2 == 1);
+        P256k1PrivKey privKey = P256k1PrivKey.of(privKeySegment.toArray(JAVA_BYTE));
+        return new P256K1KeyPairImpl(privKey, pubKey);
     }
 
     @Override
