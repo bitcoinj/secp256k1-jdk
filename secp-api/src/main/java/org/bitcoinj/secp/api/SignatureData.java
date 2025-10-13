@@ -15,22 +15,56 @@
  */
 package org.bitcoinj.secp.api;
 
+import java.util.Arrays;
+
 /**
  *
  */
 public interface SignatureData extends ByteArray {
-    byte[] bytes();
+
+    P256K1FieldElement r();
+    P256K1FieldElement s();
+
+    static SignatureData of(byte[] bytes) {
+        return new SignatureDataImpl(bytes);
+    }
+
+    static SignatureData of(P256K1FieldElement r, P256K1FieldElement s) {
+        return new SignatureDataImpl(r,s);
+    }
 
     class SignatureDataImpl implements SignatureData {
-        private final byte[] signature;
+        private final P256K1FieldElement r;
+        private final P256K1FieldElement s;
 
-        public SignatureDataImpl(byte[] signature) {
-            this.signature = signature;
+        SignatureDataImpl(P256K1FieldElement r, P256K1FieldElement s) {
+            this.r = r;
+            this.s = s;
         }
+
+        SignatureDataImpl(byte[] signature) {
+            if (signature.length != 64) {
+                throw new IllegalArgumentException("Sig Not 64 bytes");
+            }
+            this.r = P256K1FieldElement.of(Arrays.copyOfRange(signature, 0, 32));
+            this.s = P256K1FieldElement.of(Arrays.copyOfRange(signature, 32, 64));
+        }
+
+        public P256K1FieldElement r() {
+            return r;
+        }
+
+        public P256K1FieldElement s() {
+            return s;
+        }
+
 
         @Override
         public byte[] bytes() {
-            return signature.clone();
+            byte[] signature = new byte[64];
+            System.arraycopy(r.serialize(), 0, signature, 0, 32);
+            System.arraycopy(s.serialize(), 0, signature, 32, 32);
+            return signature;
         }
     }
 }

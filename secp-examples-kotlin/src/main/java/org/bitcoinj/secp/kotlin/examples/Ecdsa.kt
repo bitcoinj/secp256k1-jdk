@@ -54,7 +54,7 @@ fun main() {
 
         /* Serialize the signature in a compact form. Should always succeed according to
          the documentation in secp256k1.h. */
-        val serialized_signature = secp.ecdsaSignatureSerializeCompact(sig).get()
+        val serialized_signature = secp.ecdsaSignatureSerializeCompact(sig)
 
         /* === Verification === */
 
@@ -71,7 +71,7 @@ fun main() {
         println("Secret Key: ${privKey.s.toString(16)}")
         println("Public Key (as ECPoint): $pubkey")
         println("Public Key (Compressed): ${formatter.formatHex(compressed_pubkey)}")
-        println("Signature: ${formatter.formatHex(serialized_signature.bytes())}")
+        println("Signature: ${formatter.formatHex(serialized_signature)}")
 
         /* It's best practice to try to clear secrets from memory after using them.
          * This is done because some bugs can allow an attacker to leak memory, for

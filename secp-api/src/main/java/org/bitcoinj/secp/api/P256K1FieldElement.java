@@ -29,7 +29,10 @@ public interface P256K1FieldElement {
      */
     BigInteger toBigInteger();
 
-    byte[] toBytes();
+    /**
+     * @return the serialized field element (32 bytes unsigned)
+     */
+    byte[] serialize();
 
     /**
      * Construct a {@code P256K1FieldElement} from a BigInteger
@@ -37,6 +40,10 @@ public interface P256K1FieldElement {
      * @return valid element
      */
     static P256K1FieldElement of(BigInteger i) {
+        return new P256K1FieldElementDefault(i);
+    }
+
+    static P256K1FieldElement of(byte[] i) {
         return new P256K1FieldElementDefault(i);
     }
 
@@ -59,6 +66,13 @@ public interface P256K1FieldElement {
     static BigInteger checkInRange(BigInteger x) {
         if (!isInRange(x)) {
             throw new IllegalArgumentException("BigInteger is not a valid P256K1FieldElement: " + x);
+        }
+        return x;
+    }
+
+    static byte[] checkInRange(byte[] x) {
+        if (x.length != 32) {
+            throw new IllegalArgumentException("P256K1FieldElement must have 32 bytes, found : " + x.length);
         }
         return x;
     }
@@ -88,7 +102,11 @@ public interface P256K1FieldElement {
         private final byte[] value;
 
         P256K1FieldElementDefault(BigInteger i) {
-            value = integerTo32Bytes(i);
+            value = integerTo32Bytes(checkInRange(i));
+        }
+
+        P256K1FieldElementDefault(byte[] bytes) {
+            value = checkInRange(bytes);
         }
 
         @Override
@@ -97,7 +115,7 @@ public interface P256K1FieldElement {
         }
 
         @Override
-        public byte[] toBytes() {
+        public byte[] serialize() {
             return value.clone();
         }
 

@@ -73,18 +73,30 @@ public interface Secp256k1 extends Closeable {
     default P256K1Point.Uncompressed ecPointUncompress(P256K1Point.Compressed compressedPoint) {
         byte[] serializedCompressed = compressedPoint.getEncoded();
         P256k1PubKey pub = ecPubKeyParse(serializedCompressed).get();
-        return pub.getPoint();
+        return pub.point();
     }
-
-    Result<P256k1PubKey> ecPubKeyParse(CompressedPubKeyData inputData);
 
     Result<P256k1PubKey> ecPubKeyParse(byte[] inputData);
 
     Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey);
 
-    Result<CompressedSignatureData> ecdsaSignatureSerializeCompact(SignatureData sig);
+    /**
+     * Serialize a {@link SignatureData} as a Bitcoin <i>compact signature</i>. A compact signature is
+     * the two signature component field integers (known as {@code r} and {@code s}) serialized in-order as
+     * binary data in big-endian format.
+     * @param sig signature object
+     * @return compact signature bytes
+     */
+    byte[] ecdsaSignatureSerializeCompact(SignatureData sig);
 
-    Result<SignatureData> ecdsaSignatureParseCompact(CompressedSignatureData serialized_signature);
+    /**
+     * Parse a Bitcoin <i>compact signature</i>. A compact signature is
+     * the two signature component field integers (known as {@code r} and {@code s}) serialized in-order as
+     * binary data in big-endian format.
+     * @param serialized_signature compact signature bytes
+     * @return signature object
+     */
+    Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature);
 
     Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey);
 

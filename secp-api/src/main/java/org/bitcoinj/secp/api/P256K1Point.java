@@ -56,7 +56,7 @@ public interface P256K1Point {
             compressed[0] = isOdd()
                     ? (byte) 0x03      // odd
                     : (byte) 0x02;     // even;
-            System.arraycopy(x().toBytes(),
+            System.arraycopy(x().serialize(),
                     0,
                     compressed,
                     1,
@@ -91,6 +91,10 @@ public interface P256K1Point {
         public static P256K1PointUncompressed of(ECPoint point) {
             return new P256K1PointUncompressed(P256K1FieldElement.of(point.getAffineX()),
                     P256K1FieldElement.of(point.getAffineY()));
+        }
+
+        public static P256K1PointUncompressed of(BigInteger x, BigInteger y) {
+            return new P256K1PointUncompressed(P256K1FieldElement.of(x), P256K1FieldElement.of(y));
         }
 
         @Override

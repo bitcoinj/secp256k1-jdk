@@ -23,22 +23,38 @@ import java.security.spec.ECPoint;
  *
  */
 public interface P256k1PubKey extends ECPublicKey {
+    /**
+     * Return associated cryptographic algorithm. This implements the {@link java.security.Key} interface.
+     * @return string indicating algorithm
+     */
     @Override
     default String getAlgorithm() {
         return "Secp256k1";
     }
 
+    /**
+     * Return default encoding (serialization) format. This implements the {@link java.security.Key} interface.
+     * @return string indicating format
+     */
     @Override
     default String getFormat() {
         return "Compressed SEC";
     }
 
     /**
-     * Return key in primary encoded format (compressed)
+     * Return serialized key. This implements the {@link java.security.Key} interface and is an alias for {@link #serialize()}.
      * @return public key in compressed format
      */
     @Override
     default byte[] getEncoded() {
+        return serialize();
+    }
+
+    /**
+     * Serialize key in primary encoded format (compressed)
+     * @return public key in compressed format
+     */
+    default byte[] serialize() {
         return getCompressed();
     }
 
@@ -47,7 +63,7 @@ public interface P256k1PubKey extends ECPublicKey {
      * @param compressed Use compressed variant of format
      * @return public key in SEC format
      */
-    default byte[] getEncoded(boolean compressed) {
+    default byte[] serialize(boolean compressed) {
         return compressed
                 ? getCompressed()
                 : getUncompressed();
@@ -78,7 +94,11 @@ public interface P256k1PubKey extends ECPublicKey {
         return encoded;
     }
 
-    default P256K1XOnlyPubKey getXOnly() {
+    /**
+     * Return the x-only public key.
+     * @return x-only pubkey
+     */
+    default P256K1XOnlyPubKey xOnly() {
         return P256K1XOnlyPubKey.of(this.getW().getAffineX());
     }
 
@@ -90,7 +110,7 @@ public interface P256k1PubKey extends ECPublicKey {
     @Override
     ECPoint getW();
 
-    P256K1Point.Uncompressed getPoint();
+    P256K1Point.Uncompressed point();
 
     @Override
     default ECParameterSpec getParams() {
@@ -109,4 +129,42 @@ public interface P256k1PubKey extends ECPublicKey {
                 : point.getAffineX().toString(16) + "," + point.getAffineY().toString(16);
     }
 
+    static P256k1PubKey ofPoint(ECPoint ecPoint) {
+        return new P256k1PubKeyImpl(ecPoint);
+    }
+    static P256k1PubKey ofPoint(P256K1Point.Uncompressed point) {
+        return new P256k1PubKeyImpl(point);
+    }
+
+    /**
+     *
+     */
+    class P256k1PubKeyImpl implements P256k1PubKey {
+        private final ECPoint point;
+
+        public P256k1PubKeyImpl(P256K1Point.Uncompressed point) {
+            this(new P256K1Point.P256K1ECPoint(point.x(), point.y()));
+        }
+
+        public P256k1PubKeyImpl(P256K1Point.P256K1ECPoint ecPoint) {
+            point = ecPoint;
+        }
+        public P256k1PubKeyImpl(ECPoint ecPoint) {
+            point = ecPoint;
+        }
+        @Override
+        public ECPoint getW() {
+            return point;
+        }
+
+        @Override
+        public P256K1Point.Uncompressed point() {
+            return P256K1Point.P256K1PointUncompressed.of(getW());
+        }
+
+        @Override
+        public String toString() {
+            return toStringDefault();
+        }
+    }
 }

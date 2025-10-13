@@ -37,9 +37,9 @@ fun main() {
         /* Public key creation using a valid context with a verified secret key should never fail */
         val pubkey = secp.ecPubKeyCreate(keyPair)
 
-        val xOnly = pubkey.xOnly
+        val xOnly = pubkey.xOnly()
 
-        val serializedXOnly = xOnly.getSerialized()
+        val serializedXOnly = xOnly.serialize()
 
         /* === Signing === */
         val msg_hash = secp.taggedSha256(tag, msg)
