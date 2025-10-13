@@ -24,9 +24,20 @@ import java.lang.foreign.Linker;
 import static java.lang.foreign.ValueLayout.*;
 
 /**
- * Register secp methods for GraalVM Foreign Access
+ * Register secp methods for GraalVM Foreign Access. All code within feature classes is executed during native image generation,
+ * and never at runtime.
  */
 public class ForeignRegistrationFeature implements Feature {
+
+    /**
+     * Required no-argument constructor.
+     */
+    public ForeignRegistrationFeature() {};
+
+    /**
+     * Handler for initializations at startup time. It allows customization of the static analysis setup.
+     * @param access The supported operations that the feature can perform at this time
+     */
     public void duringSetup(Feature.DuringSetupAccess access) {
         RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.ofVoid());
         RuntimeForeignAccess.registerForDowncall(FunctionDescriptor.of(JAVA_INT, JAVA_INT, JAVA_INT));

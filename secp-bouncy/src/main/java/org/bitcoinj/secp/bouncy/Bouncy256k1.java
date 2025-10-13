@@ -23,6 +23,7 @@ import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Result;
 import org.bitcoinj.secp.api.Secp256k1;
 import org.bitcoinj.secp.api.SignatureData;
+import org.bitcoinj.secp.api.internal.P256K1KeyPairImpl;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -45,7 +46,7 @@ import java.security.SecureRandom;
 import java.util.Objects;
 
 /**
- *
+ * Implementation of {@link Secp256k1} using the Bouncy Castle library.
  */
 public class Bouncy256k1 implements Secp256k1 {
 
@@ -74,9 +75,12 @@ public class Bouncy256k1 implements Secp256k1 {
         secureRandom = new SecureRandom();
     }
 
+    /**
+     * Default constructor.
+     */
     public Bouncy256k1() {
     }
-    
+
     @Override
     public P256k1PrivKey ecPrivKeyCreate() {
         ECKeyPairGenerator generator = new ECKeyPairGenerator();
@@ -97,14 +101,14 @@ public class Bouncy256k1 implements Secp256k1 {
     public P256K1KeyPair ecKeyPairCreate() {
         P256k1PrivKey priv = ecPrivKeyCreate();
         P256k1PubKey pub = ecPubKeyCreate(priv);
-        return new P256K1KeyPair.P256K1KeyPairImpl(priv, pub);
+        return new P256K1KeyPairImpl(priv, pub);
     }
 
     @Override
     public P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey) {
         P256k1PrivKey priv = P256k1PrivKey.of(privKey.getS());
         P256k1PubKey pub = ecPubKeyCreate(priv);
-        return new P256K1KeyPair.P256K1KeyPairImpl(priv, pub);
+        return new P256K1KeyPairImpl(priv, pub);
     }
 
     @Override
@@ -190,7 +194,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public byte[] schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

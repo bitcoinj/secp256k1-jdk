@@ -24,6 +24,7 @@ import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Result;
 import org.bitcoinj.secp.api.Secp256k1;
 import org.bitcoinj.secp.api.SignatureData;
+import org.bitcoinj.secp.api.internal.P256k1PubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_keypair;
@@ -44,7 +45,7 @@ import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESS
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 
 /**
- *
+ * Implementation of {@link Secp256k1} using the {@code secp256k1} C-language library and the Java Foreign Function &amp; Memory API.
  */
 public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private final Arena arena;
@@ -121,7 +122,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment pubKey = ecPubKeyCreate(privkeySegment);
         privkeySegment.fill((byte) 0x00);
         // Return serialized pubkey
-        return new P256k1PubKey.P256k1PubKeyImpl(toPoint(pubKey));
+        return new P256k1PubKeyImpl(toPoint(pubKey));
     }
 
     /* package */ MemorySegment ecPubKeyCreate(MemorySegment privkeySegment) {
@@ -190,7 +191,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             throw new IllegalStateException("Tweak_mul failed");
         }
-        return new P256k1PubKey.P256k1PubKeyImpl(toPoint(pubKeySeg));
+        return new P256k1PubKeyImpl(toPoint(pubKeySeg));
     }
 
     @Override
@@ -203,7 +204,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
         }
-        return new P256k1PubKey.P256k1PubKeyImpl(toPoint(resultKeySeg));
+        return new P256k1PubKeyImpl(toPoint(resultKeySeg));
     }
 
     public P256k1PubKey ecPubKeyCombine(P256k1PubKey key1) {
@@ -214,7 +215,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
         }
-        return new P256k1PubKey.P256k1PubKeyImpl(toPoint(resultKeySeg));
+        return new P256k1PubKeyImpl(toPoint(resultKeySeg));
     }
 
 
@@ -268,7 +269,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             System.out.println("Failed parsing the public key\n");
         }
-        return Result.checked(return_val, new P256k1PubKey.P256k1PubKeyImpl(toPoint(pubkey)));
+        return Result.checked(return_val, () -> new P256k1PubKeyImpl(toPoint(pubkey)));
     }
 
     private MemorySegment pubKeyParse(P256k1PubKey pubKeyData) {
@@ -294,7 +295,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, seckey.getEncoded());
         int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, nullCallback, nullPointer);
         privKeySeg.fill((byte) 0x00);
-        return Result.checked(return_val, SignatureData.of(sig.toArray(JAVA_BYTE)));
+        return Result.checked(return_val, () -> SignatureData.of(sig.toArray(JAVA_BYTE)));
     }
 
     @Override
@@ -306,7 +307,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     public Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature) {
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sig, arena.allocateFrom(JAVA_BYTE, serialized_signature));
-        return Result.checked(return_val, SignatureData.of(sig.toArray(JAVA_BYTE)));
+        return Result.checked(return_val, () -> SignatureData.of(sig.toArray(JAVA_BYTE)));
     }
 
     @Override

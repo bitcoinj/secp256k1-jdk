@@ -25,7 +25,7 @@ import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 
 /**
- * A Java interface for <i>Elliptic Curve Cryptography</i> using the <a href="https://www.secg.org">SECG</a> curve
+ * Main interface providing <i>Elliptic Curve Cryptography</i> functions using the <a href="https://www.secg.org">SECG</a> curve.
  * <a href="https://en.bitcoin.it/wiki/Secp256k1">secp256k1</a>.
  * <p>
  * The API is based on the C-language API of <a href="https://github.com/bitcoin-core/secp256k1">libsecp256k1</a>, but
@@ -46,10 +46,11 @@ import java.security.spec.EllipticCurve;
  * </ul>
  */
 public interface Secp256k1 extends Closeable {
-
-
+    /** The secp256k1 field definition using the standard Java type */
     ECFieldFp FIELD = new ECFieldFp(new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16));
+    /** The secp256k1 curve definition using the standard Java type */
     EllipticCurve CURVE = new EllipticCurve(FIELD, BigInteger.ZERO, BigInteger.valueOf(7));
+    /** The secp256k1 domain parameters definition using the standard Java type */
     ECParameterSpec EC_PARAMS = new ECParameterSpec(CURVE,
         new ECPoint(
             new BigInteger("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16),     // G.x
@@ -57,27 +58,79 @@ public interface Secp256k1 extends Closeable {
         new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16),         // n
         1);                                                                                                       // h
 
+    /**
+     * Create a new, randomly-generated private key.
+     * @return the private key
+     */
     P256k1PrivKey ecPrivKeyCreate();
 
+    /**
+     * Create a public key from the given private key.
+     * @param seckey the private key
+     * @return derived public key
+     */
     P256k1PubKey ecPubKeyCreate(P256k1PrivKey seckey);
 
+    /**
+     * Create a new, randomly-generated private key and return it with its matching public key
+     * @return newly generated key pair
+     */
     P256K1KeyPair ecKeyPairCreate();
+
+    /** Create a key pair structure from a known private key
+     * @param privKey the private key
+     * @return object containing both public and private key
+     */
     P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey);
 
+    /**
+     * Multiply a public key by a scalar, this is known as key "tweaking"
+     * @param pubKey public key representing a point on the curve
+     * @param scalarMultiplier scalar multiplier
+     * @return the product
+     */
     P256k1PubKey ecPubKeyTweakMul(P256k1PubKey pubKey, BigInteger scalarMultiplier);
 
+    /**
+     * Combine two public keys by adding them.
+     * @param key1 first key
+     * @param key2 second key
+     * @return the sum
+     */
     P256k1PubKey ecPubKeyCombine(P256k1PubKey key1, P256k1PubKey key2);
 
+    /**
+     * Serialize a public key
+     * @param pubKey public key to serialize
+     * @param flags serialization flags
+     * @return pubKey serialized as a byte array
+     */
     byte[] ecPubKeySerialize(P256k1PubKey pubKey, int flags);
 
+    /**
+     * Calculate an uncompressed point from a compressed point.
+     * @param compressedPoint a compressed point
+     * @return The same point, in uncompressed format
+     */
     default P256K1Point.Uncompressed ecPointUncompress(P256K1Point.Compressed compressedPoint) {
         byte[] serializedCompressed = compressedPoint.getEncoded();
         P256k1PubKey pub = ecPubKeyParse(serializedCompressed).get();
         return pub.point();
     }
 
+    /**
+     * Parse a byte array as a public key
+     * @param inputData raw data to parse as public key
+     * @return public key result or error
+     */
     Result<P256k1PubKey> ecPubKeyParse(byte[] inputData);
 
+    /**
+     * Sign a message hash using the ECDSA algorithm
+     * @param msg_hash_data hash of message to sign
+     * @param seckey private key
+     * @return the signature
+     */
     Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey);
 
     /**
@@ -98,18 +151,56 @@ public interface Secp256k1 extends Closeable {
      */
     Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature);
 
+    /**
+     * Verify an ECDSA signature.
+     * @param sig The signature to verify.
+     * @param msg_hash_data A hash of the message to verify.
+     * @param pubKey The pubkey that must have signed the message
+     * @return true, false, or error
+     */
     Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey);
 
+    /**
+     * Generate a tagged SHA-256 hash.
+     * @param tag a tag specifying the context of usage
+     * @param message the message itself
+     * @return the SHA-256 HASH
+     */
     default byte[] taggedSha256(String tag, String message) {
         return  taggedSha256(tag.getBytes(StandardCharsets.UTF_8), message.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * Generate a tagged SHA-256 hash.
+     * @param tag a tag specifying the context of usage
+     * @param message the message itself
+     * @return the SHA-256 HASH
+     */
     byte[] taggedSha256(byte[] tag, byte[] message);
 
+    /**
+     * Create a Schnorr signature for a message.
+     * @param msg_hash a hash of a message to sign
+     * @param keyPair the keypair for signing
+     * @return the signature
+     */
     byte[] schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair);
 
+    /**
+     * Verify a Schnorr signature.
+     * @param signature the signature to verify
+     * @param msg_hash hash of the message
+     * @param pubKey pubkey that must have signed the message
+     * @return true, false, or error
+     */
     Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
 
+    /**
+     * ECDH key agreement
+     * @param pubKey pubkey of the other party
+     * @param secKey secret key
+     * @return ecdh key agreement
+     */
     Result<byte[]> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey);
 
     /**

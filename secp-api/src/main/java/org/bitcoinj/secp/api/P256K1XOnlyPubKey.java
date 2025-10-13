@@ -15,18 +15,23 @@
  */
 package org.bitcoinj.secp.api;
 
+import org.bitcoinj.secp.api.internal.P256K1XOnlyPubKeyBigInteger;
+import org.bitcoinj.secp.api.internal.P256K1XOnlyPubKeyBytes;
+
 import java.math.BigInteger;
 
 /**
- *
+ * An x-only public key from a point on the secp256k1 curve
  */
 public interface P256K1XOnlyPubKey {
     /**
+     *  Get X as a {@link BigInteger}
      * @return X as a {@link BigInteger}
      */
     BigInteger getX();
 
     /**
+     * Serialize as a 32-byte, Big-endian byte array
      * @return Big-endian, 32 bytes
      */
     byte[] serialize();
@@ -44,7 +49,8 @@ public interface P256K1XOnlyPubKey {
     }
 
     /**
-     * @param x X as a {@link BigInteger}
+     * Create an X-only public key from a {@link BigInteger}.
+     * @param x X
      * @return an instance of the default implementation
      */
     static P256K1XOnlyPubKey of(BigInteger x) {
@@ -52,93 +58,11 @@ public interface P256K1XOnlyPubKey {
     }
 
     /**
-     * @param xBytes X in its standard {@code byte[]} format
+     * Create an X-only public key from a 32-byte, big-endian {@code byte[]}.
+     * @param xBytes X
      * @return an instance of the default implementation
      */
     static P256K1XOnlyPubKey of(byte[] xBytes) {
         return new P256K1XOnlyPubKeyBytes(xBytes);
-    }
-
-    /**
-     * Default implementation. Currently used by all known implementations
-     */
-    class P256K1XOnlyPubKeyBigInteger implements P256K1XOnlyPubKey {
-        private final BigInteger x;
-
-        public P256K1XOnlyPubKeyBigInteger(P256k1PubKey pubKey) {
-            // Avoid using pubKey.getXOnly() and possible infinite recursion
-            this.x = pubKey.getW().getAffineX();
-        }
-
-        public P256K1XOnlyPubKeyBigInteger(BigInteger x) {
-            this.x = x;
-        }
-
-        @Override
-        public BigInteger getX() {
-            return x;
-        }
-
-        /**
-         * @return Big-endian, 32 bytes
-         */
-        @Override
-        public byte[] serialize() {
-            return P256K1FieldElement.integerTo32Bytes(x);
-        }
-
-        /**
-         * @return A hex string representing the default binary serialization format
-         */
-        @Override
-        public String toString() {
-            return ByteArray.toHexString(serialize());
-        }
-    }
-
-    /**
-     * Simple implementation using {code @byte[]} as internal storage.
-     */
-    class P256K1XOnlyPubKeyBytes implements P256K1XOnlyPubKey, ByteArray {
-        private final byte[] x;
-
-        public P256K1XOnlyPubKeyBytes(P256k1PubKey pubKey) {
-            // Avoid using pubKey.getXOnly() and possible infinite recursion
-            this.x = pubKey.xOnly().serialize();
-        }
-
-        public P256K1XOnlyPubKeyBytes(byte[] xBytes) {
-            // Defensive copy
-            x = new byte[xBytes.length];
-            System.arraycopy(xBytes, 0, x, 0, x.length);
-        }
-
-        @Override
-        public BigInteger getX() {
-            return ByteArray.toInteger(x);
-        }
-
-        @Override
-        public byte[] bytes() {
-            // Defensive copy
-            byte[] result = new byte[x.length];
-            System.arraycopy(x, 0, result, 0, x.length);
-            return result;
-        }
-        /**
-         * @return Big-endian, 32 bytes
-         */
-        @Override
-        public byte[] serialize() {
-            return bytes();
-        }
-
-        /**
-         * @return A hex string representing the default binary serialization format
-         */
-        @Override
-        public String toString() {
-            return ByteArray.toHexString(serialize());
-        }
     }
 }

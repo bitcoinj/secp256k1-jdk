@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Bouncy Castle implementation of {@link org.bitcoinj.secp.api.Secp256k1}
+ */
 @org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp.bouncy {
     requires org.bitcoinj.secp.api;

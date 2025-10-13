@@ -49,7 +49,7 @@ public class Secp256K1ProviderTest {
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Implementation for {0}")
     void checkImplementations(Secp256k1 secp) {
-        System.out.println("Implementation " + secp.toString());
+        System.out.println("Implementation " + secp);
         assertNotNull(secp);
     }
 

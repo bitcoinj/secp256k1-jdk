@@ -17,7 +17,7 @@
  * API definition module for <a href="https://github.com/bitcoinj/secp256k1-jdk">secp256k1-jdk</a>, a Java library providing
  * <i>Elliptic Curve Cryptography</i> functions using the <a href="https://www.secg.org">SECG</a> curve
  * <a href="https://en.bitcoin.it/wiki/Secp256k1">secp256k1</a>.
- * It provides both ECDSA and Schnorr message-signing functions.
+ * It provides both ECDSA and Schnorr message signing and verification functions.
  * <p>
  * For more information see the package {@link org.bitcoinj.secp.api} or the main interface
  * {@link org.bitcoinj.secp.api.Secp256k1}.
@@ -27,6 +27,7 @@ module org.bitcoinj.secp.api {
     requires org.jspecify;
 
     exports org.bitcoinj.secp.api;
+    exports org.bitcoinj.secp.api.internal to org.bitcoinj.secp.bouncy, org.bitcoinj.secp.ffm, org.bitcoinj.secp.bitcoinj;
 
     uses org.bitcoinj.secp.api.Secp256k1Provider;
 }

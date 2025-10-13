@@ -15,24 +15,33 @@
  */
 package org.bitcoinj.secp.api;
 
+import org.bitcoinj.secp.api.internal.P256K1FieldElementDefault;
+
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
- * Interface for numbers that are valid elements of the P256K1 field
+ * A number that is a valid element of the P256K1 field. We use this instead of {@link BigInteger}
+ * so we can use a fixed-length, unsigned representation for simplicity and performance.
  */
 public interface P256K1FieldElement {
 
     /**
-     * @return the field element as a {@code BigInteger}
+     * Get the field element as a {@code BigInteger}
+     * @return field element value
      */
     BigInteger toBigInteger();
 
     /**
-     * @return the serialized field element (32 bytes unsigned)
+     * Get serialized field element (32 bytes unsigned)
+     * @return serialized field element
      */
     byte[] serialize();
+
+    /**
+     * Get the parity of the field value
+     * @return {@code true} if odd, {@code false} if even
+     */
+    boolean isOdd();
 
     /**
      * Construct a {@code P256K1FieldElement} from a BigInteger
@@ -43,38 +52,52 @@ public interface P256K1FieldElement {
         return new P256K1FieldElementDefault(i);
     }
 
-    static P256K1FieldElement of(byte[] i) {
-        return new P256K1FieldElementDefault(i);
+    /**
+     * Construct a field element from a byte-array of 32 bytes
+     * @param bytes array containing a valid field element
+     * @return field element
+     */
+    static P256K1FieldElement of(byte[] bytes) {
+        return new P256K1FieldElementDefault(bytes);
     }
 
+    // TODO: Constant-time implementation?
     /**
      * Check if an integer is in the inclusive range {@code 0} to {@code P - 1}, where {@code P} is
-     * the prime of the SECP256K1 prime finite field.
-     * @param x A possible field element to validate
+     * the prime of the SECG P256K1 prime finite field.
+     * @param e A possible field element to validate
      * @return true if valid
      */
-    static boolean isInRange(BigInteger x) {
-        return x.signum() >= 0 && x.compareTo(Secp256k1.FIELD.getP()) < 0;
+    static boolean isInRange(BigInteger e) {
+        return e.signum() >= 0 && e.compareTo(Secp256k1.FIELD.getP()) < 0;
     }
 
     /**
      * Throw {@link IllegalArgumentException} if an integer is not in the inclusive range {@code 0} to {@code P - 1}, where {@code P} is
      * the prime of the SECP256K1 prime finite field.
-     * @param x unvalidated integer
+     * @param e unvalidated integer
      * @return a validated integer
      */
-    static BigInteger checkInRange(BigInteger x) {
-        if (!isInRange(x)) {
-            throw new IllegalArgumentException("BigInteger is not a valid P256K1FieldElement: " + x);
+    static BigInteger checkInRange(BigInteger e) {
+        if (!isInRange(e)) {
+            throw new IllegalArgumentException("BigInteger is not a valid P256K1FieldElement: " + e);
         }
-        return x;
+        return e;
     }
 
-    static byte[] checkInRange(byte[] x) {
-        if (x.length != 32) {
-            throw new IllegalArgumentException("P256K1FieldElement must have 32 bytes, found : " + x.length);
+    // TODO: Full-validation (i.e. check for < P), constant-time implementation?
+    /**
+     * Throw {@link IllegalArgumentException} if the byte array is not the length.
+     * <p>
+     * <b>NOTE:</b> We are not currently validating for value less than {@code P}
+     * @param e unvalidated integer
+     * @return a validated integer
+     */
+    static byte[] checkInRange(byte[] e) {
+        if (e.length != 32) {
+            throw new IllegalArgumentException("P256K1FieldElement must have 32 bytes, found : " + e.length);
         }
-        return x;
+        return e;
     }
 
     /**
@@ -94,46 +117,5 @@ public interface P256K1FieldElement {
                 minBytes.length == 33 ? 0 : 32 - minBytes.length,   // dest pos
                 minBytes.length == 33 ? 32 : minBytes.length);      // num bytes to copy
         return result;
-    }
-
-    boolean isOdd();
-
-    class P256K1FieldElementDefault implements P256K1FieldElement {
-        private final byte[] value;
-
-        P256K1FieldElementDefault(BigInteger i) {
-            value = integerTo32Bytes(checkInRange(i));
-        }
-
-        P256K1FieldElementDefault(byte[] bytes) {
-            value = checkInRange(bytes);
-        }
-
-        @Override
-        public BigInteger toBigInteger() {
-            return ByteArray.toInteger(value);
-        }
-
-        @Override
-        public byte[] serialize() {
-            return value.clone();
-        }
-
-        @Override
-        public boolean isOdd() {
-            return ByteArray.toInteger(value).mod(BigInteger.TWO).equals(BigInteger.ONE);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
-            P256K1FieldElementDefault that = (P256K1FieldElementDefault) o;
-            return Objects.deepEquals(value, that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Arrays.hashCode(value);
-        }
     }
 }

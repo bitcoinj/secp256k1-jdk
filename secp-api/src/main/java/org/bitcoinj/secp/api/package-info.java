@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Main API package for the {@code org.bitcoinj.secp.api} module and JAR. Part of
+ * API definition package for the {@code org.bitcoinj.secp.api} module and JAR. Part of
  * <a href="https://github.com/bitcoinj/secp256k1-jdk">secp256k1-jdk</a>, a Java library providing
  * <i>Elliptic Curve Cryptography</i> functions using the <a href="https://www.secg.org">SECG</a> curve
  * <a href="https://en.bitcoin.it/wiki/Secp256k1">secp256k1</a>.

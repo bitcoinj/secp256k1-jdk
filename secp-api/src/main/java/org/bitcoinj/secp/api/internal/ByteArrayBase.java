@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.bitcoinj.secp.api.internal;
+
+import org.bitcoinj.secp.api.ByteArray;
+
 /**
- * Module to assist GraalVM with native image generation.
+ * Abstract Base Class for creating ByteArray Implementations
  */
-@org.jspecify.annotations.NullMarked
-module org.bitcoinj.secp.graalvm {
-    requires org.graalvm.nativeimage;
-    requires org.jspecify;
+public abstract class ByteArrayBase implements ByteArray {
+    public static final HexFormat HEX_FORMAT = new HexFormat();
+
+    @Override
+    public abstract byte[] bytes();
 }

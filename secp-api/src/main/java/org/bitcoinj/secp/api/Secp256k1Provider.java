@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- *
+ * Provider interface for implementations of {@link Secp256k1}.
  */
 public interface Secp256k1Provider {
     /**
@@ -33,7 +33,8 @@ public interface Secp256k1Provider {
     String name();
 
     /**
-     * @return A Secp256k1 instance
+     * Get the instance this provider object describes
+     * @return A {@code Secp256k1} instance
      */
     Secp256k1 get();
 
@@ -69,10 +70,19 @@ public interface Secp256k1Provider {
         return findAll(filter).findFirst();
     }
 
+    /**
+     * Get a stream of all known providers
+     * @return stream of all known providers 
+     */
     static Stream<Secp256k1Provider> all() {
         return findAll(p -> true);
     }
 
+    /**
+     * Get a stream of all providers that match a filter
+     * @param filter filter function to select providers
+     * @return stream of matching providers
+     */
     static Stream<Secp256k1Provider> findAll(Predicate<Secp256k1Provider> filter) {
         ServiceLoader<Secp256k1Provider> loader = ServiceLoader.load(Secp256k1Provider.class);
         return StreamSupport.stream(loader.spliterator(), false)

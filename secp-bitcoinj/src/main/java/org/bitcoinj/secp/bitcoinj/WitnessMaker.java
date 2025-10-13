@@ -18,6 +18,7 @@ package org.bitcoinj.secp.bitcoinj;
 import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Secp256k1;
+import org.bitcoinj.secp.api.internal.P256k1PubKeyImpl;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -42,7 +43,7 @@ public class WitnessMaker {
     public byte[] calcWitnessProgram(P256k1PubKey pubKey) {
         P256K1XOnlyPubKey xOnlyKey = pubKey.xOnly();
         BigInteger tweakInt = calcTweak(xOnlyKey);
-        P256k1PubKey G = new P256k1PubKey.P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
+        P256k1PubKey G = new P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
         P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
         P256k1PubKey Q = secp.ecPubKeyCombine(pubKey, P2);
         return Q.xOnly().serialize();

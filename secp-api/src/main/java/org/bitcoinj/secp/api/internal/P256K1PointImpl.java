@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.bitcoinj.secp.api.internal;
+
+import org.bitcoinj.secp.api.P256K1FieldElement;
+import org.bitcoinj.secp.api.P256K1Point;
+
 /**
- * Module to assist GraalVM with native image generation.
+ * Default implementation of {@link P256K1Point}
  */
-@org.jspecify.annotations.NullMarked
-module org.bitcoinj.secp.graalvm {
-    requires org.graalvm.nativeimage;
-    requires org.jspecify;
+public abstract class P256K1PointImpl implements P256K1Point {
+    public static P256K1PointUncompressed of(P256K1FieldElement x, P256K1FieldElement y) {
+        return new P256K1PointUncompressed(x, y);
+    }
 }

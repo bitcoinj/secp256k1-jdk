@@ -15,39 +15,25 @@
  */
 package org.bitcoinj.secp.api;
 
+import org.bitcoinj.secp.api.internal.P256K1KeyPairImpl;
+
 /**
- * A single object with a private and public key
+ * A single object containing a private key and its derived public key.
  */
 public interface P256K1KeyPair extends P256k1PrivKey {
+    /**
+     * Get the public key
+     * @return public key
+     */
     P256k1PubKey getPublic();
 
+    /**
+     * Create a keypair from a private key and its matching public key
+     * @param privKey private key
+     * @param pubKey matching public key
+     * @return key pair
+     */
     static P256K1KeyPair of(P256k1PrivKey privKey, P256k1PubKey pubKey) {
-        return new P256K1KeyPair.P256K1KeyPairImpl(privKey, pubKey);
-    }
-
-    class P256K1KeyPairImpl implements P256K1KeyPair {
-
-        private final P256k1PrivKey privKey;
-        private final P256k1PubKey pubKey;
-
-        public P256K1KeyPairImpl(P256k1PrivKey privKey, P256k1PubKey pubKey) {
-            this.privKey = privKey;
-            this.pubKey = pubKey;
-
-        }
-
-        @Override
-        public P256k1PubKey getPublic() {
-            return pubKey;
-        }
-
-        @Override
-        public byte[] getEncoded() {
-            return privKey.getEncoded();
-        }
-
-        @Override
-        public void destroy() {
-        }
+        return new P256K1KeyPairImpl(privKey, pubKey);
     }
 }
