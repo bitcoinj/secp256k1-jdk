@@ -15,26 +15,26 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.P256K1Point;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SPPoint;
+import org.bitcoinj.secp.api.SPPubKey;
 
 import java.security.spec.ECPoint;
 
 /**
  * Default/Internal P256k1PubKey implementation storing as {@link ECPoint}.
  */
-public class P256k1PubKeyImpl implements P256k1PubKey {
+public class SPPubKeyImpl implements SPPubKey {
     private final ECPoint point;
 
-    public P256k1PubKeyImpl(P256K1Point.Uncompressed point) {
+    public SPPubKeyImpl(SPPoint.Uncompressed point) {
         this(new P256K1ECPoint(point.x(), point.y()));
     }
 
-    public P256k1PubKeyImpl(P256K1ECPoint ecPoint) {
+    public SPPubKeyImpl(P256K1ECPoint ecPoint) {
         point = ecPoint;
     }
 
-    public P256k1PubKeyImpl(ECPoint ecPoint) {
+    public SPPubKeyImpl(ECPoint ecPoint) {
         point = ecPoint;
     }
 
@@ -44,7 +44,7 @@ public class P256k1PubKeyImpl implements P256k1PubKey {
     }
 
     @Override
-    public P256K1Point.Uncompressed point() {
+    public SPPoint.Uncompressed point() {
         return P256K1PointUncompressed.of(getW());
     }
 

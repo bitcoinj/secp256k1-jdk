@@ -16,7 +16,7 @@
 package org.bitcoinj.secp.bitcoinj;
 
 import org.bitcoinj.crypto.ECKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SPPubKey;
 import org.bitcoinj.secp.api.internal.P256K1ECPoint;
 import org.bitcoinj.secp.api.internal.P256K1PointUncompressed;
 import org.bouncycastle.crypto.params.ECDomainParameters;
@@ -30,9 +30,9 @@ interface BC {
     /** The parameters of the secp256k1 curve that Bitcoin uses. */
     ECDomainParameters BC_CURVE = ECKey.ecDomainParameters();
 
-    static P256k1PubKey toP256K1PubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
+    static SPPubKey toP256K1PubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
-        return  P256k1PubKey.ofPoint(BC.toECPoint(bcPoint));
+        return  SPPubKey.ofPoint(BC.toECPoint(bcPoint));
     }
 
     static P256K1PointUncompressed toP256K1Point(org.bouncycastle.math.ec.ECPoint bcPoint) {

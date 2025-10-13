@@ -23,12 +23,12 @@ import java.util.function.Supplier;
  * occurred the error code is in {@link Err#code()}.
  * @param <T> type of the successful result
  */
-public /* sealed */ interface Result<T> {
+public /* sealed */ interface SPResult<T> {
     /**
      * A successful result containing a value of type {@code <T>} in {@link #result()}.
      * @param <T> type of the successful result
      */
-    final class Ok<T> implements Result<T> {
+    final class Ok<T> implements SPResult<T> {
         private final T result;
 
         /**
@@ -52,7 +52,7 @@ public /* sealed */ interface Result<T> {
      * An error result, with an {@code int} error code in {@link #code()}.
      * @param <T> type of the successful result
      */
-    final class Err<T> implements Result<T> {
+    final class Err<T> implements SPResult<T> {
         private final int code;
 
         /**
@@ -73,22 +73,22 @@ public /* sealed */ interface Result<T> {
     }
 
     /**
-     * Static constructor for {@link Result.Ok}
+     * Static constructor for {@link SPResult.Ok}
      * @param result result value
      * @return successful result
      * @param <T> result type
      */
-    static <T> Result<T> ok(T result) {
+    static <T> SPResult<T> ok(T result) {
         return new Ok<>(result);
     }
 
     /**
-     * Static constructor for {@link Result.Err}
+     * Static constructor for {@link SPResult.Err}
      * @param error_code error code
      * @return error result
      * @param <T> expected result type
      */
-    static <T> Result<T> err(int error_code) {
+    static <T> SPResult<T> err(int error_code) {
         return new Err<>(error_code);
     }
 
@@ -101,8 +101,8 @@ public /* sealed */ interface Result<T> {
      * @return result
      * @param <T> result value type
      */
-    static <T> Result<T> checked(int error_code, Supplier<T> supplier) {
-        return (error_code == 1) ? Result.ok(supplier.get()) : Result.err(error_code);
+    static <T> SPResult<T> checked(int error_code, Supplier<T> supplier) {
+        return (error_code == 1) ? SPResult.ok(supplier.get()) : SPResult.err(error_code);
     }
 
     // TODO: define well-known error codes and messages and map between them

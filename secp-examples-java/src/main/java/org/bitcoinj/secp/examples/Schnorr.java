@@ -15,9 +15,9 @@
  */
 package org.bitcoinj.secp.examples;
 
-import org.bitcoinj.secp.api.P256K1KeyPair;
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SPKeyPair;
+import org.bitcoinj.secp.api.SPXOnlyPubKey;
+import org.bitcoinj.secp.api.SPPubKey;
 import org.bitcoinj.secp.api.Secp256k1;
 
 import java.util.HexFormat;
@@ -36,13 +36,13 @@ public class Schnorr {
             /* === Key Generation === */
 
             /* Return a non-zero, in-range private key */
-            P256K1KeyPair keyPair = secp.ecKeyPairCreate();
+            SPKeyPair keyPair = secp.ecKeyPairCreate();
             //P256K1KeyPair keyPair = secp.ecKeyPairCreate(new BouncyPrivKey(BigInteger.ONE));
 
             /* Public key creation using a valid context with a verified secret key should never fail */
-            P256k1PubKey pubkey = secp.ecPubKeyCreate(keyPair);
+            SPPubKey pubkey = secp.ecPubKeyCreate(keyPair);
 
-            P256K1XOnlyPubKey xOnly = pubkey.xOnly();
+            SPXOnlyPubKey xOnly = pubkey.xOnly();
 
             byte[] serializedXOnly = xOnly.serialize();
 
@@ -54,7 +54,7 @@ public class Schnorr {
 
             /* === Verification === */
 
-            P256K1XOnlyPubKey xOnly2 = P256K1XOnlyPubKey.parse(serializedXOnly).get();
+            SPXOnlyPubKey xOnly2 = SPXOnlyPubKey.parse(serializedXOnly).get();
 
             /* Compute the tagged hash on the received message using the same tag as the signer. */
             byte[] msg_hash2 = secp.taggedSha256(tag, msg);

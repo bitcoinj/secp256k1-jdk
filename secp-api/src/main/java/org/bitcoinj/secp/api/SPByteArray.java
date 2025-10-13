@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp.api;
 
-import org.bitcoinj.secp.api.internal.ByteArrayBase;
+import org.bitcoinj.secp.api.internal.SPByteArrayBase;
 import org.bitcoinj.secp.api.internal.ByteUtils;
 
 import java.math.BigInteger;
@@ -23,7 +23,7 @@ import java.math.BigInteger;
 /**
  * An effectively-immutable sequence of bytes.
  */
-public interface ByteArray extends Comparable<ByteArray> {
+public interface SPByteArray extends Comparable<SPByteArray> {
 
     /**
      * Get the bytes as an array
@@ -41,12 +41,12 @@ public interface ByteArray extends Comparable<ByteArray> {
 
     /**
      * {@inheritDoc}
-     * <p>For {@link ByteArray} this is a byte-by-byte, unsigned comparison.
+     * <p>For {@link SPByteArray} this is a byte-by-byte, unsigned comparison.
      * @param o {@inheritDoc}
      * @return {@inheritDoc}
      */
     @Override
-    default int compareTo(ByteArray o) {
+    default int compareTo(SPByteArray o) {
         return ByteUtils.arrayUnsignedComparator().compare(bytes(), o.bytes());
     }
 
@@ -72,6 +72,6 @@ public interface ByteArray extends Comparable<ByteArray> {
      * @return hex-formatted String
      */
     static String toHexString(byte[] bytes) {
-        return ByteArrayBase.HEX_FORMAT.formatHex(bytes);
+        return SPByteArrayBase.HEX_FORMAT.formatHex(bytes);
     }
 }

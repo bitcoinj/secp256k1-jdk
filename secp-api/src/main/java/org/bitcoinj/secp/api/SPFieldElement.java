@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp.api;
 
-import org.bitcoinj.secp.api.internal.P256K1FieldElementDefault;
+import org.bitcoinj.secp.api.internal.SPFieldElementDefault;
 
 import java.math.BigInteger;
 
@@ -23,7 +23,7 @@ import java.math.BigInteger;
  * A number that is a valid element of the P256K1 field. We use this instead of {@link BigInteger}
  * so we can use a fixed-length, unsigned representation for simplicity and performance.
  */
-public interface P256K1FieldElement {
+public interface SPFieldElement {
 
     /**
      * Get the field element as a {@code BigInteger}
@@ -48,8 +48,8 @@ public interface P256K1FieldElement {
      * @param i integer
      * @return valid element
      */
-    static P256K1FieldElement of(BigInteger i) {
-        return new P256K1FieldElementDefault(i);
+    static SPFieldElement of(BigInteger i) {
+        return new SPFieldElementDefault(i);
     }
 
     /**
@@ -57,8 +57,8 @@ public interface P256K1FieldElement {
      * @param bytes array containing a valid field element
      * @return field element
      */
-    static P256K1FieldElement of(byte[] bytes) {
-        return new P256K1FieldElementDefault(bytes);
+    static SPFieldElement of(byte[] bytes) {
+        return new SPFieldElementDefault(bytes);
     }
 
     // TODO: Constant-time implementation?

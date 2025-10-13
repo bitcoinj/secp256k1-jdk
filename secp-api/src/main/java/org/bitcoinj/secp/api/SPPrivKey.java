@@ -15,19 +15,19 @@
  */
 package org.bitcoinj.secp.api;
 
-import org.bitcoinj.secp.api.internal.P256k1PrivKeyDefault;
+import org.bitcoinj.secp.api.internal.SPPrivKeyDefault;
 
 import java.math.BigInteger;
 import java.security.interfaces.ECPrivateKey;
 import java.security.spec.ECParameterSpec;
 
-import static org.bitcoinj.secp.api.P256K1FieldElement.checkInRange;
+import static org.bitcoinj.secp.api.SPFieldElement.checkInRange;
 
 // TODO: Override/prevent serialization
 /**
  * A P256k1 private key.
  */
-public interface P256k1PrivKey extends ECPrivateKey {
+public interface SPPrivKey extends ECPrivateKey {
 
 
     @Override
@@ -48,7 +48,7 @@ public interface P256k1PrivKey extends ECPrivateKey {
 
     @Override
     default BigInteger getS() {
-        return ByteArray.toInteger(getEncoded());
+        return SPByteArray.toInteger(getEncoded());
     }
 
     @Override
@@ -61,8 +61,8 @@ public interface P256k1PrivKey extends ECPrivateKey {
      * @param p Must be a member of the Secp256k1 field
      * @return private key
      */
-    static P256k1PrivKey of(BigInteger p) {
-        return new P256k1PrivKeyDefault(p);
+    static SPPrivKey of(BigInteger p) {
+        return new SPPrivKeyDefault(p);
     }
 
     /**
@@ -70,8 +70,8 @@ public interface P256k1PrivKey extends ECPrivateKey {
      * @param bytes bytes
      * @return private key
      */
-    static P256k1PrivKey of(byte[] bytes) {
-        return new P256k1PrivKeyDefault(bytes);
+    static SPPrivKey of(byte[] bytes) {
+        return new SPPrivKeyDefault(bytes);
     }
 
     /**

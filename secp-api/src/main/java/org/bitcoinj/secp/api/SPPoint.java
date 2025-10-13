@@ -24,10 +24,10 @@ import java.security.spec.ECPoint;
  * A P256K1 point -- either {@link Compressed}, {@link Uncompressed}, or {@link Infinity}. Implementations of this interface
  * <i>need not</i> be subclasses of {@link java.security.spec.ECPoint}. {@code ECPoint} is a concrete class
  * and uses {@link java.math.BigInteger} internally. {@code P256K1Point} uses
- * {@link P256K1FieldElement} to represent point coordinates. If you need a type that
+ * {@link SPFieldElement} to represent point coordinates. If you need a type that
  * is both a {@code P256K1Point} and a {@code ECPoint}, use {@link P256K1ECPoint}.
  */
-public interface P256K1Point {
+public interface SPPoint {
     /** The P256K1 infinity point */
     Infinity POINT_INFINITY = Infinity.INSTANCE;
 
@@ -37,7 +37,7 @@ public interface P256K1Point {
      * @param y y component
      * @return point
      */
-    static P256K1PointUncompressed of(P256K1FieldElement x, P256K1FieldElement y) {
+    static P256K1PointUncompressed of(SPFieldElement x, SPFieldElement y) {
         return new P256K1PointUncompressed(x, y);
     }
 
@@ -46,16 +46,16 @@ public interface P256K1Point {
      * @param point Java point
      * @return P256K1Point point
      */
-    static P256K1Point of(ECPoint point) {
+    static SPPoint of(ECPoint point) {
         return  point == ECPoint.POINT_INFINITY
-                    ? P256K1Point.POINT_INFINITY
+                    ? SPPoint.POINT_INFINITY
                     : point instanceof P256K1ECPoint
                         ? (P256K1ECPoint) point
                         : P256K1PointUncompressed.of(point);
     }
 
     /** Singleton representing the point-at-infinity */
-    enum Infinity implements P256K1Point {
+    enum Infinity implements SPPoint {
         /** Singleton instance */
         INSTANCE;
     }
@@ -63,12 +63,12 @@ public interface P256K1Point {
     /**
      * A non-infinity point, either {@link Compressed} or {@link Uncompressed}.
      */
-    interface Point extends P256K1Point {
+    interface Point extends SPPoint {
         /**
          * Get the x-coordinate field value
          * @return x-coordinate
          */
-        P256K1FieldElement x();
+        SPFieldElement x();
 
         /**
          * Get the parity of the y-coordinate field value
@@ -113,7 +113,7 @@ public interface P256K1Point {
          * Get the y-coordinate field value
          * @return y-coordinate
          */
-        P256K1FieldElement y();
+        SPFieldElement y();
         /**
          * Convert to a compressed point.
          * @return compressed point

@@ -15,15 +15,15 @@
  */
 package org.bitcoinj.secp.bouncy;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1KeyPair;
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bitcoinj.secp.api.Result;
+import org.bitcoinj.secp.api.SPFieldElement;
+import org.bitcoinj.secp.api.SPKeyPair;
+import org.bitcoinj.secp.api.SPXOnlyPubKey;
+import org.bitcoinj.secp.api.SPPrivKey;
+import org.bitcoinj.secp.api.SPPubKey;
+import org.bitcoinj.secp.api.SPResult;
 import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.SignatureData;
-import org.bitcoinj.secp.api.internal.P256K1KeyPairImpl;
+import org.bitcoinj.secp.api.SPSignatureData;
+import org.bitcoinj.secp.api.internal.SPKeyPairImpl;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -82,44 +82,44 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public P256k1PrivKey ecPrivKeyCreate() {
+    public SPPrivKey ecPrivKeyCreate() {
         ECKeyPairGenerator generator = new ECKeyPairGenerator();
         ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(BC_CURVE, secureRandom);
         generator.init(keygenParams);
         AsymmetricCipherKeyPair keypair = generator.generateKeyPair();
         ECPrivateKeyParameters privParams = (ECPrivateKeyParameters) keypair.getPrivate();
-        return P256k1PrivKey.of(privParams.getD());
+        return SPPrivKey.of(privParams.getD());
     }
 
     @Override
-    public P256k1PubKey ecPubKeyCreate(P256k1PrivKey seckey) {
+    public SPPubKey ecPubKeyCreate(SPPrivKey seckey) {
         ECPoint pub = BC_CURVE.getG().multiply(seckey.getS()).normalize();
         return BC.toP256K1PubKey(pub);
     }
 
     @Override
-    public P256K1KeyPair ecKeyPairCreate() {
-        P256k1PrivKey priv = ecPrivKeyCreate();
-        P256k1PubKey pub = ecPubKeyCreate(priv);
-        return new P256K1KeyPairImpl(priv, pub);
+    public SPKeyPair ecKeyPairCreate() {
+        SPPrivKey priv = ecPrivKeyCreate();
+        SPPubKey pub = ecPubKeyCreate(priv);
+        return new SPKeyPairImpl(priv, pub);
     }
 
     @Override
-    public P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey) {
-        P256k1PrivKey priv = P256k1PrivKey.of(privKey.getS());
-        P256k1PubKey pub = ecPubKeyCreate(priv);
-        return new P256K1KeyPairImpl(priv, pub);
+    public SPKeyPair ecKeyPairCreate(SPPrivKey privKey) {
+        SPPrivKey priv = SPPrivKey.of(privKey.getS());
+        SPPubKey pub = ecPubKeyCreate(priv);
+        return new SPKeyPairImpl(priv, pub);
     }
 
     @Override
-    public P256k1PubKey ecPubKeyTweakMul(P256k1PubKey pubKey, BigInteger scalarMultiplier) {
+    public SPPubKey ecPubKeyTweakMul(SPPubKey pubKey, BigInteger scalarMultiplier) {
         ECPoint pubKeyBC = BC_CURVE.getCurve().createPoint(pubKey.getW().getAffineX(), pubKey.getW().getAffineY());
         ECPoint pub = new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier).normalize();
         return BC.toP256K1PubKey(pub);
     }
 
     @Override
-    public P256k1PubKey ecPubKeyCombine(P256k1PubKey key1, P256k1PubKey key2) {
+    public SPPubKey ecPubKeyCombine(SPPubKey key1, SPPubKey key2) {
         ECPoint pubKey1BC = BC_CURVE.getCurve().createPoint(key1.getW().getAffineX(), key1.getW().getAffineY());
         ECPoint pubKey2BC = BC_CURVE.getCurve().createPoint(key2.getW().getAffineX(), key2.getW().getAffineY());
         ECPoint result = pubKey1BC.add(pubKey2BC);
@@ -127,7 +127,7 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public byte[] ecPubKeySerialize(P256k1PubKey pubKey, int flags) {
+    public byte[] ecPubKeySerialize(SPPubKey pubKey, int flags) {
         boolean compressed;
         switch(flags) {
             case 2: compressed = false; break;          // SECP256K1_EC_UNCOMPRESSED())
@@ -138,38 +138,38 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public Result<P256k1PubKey> ecPubKeyParse(byte[] inputData) {
+    public SPResult<SPPubKey> ecPubKeyParse(byte[] inputData) {
         org.bouncycastle.math.ec.ECPoint bcPoint = BC_CURVE.getCurve().decodePoint(inputData);
-        return Result.ok(BC.toP256K1PubKey(bcPoint));
+        return SPResult.ok(BC.toP256K1PubKey(bcPoint));
     }
 
     // TODO: Add constructor to create SignatureData from r and s
     @Override
-    public Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
+    public SPResult<SPSignatureData> ecdsaSign(byte[] msg_hash_data, SPPrivKey seckey) {
         BigInteger privateKeyForSigning = seckey.getS();
         Objects.requireNonNull(privateKeyForSigning);
         ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
         ECPrivateKeyParameters privKey = new ECPrivateKeyParameters(privateKeyForSigning, BC_CURVE);
         signer.init(true, privKey);
         BigInteger[] components = signer.generateSignature(msg_hash_data);
-        SignatureData signatureData = SignatureData.of(P256K1FieldElement.of(components[0]),
-                P256K1FieldElement.of(components[1]));
-        return Result.ok(signatureData);
+        SPSignatureData signatureData = SPSignatureData.of(SPFieldElement.of(components[0]),
+                SPFieldElement.of(components[1]));
+        return SPResult.ok(signatureData);
     }
 
     @Override
-    public byte[] ecdsaSignatureSerializeCompact(SignatureData sig) {
+    public byte[] ecdsaSignatureSerializeCompact(SPSignatureData sig) {
         return sig.bytes();
     }
 
     // TODO: Return Result.err when parsing fails
     @Override
-    public Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature) {
-        return Result.ok(SignatureData.of(serialized_signature));
+    public SPResult<SPSignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature) {
+        return SPResult.ok(SPSignatureData.of(serialized_signature));
     }
 
     @Override
-    public Result<Boolean> ecdsaVerify(SignatureData signature, byte[] msg_hash_data, P256k1PubKey pubKey) {
+    public SPResult<Boolean> ecdsaVerify(SPSignatureData signature, byte[] msg_hash_data, SPPubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
         java.security.spec.ECPoint jPoint = pubKey.getW();
         org.bouncycastle.math.ec.ECPoint pubPoint = BC.fromECPoint(jPoint);
@@ -184,7 +184,7 @@ public class Bouncy256k1 implements Secp256k1 {
             //log.error("Caught NPE inside bouncy castle", e);
             result = false;
         }
-        return Result.ok(result);
+        return SPResult.ok(result);
     }
 
     @Override
@@ -193,24 +193,24 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public byte[] schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair) {
+    public byte[] schnorrSigSign32(byte[] msg_hash, SPKeyPair keyPair) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
-        return Result.err(-1);
+    public SPResult<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, SPXOnlyPubKey pubKey) {
+        return SPResult.err(-1);
     }
 
     @Override
-    public Result<byte[]> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey) {
+    public SPResult<byte[]> ecdh(SPPubKey pubKey, SPPrivKey secKey) {
         ECPoint point = BC.fromECPoint(pubKey.getW());
         ECPoint ssPoint = point.multiply(secKey.getS()).normalize();
         byte[] hashed = ecdhHash(BC.toP256K1PubKey(ssPoint));
-        return Result.ok(hashed);
+        return SPResult.ok(hashed);
     }
     
-    private byte[] ecdhHash(P256k1PubKey sspk) {
+    private byte[] ecdhHash(SPPubKey sspk) {
         MessageDigest digest;
         try {
             digest = MessageDigest.getInstance("SHA-256");

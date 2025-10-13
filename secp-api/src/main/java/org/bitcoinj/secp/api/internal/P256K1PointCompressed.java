@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1Point;
+import org.bitcoinj.secp.api.SPFieldElement;
+import org.bitcoinj.secp.api.SPPoint;
 
 import java.util.Objects;
 
@@ -24,17 +24,17 @@ import java.util.Objects;
  *
  */
 public
-class P256K1PointCompressed implements P256K1Point.Compressed {
-    private final P256K1FieldElement x;
+class P256K1PointCompressed implements SPPoint.Compressed {
+    private final SPFieldElement x;
     private final boolean isOdd;
 
-    P256K1PointCompressed(P256K1FieldElement x, P256K1FieldElement y) {
+    P256K1PointCompressed(SPFieldElement x, SPFieldElement y) {
         this.x = x;
         this.isOdd = y.isOdd();
     }
 
     @Override
-    public P256K1FieldElement x() {
+    public SPFieldElement x() {
         return x;
     }
 

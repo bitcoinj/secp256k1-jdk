@@ -20,13 +20,13 @@ import org.bitcoinj.base.BitcoinNetwork;
 import org.bitcoinj.base.Network;
 import org.bitcoinj.base.SegwitAddress;
 import org.bitcoinj.crypto.ECKey;
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1KeyPair;
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SPFieldElement;
+import org.bitcoinj.secp.api.SPKeyPair;
+import org.bitcoinj.secp.api.SPXOnlyPubKey;
+import org.bitcoinj.secp.api.SPPrivKey;
+import org.bitcoinj.secp.api.SPPubKey;
 import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.internal.P256k1PubKeyImpl;
+import org.bitcoinj.secp.api.internal.SPPubKeyImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,7 +50,7 @@ public class AddressTest {
     void createAddressTest(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
         try (Secp256k1 secp = Secp256k1.getByName("bouncy-castle")) {
-            P256K1KeyPair keyPair = secp.ecKeyPairCreate(P256k1PrivKey.of(key));
+            SPKeyPair keyPair = secp.ecKeyPairCreate(SPPrivKey.of(key));
             WitnessMaker maker = new WitnessMaker(secp);
 //            P256K1XOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
 //            BigInteger tweakInt = calcTweak(xOnlyKey);
@@ -69,7 +69,7 @@ public class AddressTest {
     void createAddressTestBouncy(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
         try (Secp256k1 secp = Secp256k1.getByName("bouncy-castle")) {
-            P256K1KeyPair keyPair = secp.ecKeyPairCreate(P256k1PrivKey.of(key));
+            SPKeyPair keyPair = secp.ecKeyPairCreate(SPPrivKey.of(key));
             WitnessMaker maker = new WitnessMaker(secp);
 //            P256K1XOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
 //            BigInteger tweakInt = calcTweak(xOnlyKey);
@@ -88,11 +88,11 @@ public class AddressTest {
         Address tapRootAddress;
         try (Secp256k1 secp = Secp256k1.getByName("bouncy-castle")) {
             byte[] serial = HexFormat.of().parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
-            P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.parse(serial).get();
+            SPXOnlyPubKey xOnlyKey = SPXOnlyPubKey.parse(serial).get();
             BigInteger tweakInt = calcTweak(xOnlyKey);
-            P256k1PubKey G = new P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
-            P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-            P256k1PubKey Q = secp.ecPubKeyCombine(new P256k1PubKeyImpl(new ECPoint(xOnlyKey.getX(), BigInteger.ZERO)), P2);
+            SPPubKey G = new SPPubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
+            SPPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
+            SPPubKey Q = secp.ecPubKeyCombine(new SPPubKeyImpl(new ECPoint(xOnlyKey.getX(), BigInteger.ZERO)), P2);
             byte[] witnessProgram = Q.xOnly().serialize();
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
@@ -113,15 +113,15 @@ public class AddressTest {
             BigInteger internalPubKey = new BigInteger("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d", 16);
             byte[] compressed = new byte[33];
             compressed[0] = 0x02;
-            byte[] xbytes = P256K1FieldElement.integerTo32Bytes(internalPubKey);
+            byte[] xbytes = SPFieldElement.integerTo32Bytes(internalPubKey);
             System.arraycopy(xbytes, 0, compressed, 1, 32);
             ECKey ecKey = ECKey.fromPublicOnly(compressed);
-            P256k1PubKey pubkey = BC.toP256K1PubKey(ecKey.getPubKeyPoint());
-            P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.of(internalPubKey);
+            SPPubKey pubkey = BC.toP256K1PubKey(ecKey.getPubKeyPoint());
+            SPXOnlyPubKey xOnlyKey = SPXOnlyPubKey.of(internalPubKey);
             BigInteger tweakInt = calcTweak(xOnlyKey);
-            P256k1PubKey G = new P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
-            P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-            P256k1PubKey Q = secp.ecPubKeyCombine(pubkey, P2);
+            SPPubKey G = new SPPubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
+            SPPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
+            SPPubKey Q = secp.ecPubKeyCombine(pubkey, P2);
             byte[] witnessProgram = Q.xOnly().serialize();
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }

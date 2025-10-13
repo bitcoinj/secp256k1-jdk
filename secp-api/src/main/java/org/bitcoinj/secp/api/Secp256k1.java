@@ -30,7 +30,7 @@ import java.security.spec.EllipticCurve;
  * <p>
  * The API is based on the C-language API of <a href="https://github.com/bitcoin-core/secp256k1">libsecp256k1</a>, but
  * is here adapted to modern, idiomatic, functional-style Java and use Elliptic Curve <i>types</i> from the Java Class Library,
- * such as {@link ECPublicKey} via the specialized {@link P256k1PubKey} subclass.
+ * such as {@link ECPublicKey} via the specialized {@link SPPubKey} subclass.
  * <p>
  * Two implementations are being developed.
  * <ul>
@@ -62,26 +62,26 @@ public interface Secp256k1 extends Closeable {
      * Create a new, randomly-generated private key.
      * @return the private key
      */
-    P256k1PrivKey ecPrivKeyCreate();
+    SPPrivKey ecPrivKeyCreate();
 
     /**
      * Create a public key from the given private key.
      * @param seckey the private key
      * @return derived public key
      */
-    P256k1PubKey ecPubKeyCreate(P256k1PrivKey seckey);
+    SPPubKey ecPubKeyCreate(SPPrivKey seckey);
 
     /**
      * Create a new, randomly-generated private key and return it with its matching public key
      * @return newly generated key pair
      */
-    P256K1KeyPair ecKeyPairCreate();
+    SPKeyPair ecKeyPairCreate();
 
     /** Create a key pair structure from a known private key
      * @param privKey the private key
      * @return object containing both public and private key
      */
-    P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey);
+    SPKeyPair ecKeyPairCreate(SPPrivKey privKey);
 
     /**
      * Multiply a public key by a scalar, this is known as key "tweaking"
@@ -89,7 +89,7 @@ public interface Secp256k1 extends Closeable {
      * @param scalarMultiplier scalar multiplier
      * @return the product
      */
-    P256k1PubKey ecPubKeyTweakMul(P256k1PubKey pubKey, BigInteger scalarMultiplier);
+    SPPubKey ecPubKeyTweakMul(SPPubKey pubKey, BigInteger scalarMultiplier);
 
     /**
      * Combine two public keys by adding them.
@@ -97,7 +97,7 @@ public interface Secp256k1 extends Closeable {
      * @param key2 second key
      * @return the sum
      */
-    P256k1PubKey ecPubKeyCombine(P256k1PubKey key1, P256k1PubKey key2);
+    SPPubKey ecPubKeyCombine(SPPubKey key1, SPPubKey key2);
 
     /**
      * Serialize a public key
@@ -105,16 +105,16 @@ public interface Secp256k1 extends Closeable {
      * @param flags serialization flags
      * @return pubKey serialized as a byte array
      */
-    byte[] ecPubKeySerialize(P256k1PubKey pubKey, int flags);
+    byte[] ecPubKeySerialize(SPPubKey pubKey, int flags);
 
     /**
      * Calculate an uncompressed point from a compressed point.
      * @param compressedPoint a compressed point
      * @return The same point, in uncompressed format
      */
-    default P256K1Point.Uncompressed ecPointUncompress(P256K1Point.Compressed compressedPoint) {
+    default SPPoint.Uncompressed ecPointUncompress(SPPoint.Compressed compressedPoint) {
         byte[] serializedCompressed = compressedPoint.getEncoded();
-        P256k1PubKey pub = ecPubKeyParse(serializedCompressed).get();
+        SPPubKey pub = ecPubKeyParse(serializedCompressed).get();
         return pub.point();
     }
 
@@ -123,7 +123,7 @@ public interface Secp256k1 extends Closeable {
      * @param inputData raw data to parse as public key
      * @return public key result or error
      */
-    Result<P256k1PubKey> ecPubKeyParse(byte[] inputData);
+    SPResult<SPPubKey> ecPubKeyParse(byte[] inputData);
 
     /**
      * Sign a message hash using the ECDSA algorithm
@@ -131,16 +131,16 @@ public interface Secp256k1 extends Closeable {
      * @param seckey private key
      * @return the signature
      */
-    Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey);
+    SPResult<SPSignatureData> ecdsaSign(byte[] msg_hash_data, SPPrivKey seckey);
 
     /**
-     * Serialize a {@link SignatureData} as a Bitcoin <i>compact signature</i>. A compact signature is
+     * Serialize a {@link SPSignatureData} as a Bitcoin <i>compact signature</i>. A compact signature is
      * the two signature component field integers (known as {@code r} and {@code s}) serialized in-order as
      * binary data in big-endian format.
      * @param sig signature object
      * @return compact signature bytes
      */
-    byte[] ecdsaSignatureSerializeCompact(SignatureData sig);
+    byte[] ecdsaSignatureSerializeCompact(SPSignatureData sig);
 
     /**
      * Parse a Bitcoin <i>compact signature</i>. A compact signature is
@@ -149,7 +149,7 @@ public interface Secp256k1 extends Closeable {
      * @param serialized_signature compact signature bytes
      * @return signature object
      */
-    Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature);
+    SPResult<SPSignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature);
 
     /**
      * Verify an ECDSA signature.
@@ -158,7 +158,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey The pubkey that must have signed the message
      * @return true, false, or error
      */
-    Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey);
+    SPResult<Boolean> ecdsaVerify(SPSignatureData sig, byte[] msg_hash_data, SPPubKey pubKey);
 
     /**
      * Generate a tagged SHA-256 hash.
@@ -184,7 +184,7 @@ public interface Secp256k1 extends Closeable {
      * @param keyPair the keypair for signing
      * @return the signature
      */
-    byte[] schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair);
+    byte[] schnorrSigSign32(byte[] msg_hash, SPKeyPair keyPair);
 
     /**
      * Verify a Schnorr signature.
@@ -193,7 +193,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey pubkey that must have signed the message
      * @return true, false, or error
      */
-    Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
+    SPResult<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, SPXOnlyPubKey pubKey);
 
     /**
      * ECDH key agreement
@@ -201,7 +201,7 @@ public interface Secp256k1 extends Closeable {
      * @param secKey secret key
      * @return ecdh key agreement
      */
-    Result<byte[]> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey);
+    SPResult<byte[]> ecdh(SPPubKey pubKey, SPPrivKey secKey);
 
     /**
      * Override close and declare that no checked exceptions are thrown

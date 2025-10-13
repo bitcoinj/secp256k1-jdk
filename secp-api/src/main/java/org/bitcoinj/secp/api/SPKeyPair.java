@@ -13,16 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api.internal;
+package org.bitcoinj.secp.api;
 
-import org.bitcoinj.secp.api.ByteArray;
+import org.bitcoinj.secp.api.internal.SPKeyPairImpl;
 
 /**
- * Abstract Base Class for creating ByteArray Implementations
+ * A single object containing a private key and its derived public key.
  */
-public abstract class ByteArrayBase implements ByteArray {
-    public static final HexFormat HEX_FORMAT = new HexFormat();
+public interface SPKeyPair extends SPPrivKey {
+    /**
+     * Get the public key
+     * @return public key
+     */
+    SPPubKey getPublic();
 
-    @Override
-    public abstract byte[] bytes();
+    /**
+     * Create a keypair from a private key and its matching public key
+     * @param privKey private key
+     * @param pubKey matching public key
+     * @return key pair
+     */
+    static SPKeyPair of(SPPrivKey privKey, SPPubKey pubKey) {
+        return new SPKeyPairImpl(privKey, pubKey);
+    }
 }

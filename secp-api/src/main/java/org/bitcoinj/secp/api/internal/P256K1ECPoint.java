@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1Point;
+import org.bitcoinj.secp.api.SPFieldElement;
+import org.bitcoinj.secp.api.SPPoint;
 
 import java.math.BigInteger;
 import java.security.spec.ECPoint;
@@ -26,7 +26,7 @@ import java.security.spec.ECPoint;
  * represent the "point at infinity", if you need it use {@link ECPoint#POINT_INFINITY} and the
  * superclass {@link ECPoint}.
  */
-public class P256K1ECPoint extends ECPoint implements P256K1Point.Uncompressed {
+public class P256K1ECPoint extends ECPoint implements SPPoint.Uncompressed {
     /**
      * Creates an ECPoint from the specified affine x-coordinate
      * {@code x} and affine y-coordinate {@code y}.
@@ -37,21 +37,21 @@ public class P256K1ECPoint extends ECPoint implements P256K1Point.Uncompressed {
      *                              {@code y} is null.
      */
     public P256K1ECPoint(BigInteger x, BigInteger y) {
-        super(P256K1FieldElement.checkInRange(x), P256K1FieldElement.checkInRange(y));
+        super(SPFieldElement.checkInRange(x), SPFieldElement.checkInRange(y));
     }
 
-    public P256K1ECPoint(P256K1FieldElement x, P256K1FieldElement y) {
+    public P256K1ECPoint(SPFieldElement x, SPFieldElement y) {
         super(x.toBigInteger(), y.toBigInteger());
     }
 
     @Override
-    public P256K1FieldElement x() {
-        return P256K1FieldElement.of(super.getAffineX());
+    public SPFieldElement x() {
+        return SPFieldElement.of(super.getAffineX());
     }
 
     @Override
-    public P256K1FieldElement y() {
-        return P256K1FieldElement.of(super.getAffineY());
+    public SPFieldElement y() {
+        return SPFieldElement.of(super.getAffineY());
     }
 
     @Override
@@ -61,6 +61,6 @@ public class P256K1ECPoint extends ECPoint implements P256K1Point.Uncompressed {
 
     @Override
     public boolean isOdd() {
-        return P256K1FieldElement.of(super.getAffineY()).isOdd();
+        return SPFieldElement.of(super.getAffineY()).isOdd();
     }
 }
