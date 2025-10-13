@@ -1,0 +1,23 @@
+= secp256k1-jdk API Design Notes
+
+== Introduction
+
+`secp256k1-jdk` is a Java library providing Elliptic Curve Cryptography signing, verification and other primitives using the https://www.secg.org/[SECG] curve
+https://en.bitcoin.it/wiki/Secp256k1[secp256k1]. A major priority in the design and implementation is to provide a high-quality, industry-standard Java API for the C-language https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] library. At the same time, it is a priority to provide an implementation-independent API to allows alternative implementations.
+
+The `secp-api` module  (`org.bitcoinj.secp:secp-api` Maven artifact, `org.bitcoinj.secp.api` Java Module System module) defines the `secp256k1-jdk` API entirely using `interface` classes and allows clients of the API to be developed that are completely implementation-independent. Libraries using `secp-api` (for example a future version of **bitcoinj**) can be developed that depend on the API and allow applications to choose an implementation at runtime.
+
+The design of the `secp256k1-jdk` API is not final, but our goal is for it to become the industry standard for Java, JDK, and JVM-language Bitcoin libraries and applications.
+
+These draft _Design Notes_ are a statement of the principles and priorities of the API design. We welcome feedback on these design notes that may help us refine the priorities or explain them more clearly -- they are not yet final. The same is true of the prototype API implementation.
+
+== Design Priorities
+
+. Fully-functional Java wrapper for the secp256k1 'C' library.
+. API conceptually similar to the 'C' API, but adapted to Java (e.g. Java naming conventions, references instead of pointers, etc.)
+. Modern, functional-style Java idioms.
+. API that strongly-encourages secure usage patterns.
+. Provide an API that is implementation-independent. This means no public concrete classes in `secp-api` module and the ability to swap implementations at run-time.
+. Fully support the Java Module System (but do not require its use.)
+. In the 1.0 release support Java as old as version 8 or 9.
+. Near-zero dependencies. (The only dependency is JSpecify which is very minimal and needed for nullability annotations and first-class Kotlin support.)
