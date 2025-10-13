@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 secp256k1-jdk Developers.
+ * Copyright 2023-2025 secp256k1-jdk Developers.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  * API definition module for <a href="https://github.com/bitcoinj/secp256k1-jdk">secp256k1-jdk</a>, a Java library providing
  * <i>Elliptic Curve Cryptography</i> functions using the <a href="https://www.secg.org">SECG</a> curve
