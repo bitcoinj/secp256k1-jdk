@@ -15,36 +15,36 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.SignatureData;
+import org.bitcoinj.secp.api.SPFieldElement;
+import org.bitcoinj.secp.api.SPSignatureData;
 
 import java.util.Arrays;
 
 /**
- * Default/Internal implementation of {@link SignatureData}
+ * Default/Internal implementation of {@link SPSignatureData}
  */
-public class SignatureDataImpl implements SignatureData {
-    private final P256K1FieldElement r;
-    private final P256K1FieldElement s;
+public class SPSignatureDataImpl implements SPSignatureData {
+    private final SPFieldElement r;
+    private final SPFieldElement s;
 
-    public SignatureDataImpl(P256K1FieldElement r, P256K1FieldElement s) {
+    public SPSignatureDataImpl(SPFieldElement r, SPFieldElement s) {
         this.r = r;
         this.s = s;
     }
 
-    public SignatureDataImpl(byte[] signature) {
+    public SPSignatureDataImpl(byte[] signature) {
         if (signature.length != 64) {
             throw new IllegalArgumentException("Sig Not 64 bytes");
         }
-        this.r = P256K1FieldElement.of(Arrays.copyOfRange(signature, 0, 32));
-        this.s = P256K1FieldElement.of(Arrays.copyOfRange(signature, 32, 64));
+        this.r = SPFieldElement.of(Arrays.copyOfRange(signature, 0, 32));
+        this.s = SPFieldElement.of(Arrays.copyOfRange(signature, 32, 64));
     }
 
-    public P256K1FieldElement r() {
+    public SPFieldElement r() {
         return r;
     }
 
-    public P256K1FieldElement s() {
+    public SPFieldElement s() {
         return s;
     }
 

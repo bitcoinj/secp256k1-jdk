@@ -38,36 +38,36 @@ public class P256K1FieldElementTest {
     @FieldSource("inRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testDefaultImplementation(BigInteger n) {
-        P256K1FieldElement element = P256K1FieldElement.of(n);
+        SPFieldElement element = SPFieldElement.of(n);
         assertEquals(n, element.toBigInteger());
     }
 
     @FieldSource("inRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testIsInRange(BigInteger n) {
-        assertTrue(P256K1FieldElement.isInRange(n));
+        assertTrue(SPFieldElement.isInRange(n));
     }
 
     @FieldSource("outOfRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testIsOutOfRange(BigInteger n) {
-        assertFalse(P256K1FieldElement.isInRange(n));
+        assertFalse(SPFieldElement.isInRange(n));
     }
 
     @FieldSource("inRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testCheckInRangeValid(BigInteger n) {
         assertDoesNotThrow(
-            () -> P256K1FieldElement.checkInRange(n)
+            () -> SPFieldElement.checkInRange(n)
         );
-        assertEquals(n, P256K1FieldElement.checkInRange(n));
+        assertEquals(n, SPFieldElement.checkInRange(n));
     }
 
     @FieldSource("outOfRangeFieldInts")
     @ParameterizedTest(name = "n: {0}")
     void testCheckInRangeInvalid(BigInteger n) {
         assertThrows(IllegalArgumentException.class,
-            () -> P256K1FieldElement.checkInRange(n)
+            () -> SPFieldElement.checkInRange(n)
         );
     }
 }

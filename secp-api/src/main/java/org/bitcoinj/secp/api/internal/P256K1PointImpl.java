@@ -15,14 +15,14 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1Point;
+import org.bitcoinj.secp.api.SPFieldElement;
+import org.bitcoinj.secp.api.SPPoint;
 
 /**
- * Default implementation of {@link P256K1Point}
+ * Default implementation of {@link SPPoint}
  */
-public abstract class P256K1PointImpl implements P256K1Point {
-    public static P256K1PointUncompressed of(P256K1FieldElement x, P256K1FieldElement y) {
+public abstract class P256K1PointImpl implements SPPoint {
+    public static P256K1PointUncompressed of(SPFieldElement x, SPFieldElement y) {
         return new P256K1PointUncompressed(x, y);
     }
 }

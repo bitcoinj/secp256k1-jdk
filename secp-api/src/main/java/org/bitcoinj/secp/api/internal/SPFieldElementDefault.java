@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.ByteArray;
-import org.bitcoinj.secp.api.P256K1FieldElement;
+import org.bitcoinj.secp.api.SPByteArray;
+import org.bitcoinj.secp.api.SPFieldElement;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -25,20 +25,20 @@ import java.util.Objects;
 /**
  *
  */
-public class P256K1FieldElementDefault implements P256K1FieldElement {
+public class SPFieldElementDefault implements SPFieldElement {
     private final byte[] value;
 
-    public P256K1FieldElementDefault(BigInteger i) {
-        value = P256K1FieldElement.integerTo32Bytes(P256K1FieldElement.checkInRange(i));
+    public SPFieldElementDefault(BigInteger i) {
+        value = SPFieldElement.integerTo32Bytes(SPFieldElement.checkInRange(i));
     }
 
-    public P256K1FieldElementDefault(byte[] bytes) {
-        value = P256K1FieldElement.checkInRange(bytes);
+    public SPFieldElementDefault(byte[] bytes) {
+        value = SPFieldElement.checkInRange(bytes);
     }
 
     @Override
     public BigInteger toBigInteger() {
-        return ByteArray.toInteger(value);
+        return SPByteArray.toInteger(value);
     }
 
     @Override
@@ -48,13 +48,13 @@ public class P256K1FieldElementDefault implements P256K1FieldElement {
 
     @Override
     public boolean isOdd() {
-        return ByteArray.toInteger(value).mod(BigInteger.TWO).equals(BigInteger.ONE);
+        return SPByteArray.toInteger(value).mod(BigInteger.TWO).equals(BigInteger.ONE);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        P256K1FieldElementDefault that = (P256K1FieldElementDefault) o;
+        SPFieldElementDefault that = (SPFieldElementDefault) o;
         return Objects.deepEquals(value, that.value);
     }
 

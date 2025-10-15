@@ -25,21 +25,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * Tests of {@link P256K1Point}
+ * Tests of {@link SPPoint}
  */
 public class P256K1PointTest {
     static BigInteger p = Secp256k1.FIELD.getP();
-    static P256K1FieldElement ONE = P256K1FieldElement.of(BigInteger.ONE);
-    static P256K1FieldElement MAX = P256K1FieldElement.of(p.subtract(BigInteger.ONE));
+    static SPFieldElement ONE = SPFieldElement.of(BigInteger.ONE);
+    static SPFieldElement MAX = SPFieldElement.of(p.subtract(BigInteger.ONE));
     static BigInteger INT_MAX = MAX.toBigInteger();
 
     @Test
     void testDefaultImpl() {
-        P256K1Point.Uncompressed uncompressed = new P256K1PointUncompressed(ONE, MAX);
+        SPPoint.Uncompressed uncompressed = new P256K1PointUncompressed(ONE, MAX);
         assertEquals(ONE, uncompressed.x());
         assertEquals(MAX, uncompressed.y());
 
-        P256K1Point.Compressed compressed = uncompressed.compress();
+        SPPoint.Compressed compressed = uncompressed.compress();
         assertEquals(ONE, compressed.x());
         assertFalse(compressed.isOdd());
     }

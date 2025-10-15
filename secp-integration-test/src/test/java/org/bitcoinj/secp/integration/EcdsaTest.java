@@ -15,20 +15,16 @@
  */
 package org.bitcoinj.secp.integration;
 
-import org.bitcoinj.secp.api.P256K1Point;
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SPPrivKey;
+import org.bitcoinj.secp.api.SPPubKey;
 import org.bitcoinj.secp.api.Secp256k1;
 import org.bitcoinj.secp.api.Secp256k1Provider;
-import org.bitcoinj.secp.api.SignatureData;
+import org.bitcoinj.secp.api.SPSignatureData;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HexFormat;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -49,9 +45,9 @@ public class EcdsaTest {
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Test Ecdsa for {0}")
     void testEcdsa(Secp256k1 secp) {
-        P256k1PrivKey privKey = secp.ecPrivKeyCreate();
-        P256k1PubKey pubKey = secp.ecPubKeyCreate(privKey);
-        SignatureData sig = secp.ecdsaSign(msg_hash, privKey).get();
+        SPPrivKey privKey = secp.ecPrivKeyCreate();
+        SPPubKey pubKey = secp.ecPubKeyCreate(privKey);
+        SPSignatureData sig = secp.ecdsaSign(msg_hash, privKey).get();
         boolean validSignature = secp.ecdsaVerify(sig, msg_hash, pubKey).get();
         assertTrue(validSignature);
     }

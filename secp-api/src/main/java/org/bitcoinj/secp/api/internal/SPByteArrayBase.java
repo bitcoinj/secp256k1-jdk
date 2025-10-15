@@ -13,23 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.integration;
+package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.SPPrivKey;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
+import org.bitcoinj.secp.api.SPByteArray;
 
 /**
- *
+ * Abstract Base Class for creating ByteArray Implementations
  */
-public class PrivKeyDataTest {
-    @Test
-    void testBouncyPriv() {
-        SPPrivKey priv = SPPrivKey.of(BigInteger.ONE);
+public abstract class SPByteArrayBase implements SPByteArray {
+    public static final HexFormat HEX_FORMAT = new HexFormat();
 
-        BigInteger privInt = priv.getS();
-        Assertions.assertEquals(BigInteger.ONE, privInt);
-    }
+    @Override
+    public abstract byte[] bytes();
 }

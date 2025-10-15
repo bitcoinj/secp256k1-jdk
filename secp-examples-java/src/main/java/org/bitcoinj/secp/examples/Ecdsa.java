@@ -15,10 +15,10 @@
  */
 package org.bitcoinj.secp.examples;
 
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SPPrivKey;
+import org.bitcoinj.secp.api.SPPubKey;
 import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.SignatureData;
+import org.bitcoinj.secp.api.SPSignatureData;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -41,11 +41,11 @@ public class Ecdsa {
             /* === Key Generation === */
 
             /* Return a non-zero, in-range private key */
-            P256k1PrivKey privKey = secp.ecPrivKeyCreate();
+            SPPrivKey privKey = secp.ecPrivKeyCreate();
             //P256k1PrivKey privKey = new BouncyPrivKey(BigInteger.ONE);
 
             /* Public key creation using a valid context with a verified secret key should never fail */
-            P256k1PubKey pubkey = secp.ecPubKeyCreate(privKey);
+            SPPubKey pubkey = secp.ecPubKeyCreate(privKey);
 
             /* Serialize the pubkey in a compressed form (33 bytes). */
             byte[] compressed_pubkey = secp.ecPubKeySerialize(pubkey, (int)2L /* secp256k1_h.SECP256K1_EC_COMPRESSED() */);
@@ -54,7 +54,7 @@ public class Ecdsa {
 
             /* Generate an ECDSA signature using the RFC-6979 safe default nonce.
              * Signing with a valid context, verified secret key and the default nonce function should never fail. */
-            SignatureData sig = secp.ecdsaSign(msg_hash, privKey).get();
+            SPSignatureData sig = secp.ecdsaSign(msg_hash, privKey).get();
 
             /* Serialize the signature in a compact form. Should always succeed according to
              the documentation in secp256k1.h. */
@@ -63,11 +63,11 @@ public class Ecdsa {
             /* === Verification === */
 
             /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
-            SignatureData sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).get();
+            SPSignatureData sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).get();
             assert(Arrays.equals(sig.bytes(), sig2.bytes()));
 
             /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
-            P256k1PubKey pubkey2 = secp.ecPubKeyParse(compressed_pubkey).get();
+            SPPubKey pubkey2 = secp.ecPubKeyParse(compressed_pubkey).get();
             assert(pubkey.getW().equals(pubkey2.getW()));
 
             /* Verify a signature. This will return true if it's valid and false if it's not. */

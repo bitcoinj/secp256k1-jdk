@@ -15,31 +15,31 @@
  */
 package org.bitcoinj.secp.api;
 
-import org.bitcoinj.secp.api.internal.SignatureDataImpl;
+import org.bitcoinj.secp.api.internal.SPSignatureDataImpl;
 
 /**
  * An secp256k1 ECDSA signature.
  */
-public interface SignatureData extends ByteArray {
+public interface SPSignatureData extends SPByteArray {
     /**
      * Get field element R
      * @return R
      */
-    P256K1FieldElement r();
+    SPFieldElement r();
 
     /**
      * Get field element S
      * @return S
      */
-    P256K1FieldElement s();
+    SPFieldElement s();
 
     /**
      * Create an ECDSA signature from serialized bytes
      * @param bytes bytes
      * @return signature
      */
-    static SignatureData of(byte[] bytes) {
-        return new SignatureDataImpl(bytes);
+    static SPSignatureData of(byte[] bytes) {
+        return new SPSignatureDataImpl(bytes);
     }
 
     /**
@@ -48,7 +48,7 @@ public interface SignatureData extends ByteArray {
      * @param s S
      * @return signature
      */
-    static SignatureData of(P256K1FieldElement r, P256K1FieldElement s) {
-        return new SignatureDataImpl(r,s);
+    static SPSignatureData of(SPFieldElement r, SPFieldElement s) {
+        return new SPSignatureDataImpl(r,s);
     }
 }

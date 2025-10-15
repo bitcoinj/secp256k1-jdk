@@ -15,15 +15,15 @@
  */
 package org.bitcoinj.secp.api;
 
-import org.bitcoinj.secp.api.internal.P256K1XOnlyPubKeyBigInteger;
-import org.bitcoinj.secp.api.internal.P256K1XOnlyPubKeyBytes;
+import org.bitcoinj.secp.api.internal.SPXOnlyPubKeyBigInteger;
+import org.bitcoinj.secp.api.internal.SPXOnlyPubKeyBytes;
 
 import java.math.BigInteger;
 
 /**
  * An x-only public key from a point on the secp256k1 curve
  */
-public interface P256K1XOnlyPubKey {
+public interface SPXOnlyPubKey {
     /**
      *  Get X as a {@link BigInteger}
      * @return X as a {@link BigInteger}
@@ -41,11 +41,11 @@ public interface P256K1XOnlyPubKey {
      * @param serialized byte string in x-only pubkey serialization format
      * @return an instance of the default implementation
      */
-    static Result<P256K1XOnlyPubKey> parse(byte[] serialized) {
+    static SPResult<SPXOnlyPubKey> parse(byte[] serialized) {
         BigInteger x = new BigInteger(1, serialized);
-        return !P256K1FieldElement.isInRange(x)
-                ? Result.err(-1)
-                : Result.ok(P256K1XOnlyPubKey.of(x));
+        return !SPFieldElement.isInRange(x)
+                ? SPResult.err(-1)
+                : SPResult.ok(SPXOnlyPubKey.of(x));
     }
 
     /**
@@ -53,8 +53,8 @@ public interface P256K1XOnlyPubKey {
      * @param x X
      * @return an instance of the default implementation
      */
-    static P256K1XOnlyPubKey of(BigInteger x) {
-        return new P256K1XOnlyPubKeyBigInteger(x);
+    static SPXOnlyPubKey of(BigInteger x) {
+        return new SPXOnlyPubKeyBigInteger(x);
     }
 
     /**
@@ -62,7 +62,7 @@ public interface P256K1XOnlyPubKey {
      * @param xBytes X
      * @return an instance of the default implementation
      */
-    static P256K1XOnlyPubKey of(byte[] xBytes) {
-        return new P256K1XOnlyPubKeyBytes(xBytes);
+    static SPXOnlyPubKey of(byte[] xBytes) {
+        return new SPXOnlyPubKeyBytes(xBytes);
     }
 }

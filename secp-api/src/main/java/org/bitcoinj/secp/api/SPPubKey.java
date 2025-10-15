@@ -16,7 +16,7 @@
 package org.bitcoinj.secp.api;
 
 import org.bitcoinj.secp.api.internal.P256K1ECPoint;
-import org.bitcoinj.secp.api.internal.P256k1PubKeyImpl;
+import org.bitcoinj.secp.api.internal.SPPubKeyImpl;
 
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -25,7 +25,7 @@ import java.security.spec.ECPoint;
 /**
  * A valid secp256k1 Public Key that is a subclass of {@link ECPublicKey}
  */
-public interface P256k1PubKey extends ECPublicKey {
+public interface SPPubKey extends ECPublicKey {
     /**
      * Return associated cryptographic algorithm. This implements the {@link java.security.Key} interface.
      * @return string indicating algorithm
@@ -82,7 +82,7 @@ public interface P256k1PubKey extends ECPublicKey {
         compressed[0] = point.getAffineY().testBit(0)
                 ? (byte) 0x03      // odd
                 : (byte) 0x02;     // even;
-        System.arraycopy(P256K1FieldElement.integerTo32Bytes(point.getAffineX()),
+        System.arraycopy(SPFieldElement.integerTo32Bytes(point.getAffineX()),
                 0,
                 compressed,
                 1,
@@ -96,8 +96,8 @@ public interface P256k1PubKey extends ECPublicKey {
      */
     default byte[] getUncompressed() {
         ECPoint point = getW();
-        byte[] x = P256K1FieldElement.integerTo32Bytes(point.getAffineX());
-        byte[] y = P256K1FieldElement.integerTo32Bytes(point.getAffineY());
+        byte[] x = SPFieldElement.integerTo32Bytes(point.getAffineX());
+        byte[] y = SPFieldElement.integerTo32Bytes(point.getAffineY());
         byte[] encoded = new byte[65];
         encoded[0] = 0x04;
         System.arraycopy(x, 0, encoded, 1, 32);
@@ -109,8 +109,8 @@ public interface P256k1PubKey extends ECPublicKey {
      * Return the x-only public key.
      * @return x-only pubkey
      */
-    default P256K1XOnlyPubKey xOnly() {
-        return P256K1XOnlyPubKey.of(this.getW().getAffineX());
+    default SPXOnlyPubKey xOnly() {
+        return SPXOnlyPubKey.of(this.getW().getAffineX());
     }
 
     /**
@@ -122,10 +122,10 @@ public interface P256k1PubKey extends ECPublicKey {
     ECPoint getW();
 
     /**
-     * Get the uncompressed {@link P256K1Point}
+     * Get the uncompressed {@link SPPoint}
      * @return point
      */
-    P256K1Point.Uncompressed point();
+    SPPoint.Uncompressed point();
 
     /**
      * Get the Elliptic Curve parameters
@@ -153,16 +153,16 @@ public interface P256k1PubKey extends ECPublicKey {
      * @param ecPoint the point
      * @return the pubkey
      */
-    static P256k1PubKey ofPoint(ECPoint ecPoint) {
-        return new P256k1PubKeyImpl(ecPoint);
+    static SPPubKey ofPoint(ECPoint ecPoint) {
+        return new SPPubKeyImpl(ecPoint);
     }
 
     /**
-     * Construct a public key from an {@link P256K1Point.Uncompressed}
+     * Construct a public key from an {@link SPPoint.Uncompressed}
      * @param point the point
      * @return the pubkey
      */
-    static P256k1PubKey ofPoint(P256K1Point.Uncompressed point) {
-        return new P256k1PubKeyImpl(point);
+    static SPPubKey ofPoint(SPPoint.Uncompressed point) {
+        return new SPPubKeyImpl(point);
     }
 }

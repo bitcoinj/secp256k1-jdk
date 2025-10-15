@@ -15,40 +15,31 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.ByteArray;
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SPByteArray;
+import org.bitcoinj.secp.api.SPFieldElement;
+import org.bitcoinj.secp.api.SPXOnlyPubKey;
+import org.bitcoinj.secp.api.SPPubKey;
 
 import java.math.BigInteger;
 
 /**
- * Simple implementation using {code @byte[]} as internal storage.
+ * Default implementation. Currently used by all known implementations
  */
-public class P256K1XOnlyPubKeyBytes implements P256K1XOnlyPubKey, ByteArray {
-    private final byte[] x;
+public class SPXOnlyPubKeyBigInteger implements SPXOnlyPubKey {
+    private final BigInteger x;
 
-    public P256K1XOnlyPubKeyBytes(P256k1PubKey pubKey) {
+    public SPXOnlyPubKeyBigInteger(SPPubKey pubKey) {
         // Avoid using pubKey.getXOnly() and possible infinite recursion
-        this.x = pubKey.xOnly().serialize();
+        this.x = pubKey.getW().getAffineX();
     }
 
-    public P256K1XOnlyPubKeyBytes(byte[] xBytes) {
-        // Defensive copy
-        x = new byte[xBytes.length];
-        System.arraycopy(xBytes, 0, x, 0, x.length);
+    public SPXOnlyPubKeyBigInteger(BigInteger x) {
+        this.x = x;
     }
 
     @Override
     public BigInteger getX() {
-        return ByteArray.toInteger(x);
-    }
-
-    @Override
-    public byte[] bytes() {
-        // Defensive copy
-        byte[] result = new byte[x.length];
-        System.arraycopy(x, 0, result, 0, x.length);
-        return result;
+        return x;
     }
 
     /**
@@ -56,7 +47,7 @@ public class P256K1XOnlyPubKeyBytes implements P256K1XOnlyPubKey, ByteArray {
      */
     @Override
     public byte[] serialize() {
-        return bytes();
+        return SPFieldElement.integerTo32Bytes(x);
     }
 
     /**
@@ -64,6 +55,6 @@ public class P256K1XOnlyPubKeyBytes implements P256K1XOnlyPubKey, ByteArray {
      */
     @Override
     public String toString() {
-        return ByteArray.toHexString(serialize());
+        return SPByteArray.toHexString(serialize());
     }
 }
