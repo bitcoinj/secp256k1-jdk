@@ -19,6 +19,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -65,10 +66,17 @@ public interface Secp256k1Provider {
      * @return the <b>first</b> provider matching the predicate, if any
      */
     static Optional<Secp256k1Provider> findFirst(Predicate<Secp256k1Provider> filter) {
+        return findAll(filter).findFirst();
+    }
+
+    static Stream<Secp256k1Provider> all() {
+        return findAll(p -> true);
+    }
+
+    static Stream<Secp256k1Provider> findAll(Predicate<Secp256k1Provider> filter) {
         ServiceLoader<Secp256k1Provider> loader = ServiceLoader.load(Secp256k1Provider.class);
         return StreamSupport.stream(loader.spliterator(), false)
-                .filter(filter)
-                .findFirst();
+                .filter(filter);
     }
 
     /**
