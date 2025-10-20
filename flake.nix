@@ -22,10 +22,11 @@
         jdk = pkgs.jdk25;
         graalvm = pkgs.graalvmPackages.graalvm-ce;
         sharedShellHook = ''
+            export LIBSECP_DIR="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}"
             if [[ "$(uname)" == "Darwin" ]]; then
-              export DYLD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$DYLD_LIBRARY_PATH"
+              export DYLD_LIBRARY_PATH="$LIBSECP_DIR:$DYLD_LIBRARY_PATH"
             else
-              export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.secp256k1 ]}:$LD_LIBRARY_PATH"
+              export LD_LIBRARY_PATH="$LIBSECP_DIR:$LD_LIBRARY_PATH"
             fi
             # setup GRAALVM_HOME
             export GRAALVM_HOME=${graalvm}
