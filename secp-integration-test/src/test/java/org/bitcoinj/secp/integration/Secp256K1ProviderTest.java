@@ -23,6 +23,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.bitcoinj.secp.api.Secp256k1.ProviderId.BOUNCY_CASTLE;
+import static org.bitcoinj.secp.api.Secp256k1.ProviderId.LIBSECP256K1_FFM;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,7 +37,7 @@ public class Secp256K1ProviderTest {
     }
 
     public static Stream<Secp256k1Provider> secpProviders() {
-        var providerList = List.of("ffm", "bouncy-castle");
+        var providerList = List.of(LIBSECP256K1_FFM.id(), BOUNCY_CASTLE.id());
         return Secp256k1Provider.findAll(p -> providerList.contains(p.name()));
     }
 

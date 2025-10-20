@@ -41,7 +41,7 @@ public interface Secp256k1Provider {
     /**
      * Find a Secp256k1Provider by name
      *
-     * @param name Name (e.g. "ffm" or "bouncy-castle")
+     * @param name Provider ID string (e.g. "ffm" or "bouncy-castle")
      * @return an Secp256k1Provider instance
      * @throws NoSuchElementException if not found
      */
@@ -90,11 +90,11 @@ public interface Secp256k1Provider {
     }
 
     /**
-     * Find the default provider. This is currently the "ffm" provider.
+     * Find the default provider. This is currently the {@link Secp256k1.ProviderId#LIBSECP256K1_FFM} provider.
      * @param provider a candidate provider
      * @return true if it should be "found"
      */
     /* private */ static boolean defaultFilter(Secp256k1Provider provider) {
-        return provider.name().equals("ffm");
+        return provider.name().equals(Secp256k1.ProviderId.LIBSECP256K1_FFM.id());
     }
 }
