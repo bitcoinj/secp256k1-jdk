@@ -42,7 +42,7 @@ public class EcdsaTest {
     private static final byte[] msg_hash = hash("Hello, world!");
 
     public static Stream<Secp256k1> secpImplementations() {
-        return Secp256k1.Provider.all().map(Secp256k1.Provider::get);
+        return Secp256k1.all().map(Secp256k1.Provider::get);
     }
 
     @MethodSource("secpImplementations")
