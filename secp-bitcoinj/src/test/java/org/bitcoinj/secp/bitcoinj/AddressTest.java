@@ -38,6 +38,7 @@ import java.security.spec.ECPoint;
 import java.util.HexFormat;
 import java.util.stream.Stream;
 
+import static org.bitcoinj.secp.api.Secp256k1.ProviderId.BOUNCY_CASTLE;
 import static org.bitcoinj.secp.bitcoinj.WitnessMaker.calcTweak;
 
 /**
@@ -49,7 +50,7 @@ public class AddressTest {
     @ParameterizedTest(name = "key {0} -> Address {1}")
     void createAddressTest(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
-        try (Secp256k1 secp = Secp256k1.getByName("bouncy-castle")) {
+        try (Secp256k1 secp = Secp256k1.getByName(BOUNCY_CASTLE.id())) {
             P256K1KeyPair keyPair = secp.ecKeyPairCreate(P256k1PrivKey.of(key));
             WitnessMaker maker = new WitnessMaker(secp);
 //            P256K1XOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
@@ -68,7 +69,7 @@ public class AddressTest {
     @ParameterizedTest(name = "key {0} -> Address {1}")
     void createAddressTestBouncy(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
-        try (Secp256k1 secp = Secp256k1.getByName("bouncy-castle")) {
+        try (Secp256k1 secp = Secp256k1.getByName(BOUNCY_CASTLE.id())) {
             P256K1KeyPair keyPair = secp.ecKeyPairCreate(P256k1PrivKey.of(key));
             WitnessMaker maker = new WitnessMaker(secp);
 //            P256K1XOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
@@ -86,7 +87,7 @@ public class AddressTest {
     @Test
     void createAddressTestBouncyXO() throws Exception {
         Address tapRootAddress;
-        try (Secp256k1 secp = Secp256k1.getByName("bouncy-castle")) {
+        try (Secp256k1 secp = Secp256k1.getByName(BOUNCY_CASTLE.id())) {
             byte[] serial = HexFormat.of().parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
             P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.parse(serial).get();
             BigInteger tweakInt = calcTweak(xOnlyKey);

@@ -59,6 +59,35 @@ public interface Secp256k1 extends Closeable {
         1);                                                                                                       // h
 
     /**
+     * Standard, well-known providers
+     */
+    enum ProviderId {
+        /** libsecp256k1 'C" library accessed through Java FFM */
+        LIBSECP256K1_FFM("ffm"),
+        /** Bouncy Castle library */
+        BOUNCY_CASTLE("bouncy-castle");
+
+        private final String id;
+
+        ProviderId(String s) {
+            this.id = s;
+        }
+
+        @Override
+        public String toString() {
+            return id();
+        }
+
+        /**
+         * Get the provider ID as a string
+         * @return provider ID string
+         */
+        public String id() {
+            return id;
+        }
+    }
+
+    /**
      * Create a new, randomly-generated private key.
      * @return the private key
      */

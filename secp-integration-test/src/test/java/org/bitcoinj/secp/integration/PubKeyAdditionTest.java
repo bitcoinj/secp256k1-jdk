@@ -23,13 +23,15 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
+import static org.bitcoinj.secp.api.Secp256k1.ProviderId.BOUNCY_CASTLE;
+
 /**
  *
  */
 public class PubKeyAdditionTest {
     @Test
     void pubKeyAdditionTestTwo() {
-        try (Secp256k1 secp = Secp256k1.getByName("bouncy-castle")) {
+        try (Secp256k1 secp = Secp256k1.getByName(BOUNCY_CASTLE.id())) {
             P256k1PubKey pubKey = secp.ecKeyPairCreate(P256k1PrivKey.of(BigInteger.ONE)).getPublic();
             P256k1PubKey added = secp.ecPubKeyCombine(pubKey, pubKey);
             P256k1PubKey multiplied = secp.ecPubKeyTweakMul(pubKey, BigInteger.valueOf(2));

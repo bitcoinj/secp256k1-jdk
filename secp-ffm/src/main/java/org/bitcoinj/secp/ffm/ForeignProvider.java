@@ -18,10 +18,12 @@ package org.bitcoinj.secp.ffm;
 import org.bitcoinj.secp.api.Secp256k1;
 import org.bitcoinj.secp.api.Secp256k1Provider;
 
+import static org.bitcoinj.secp.api.Secp256k1.ProviderId.LIBSECP256K1_FFM;
+
 public class ForeignProvider implements Secp256k1Provider {
     @Override
     public String name() {
-        return "ffm";
+        return LIBSECP256K1_FFM.id();
     }
 
     @Override
