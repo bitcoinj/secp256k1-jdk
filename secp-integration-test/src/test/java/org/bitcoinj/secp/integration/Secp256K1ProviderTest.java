@@ -37,7 +37,7 @@ public class Secp256K1ProviderTest {
 
     public static Stream<Secp256k1.Provider> secpProviders() {
         var providerList = List.of(LIBSECP256K1_FFM.id(), BOUNCY_CASTLE.id());
-        return Secp256k1.Provider.findAll(p -> providerList.contains(p.name()));
+        return Secp256k1.findAll(p -> providerList.contains(p.name()));
     }
 
     @MethodSource("secpProviders")
