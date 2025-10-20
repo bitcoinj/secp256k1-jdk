@@ -15,26 +15,26 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.P256K1KeyPair;
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SPKeyPair;
+import org.bitcoinj.secp.api.SPPrivKey;
+import org.bitcoinj.secp.api.SPPubKey;
 
 /**
  *
  */
-public class P256K1KeyPairImpl implements P256K1KeyPair {
+public class SPKeyPairImpl implements SPKeyPair {
 
-    private final P256k1PrivKey privKey;
-    private final P256k1PubKey pubKey;
+    private final SPPrivKey privKey;
+    private final SPPubKey pubKey;
 
-    public P256K1KeyPairImpl(P256k1PrivKey privKey, P256k1PubKey pubKey) {
+    public SPKeyPairImpl(SPPrivKey privKey, SPPubKey pubKey) {
         this.privKey = privKey;
         this.pubKey = pubKey;
 
     }
 
     @Override
-    public P256k1PubKey getPublic() {
+    public SPPubKey getPublic() {
         return pubKey;
     }
 

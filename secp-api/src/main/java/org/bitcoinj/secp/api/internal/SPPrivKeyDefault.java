@@ -15,20 +15,20 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.ByteArray;
-import org.bitcoinj.secp.api.P256k1PrivKey;
+import org.bitcoinj.secp.api.SPByteArray;
+import org.bitcoinj.secp.api.SPPrivKey;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static org.bitcoinj.secp.api.P256K1FieldElement.checkInRange;
-import static org.bitcoinj.secp.api.P256K1FieldElement.integerTo32Bytes;
+import static org.bitcoinj.secp.api.SPFieldElement.checkInRange;
+import static org.bitcoinj.secp.api.SPFieldElement.integerTo32Bytes;
 
 /**
- * Default/internal implementation of {@link P256k1PrivKey}
+ * Default/internal implementation of {@link SPPrivKey}
  */
-public class P256k1PrivKeyDefault implements P256k1PrivKey {
+public class SPPrivKeyDefault implements SPPrivKey {
     /**
      * private key or null if key was destroyed
      */
@@ -40,13 +40,13 @@ public class P256k1PrivKeyDefault implements P256k1PrivKey {
      *
      * @param bytes (will not be defensively copied)
      */
-    public P256k1PrivKeyDefault(byte[] bytes) {
+    public SPPrivKeyDefault(byte[] bytes) {
         // TODO: Full, constant-time Range validation?
         checkInRange(bytes);
         privKeyBytes = checkInRange(bytes);
     }
 
-    public P256k1PrivKeyDefault(BigInteger privKey) {
+    public SPPrivKeyDefault(BigInteger privKey) {
         // TODO: Valid integer is valid for field
         this.privKeyBytes = integerTo32Bytes(privKey);
     }
@@ -62,7 +62,7 @@ public class P256k1PrivKeyDefault implements P256k1PrivKey {
     @Override
     public BigInteger getS() {
         if (privKeyBytes == null) throwKeyDestroyed();
-        return ByteArray.toInteger(getEncoded());
+        return SPByteArray.toInteger(getEncoded());
     }
 
     @Override

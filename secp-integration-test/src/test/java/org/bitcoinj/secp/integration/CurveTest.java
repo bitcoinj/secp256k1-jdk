@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp.integration;
 
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.api.SPPrivKey;
+import org.bitcoinj.secp.api.SPPubKey;
 import org.bitcoinj.secp.api.Secp256k1;
 import org.junit.jupiter.api.Test;
 
@@ -34,11 +34,11 @@ public class CurveTest {
     @Test
     void pubKeyCalc() {
         try (var secp = Secp256k1.getByName("ffm"); var bouncy = Secp256k1.getByName("bouncy-castle")) {
-            P256k1PrivKey privkey = P256k1PrivKey.of(BigInteger.ONE);
+            SPPrivKey privkey = SPPrivKey.of(BigInteger.ONE);
 
             // Create pubkeys with both implementations
-            P256k1PubKey pubkey_secp = secp.ecPubKeyCreate(privkey);
-            P256k1PubKey pubkey_bouncy = bouncy.ecPubKeyCreate(privkey);
+            SPPubKey pubkey_secp = secp.ecPubKeyCreate(privkey);
+            SPPubKey pubkey_bouncy = bouncy.ecPubKeyCreate(privkey);
 
             // A private key of `1` should result in a public key of `G`
             assertEquals(G, pubkey_secp.getW());

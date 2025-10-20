@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp.api.internal;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1Point;
+import org.bitcoinj.secp.api.SPFieldElement;
+import org.bitcoinj.secp.api.SPPoint;
 
 import java.math.BigInteger;
 import java.security.spec.ECPoint;
@@ -26,26 +26,26 @@ import java.util.Objects;
  *
  */
 public
-class P256K1PointUncompressed extends P256K1PointImpl implements P256K1Point.Uncompressed {
-    private final P256K1FieldElement x;
-    private final P256K1FieldElement y;
+class P256K1PointUncompressed extends P256K1PointImpl implements SPPoint.Uncompressed {
+    private final SPFieldElement x;
+    private final SPFieldElement y;
 
-    public P256K1PointUncompressed(P256K1FieldElement x, P256K1FieldElement y) {
+    public P256K1PointUncompressed(SPFieldElement x, SPFieldElement y) {
         this.x = x;
         this.y = y;
     }
 
     public static org.bitcoinj.secp.api.internal.P256K1PointUncompressed of(ECPoint point) {
-        return new org.bitcoinj.secp.api.internal.P256K1PointUncompressed(P256K1FieldElement.of(point.getAffineX()),
-                P256K1FieldElement.of(point.getAffineY()));
+        return new org.bitcoinj.secp.api.internal.P256K1PointUncompressed(SPFieldElement.of(point.getAffineX()),
+                SPFieldElement.of(point.getAffineY()));
     }
 
     public static org.bitcoinj.secp.api.internal.P256K1PointUncompressed of(BigInteger x, BigInteger y) {
-        return new org.bitcoinj.secp.api.internal.P256K1PointUncompressed(P256K1FieldElement.of(x), P256K1FieldElement.of(y));
+        return new org.bitcoinj.secp.api.internal.P256K1PointUncompressed(SPFieldElement.of(x), SPFieldElement.of(y));
     }
 
     @Override
-    public P256K1FieldElement x() {
+    public SPFieldElement x() {
         return x;
     }
 
@@ -55,7 +55,7 @@ class P256K1PointUncompressed extends P256K1PointImpl implements P256K1Point.Unc
     }
 
     @Override
-    public P256K1FieldElement y() {
+    public SPFieldElement y() {
         return y;
     }
 
@@ -65,7 +65,7 @@ class P256K1PointUncompressed extends P256K1PointImpl implements P256K1Point.Unc
         return new P256K1PointCompressed(x, y);
     }
 
-    public boolean equals(P256K1Point other) {
+    public boolean equals(SPPoint other) {
         if (!(other instanceof org.bitcoinj.secp.api.internal.P256K1PointUncompressed)) return false;
         Uncompressed otherUncompressed = (Uncompressed) other;
         return x().equals(otherUncompressed.x()) && y().equals(otherUncompressed.y());
