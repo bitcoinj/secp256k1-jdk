@@ -15,15 +15,15 @@
  */
 package org.bitcoinj.secp.integration;
 
-import org.bitcoinj.secp.api.Secp256k1;
+import org.bitcoinj.secp.Secp256k1;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.bitcoinj.secp.api.Secp256k1.ProviderId.BOUNCY_CASTLE;
-import static org.bitcoinj.secp.api.Secp256k1.ProviderId.LIBSECP256K1_FFM;
+import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
+import static org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

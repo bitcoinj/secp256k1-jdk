@@ -15,17 +15,17 @@
  */
 package org.bitcoinj.secp.ffm;
 
-import org.bitcoinj.secp.api.ByteArray;
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1KeyPair;
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bitcoinj.secp.api.Result;
-import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.SignatureData;
-import org.bitcoinj.secp.api.internal.P256K1KeyPairImpl;
-import org.bitcoinj.secp.api.internal.P256k1PubKeyImpl;
+import org.bitcoinj.secp.ByteArray;
+import org.bitcoinj.secp.P256K1FieldElement;
+import org.bitcoinj.secp.P256K1KeyPair;
+import org.bitcoinj.secp.P256K1XOnlyPubKey;
+import org.bitcoinj.secp.P256k1PrivKey;
+import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.Result;
+import org.bitcoinj.secp.Secp256k1;
+import org.bitcoinj.secp.SignatureData;
+import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
+import org.bitcoinj.secp.internal.P256k1PubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_keypair;
@@ -43,7 +43,6 @@ import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.NULL;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
-import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_keypair_pub;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 
 /**

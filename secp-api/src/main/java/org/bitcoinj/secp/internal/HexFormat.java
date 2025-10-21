@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api.internal;
+package org.bitcoinj.secp.internal;
 
 /**
  * This class implements a subset of the functionality of the {@code HexFormat} class available in Java 17 and later.

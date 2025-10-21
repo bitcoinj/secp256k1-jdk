@@ -13,16 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api.internal;
+package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1Point;
+import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
 
 /**
- * Default implementation of {@link P256K1Point}
+ * A single object containing a private key and its derived public key.
  */
-public abstract class P256K1PointImpl implements P256K1Point {
-    public static P256K1PointUncompressed of(P256K1FieldElement x, P256K1FieldElement y) {
-        return new P256K1PointUncompressed(x, y);
+public interface P256K1KeyPair extends P256k1PrivKey {
+    /**
+     * Get the public key
+     * @return public key
+     */
+    P256k1PubKey getPublic();
+
+    /**
+     * Create a keypair from a private key and its matching public key
+     * @param privKey private key
+     * @param pubKey matching public key
+     * @return key pair
+     */
+    static P256K1KeyPair of(P256k1PrivKey privKey, P256k1PubKey pubKey) {
+        return new P256K1KeyPairImpl(privKey, pubKey);
     }
 }

@@ -20,13 +20,13 @@ import org.bitcoinj.base.BitcoinNetwork;
 import org.bitcoinj.base.Network;
 import org.bitcoinj.base.SegwitAddress;
 import org.bitcoinj.crypto.ECKey;
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1KeyPair;
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.internal.P256k1PubKeyImpl;
+import org.bitcoinj.secp.P256K1FieldElement;
+import org.bitcoinj.secp.P256K1KeyPair;
+import org.bitcoinj.secp.P256K1XOnlyPubKey;
+import org.bitcoinj.secp.P256k1PrivKey;
+import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.Secp256k1;
+import org.bitcoinj.secp.internal.P256k1PubKeyImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,7 +38,7 @@ import java.security.spec.ECPoint;
 import java.util.HexFormat;
 import java.util.stream.Stream;
 
-import static org.bitcoinj.secp.api.Secp256k1.ProviderId.BOUNCY_CASTLE;
+import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
 import static org.bitcoinj.secp.bitcoinj.WitnessMaker.calcTweak;
 
 /**

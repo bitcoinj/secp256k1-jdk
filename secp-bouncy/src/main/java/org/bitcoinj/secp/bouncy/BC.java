@@ -15,9 +15,9 @@
  */
 package org.bitcoinj.secp.bouncy;
 
-import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bitcoinj.secp.api.internal.P256K1ECPoint;
-import org.bitcoinj.secp.api.internal.P256K1PointUncompressed;
+import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.internal.P256K1ECPoint;
+import org.bitcoinj.secp.internal.P256K1PointUncompressed;
 
 import java.security.spec.ECPoint;
 

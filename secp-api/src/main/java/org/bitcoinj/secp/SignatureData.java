@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api;
+package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.api.internal.SignatureDataImpl;
+import org.bitcoinj.secp.internal.SignatureDataImpl;
 
 /**
  * An secp256k1 ECDSA signature.

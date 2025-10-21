@@ -15,15 +15,15 @@
  */
 package org.bitcoinj.secp.bouncy;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1KeyPair;
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bitcoinj.secp.api.Result;
-import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.SignatureData;
-import org.bitcoinj.secp.api.internal.P256K1KeyPairImpl;
+import org.bitcoinj.secp.P256K1FieldElement;
+import org.bitcoinj.secp.P256K1KeyPair;
+import org.bitcoinj.secp.P256K1XOnlyPubKey;
+import org.bitcoinj.secp.P256k1PrivKey;
+import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.Result;
+import org.bitcoinj.secp.Secp256k1;
+import org.bitcoinj.secp.SignatureData;
+import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.digests.SHA256Digest;

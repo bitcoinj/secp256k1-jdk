@@ -15,8 +15,6 @@
  */
 package org.bitcoinj.secp.bouncy;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256k1PubKey;
 import org.junit.jupiter.api.Test;
 
 import java.security.spec.ECPoint;

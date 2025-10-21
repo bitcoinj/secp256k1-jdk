@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api;
+package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.api.internal.P256K1ECPoint;
-import org.bitcoinj.secp.api.internal.P256K1PointUncompressed;
+import org.bitcoinj.secp.internal.P256K1ECPoint;
+import org.bitcoinj.secp.internal.P256K1PointUncompressed;
 
 import java.security.spec.ECPoint;
 

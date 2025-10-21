@@ -6,7 +6,7 @@ tasks.withType(JavaCompile).configureEach {
     options.release = 9
 }
 
-ext.moduleName = 'org.bitcoinj.secp.api'
+ext.moduleName = 'org.bitcoinj.secp'
 
 dependencies {
     api("org.jspecify:jspecify:1.0.0")

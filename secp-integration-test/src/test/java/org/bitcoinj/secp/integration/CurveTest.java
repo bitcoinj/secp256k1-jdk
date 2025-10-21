@@ -15,13 +15,13 @@
  */
 package org.bitcoinj.secp.integration;
 
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bitcoinj.secp.api.Secp256k1;
+import org.bitcoinj.secp.P256k1PrivKey;
+import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.Secp256k1;
 import org.junit.jupiter.api.Test;
 
-import static org.bitcoinj.secp.api.Secp256k1.ProviderId.LIBSECP256K1_FFM;
-import static org.bitcoinj.secp.api.Secp256k1.ProviderId.BOUNCY_CASTLE;
+import static org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM;
+import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
 
 import java.math.BigInteger;
 import java.security.spec.ECPoint;

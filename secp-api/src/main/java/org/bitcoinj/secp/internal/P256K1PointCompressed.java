@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api.internal;
+package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1Point;
+import org.bitcoinj.secp.P256K1FieldElement;
+import org.bitcoinj.secp.P256K1Point;
 
 import java.util.Objects;
 
@@ -51,7 +51,7 @@ class P256K1PointCompressed implements P256K1Point.Compressed {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        org.bitcoinj.secp.api.internal.P256K1PointCompressed that = (org.bitcoinj.secp.api.internal.P256K1PointCompressed) o;
+        org.bitcoinj.secp.internal.P256K1PointCompressed that = (org.bitcoinj.secp.internal.P256K1PointCompressed) o;
         return isOdd == that.isOdd && Objects.equals(x, that.x);
     }
 

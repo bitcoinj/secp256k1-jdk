@@ -15,19 +15,15 @@
  */
 package org.bitcoinj.secp.integration;
 
-import org.bitcoinj.secp.api.P256K1Point;
-import org.bitcoinj.secp.api.P256k1PrivKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.SignatureData;
+import org.bitcoinj.secp.P256k1PrivKey;
+import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.Secp256k1;
+import org.bitcoinj.secp.SignatureData;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HexFormat;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;

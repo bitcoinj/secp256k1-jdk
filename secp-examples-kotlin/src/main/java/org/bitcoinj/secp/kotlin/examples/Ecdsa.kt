@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp.kotlin.examples
 
-import org.bitcoinj.secp.api.Secp256k1
-import org.bitcoinj.secp.api.Secp256k1.ProviderId.LIBSECP256K1_FFM
+import org.bitcoinj.secp.Secp256k1
+import org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*

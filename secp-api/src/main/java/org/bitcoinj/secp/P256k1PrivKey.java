@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api;
+package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.api.internal.P256k1PrivKeyDefault;
+import org.bitcoinj.secp.internal.P256k1PrivKeyDefault;
 
 import java.math.BigInteger;
 import java.security.interfaces.ECPrivateKey;
 import java.security.spec.ECParameterSpec;
 
-import static org.bitcoinj.secp.api.P256K1FieldElement.checkInRange;
+import static org.bitcoinj.secp.P256K1FieldElement.checkInRange;
 
 // TODO: Override/prevent serialization
 /**

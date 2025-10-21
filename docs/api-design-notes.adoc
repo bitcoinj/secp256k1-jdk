@@ -5,7 +5,7 @@
 `secp256k1-jdk` is a Java library providing Elliptic Curve Cryptography signing, verification and other primitives using the https://www.secg.org/[SECG] curve
 https://en.bitcoin.it/wiki/Secp256k1[secp256k1]. A major priority in the design and implementation is to provide a high-quality, industry-standard Java API for the C-language https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] library. At the same time, it is a priority to provide an implementation-independent API to allows alternative implementations.
 
-The `secp-api` module  (`org.bitcoinj.secp:secp-api` Maven artifact, `org.bitcoinj.secp.api` Java Module System module) defines the `secp256k1-jdk` API entirely using `interface` classes and allows clients of the API to be developed that are completely implementation-independent. Libraries using `secp-api` (for example a future version of **bitcoinj**) can be developed that depend on the API and allow applications to choose an implementation at runtime.
+The `secp-api` module  (`org.bitcoinj.secp:secp-api` Maven artifact, `org.bitcoinj.secp` Java Module System module) defines the `secp256k1-jdk` API entirely using `interface` classes and allows clients of the API to be developed that are completely implementation-independent. Libraries using `secp-api` (for example a future version of **bitcoinj**) can be developed that depend on the API and allow applications to choose an implementation at runtime.
 
 The design of the `secp256k1-jdk` API is not final, but our goal is for it to become the industry standard for Java, JDK, and JVM-language Bitcoin libraries and applications.
 
