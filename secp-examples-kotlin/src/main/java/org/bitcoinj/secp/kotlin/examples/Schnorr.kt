@@ -28,7 +28,7 @@ fun main() {
     val tag = "my_fancy_protocol"
 
     println("Running secp256k1-jdk Schnorr example...")
-    Secp256k1.getById(LIBSECP256K1_FFM.id()).use { secp ->
+    Secp256k1.getById(LIBSECP256K1_FFM).use { secp ->
         /* === Key Generation === */
         /* Return a non-zero, in-range private key */
         val keyPair = secp.ecKeyPairCreate()

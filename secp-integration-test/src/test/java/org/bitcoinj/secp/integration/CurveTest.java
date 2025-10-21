@@ -36,7 +36,7 @@ public class CurveTest {
 
     @Test
     void pubKeyCalc() {
-        try (var secp = Secp256k1.getById(LIBSECP256K1_FFM.id()); var bouncy = Secp256k1.getById(BOUNCY_CASTLE.id())) {
+        try (var secp = Secp256k1.getById(LIBSECP256K1_FFM); var bouncy = Secp256k1.getById(BOUNCY_CASTLE)) {
             P256k1PrivKey privkey = P256k1PrivKey.of(BigInteger.ONE);
 
             // Create pubkeys with both implementations
