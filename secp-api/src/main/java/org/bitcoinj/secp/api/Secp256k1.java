@@ -24,7 +24,6 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -267,19 +266,19 @@ public interface Secp256k1 extends Closeable {
      * @return A Secp256k1 instance using the <i>default</i> implementation
      */
     static Secp256k1 get() {
-        return findAll(p -> p.name().equals(ProviderId.LIBSECP256K1_FFM.id())).findFirst()
+        return findAll(p -> p.id().equals(ProviderId.LIBSECP256K1_FFM.id())).findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Default Provider not found."))
                 .get();
     }
 
     /**
-     * Get implementation by name
-     * @param name implementation name
+     * Get implementation by ID
+     * @param id implementation ID
      * @return A Secp256k1 instance using the <i>default</i> implementation
      */
-    static Secp256k1 getByName(String name) {
-        return findAll(provider -> provider.name().equals(name)).findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Provider " + name + " not found."))
+    static Secp256k1 getById(String id) {
+        return findAll(provider -> provider.id().equals(id)).findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Provider " + id + " not found."))
                 .get();
     }
 
@@ -288,10 +287,10 @@ public interface Secp256k1 extends Closeable {
      */
     interface Provider {
         /**
-         * Implementations must implement this method to return a unique name
-         * @return A unique name for this Secp256k1 implementation
+         * Implementations must implement this method to return a unique ID
+         * @return A unique ID for this Secp256k1 implementation
          */
-        String name();
+        String id();
 
         /**
          * Get the instance this provider object describes

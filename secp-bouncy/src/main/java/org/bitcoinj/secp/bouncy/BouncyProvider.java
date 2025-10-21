@@ -28,7 +28,7 @@ public class BouncyProvider implements Secp256k1.Provider {
      */
     public BouncyProvider() {}
     @Override
-    public String name() {
+    public String id() {
         return BOUNCY_CASTLE.id();
     }
 

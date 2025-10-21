@@ -21,7 +21,7 @@ import static org.bitcoinj.secp.api.Secp256k1.ProviderId.LIBSECP256K1_FFM;
 
 public class ForeignProvider implements Secp256k1.Provider {
     @Override
-    public String name() {
+    public String id() {
         return LIBSECP256K1_FFM.id();
     }
 
