@@ -72,28 +72,8 @@ public interface Secp256k1 extends Closeable {
      * @throws NoSuchElementException if not found
      */
     static Provider byName(String name) {
-        return findFirst(provider -> provider.name().equals(name))
+        return findAll(provider -> provider.name().equals(name)).findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Provider " + name + " not found."));
-    }
-
-    /**
-     * Find default Secp256k1Provider
-     *
-     * @return an Secp256k1Provider instance
-     * @throws NoSuchElementException if not found
-     */
-    static Provider find() {
-        return findFirst(Secp256k1::defaultFilter)
-                .orElseThrow(() -> new NoSuchElementException("Default Provider not found."));
-    }
-
-    /**
-     * Find a Secp256k1Provider using a custom predicate
-     * @param filter predicate for finding a provider
-     * @return the <b>first</b> provider matching the predicate, if any
-     */
-    static Optional<Provider> findFirst(Predicate<Provider> filter) {
-        return findAll(filter).findFirst();
     }
 
     /**
@@ -113,15 +93,6 @@ public interface Secp256k1 extends Closeable {
         ServiceLoader<Provider> loader = ServiceLoader.load(Provider.class);
         return StreamSupport.stream(loader.spliterator(), false)
                 .filter(filter);
-    }
-
-    /**
-     * Find the default provider. This is currently the {@link ProviderId#LIBSECP256K1_FFM} provider.
-     * @param provider a candidate provider
-     * @return true if it should be "found"
-     */
-    /* private */ static boolean defaultFilter(Provider provider) {
-        return provider.name().equals(ProviderId.LIBSECP256K1_FFM.id());
     }
 
     /**
@@ -308,7 +279,9 @@ public interface Secp256k1 extends Closeable {
      * @return A Secp256k1 instance using the <i>default</i> implementation
      */
     static Secp256k1 get() {
-        return find().get();
+        return findAll(p -> p.name().equals(ProviderId.LIBSECP256K1_FFM.id())).findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Default Provider not found."))
+                .get();
     }
 
     /**
