@@ -283,6 +283,15 @@ public interface Secp256k1 extends Closeable {
     }
 
     /**
+     * Get implementation by ID enum
+     * @param idEnum implementation ID enum
+     * @return A Secp256k1 instance using the <i>default</i> implementation
+     */
+    static Secp256k1 getById(ProviderId idEnum) {
+        return getById(idEnum.id());
+    }
+
+    /**
      * Provider interface for implementations of {@link Secp256k1}.
      */
     interface Provider {
