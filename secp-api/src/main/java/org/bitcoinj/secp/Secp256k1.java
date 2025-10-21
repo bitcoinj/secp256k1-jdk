@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api;
+package org.bitcoinj.secp;
 
 import java.io.Closeable;
 import java.math.BigInteger;

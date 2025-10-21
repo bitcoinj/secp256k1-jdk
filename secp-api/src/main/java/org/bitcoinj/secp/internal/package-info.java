@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * Internal helper classes -- not for public use. These classes are not exported by the {@link org.bitcoinj.secp.api} module
+ * Internal helper classes -- not for public use. These classes are not exported by the {@link org.bitcoinj.secp} module
  * and should not be used by non-modular applications.
  */
-package org.bitcoinj.secp.api.internal;
+package org.bitcoinj.secp.internal;

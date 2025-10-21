@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import org.bitcoinj.secp.Secp256k1;
+
 /**
- * Implementation of {@link org.bitcoinj.secp.api.Secp256k1} using secp256k1 via Java FFM.
+ * Implementation of {@link Secp256k1} using secp256k1 via Java FFM.
  */
 @org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp.ffm {
-    requires org.bitcoinj.secp.api;
+    requires org.bitcoinj.secp;
     requires org.jspecify;
 
     exports org.bitcoinj.secp.ffm;
     exports org.bitcoinj.secp.ffm.jextract;
 
-    provides org.bitcoinj.secp.api.Secp256k1.Provider with org.bitcoinj.secp.ffm.ForeignProvider;
+    provides Secp256k1.Provider with org.bitcoinj.secp.ffm.ForeignProvider;
 }

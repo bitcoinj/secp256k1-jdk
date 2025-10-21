@@ -13,42 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api.internal;
+package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.api.ByteArray;
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
+import org.bitcoinj.secp.ByteArray;
+import org.bitcoinj.secp.P256K1FieldElement;
+import org.bitcoinj.secp.P256K1XOnlyPubKey;
+import org.bitcoinj.secp.P256k1PubKey;
 
 import java.math.BigInteger;
 
 /**
- * Simple implementation using {code @byte[]} as internal storage.
+ * Default implementation. Currently used by all known implementations
  */
-public class P256K1XOnlyPubKeyBytes implements P256K1XOnlyPubKey, ByteArray {
-    private final byte[] x;
+public class P256K1XOnlyPubKeyBigInteger implements P256K1XOnlyPubKey {
+    private final BigInteger x;
 
-    public P256K1XOnlyPubKeyBytes(P256k1PubKey pubKey) {
+    public P256K1XOnlyPubKeyBigInteger(P256k1PubKey pubKey) {
         // Avoid using pubKey.getXOnly() and possible infinite recursion
-        this.x = pubKey.xOnly().serialize();
+        this.x = pubKey.getW().getAffineX();
     }
 
-    public P256K1XOnlyPubKeyBytes(byte[] xBytes) {
-        // Defensive copy
-        x = new byte[xBytes.length];
-        System.arraycopy(xBytes, 0, x, 0, x.length);
+    public P256K1XOnlyPubKeyBigInteger(BigInteger x) {
+        this.x = x;
     }
 
     @Override
     public BigInteger getX() {
-        return ByteArray.toInteger(x);
-    }
-
-    @Override
-    public byte[] bytes() {
-        // Defensive copy
-        byte[] result = new byte[x.length];
-        System.arraycopy(x, 0, result, 0, x.length);
-        return result;
+        return x;
     }
 
     /**
@@ -56,7 +47,7 @@ public class P256K1XOnlyPubKeyBytes implements P256K1XOnlyPubKey, ByteArray {
      */
     @Override
     public byte[] serialize() {
-        return bytes();
+        return P256K1FieldElement.integerTo32Bytes(x);
     }
 
     /**

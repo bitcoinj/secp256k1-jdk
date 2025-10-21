@@ -15,9 +15,9 @@
  */
 package org.bitcoinj.secp.kotlin.examples
 
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey
-import org.bitcoinj.secp.api.Secp256k1
-import org.bitcoinj.secp.api.Secp256k1.ProviderId.LIBSECP256K1_FFM
+import org.bitcoinj.secp.P256K1XOnlyPubKey
+import org.bitcoinj.secp.Secp256k1
+import org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM
 import java.util.*
 
 

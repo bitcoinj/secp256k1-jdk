@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api.internal;
+package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.api.ByteArray;
-import org.bitcoinj.secp.api.P256k1PrivKey;
+import org.bitcoinj.secp.ByteArray;
+import org.bitcoinj.secp.P256k1PrivKey;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static org.bitcoinj.secp.api.P256K1FieldElement.checkInRange;
-import static org.bitcoinj.secp.api.P256K1FieldElement.integerTo32Bytes;
+import static org.bitcoinj.secp.P256K1FieldElement.checkInRange;
+import static org.bitcoinj.secp.P256K1FieldElement.integerTo32Bytes;
 
 /**
  * Default/internal implementation of {@link P256k1PrivKey}

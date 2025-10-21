@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import org.bitcoinj.secp.Secp256k1;
+
 /**
- * Bouncy Castle implementation of {@link org.bitcoinj.secp.api.Secp256k1}
+ * Bouncy Castle implementation of {@link Secp256k1}
  */
 @org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp.bouncy {
-    requires org.bitcoinj.secp.api;
+    requires org.bitcoinj.secp;
     requires org.bouncycastle.provider;
     requires org.jspecify;
 
-    provides org.bitcoinj.secp.api.Secp256k1.Provider with org.bitcoinj.secp.bouncy.BouncyProvider;
+    provides Secp256k1.Provider with org.bitcoinj.secp.bouncy.BouncyProvider;
 }

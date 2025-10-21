@@ -15,10 +15,10 @@
  */
 package org.bitcoinj.secp.examples;
 
-import org.bitcoinj.secp.api.P256K1KeyPair;
-import org.bitcoinj.secp.api.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.api.P256k1PubKey;
-import org.bitcoinj.secp.api.Secp256k1;
+import org.bitcoinj.secp.P256K1KeyPair;
+import org.bitcoinj.secp.P256K1XOnlyPubKey;
+import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.Secp256k1;
 
 import java.util.HexFormat;
 

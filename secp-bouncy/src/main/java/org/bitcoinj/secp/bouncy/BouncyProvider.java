@@ -15,9 +15,9 @@
  */
 package org.bitcoinj.secp.bouncy;
 
-import org.bitcoinj.secp.api.Secp256k1;
+import org.bitcoinj.secp.Secp256k1;
 
-import static org.bitcoinj.secp.api.Secp256k1.ProviderId.BOUNCY_CASTLE;
+import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
 
 /**
  * Provider implementations providing name and access to {@link Bouncy256k1}.

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api.internal;
+package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.api.P256K1FieldElement;
-import org.bitcoinj.secp.api.P256K1Point;
+import org.bitcoinj.secp.P256K1FieldElement;
+import org.bitcoinj.secp.P256K1Point;
 
 import java.math.BigInteger;
 import java.security.spec.ECPoint;
@@ -35,13 +35,13 @@ class P256K1PointUncompressed extends P256K1PointImpl implements P256K1Point.Unc
         this.y = y;
     }
 
-    public static org.bitcoinj.secp.api.internal.P256K1PointUncompressed of(ECPoint point) {
-        return new org.bitcoinj.secp.api.internal.P256K1PointUncompressed(P256K1FieldElement.of(point.getAffineX()),
+    public static org.bitcoinj.secp.internal.P256K1PointUncompressed of(ECPoint point) {
+        return new org.bitcoinj.secp.internal.P256K1PointUncompressed(P256K1FieldElement.of(point.getAffineX()),
                 P256K1FieldElement.of(point.getAffineY()));
     }
 
-    public static org.bitcoinj.secp.api.internal.P256K1PointUncompressed of(BigInteger x, BigInteger y) {
-        return new org.bitcoinj.secp.api.internal.P256K1PointUncompressed(P256K1FieldElement.of(x), P256K1FieldElement.of(y));
+    public static org.bitcoinj.secp.internal.P256K1PointUncompressed of(BigInteger x, BigInteger y) {
+        return new org.bitcoinj.secp.internal.P256K1PointUncompressed(P256K1FieldElement.of(x), P256K1FieldElement.of(y));
     }
 
     @Override
@@ -66,7 +66,7 @@ class P256K1PointUncompressed extends P256K1PointImpl implements P256K1Point.Unc
     }
 
     public boolean equals(P256K1Point other) {
-        if (!(other instanceof org.bitcoinj.secp.api.internal.P256K1PointUncompressed)) return false;
+        if (!(other instanceof org.bitcoinj.secp.internal.P256K1PointUncompressed)) return false;
         Uncompressed otherUncompressed = (Uncompressed) other;
         return x().equals(otherUncompressed.x()) && y().equals(otherUncompressed.y());
     }
@@ -74,7 +74,7 @@ class P256K1PointUncompressed extends P256K1PointImpl implements P256K1Point.Unc
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        org.bitcoinj.secp.api.internal.P256K1PointUncompressed that = (org.bitcoinj.secp.api.internal.P256K1PointUncompressed) o;
+        org.bitcoinj.secp.internal.P256K1PointUncompressed that = (org.bitcoinj.secp.internal.P256K1PointUncompressed) o;
         return Objects.equals(x, that.x) && Objects.equals(y, that.y);
     }
 

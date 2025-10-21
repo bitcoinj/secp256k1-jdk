@@ -13,5 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/// Example Java programs for [org.bitcoinj.secp.api].
+/// Example Java programs for [org.bitcoinj.secp].
 package org.bitcoinj.secp.examples;

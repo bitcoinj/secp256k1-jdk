@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 /**
- * API definition package for the {@code org.bitcoinj.secp.api} module and JAR. Part of
+ * API definition package for the {@code org.bitcoinj.secp} module and JAR. Part of
  * <a href="https://github.com/bitcoinj/secp256k1-jdk">secp256k1-jdk</a>, a Java library providing
  * <i>Elliptic Curve Cryptography</i> functions using the <a href="https://www.secg.org">SECG</a> curve
  * <a href="https://en.bitcoin.it/wiki/Secp256k1">secp256k1</a>.
  * It provides both ECDSA and Schnorr message-signing functions.
  * <p>
- * The main interface is defined in {@link org.bitcoinj.secp.api.Secp256k1}.
+ * The main interface is defined in {@link org.bitcoinj.secp.Secp256k1}.
  */
-package org.bitcoinj.secp.api;
+package org.bitcoinj.secp;

@@ -18,7 +18,7 @@
  */
 @org.jspecify.annotations.NullMarked
 module org.bitcoinj.secp.examples {
-    requires org.bitcoinj.secp.api;
+    requires org.bitcoinj.secp;
     requires org.bitcoinj.secp.graalvm;
     requires org.jspecify;
 }

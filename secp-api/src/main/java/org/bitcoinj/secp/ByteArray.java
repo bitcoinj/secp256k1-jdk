@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.bitcoinj.secp.api;
+package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.api.internal.ByteArrayBase;
-import org.bitcoinj.secp.api.internal.ByteUtils;
+import org.bitcoinj.secp.internal.ByteArrayBase;
+import org.bitcoinj.secp.internal.ByteUtils;
 
 import java.math.BigInteger;
 
