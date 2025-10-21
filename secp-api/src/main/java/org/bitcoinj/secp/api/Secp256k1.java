@@ -65,18 +65,6 @@ public interface Secp256k1 extends Closeable {
         1);                                                                                                       // h
 
     /**
-     * Find a Secp256k1Provider by name
-     *
-     * @param name Provider ID string (e.g. "ffm" or "bouncy-castle")
-     * @return an Secp256k1Provider instance
-     * @throws NoSuchElementException if not found
-     */
-    static Provider byName(String name) {
-        return findAll(provider -> provider.name().equals(name)).findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Provider " + name + " not found."));
-    }
-
-    /**
      * Get a stream of all known providers
      * @return stream of all known providers
      */
@@ -290,7 +278,9 @@ public interface Secp256k1 extends Closeable {
      * @return A Secp256k1 instance using the <i>default</i> implementation
      */
     static Secp256k1 getByName(String name) {
-        return byName(name).get();
+        return findAll(provider -> provider.name().equals(name)).findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Provider " + name + " not found."))
+                .get();
     }
 
     /**
