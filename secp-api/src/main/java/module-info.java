@@ -29,5 +29,5 @@ module org.bitcoinj.secp.api {
     exports org.bitcoinj.secp.api;
     exports org.bitcoinj.secp.api.internal to org.bitcoinj.secp.bouncy, org.bitcoinj.secp.ffm, org.bitcoinj.secp.bitcoinj;
 
-    uses org.bitcoinj.secp.api.Secp256k1Provider;
+    uses org.bitcoinj.secp.api.Secp256k1.Provider;
 }

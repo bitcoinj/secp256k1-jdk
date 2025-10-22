@@ -23,6 +23,12 @@ import java.security.spec.ECFieldFp;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Main interface providing <i>Elliptic Curve Cryptography</i> functions using the <a href="https://www.secg.org">SECG</a> curve.
@@ -242,7 +248,7 @@ public interface Secp256k1 extends Closeable {
      * @return A Secp256k1 instance using the <i>default</i> implementation
      */
     static Secp256k1 get() {
-        return Secp256k1Provider.find().get();
+        return Provider.find().get();
     }
 
     /**
@@ -251,6 +257,83 @@ public interface Secp256k1 extends Closeable {
      * @return A Secp256k1 instance using the <i>default</i> implementation
      */
     static Secp256k1 getByName(String name) {
-        return Secp256k1Provider.byName(name).get();
+        return Provider.byName(name).get();
+    }
+
+    /**
+     * Provider interface for implementations of {@link Secp256k1}.
+     */
+    interface Provider {
+        /**
+         * Implementations must implement this method to return a unique name
+         * @return A unique name for this Secp256k1 implementation
+         */
+        String name();
+
+        /**
+         * Get the instance this provider object describes
+         * @return A {@code Secp256k1} instance
+         */
+        Secp256k1 get();
+
+        /**
+         * Find a Secp256k1Provider by name
+         *
+         * @param name Provider ID string (e.g. "ffm" or "bouncy-castle")
+         * @return an Secp256k1Provider instance
+         * @throws NoSuchElementException if not found
+         */
+        static Provider byName(String name) {
+            return findFirst(provider -> provider.name().equals(name))
+                    .orElseThrow(() -> new NoSuchElementException("Provider " + name + " not found."));
+        }
+
+        /**
+         * Find default Secp256k1Provider
+         *
+         * @return an Secp256k1Provider instance
+         * @throws NoSuchElementException if not found
+         */
+        static Provider find() {
+            return findFirst(Provider::defaultFilter)
+                    .orElseThrow(() -> new NoSuchElementException("Default Provider not found."));
+        }
+
+        /**
+         * Find a Secp256k1Provider using a custom predicate
+         * @param filter predicate for finding a provider
+         * @return the <b>first</b> provider matching the predicate, if any
+         */
+        static Optional<Provider> findFirst(Predicate<Provider> filter) {
+            return findAll(filter).findFirst();
+        }
+
+        /**
+         * Get a stream of all known providers
+         * @return stream of all known providers
+         */
+        static Stream<Provider> all() {
+            return findAll(p -> true);
+        }
+
+        /**
+         * Get a stream of all providers that match a filter
+         * @param filter filter function to select providers
+         * @return stream of matching providers
+         */
+        static Stream<Provider> findAll(Predicate<Provider> filter) {
+            ServiceLoader<Provider> loader = ServiceLoader.load(Provider.class);
+            return StreamSupport.stream(loader.spliterator(), false)
+                    .filter(filter);
+        }
+
+        /**
+         * Find the default provider. This is currently the {@link ProviderId#LIBSECP256K1_FFM} provider.
+         * @param provider a candidate provider
+         * @return true if it should be "found"
+         */
+        /* private */ static boolean defaultFilter(Provider provider) {
+            return provider.name().equals(ProviderId.LIBSECP256K1_FFM.id());
+        }
     }
 }
