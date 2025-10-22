@@ -24,5 +24,5 @@ module org.bitcoinj.secp.ffm {
     exports org.bitcoinj.secp.ffm;
     exports org.bitcoinj.secp.ffm.jextract;
 
-    provides org.bitcoinj.secp.api.Secp256k1Provider with org.bitcoinj.secp.ffm.ForeignProvider;
+    provides org.bitcoinj.secp.api.Secp256k1.Provider with org.bitcoinj.secp.ffm.ForeignProvider;
 }

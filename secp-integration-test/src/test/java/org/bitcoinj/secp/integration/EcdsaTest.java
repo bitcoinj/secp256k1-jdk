@@ -19,7 +19,6 @@ import org.bitcoinj.secp.api.P256K1Point;
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.Secp256k1Provider;
 import org.bitcoinj.secp.api.SignatureData;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -43,7 +42,7 @@ public class EcdsaTest {
     private static final byte[] msg_hash = hash("Hello, world!");
 
     public static Stream<Secp256k1> secpImplementations() {
-        return Secp256k1Provider.all().map(Secp256k1Provider::get);
+        return Secp256k1.Provider.all().map(Secp256k1.Provider::get);
     }
 
     @MethodSource("secpImplementations")

@@ -19,7 +19,6 @@ import org.bitcoinj.secp.api.P256K1Point;
 import org.bitcoinj.secp.api.P256k1PrivKey;
 import org.bitcoinj.secp.api.P256k1PubKey;
 import org.bitcoinj.secp.api.Secp256k1;
-import org.bitcoinj.secp.api.Secp256k1Provider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -39,7 +38,7 @@ public class PubKeyTest {
     byte[] ONE_SERIALIZED = HexFormat.of().parseHex("0479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8");
 
     public static Stream<Secp256k1> secpImplementations() {
-        return Secp256k1Provider.all().map(Secp256k1Provider::get);
+        return Secp256k1.Provider.all().map(Secp256k1.Provider::get);
     }
 
     @MethodSource("secpImplementations")
