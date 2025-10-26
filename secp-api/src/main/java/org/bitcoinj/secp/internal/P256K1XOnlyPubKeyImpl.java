@@ -25,21 +25,21 @@ import java.math.BigInteger;
 /**
  * Simple implementation using {code @byte[]} as internal storage.
  */
-public class P256K1XOnlyPubKeyBytes implements P256K1XOnlyPubKey, ByteArray {
+public class P256K1XOnlyPubKeyImpl implements P256K1XOnlyPubKey, ByteArray {
     private final byte[] x;
 
-    public P256K1XOnlyPubKeyBytes(P256k1PubKey pubKey) {
+    public P256K1XOnlyPubKeyImpl(P256k1PubKey pubKey) {
         // Avoid using pubKey.getXOnly() and possible infinite recursion
         this.x = pubKey.xOnly().serialize();
     }
 
-    public P256K1XOnlyPubKeyBytes(byte[] xBytes) {
+    public P256K1XOnlyPubKeyImpl(byte[] xBytes) {
         // Defensive copy
         x = new byte[xBytes.length];
         System.arraycopy(xBytes, 0, x, 0, x.length);
     }
 
-    public P256K1XOnlyPubKeyBytes(BigInteger x) {
+    public P256K1XOnlyPubKeyImpl(BigInteger x) {
         this.x = P256K1FieldElement.integerTo32Bytes(x);
     }
 
