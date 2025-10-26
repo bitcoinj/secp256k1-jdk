@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.P256K1XOnlyPubKeyBytes;
+import org.bitcoinj.secp.internal.P256K1XOnlyPubKeyImpl;
 
 import java.math.BigInteger;
 
@@ -53,7 +53,7 @@ public interface P256K1XOnlyPubKey {
      * @return an instance of the default implementation
      */
     static P256K1XOnlyPubKey of(BigInteger x) {
-        return new P256K1XOnlyPubKeyBytes(x);
+        return new P256K1XOnlyPubKeyImpl(x);
     }
 
     /**
@@ -62,6 +62,6 @@ public interface P256K1XOnlyPubKey {
      * @return an instance of the default implementation
      */
     static P256K1XOnlyPubKey of(byte[] xBytes) {
-        return new P256K1XOnlyPubKeyBytes(xBytes);
+        return new P256K1XOnlyPubKeyImpl(xBytes);
     }
 }
