@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.ByteArray;
+import org.bitcoinj.secp.P256K1FieldElement;
 import org.bitcoinj.secp.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.P256k1PubKey;
 
@@ -36,6 +37,10 @@ public class P256K1XOnlyPubKeyBytes implements P256K1XOnlyPubKey, ByteArray {
         // Defensive copy
         x = new byte[xBytes.length];
         System.arraycopy(xBytes, 0, x, 0, x.length);
+    }
+
+    public P256K1XOnlyPubKeyBytes(BigInteger x) {
+        this.x = P256K1FieldElement.integerTo32Bytes(x);
     }
 
     @Override
