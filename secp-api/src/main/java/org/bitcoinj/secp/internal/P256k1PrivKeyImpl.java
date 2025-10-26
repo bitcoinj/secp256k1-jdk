@@ -28,7 +28,7 @@ import static org.bitcoinj.secp.P256K1FieldElement.integerTo32Bytes;
 /**
  * Default/internal implementation of {@link P256k1PrivKey}
  */
-public class P256k1PrivKeyDefault implements P256k1PrivKey {
+public class P256k1PrivKeyImpl implements P256k1PrivKey {
     /**
      * private key or null if key was destroyed
      */
@@ -40,13 +40,13 @@ public class P256k1PrivKeyDefault implements P256k1PrivKey {
      *
      * @param bytes (will not be defensively copied)
      */
-    public P256k1PrivKeyDefault(byte[] bytes) {
+    public P256k1PrivKeyImpl(byte[] bytes) {
         // TODO: Full, constant-time Range validation?
         checkInRange(bytes);
         privKeyBytes = checkInRange(bytes);
     }
 
-    public P256k1PrivKeyDefault(BigInteger privKey) {
+    public P256k1PrivKeyImpl(BigInteger privKey) {
         // TODO: Valid integer is valid for field
         this.privKeyBytes = integerTo32Bytes(privKey);
     }

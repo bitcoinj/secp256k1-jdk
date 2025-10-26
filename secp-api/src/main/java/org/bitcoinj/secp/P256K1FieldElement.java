@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.P256K1FieldElementDefault;
+import org.bitcoinj.secp.internal.P256K1FieldElementImpl;
 
 import java.math.BigInteger;
 
@@ -49,7 +49,7 @@ public interface P256K1FieldElement {
      * @return valid element
      */
     static P256K1FieldElement of(BigInteger i) {
-        return new P256K1FieldElementDefault(i);
+        return new P256K1FieldElementImpl(i);
     }
 
     /**
@@ -58,7 +58,7 @@ public interface P256K1FieldElement {
      * @return field element
      */
     static P256K1FieldElement of(byte[] bytes) {
-        return new P256K1FieldElementDefault(bytes);
+        return new P256K1FieldElementImpl(bytes);
     }
 
     // TODO: Constant-time implementation?
