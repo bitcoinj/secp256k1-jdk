@@ -51,17 +51,19 @@ import java.util.stream.StreamSupport;
  * </ul>
  */
 public interface Secp256k1 extends Closeable {
-    /** The secp256k1 field definition using the standard Java type */
+    /** The secp256k1 field definition {@code p} using the standard Java type */
     ECFieldFp FIELD = new ECFieldFp(new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16));
     /** The secp256k1 curve definition using the standard Java type */
-    EllipticCurve CURVE = new EllipticCurve(FIELD, BigInteger.ZERO, BigInteger.valueOf(7));
+    EllipticCurve CURVE = new EllipticCurve(FIELD,
+            BigInteger.ZERO,                // Coefficient a
+            BigInteger.valueOf(7));         // Coefficient b
     /** The secp256k1 domain parameters definition using the standard Java type */
     ECParameterSpec EC_PARAMS = new ECParameterSpec(CURVE,
         new ECPoint(
-            new BigInteger("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16),     // G.x
-            new BigInteger("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16)),    // G.y
-        new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16),         // n
-        1);                                                                                                       // h
+            new BigInteger("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16),     // Base point G.x
+            new BigInteger("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16)),    // Base point G.y
+        new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16),         // Order n
+        1);     // Cofactor h
 
     /**
      * Get a stream of all known providers
