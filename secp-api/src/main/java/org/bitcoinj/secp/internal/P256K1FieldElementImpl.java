@@ -25,14 +25,14 @@ import java.util.Objects;
 /**
  *
  */
-public class P256K1FieldElementDefault implements P256K1FieldElement {
+public class P256K1FieldElementImpl implements P256K1FieldElement {
     private final byte[] value;
 
-    public P256K1FieldElementDefault(BigInteger i) {
+    public P256K1FieldElementImpl(BigInteger i) {
         value = P256K1FieldElement.integerTo32Bytes(P256K1FieldElement.checkInRange(i));
     }
 
-    public P256K1FieldElementDefault(byte[] bytes) {
+    public P256K1FieldElementImpl(byte[] bytes) {
         value = P256K1FieldElement.checkInRange(bytes);
     }
 
@@ -54,7 +54,7 @@ public class P256K1FieldElementDefault implements P256K1FieldElement {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        P256K1FieldElementDefault that = (P256K1FieldElementDefault) o;
+        P256K1FieldElementImpl that = (P256K1FieldElementImpl) o;
         return Objects.deepEquals(value, that.value);
     }
 

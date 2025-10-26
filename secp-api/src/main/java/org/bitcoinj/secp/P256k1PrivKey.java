@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.P256k1PrivKeyDefault;
+import org.bitcoinj.secp.internal.P256k1PrivKeyImpl;
 
 import java.math.BigInteger;
 import java.security.interfaces.ECPrivateKey;
@@ -62,7 +62,7 @@ public interface P256k1PrivKey extends ECPrivateKey {
      * @return private key
      */
     static P256k1PrivKey of(BigInteger p) {
-        return new P256k1PrivKeyDefault(p);
+        return new P256k1PrivKeyImpl(p);
     }
 
     /**
@@ -71,7 +71,7 @@ public interface P256k1PrivKey extends ECPrivateKey {
      * @return private key
      */
     static P256k1PrivKey of(byte[] bytes) {
-        return new P256k1PrivKeyDefault(bytes);
+        return new P256k1PrivKeyImpl(bytes);
     }
 
     /**
