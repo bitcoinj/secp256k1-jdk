@@ -18,12 +18,8 @@ package org.bitcoinj.secp.kotlin.examples
 import org.bitcoinj.secp.P256K1XOnlyPubKey
 import org.bitcoinj.secp.Secp256k1
 import org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM
-import java.util.*
-
 
 fun main() {
-    val formatter: HexFormat = HexFormat.of()
-
     val msg = "Hello, world!"
     val tag = "my_fancy_protocol"
 
