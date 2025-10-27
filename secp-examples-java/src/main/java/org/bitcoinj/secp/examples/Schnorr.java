@@ -15,11 +15,7 @@
  */
 package org.bitcoinj.secp.examples;
 
-import org.bitcoinj.secp.P256K1KeyPair;
-import org.bitcoinj.secp.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.P256k1PubKey;
-import org.bitcoinj.secp.SchnorrSignature;
-import org.bitcoinj.secp.Secp256k1;
+import module org.bitcoinj.secp;
 
 /// Java version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [schnorr.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/schnorr.c).
 public class Schnorr {
