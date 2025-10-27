@@ -58,7 +58,7 @@ public interface P256k1PubKey extends ECPublicKey {
      * @return public key in compressed format
      */
     default byte[] serialize() {
-        return getCompressed();
+        return serialize(true);
     }
 
     /**
@@ -68,41 +68,24 @@ public interface P256k1PubKey extends ECPublicKey {
      */
     default byte[] serialize(boolean compressed) {
         return compressed
-                ? getCompressed()
-                : getUncompressed();
+                ? getCompressed().serialize()
+                : getUncompressed().serialize();
     }
 
     /**
-     * Serialize as compressed
-     * @return compressed bytes
+     * Return as a compressed point
+     * @return compressed point
      */
-    default byte[] getCompressed() {
-        ECPoint point = getW();
-        byte[] compressed = new byte[33];
-        compressed[0] = point.getAffineY().testBit(0)
-                ? (byte) 0x03      // odd
-                : (byte) 0x02;     // even;
-        System.arraycopy(P256K1FieldElement.integerTo32Bytes(point.getAffineX()),
-                0,
-                compressed,
-                1,
-                32);
-        return compressed;
+    default P256K1Point.Compressed getCompressed() {
+        return point().compress();
     }
 
     /**
-     * Serialize as uncompressed
-     * @return uncompressed bytes
+     * Return as an uncompressed point
+     * @return uncompressed point
      */
-    default byte[] getUncompressed() {
-        ECPoint point = getW();
-        byte[] x = P256K1FieldElement.integerTo32Bytes(point.getAffineX());
-        byte[] y = P256K1FieldElement.integerTo32Bytes(point.getAffineY());
-        byte[] encoded = new byte[65];
-        encoded[0] = 0x04;
-        System.arraycopy(x, 0, encoded, 1, 32);
-        System.arraycopy(y, 0, encoded, 33, 32);
-        return encoded;
+    default P256K1Point.Uncompressed getUncompressed() {
+        return point();
     }
 
     /**
