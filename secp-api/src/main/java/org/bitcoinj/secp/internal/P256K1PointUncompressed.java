@@ -35,13 +35,13 @@ class P256K1PointUncompressed extends P256K1PointImpl implements P256K1Point.Unc
         this.y = y;
     }
 
-    public static org.bitcoinj.secp.internal.P256K1PointUncompressed of(ECPoint point) {
-        return new org.bitcoinj.secp.internal.P256K1PointUncompressed(P256K1FieldElement.of(point.getAffineX()),
+    public static P256K1PointUncompressed of(ECPoint point) {
+        return new P256K1PointUncompressed(P256K1FieldElement.of(point.getAffineX()),
                 P256K1FieldElement.of(point.getAffineY()));
     }
 
-    public static org.bitcoinj.secp.internal.P256K1PointUncompressed of(BigInteger x, BigInteger y) {
-        return new org.bitcoinj.secp.internal.P256K1PointUncompressed(P256K1FieldElement.of(x), P256K1FieldElement.of(y));
+    public static P256K1PointUncompressed of(BigInteger x, BigInteger y) {
+        return new P256K1PointUncompressed(P256K1FieldElement.of(x), P256K1FieldElement.of(y));
     }
 
     @Override
