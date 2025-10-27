@@ -56,4 +56,9 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
         System.arraycopy(s.serialize(), 0, signature, 32, 32);
         return signature;
     }
+
+    @Override
+    public String toString() {
+        return this.formatHex();
+    }
 }
