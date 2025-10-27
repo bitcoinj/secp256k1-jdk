@@ -18,6 +18,7 @@ package org.bitcoinj.secp.examples;
 import org.bitcoinj.secp.P256K1KeyPair;
 import org.bitcoinj.secp.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 
 import java.util.HexFormat;
@@ -50,7 +51,7 @@ public class Schnorr {
 
             byte[] msg_hash = secp.taggedSha256(tag, msg);
 
-            byte[] signature = secp.schnorrSigSign32(msg_hash, keyPair);
+            SchnorrSignature signature = secp.schnorrSigSign32(msg_hash, keyPair);
 
             /* === Verification === */
 
@@ -64,7 +65,7 @@ public class Schnorr {
             IO.println("Is the signature valid? " + is_signature_valid);
             IO.println("Secret Key: " + keyPair.getS().toString(16));
             IO.println("Public Key (as ECPoint): " + xOnly2);
-            IO.println("Signature: " + formatter.formatHex(signature));
+            IO.println("Signature: " + signature.formatHex());
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for
