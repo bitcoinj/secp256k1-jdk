@@ -21,12 +21,8 @@ import org.bitcoinj.secp.P256k1PubKey;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 
-import java.util.HexFormat;
-
 /// Java version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [schnorr.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/schnorr.c).
 public class Schnorr {
-    final HexFormat formatter = HexFormat.of();
-
     final String msg = "Hello, world!";
     final String tag = "my_fancy_protocol";
 
