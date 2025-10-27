@@ -48,7 +48,7 @@ public class PubKeyTest {
         P256k1PubKey pubKey = secp.ecPubKeyCreate(privKey);
         assertNotNull(pubKey);
         assertEquals("Secp256k1", pubKey.getAlgorithm());
-        byte[] pubKeyUncompressed = pubKey.getUncompressed();
+        byte[] pubKeyUncompressed = pubKey.serialize(false);
         System.out.println(HexFormat.of().formatHex(pubKeyUncompressed));
         assertArrayEquals(ONE_SERIALIZED, pubKeyUncompressed);
 

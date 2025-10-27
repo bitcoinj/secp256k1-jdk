@@ -220,7 +220,7 @@ public class Bouncy256k1 implements Secp256k1 {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);  // Can't happen.
         }
-        digest.update(sspk.getCompressed());
+        digest.update(sspk.serialize(true));
         return digest.digest();
     }
 
