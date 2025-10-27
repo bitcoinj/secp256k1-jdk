@@ -18,7 +18,7 @@ package org.bitcoinj.secp.integration;
 import org.bitcoinj.secp.P256k1PrivKey;
 import org.bitcoinj.secp.P256k1PubKey;
 import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.SignatureData;
+import org.bitcoinj.secp.EcdsaSignature;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -46,7 +46,7 @@ public class EcdsaTest {
     void testEcdsa(Secp256k1 secp) {
         P256k1PrivKey privKey = secp.ecPrivKeyCreate();
         P256k1PubKey pubKey = secp.ecPubKeyCreate(privKey);
-        SignatureData sig = secp.ecdsaSign(msg_hash, privKey).get();
+        EcdsaSignature sig = secp.ecdsaSign(msg_hash, privKey).get();
         boolean validSignature = secp.ecdsaVerify(sig, msg_hash, pubKey).get();
         assertTrue(validSignature);
     }

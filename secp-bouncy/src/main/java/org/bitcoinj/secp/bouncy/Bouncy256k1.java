@@ -22,7 +22,7 @@ import org.bitcoinj.secp.P256k1PrivKey;
 import org.bitcoinj.secp.P256k1PubKey;
 import org.bitcoinj.secp.Result;
 import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.SignatureData;
+import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -145,31 +145,31 @@ public class Bouncy256k1 implements Secp256k1 {
 
     // TODO: Add constructor to create SignatureData from r and s
     @Override
-    public Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
+    public Result<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
         BigInteger privateKeyForSigning = seckey.getS();
         Objects.requireNonNull(privateKeyForSigning);
         ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
         ECPrivateKeyParameters privKey = new ECPrivateKeyParameters(privateKeyForSigning, BC_CURVE);
         signer.init(true, privKey);
         BigInteger[] components = signer.generateSignature(msg_hash_data);
-        SignatureData signatureData = SignatureData.of(P256K1FieldElement.of(components[0]),
+        EcdsaSignature signatureData = EcdsaSignature.of(P256K1FieldElement.of(components[0]),
                 P256K1FieldElement.of(components[1]));
         return Result.ok(signatureData);
     }
 
     @Override
-    public byte[] ecdsaSignatureSerializeCompact(SignatureData sig) {
+    public byte[] ecdsaSignatureSerializeCompact(EcdsaSignature sig) {
         return sig.bytes();
     }
 
     // TODO: Return Result.err when parsing fails
     @Override
-    public Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature) {
-        return Result.ok(SignatureData.of(serialized_signature));
+    public Result<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature) {
+        return Result.ok(EcdsaSignature.of(serialized_signature));
     }
 
     @Override
-    public Result<Boolean> ecdsaVerify(SignatureData signature, byte[] msg_hash_data, P256k1PubKey pubKey) {
+    public Result<Boolean> ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, P256k1PubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
         java.security.spec.ECPoint jPoint = pubKey.getW();
         org.bouncycastle.math.ec.ECPoint pubPoint = BC.fromECPoint(jPoint);

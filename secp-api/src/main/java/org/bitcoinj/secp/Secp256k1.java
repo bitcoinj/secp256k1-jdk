@@ -186,16 +186,16 @@ public interface Secp256k1 extends Closeable {
      * @param seckey private key
      * @return the signature
      */
-    Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey);
+    Result<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey);
 
     /**
-     * Serialize a {@link SignatureData} as a Bitcoin <i>compact signature</i>. A compact signature is
+     * Serialize a {@link EcdsaSignature} as a Bitcoin <i>compact signature</i>. A compact signature is
      * the two signature component field integers (known as {@code r} and {@code s}) serialized in-order as
      * binary data in big-endian format.
      * @param sig signature object
      * @return compact signature bytes
      */
-    byte[] ecdsaSignatureSerializeCompact(SignatureData sig);
+    byte[] ecdsaSignatureSerializeCompact(EcdsaSignature sig);
 
     /**
      * Parse a Bitcoin <i>compact signature</i>. A compact signature is
@@ -204,7 +204,7 @@ public interface Secp256k1 extends Closeable {
      * @param serialized_signature compact signature bytes
      * @return signature object
      */
-    Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature);
+    Result<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature);
 
     /**
      * Verify an ECDSA signature.
@@ -213,7 +213,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey The pubkey that must have signed the message
      * @return true, false, or error
      */
-    Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey);
+    Result<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, P256k1PubKey pubKey);
 
     /**
      * Generate a tagged SHA-256 hash.

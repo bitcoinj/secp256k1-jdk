@@ -18,7 +18,7 @@ package org.bitcoinj.secp.examples;
 import org.bitcoinj.secp.P256k1PrivKey;
 import org.bitcoinj.secp.P256k1PubKey;
 import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.SignatureData;
+import org.bitcoinj.secp.EcdsaSignature;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -54,7 +54,7 @@ public class Ecdsa {
 
             /* Generate an ECDSA signature using the RFC-6979 safe default nonce.
              * Signing with a valid context, verified secret key and the default nonce function should never fail. */
-            SignatureData sig = secp.ecdsaSign(msg_hash, privKey).get();
+            EcdsaSignature sig = secp.ecdsaSign(msg_hash, privKey).get();
 
             /* Serialize the signature in a compact form. Should always succeed according to
              the documentation in secp256k1.h. */
@@ -63,7 +63,7 @@ public class Ecdsa {
             /* === Verification === */
 
             /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
-            SignatureData sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).get();
+            EcdsaSignature sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).get();
             assert(Arrays.equals(sig.bytes(), sig2.bytes()));
 
             /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
