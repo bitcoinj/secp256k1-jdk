@@ -23,7 +23,7 @@ import org.bitcoinj.secp.P256k1PrivKey;
 import org.bitcoinj.secp.P256k1PubKey;
 import org.bitcoinj.secp.Result;
 import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.SignatureData;
+import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
 import org.bitcoinj.secp.internal.P256k1PubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
@@ -284,7 +284,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public Result<SignatureData> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
+    public Result<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey) {
         /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
          * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
          * Signing with a valid context, verified secret key
@@ -296,23 +296,23 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, seckey.getEncoded());
         int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, nullCallback, nullPointer);
         privKeySeg.fill((byte) 0x00);
-        return Result.checked(return_val, () -> SignatureData.of(sig.toArray(JAVA_BYTE)));
+        return Result.checked(return_val, () -> EcdsaSignature.of(sig.toArray(JAVA_BYTE)));
     }
 
     @Override
-    public byte[] ecdsaSignatureSerializeCompact(SignatureData sig) {
+    public byte[] ecdsaSignatureSerializeCompact(EcdsaSignature sig) {
         return sig.bytes();
     }
 
     @Override
-    public Result<SignatureData> ecdsaSignatureParseCompact(byte[] serialized_signature) {
+    public Result<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature) {
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sig, arena.allocateFrom(JAVA_BYTE, serialized_signature));
-        return Result.checked(return_val, () -> SignatureData.of(sig.toArray(JAVA_BYTE)));
+        return Result.checked(return_val, () -> EcdsaSignature.of(sig.toArray(JAVA_BYTE)));
     }
 
     @Override
-    public Result<Boolean> ecdsaVerify(SignatureData sig, byte[] msg_hash_data, P256k1PubKey pubKey) {
+    public Result<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, P256k1PubKey pubKey) {
         /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
          * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
          * Signing with a valid context, verified secret key

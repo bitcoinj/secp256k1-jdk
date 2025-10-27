@@ -16,23 +16,23 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.P256K1FieldElement;
-import org.bitcoinj.secp.SignatureData;
+import org.bitcoinj.secp.EcdsaSignature;
 
 import java.util.Arrays;
 
 /**
- * Default/Internal implementation of {@link SignatureData}
+ * Default/Internal implementation of {@link EcdsaSignature}
  */
-public class SignatureDataImpl implements SignatureData {
+public class EcdsaSignatureImpl implements EcdsaSignature {
     private final P256K1FieldElement r;
     private final P256K1FieldElement s;
 
-    public SignatureDataImpl(P256K1FieldElement r, P256K1FieldElement s) {
+    public EcdsaSignatureImpl(P256K1FieldElement r, P256K1FieldElement s) {
         this.r = r;
         this.s = s;
     }
 
-    public SignatureDataImpl(byte[] signature) {
+    public EcdsaSignatureImpl(byte[] signature) {
         if (signature.length != 64) {
             throw new IllegalArgumentException("Sig Not 64 bytes");
         }
