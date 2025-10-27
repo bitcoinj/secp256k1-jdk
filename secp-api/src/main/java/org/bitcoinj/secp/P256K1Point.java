@@ -119,5 +119,17 @@ public interface P256K1Point {
          * @return compressed point
          */
         Compressed compress();
+
+        /**
+         * Get the default serialization encoding
+         * @return serialized point
+         */
+        default byte[] serialize() {
+            byte[] uncompressed = new byte[65];
+            uncompressed[0] = 0x04;
+            System.arraycopy(x().serialize(), 0, uncompressed, 1, 32);
+            System.arraycopy(y().serialize(), 0, uncompressed, 33, 32);
+            return uncompressed;
+        }
     }
 }
