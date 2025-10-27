@@ -29,7 +29,7 @@ public class Ecdsa {
      * Here the message is "Hello, world!" and the hash function is SHA-256.
      * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116
      */
-    final byte[] msg_hash = hash("Hello, world!");
+    final byte[] messageHash = hash("Hello, world!");
 
     void main() {
         IO.println("Running secp256k1-jdk Ecdsa example...");
@@ -44,36 +44,36 @@ public class Ecdsa {
             P256k1PubKey pubkey = secp.ecPubKeyCreate(privKey);
 
             /* Serialize the pubkey in a compressed form (33 bytes). */
-            byte[] compressed_pubkey = secp.ecPubKeySerialize(pubkey, (int)2L /* secp256k1_h.SECP256K1_EC_COMPRESSED() */);
+            byte[] compressedPubkey = secp.ecPubKeySerialize(pubkey, (int)2L /* secp256k1_h.SECP256K1_EC_COMPRESSED() */);
 
             /* === Signing === */
 
             /* Generate an ECDSA signature using the RFC-6979 safe default nonce.
              * Signing with a valid context, verified secret key and the default nonce function should never fail. */
-            EcdsaSignature sig = secp.ecdsaSign(msg_hash, privKey).get();
+            EcdsaSignature sig = secp.ecdsaSign(messageHash, privKey).get();
 
             /* Serialize the signature in a compact form. Should always succeed according to
              the documentation in secp256k1.h. */
-            byte[] serialized_signature = secp.ecdsaSignatureSerializeCompact(sig);
+            byte[] serializedSignature = secp.ecdsaSignatureSerializeCompact(sig);
 
             /* === Verification === */
 
             /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
-            EcdsaSignature sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).get();
+            EcdsaSignature sig2 = secp.ecdsaSignatureParseCompact(serializedSignature).get();
             assert(Arrays.equals(sig.bytes(), sig2.bytes()));
 
             /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
-            P256k1PubKey pubkey2 = secp.ecPubKeyParse(compressed_pubkey).get();
+            P256k1PubKey pubkey2 = secp.ecPubKeyParse(compressedPubkey).get();
             assert(pubkey.getW().equals(pubkey2.getW()));
 
             /* Verify a signature. This will return true if it's valid and false if it's not. */
-            boolean is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).get();
+            boolean isValidSignature = secp.ecdsaVerify(sig2, messageHash, pubkey2).get();
 
-            IO.println("Is the signature valid? " + is_signature_valid);
+            IO.println("Is the signature valid? " + isValidSignature);
             IO.println("Secret Key: " + privKey.getS().toString(16));
             IO.println("Public Key (as ECPoint): " + pubkey);
-            IO.println("Public Key (Compressed): " + formatter.formatHex(compressed_pubkey));
-            IO.println("Signature: " + formatter.formatHex(serialized_signature));
+            IO.println("Public Key (Compressed): " + formatter.formatHex(compressedPubkey));
+            IO.println("Signature: " + formatter.formatHex(serializedSignature));
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for
