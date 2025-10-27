@@ -19,7 +19,7 @@ import org.bitcoinj.secp.Secp256k1
 import org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.util.*
+import java.util.HexFormat
 
 /**
  * Port of secp256k1 sample `ecdsa.c` to Kotlin
