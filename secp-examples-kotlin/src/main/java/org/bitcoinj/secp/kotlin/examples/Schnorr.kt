@@ -51,7 +51,7 @@ fun main() {
         println("Is the signature valid? $isValidSignature")
         println("Secret Key: ${keyPair.s.toString(16)}")
         println("Public Key (x-only): $xOnly2")
-        println("Signature: ${signature.formatHex()}")
+        println("Signature: $signature")
 
         /* It's best practice to try to clear secrets from memory after using them.
          * This is done because some bugs can allow an attacker to leak memory, for

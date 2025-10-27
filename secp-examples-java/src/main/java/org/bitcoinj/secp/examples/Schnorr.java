@@ -57,7 +57,7 @@ public class Schnorr {
             IO.println("Is the signature valid? " + isValidSignature);
             IO.println("Secret Key: " + keyPair.getS().toString(16));
             IO.println("Public Key (x-only): " + xOnly2);
-            IO.println("Signature: " + signature.formatHex());
+            IO.println("Signature: " + signature);
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for

@@ -34,4 +34,9 @@ public class SchnorrSignatureImpl implements SchnorrSignature {
     public byte[] bytes() {
         return Arrays.copyOf(bytes, bytes.length);
     }
+
+    @Override
+    public String toString() {
+        return this.formatHex();
+    }
 }
