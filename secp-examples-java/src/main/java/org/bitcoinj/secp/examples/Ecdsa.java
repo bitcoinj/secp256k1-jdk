@@ -73,7 +73,7 @@ public class Ecdsa {
             IO.println("Secret Key: " + privKey.getS().toString(16));
             IO.println("Public Key (as ECPoint): " + pubkey);
             IO.println("Public Key (Compressed): " + formatter.formatHex(compressedPubkey));
-            IO.println("Signature: " + formatter.formatHex(serializedSignature));
+            IO.println("Signature: " + sig);
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for

@@ -69,7 +69,7 @@ fun main() {
         println("Secret Key: ${privKey.s.toString(16)}")
         println("Public Key (as ECPoint): $pubkey")
         println("Public Key (Compressed): ${formatter.formatHex(compressedPubkey)}")
-        println("Signature: ${formatter.formatHex(serializedSignature)}")
+        println("Signature: $sig")
 
         /* It's best practice to try to clear secrets from memory after using them.
          * This is done because some bugs can allow an attacker to leak memory, for
