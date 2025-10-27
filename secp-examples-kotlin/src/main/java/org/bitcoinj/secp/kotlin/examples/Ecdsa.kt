@@ -38,8 +38,6 @@ fun main() {
         /* Return a non-zero, in-range private key */
         val privKey = secp.ecPrivKeyCreate()
 
-        //P256k1PrivKey privKey = new BouncyPrivKey(BigInteger.ONE);
-
         /* Public key creation using a valid context with a verified secret key should never fail */
         val pubkey = secp.ecPubKeyCreate(privKey)
 
