@@ -41,20 +41,20 @@ public class Schnorr {
 
             /* === Signing === */
 
-            byte[] msg_hash = secp.taggedSha256(tag, msg);
+            byte[] messageHash = secp.taggedSha256(tag, msg);
 
-            SchnorrSignature signature = secp.schnorrSigSign32(msg_hash, keyPair);
+            SchnorrSignature signature = secp.schnorrSigSign32(messageHash, keyPair);
 
             /* === Verification === */
 
             P256K1XOnlyPubKey xOnly2 = P256K1XOnlyPubKey.parse(serializedXOnly).get();
 
             /* Compute the tagged hash on the received message using the same tag as the signer. */
-            byte[] msg_hash2 = secp.taggedSha256(tag, msg);
+            byte[] messageHash2 = secp.taggedSha256(tag, msg);
 
-            boolean is_signature_valid = secp.schnorrSigVerify(signature, msg_hash2, xOnly2).get();
+            boolean isValidSignature = secp.schnorrSigVerify(signature, messageHash2, xOnly2).get();
 
-            IO.println("Is the signature valid? " + is_signature_valid);
+            IO.println("Is the signature valid? " + isValidSignature);
             IO.println("Secret Key: " + keyPair.getS().toString(16));
             IO.println("Public Key (as ECPoint): " + xOnly2);
             IO.println("Signature: " + signature.formatHex());
