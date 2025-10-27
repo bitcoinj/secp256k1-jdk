@@ -16,7 +16,6 @@
 package org.bitcoinj.secp.kotlin.examples
 
 import org.bitcoinj.secp.Secp256k1
-import org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.HexFormat
@@ -34,7 +33,7 @@ fun main() {
     val msg_hash = hash("Hello, world!")
 
     println("Running secp256k1-jdk Ecdsa example...")
-    Secp256k1.getById(LIBSECP256K1_FFM).use { secp ->
+    Secp256k1.get().use { secp ->
         /* === Key Generation === */
         /* Return a non-zero, in-range private key */
         val privKey = secp.ecPrivKeyCreate()
