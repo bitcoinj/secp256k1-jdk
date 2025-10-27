@@ -39,7 +39,6 @@ public class Ecdsa {
 
             /* Return a non-zero, in-range private key */
             P256k1PrivKey privKey = secp.ecPrivKeyCreate();
-            //P256k1PrivKey privKey = new BouncyPrivKey(BigInteger.ONE);
 
             /* Public key creation using a valid context with a verified secret key should never fail */
             P256k1PubKey pubkey = secp.ecPubKeyCreate(privKey);
