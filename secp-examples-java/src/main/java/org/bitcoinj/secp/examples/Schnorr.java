@@ -56,7 +56,7 @@ public class Schnorr {
 
             IO.println("Is the signature valid? " + isValidSignature);
             IO.println("Secret Key: " + keyPair.getS().toString(16));
-            IO.println("Public Key (as ECPoint): " + xOnly2);
+            IO.println("Public Key (x-only): " + xOnly2);
             IO.println("Signature: " + signature.formatHex());
 
             /* It's best practice to try to clear secrets from memory after using them.
