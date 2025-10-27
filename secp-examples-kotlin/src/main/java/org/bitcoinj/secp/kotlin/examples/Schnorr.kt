@@ -36,19 +36,19 @@ fun main() {
         val serializedXOnly = xOnly.serialize()
 
         /* === Signing === */
-        val msg_hash = secp.taggedSha256(tag, msg)
+        val messageHash = secp.taggedSha256(tag, msg)
 
-        val signature = secp.schnorrSigSign32(msg_hash, keyPair)
+        val signature = secp.schnorrSigSign32(messageHash, keyPair)
 
         /* === Verification === */
         val xOnly2 : P256K1XOnlyPubKey = P256K1XOnlyPubKey.parse(serializedXOnly).get()
 
         /* Compute the tagged hash on the received message using the same tag as the signer. */
-        val msg_hash2 = secp.taggedSha256(tag, msg)
+        val messageHash2 = secp.taggedSha256(tag, msg)
 
-        val is_signature_valid = secp.schnorrSigVerify(signature, msg_hash2, xOnly2).get()
+        val isValidSignature = secp.schnorrSigVerify(signature, messageHash2, xOnly2).get()
 
-        println("Is the signature valid? $is_signature_valid")
+        println("Is the signature valid? $isValidSignature")
         println("Secret Key: ${keyPair.s.toString(16)}")
         println("Public Key (as ECPoint): $xOnly2")
         println("Signature: ${signature.formatHex()}")
