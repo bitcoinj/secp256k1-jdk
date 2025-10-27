@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp.bouncy;
 
+import org.bitcoinj.secp.EcdhSharedSecret;
 import org.bitcoinj.secp.P256K1FieldElement;
 import org.bitcoinj.secp.P256K1KeyPair;
 import org.bitcoinj.secp.P256K1XOnlyPubKey;
@@ -24,6 +25,7 @@ import org.bitcoinj.secp.Result;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
+import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -204,11 +206,11 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public Result<byte[]> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey) {
+    public Result<EcdhSharedSecret> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey) {
         ECPoint point = BC.fromECPoint(pubKey.getW());
         ECPoint ssPoint = point.multiply(secKey.getS()).normalize();
         byte[] hashed = ecdhHash(BC.toP256K1PubKey(ssPoint));
-        return Result.ok(hashed);
+        return Result.ok(new EcdhSharedSecretImpl(hashed));
     }
     
     private byte[] ecdhHash(P256k1PubKey sspk) {
