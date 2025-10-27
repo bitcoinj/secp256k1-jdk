@@ -168,7 +168,7 @@ public interface Secp256k1 extends Closeable {
      * @return The same point, in uncompressed format
      */
     default P256K1Point.Uncompressed ecPointUncompress(P256K1Point.Compressed compressedPoint) {
-        byte[] serializedCompressed = compressedPoint.getEncoded();
+        byte[] serializedCompressed = compressedPoint.serialize();
         P256k1PubKey pub = ecPubKeyParse(serializedCompressed).get();
         return pub.point();
     }

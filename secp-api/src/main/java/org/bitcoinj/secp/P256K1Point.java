@@ -91,7 +91,7 @@ public interface P256K1Point {
          * Get the default serialization encoding
          * @return serialized point
          */
-        default byte[] getEncoded() {
+        default byte[] serialize() {
             byte[] compressed = new byte[33];
             compressed[0] = isOdd()
                     ? (byte) 0x03      // odd
