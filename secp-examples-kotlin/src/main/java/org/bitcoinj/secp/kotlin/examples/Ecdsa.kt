@@ -30,7 +30,7 @@ fun main() {
      * Here the message is "Hello, world!" and the hash function is SHA-256.
      * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116
      */
-    val msg_hash = hash("Hello, world!")
+    val messageHash = hash("Hello, world!")
 
     println("Running secp256k1-jdk Ecdsa example...")
     Secp256k1.get().use { secp ->
@@ -42,34 +42,34 @@ fun main() {
         val pubkey = secp.ecPubKeyCreate(privKey)
 
         /* Serialize the pubkey in a compressed form(33 bytes). */
-        val compressed_pubkey = secp.ecPubKeySerialize(pubkey, 258 /* secp256k1_h.SECP256K1_EC_COMPRESSED() */)
+        val compressedPubkey = secp.ecPubKeySerialize(pubkey, 258 /* secp256k1_h.SECP256K1_EC_COMPRESSED() */)
 
         /* === Signing === */
 
         /* Generate an ECDSA signature using the RFC-6979 safe default nonce.
          * Signing with a valid context, verified secret key and the default nonce function should never fail. */
-        val sig = secp.ecdsaSign(msg_hash, privKey).get()
+        val sig = secp.ecdsaSign(messageHash, privKey).get()
 
         /* Serialize the signature in a compact form. Should always succeed according to
          the documentation in secp256k1.h. */
-        val serialized_signature = secp.ecdsaSignatureSerializeCompact(sig)
+        val serializedSignature = secp.ecdsaSignatureSerializeCompact(sig)
 
         /* === Verification === */
 
         /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
-        val sig2 = secp.ecdsaSignatureParseCompact(serialized_signature).get()
+        val sig2 = secp.ecdsaSignatureParseCompact(serializedSignature).get()
         assert(sig.bytes().contentEquals(sig2.bytes()))
         /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
-        val pubkey2 = secp.ecPubKeyParse(compressed_pubkey).get()
+        val pubkey2 = secp.ecPubKeyParse(compressedPubkey).get()
         assert(pubkey.w == pubkey2.w)
         /* Verify a signature. This will return true if it's valid and false if it's not. */
-        val is_signature_valid = secp.ecdsaVerify(sig2, msg_hash, pubkey2).get()
+        val isValidSignature = secp.ecdsaVerify(sig2, messageHash, pubkey2).get()
 
-        println("Is the signature valid? $is_signature_valid")
+        println("Is the signature valid? $isValidSignature")
         println("Secret Key: ${privKey.s.toString(16)}")
         println("Public Key (as ECPoint): $pubkey")
-        println("Public Key (Compressed): ${formatter.formatHex(compressed_pubkey)}")
-        println("Signature: ${formatter.formatHex(serialized_signature)}")
+        println("Public Key (Compressed): ${formatter.formatHex(compressedPubkey)}")
+        println("Signature: ${formatter.formatHex(serializedSignature)}")
 
         /* It's best practice to try to clear secrets from memory after using them.
          * This is done because some bugs can allow an attacker to leak memory, for
