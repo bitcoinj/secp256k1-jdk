@@ -15,10 +15,7 @@
  */
 package org.bitcoinj.secp.examples;
 
-import org.bitcoinj.secp.P256k1PrivKey;
-import org.bitcoinj.secp.P256k1PubKey;
-import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.EcdsaSignature;
+import module org.bitcoinj.secp;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
