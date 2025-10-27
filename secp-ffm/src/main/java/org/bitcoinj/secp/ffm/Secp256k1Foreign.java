@@ -22,6 +22,7 @@ import org.bitcoinj.secp.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.P256k1PrivKey;
 import org.bitcoinj.secp.P256k1PubKey;
 import org.bitcoinj.secp.Result;
+import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
@@ -31,6 +32,7 @@ import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_keypair;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_pubkey;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_xonly_pubkey;
+import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
@@ -336,7 +338,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public byte[] schnorrSigSign32(byte[] messageHash, P256K1KeyPair keyPair) {
+    public SchnorrSignature schnorrSigSign32(byte[] messageHash, P256K1KeyPair keyPair) {
         MemorySegment sig = arena.allocate(64);
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, messageHash);
         MemorySegment auxiliary_rand = fill_random(arena, 32);
@@ -345,7 +347,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
         int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keyPairSeg, auxiliary_rand);
         assert(return_val == 1);
-        return sig.toArray(JAVA_BYTE);
+        return new SchnorrSignatureImpl(sig.toArray(JAVA_BYTE));
     }
 
     private MemorySegment keyPairToSegment(P256K1KeyPair keyPair) {
@@ -369,8 +371,8 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
-        MemorySegment sigSegment = arena.allocateFrom(JAVA_BYTE, signature);
+    public Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
+        MemorySegment sigSegment = arena.allocateFrom(JAVA_BYTE, signature.bytes());
         MemorySegment msgSegment = arena.allocateFrom(JAVA_BYTE, msg_hash);
         MemorySegment pubKeySegment = arena.allocateFrom(JAVA_BYTE, pubKey.serialize()); // 32-byte
         MemorySegment pubKeySegmentOpaque = secp256k1_xonly_pubkey.allocate(arena); // 64-byte opaque

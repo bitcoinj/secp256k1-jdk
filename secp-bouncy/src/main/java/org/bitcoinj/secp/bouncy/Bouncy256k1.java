@@ -21,6 +21,7 @@ import org.bitcoinj.secp.P256K1XOnlyPubKey;
 import org.bitcoinj.secp.P256k1PrivKey;
 import org.bitcoinj.secp.P256k1PubKey;
 import org.bitcoinj.secp.Result;
+import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
@@ -193,12 +194,12 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public byte[] schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair) {
+    public SchnorrSignature schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
+    public Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey) {
         return Result.err(-1);
     }
 

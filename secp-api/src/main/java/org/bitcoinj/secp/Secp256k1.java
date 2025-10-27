@@ -239,7 +239,7 @@ public interface Secp256k1 extends Closeable {
      * @param keyPair the keypair for signing
      * @return the signature
      */
-    byte[] schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair);
+    SchnorrSignature schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair);
 
     /**
      * Verify a Schnorr signature.
@@ -248,7 +248,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey pubkey that must have signed the message
      * @return true, false, or error
      */
-    Result<Boolean> schnorrSigVerify(byte[] signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
+    Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
 
     /**
      * ECDH key agreement
