@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.ByteArray;
+import org.bitcoinj.secp.EcdhSharedSecret;
 import org.bitcoinj.secp.P256K1FieldElement;
 import org.bitcoinj.secp.P256K1KeyPair;
 import org.bitcoinj.secp.P256K1XOnlyPubKey;
@@ -25,6 +26,7 @@ import org.bitcoinj.secp.Result;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
+import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
 import org.bitcoinj.secp.internal.P256k1PubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
@@ -383,13 +385,13 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public Result<byte[]> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey) {
+    public Result<EcdhSharedSecret> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey) {
         MemorySegment pubKeySeg = pubKeyParse(pubKey);  // Get pubkey in 64-byte internal format
         MemorySegment secKeySeg = arena.allocateFrom(JAVA_BYTE, secKey.getEncoded());
         MemorySegment output = arena.allocate(32);
         int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, secKeySeg, NULL(), NULL());
         return success == 1
-                ? Result.ok(output.toArray(JAVA_BYTE))
+                ? Result.ok(new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)))
                 : Result.err(-1);
     }
 

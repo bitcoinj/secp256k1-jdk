@@ -256,7 +256,7 @@ public interface Secp256k1 extends Closeable {
      * @param secKey secret key
      * @return ecdh key agreement
      */
-    Result<byte[]> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey);
+    Result<EcdhSharedSecret> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey);
 
     /**
      * Override close and declare that no checked exceptions are thrown
