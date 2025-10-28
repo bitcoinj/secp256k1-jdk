@@ -59,4 +59,9 @@ class P256K1PointCompressed implements P256K1Point.Compressed {
     public int hashCode() {
         return Objects.hash(x, isOdd);
     }
+
+    @Override
+    public String toString() {
+        return ByteArrayBase.HEX_FORMAT.formatHex(this.serialize());
+    }
 }

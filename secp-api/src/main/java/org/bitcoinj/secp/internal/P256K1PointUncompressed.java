@@ -82,4 +82,9 @@ class P256K1PointUncompressed extends P256K1PointImpl implements P256K1Point.Unc
     public int hashCode() {
         return Objects.hash(x, y);
     }
+
+    @Override
+    public String toString() {
+        return ByteArrayBase.HEX_FORMAT.formatHex(this.serialize());
+    }
 }
