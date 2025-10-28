@@ -120,18 +120,6 @@ public interface P256k1PubKey extends ECPublicKey {
     }
 
     /**
-     * Since we can't provide a default implementation of {@link Object#toString()}, we can
-     * at least make the default implementation easily available to implementations.
-     * @return string representation of the key
-     */
-    default String toStringDefault() {
-        ECPoint point = getW();
-        return point.equals(ECPoint.POINT_INFINITY)
-                ? "POINT_INFINITY"
-                : point.getAffineX().toString(16) + "," + point.getAffineY().toString(16);
-    }
-
-    /**
      * Construct a public key from an {@link ECPoint}
      * @param ecPoint the point
      * @return the pubkey
