@@ -52,7 +52,7 @@ class OpaqueKeyPair implements P256K1KeyPair {
         return opaque.clone();
     }
 
-    public P256k1PrivKey getPrivate() {
+    public P256k1PrivKey privateKey() {
         return P256k1PrivKey.of(getEncoded());
     }
 

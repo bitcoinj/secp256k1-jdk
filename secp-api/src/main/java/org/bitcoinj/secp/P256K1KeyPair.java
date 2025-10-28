@@ -28,6 +28,12 @@ public interface P256K1KeyPair extends P256k1PrivKey {
     P256k1PubKey publicKey();
 
     /**
+     * Get the private key
+     * @return private key
+     */
+    P256k1PrivKey privateKey();
+
+    /**
      * Create a keypair from a private key and its matching public key
      * @param privKey private key
      * @param pubKey matching public key

@@ -39,6 +39,11 @@ public class P256K1KeyPairImpl implements P256K1KeyPair {
     }
 
     @Override
+    public P256k1PrivKey privateKey() {
+        return privKey;
+    }
+
+    @Override
     public byte[] getEncoded() {
         return privKey.getEncoded();
     }
