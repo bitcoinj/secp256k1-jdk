@@ -39,7 +39,7 @@ fun main() {
         val pubkey = secp.ecPubKeyCreate(privKey)
 
         /* Serialize the pubkey in a compressed form(33 bytes). */
-        val compressedPubkey = secp.ecPubKeySerialize(pubkey, 258 /* secp256k1_h.SECP256K1_EC_COMPRESSED() */)
+        val compressedPubkey = pubkey.serialize(true);
 
         /* === Signing === */
 
