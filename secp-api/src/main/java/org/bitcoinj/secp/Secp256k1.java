@@ -245,10 +245,21 @@ public interface Secp256k1 extends Closeable {
      * Verify a Schnorr signature.
      * @param signature the signature to verify
      * @param msg_hash hash of the message
-     * @param pubKey pubkey that must have signed the message
+     * @param pubKey x-only pubkey that must have signed the message
      * @return true, false, or error
      */
     Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
+
+    /**
+     * Verify a Schnorr signature.
+     * @param signature the signature to verify
+     * @param msg_hash hash of the message
+     * @param pubKey pubkey that must have signed the message
+     * @return true, false, or error
+     */
+    default Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, P256k1PubKey pubKey) {
+        return schnorrSigVerify(signature, msg_hash, pubKey.xOnly());
+    }
 
     /**
      * ECDH key agreement
