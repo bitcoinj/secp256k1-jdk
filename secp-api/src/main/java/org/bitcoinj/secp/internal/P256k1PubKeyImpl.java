@@ -54,6 +54,6 @@ public class P256k1PubKeyImpl implements P256k1PubKey {
 
     @Override
     public String toString() {
-        return toStringDefault();
+        return ByteArrayBase.HEX_FORMAT.formatHex(point.serialize());
     }
 }
