@@ -20,11 +20,9 @@ import module org.bitcoinj.secp;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HexFormat;
 
 /// Java version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [ecdsa.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/ecdsa.c).
 public class Ecdsa {
-    final HexFormat formatter = HexFormat.of();
     /* Instead of signing the message directly, we must sign a 32-byte hash.
      * Here the message is "Hello, world!" and the hash function is SHA-256.
      * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116
@@ -72,7 +70,7 @@ public class Ecdsa {
             IO.println("Is the signature valid? " + isValidSignature);
             IO.println("Secret Key: " + privKey.getS().toString(16));
             IO.println("Public Key (Uncompressed): " + pubkey);
-            IO.println("Public Key (Compressed)  : " + formatter.formatHex(compressedPubkey));
+            IO.println("Public Key (Compressed)  : " + pubkey.getCompressed());
             IO.println("Signature: " + sig);
 
             /* It's best practice to try to clear secrets from memory after using them.

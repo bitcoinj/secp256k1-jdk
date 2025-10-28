@@ -18,14 +18,11 @@ package org.bitcoinj.secp.kotlin.examples
 import org.bitcoinj.secp.Secp256k1
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.util.HexFormat
 
 /**
  * Port of secp256k1 sample `ecdsa.c` to Kotlin
  */
 fun main() {
-    val formatter: HexFormat = HexFormat.of()
-
     /* Instead of signing the message directly, we must sign a 32-byte hash.
      * Here the message is "Hello, world!" and the hash function is SHA-256.
      * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116
@@ -68,7 +65,7 @@ fun main() {
         println("Is the signature valid? $isValidSignature")
         println("Secret Key: ${privKey.s.toString(16)}")
         println("Public Key (Uncompressed): $pubkey")
-        println("Public Key (Compressed)  : ${formatter.formatHex(compressedPubkey)}")
+        println("Public Key (Compressed)  : ${pubkey.getCompressed()}")
         println("Signature: $sig")
 
         /* It's best practice to try to clear secrets from memory after using them.
