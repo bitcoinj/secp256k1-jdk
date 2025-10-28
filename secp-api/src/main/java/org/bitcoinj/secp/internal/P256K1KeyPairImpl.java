@@ -34,7 +34,7 @@ public class P256K1KeyPairImpl implements P256K1KeyPair {
     }
 
     @Override
-    public P256k1PubKey getPublic() {
+    public P256k1PubKey publicKey() {
         return pubKey;
     }
 

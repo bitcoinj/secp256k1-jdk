@@ -32,7 +32,7 @@ public class PubKeyAdditionTest {
     @Test
     void pubKeyAdditionTestTwo() {
         try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
-            P256k1PubKey pubKey = secp.ecKeyPairCreate(P256k1PrivKey.of(BigInteger.ONE)).getPublic();
+            P256k1PubKey pubKey = secp.ecKeyPairCreate(P256k1PrivKey.of(BigInteger.ONE)).publicKey();
             P256k1PubKey added = secp.ecPubKeyCombine(pubKey, pubKey);
             P256k1PubKey multiplied = secp.ecPubKeyTweakMul(pubKey, BigInteger.valueOf(2));
             Assertions.assertEquals(added.getW(), multiplied.getW());

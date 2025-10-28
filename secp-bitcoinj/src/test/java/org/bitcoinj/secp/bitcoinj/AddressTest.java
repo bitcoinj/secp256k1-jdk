@@ -59,7 +59,7 @@ public class AddressTest {
 //            P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
 //            P256k1PubKey Q = secp.ecPubKeyCombine(keyPair.getPublic(), P2);
 //            byte[] witnessProgram = Q.getXOnly().getSerialized();
-            byte[] witnessProgram = maker.calcWitnessProgram(keyPair.getPublic());
+            byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
         Assertions.assertEquals(address, tapRootAddress.toString());
@@ -78,7 +78,7 @@ public class AddressTest {
 //            P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
 //            P256k1PubKey Q = secp.ecPubKeyCombine(keyPair.getPublic(), P2);
 //            byte[] witnessProgram = Q.getXOnly().getSerialized();
-            byte[] witnessProgram = maker.calcWitnessProgram(keyPair.getPublic());
+            byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
         Assertions.assertEquals(address, tapRootAddress.toString());

@@ -39,7 +39,7 @@ class OpaqueKeyPair implements P256K1KeyPair {
     }
 
     @Override
-    public P256k1PubKey getPublic() {
+    public P256k1PubKey publicKey() {
         MemorySegment keyPairSegment = Secp256k1Foreign.globalArena.allocateFrom(JAVA_BYTE, opaque);
         MemorySegment pubKeySegment = secp256k1_pubkey.allocate(Secp256k1Foreign.globalArena);
         int return_val = secp256k1_h.secp256k1_keypair_pub(secp256k1_h.secp256k1_context_static(), pubKeySegment, keyPairSegment);
