@@ -13,11 +13,11 @@ These draft _Design Notes_ are a statement of the principles and priorities of t
 
 == Design Priorities
 
-. Fully-functional Java wrapper for the secp256k1 'C' library.
-. API conceptually similar to the 'C' API, but adapted to Java (e.g. Java naming conventions, references instead of pointers, etc.)
-. Modern, functional-style Java idioms.
-. API that strongly-encourages secure usage patterns.
+. Provide fully-functional Java wrapper for the secp256k1 'C' library.
+. Be conceptually similar to the 'C' API, but adapted to Java (e.g. Java naming conventions, references instead of pointers, etc.)
+. Use modern, functional-style Java idioms.
+. Strongly encourage secure usage patterns.
 . Provide an API that is implementation-independent. This means no public concrete classes in `secp-api` module and the ability to swap implementations at run-time.
 . Fully support the Java Module System (but do not require its use.)
-. In the 1.0 release support Java as old as version 8 or 9.
-. Near-zero dependencies. (The only dependency is JSpecify which is very minimal and needed for nullability annotations and first-class Kotlin support.)
+. In the initial release, support Java as old as version 8 or 9.
+. Require near-zero dependencies. (The only dependency is JSpecify which is very minimal and needed for nullability annotations and first-class Kotlin support.)
