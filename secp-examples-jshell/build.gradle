@@ -1,0 +1,83 @@
+import org.codehaus.groovy.runtime.GStringImpl
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.beryx.jlink'    version '3.1.4-rc'
+}
+
+ext.moduleName = 'org.bitcoinj.secp.jshell'
+ext.libSecpDir = System.getenv("LIBSECP_DIR")
+ext.javaHome = System.getenv("JAVA_HOME")
+
+dependencies {
+    implementation project(':secp-api')
+    implementation project(':secp-bouncy')
+    implementation project(':secp-ffm')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // Override Default release version
+    options.release = 25
+}
+
+jar {
+    inputs.property("moduleName", moduleName)
+    manifest {
+        attributes  'Implementation-Title': 'Placeholder App for secp256k1-jdk JShell Example',
+                'Main-Class': application.mainClass,
+                'Implementation-Version': archiveVersion.get()
+    }
+}
+
+application {
+    mainModule = 'org.bitcoinj.secp.jshell'
+    mainClass = 'org.bitcoinj.secp.jshell.Hello'
+    applicationName = 'hello'
+}
+
+run {
+    jvmArgs += '--enable-native-access=org.bitcoinj.secp.ffm'
+}
+
+jlink {
+    options = ['--add-modules', 'org.bitcoinj.secp.ffm',
+               '--add-modules', 'org.bitcoinj.secp.bouncy', '--ignore-signing-information',
+               '--add-modules', 'jdk.jshell']
+    launcher {
+        name = application.applicationName
+    }
+}
+
+tasks.register('copyNativeLibraries', Copy) {
+    dependsOn tasks.jlink
+    from(libSecpDir) { include 'libsecp256k1.*' }
+    into("${tasks.jlink.imageDir}/lib")
+}
+
+tasks.register('copyJdkSource', Copy) {
+    dependsOn tasks.jlink
+    from {
+        def javaHome = System.getenv('JAVA_HOME') ?: System.getProperty('java.home')
+        file("$javaHome/lib/src.zip")
+    }
+    into("${tasks.jlink.imageDir}/lib")
+    finalizedBy(tasks.named('addJshellWrapper'))
+}
+
+tasks.register('addJshellWrapper') {
+    dependsOn tasks.copyJdkSource
+    doLast {
+        def jshellScript = file("${tasks.jlink.imageDir}/bin/secp-shell")
+        jshellScript.text = """#!/bin/bash
+DIR=\$(dirname "\$0")
+"\$DIR/jshell" "\$@"
+"""
+        jshellScript.setExecutable(true)
+    }
+}
+
+tasks.jlink {
+    finalizedBy(tasks.copyNativeLibraries, tasks.copyJdkSource) // tasks.copyProjectJavadoc
+}
+
