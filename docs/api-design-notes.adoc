@@ -19,5 +19,6 @@ These draft _Design Notes_ are a statement of the principles and priorities of t
 . Strongly encourage secure usage patterns.
 . Provide an API that is implementation-independent. This means no public concrete classes in `secp-api` module and the ability to swap implementations at run-time.
 . Fully support the Java Module System (but do not require its use.)
+. Be Valhalla-friendly: key types will be value types.
 . In the initial release, support Java as old as version 8 or 9.
 . Require near-zero dependencies. (The only dependency is JSpecify which is very minimal and needed for nullability annotations and first-class Kotlin support.)
