@@ -52,4 +52,9 @@ public class P256K1KeyPairImpl implements P256K1KeyPair {
     public void destroy() {
         privKey.destroy();
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" + " publicKey = " + publicKey() + " }";
+    }
 }
