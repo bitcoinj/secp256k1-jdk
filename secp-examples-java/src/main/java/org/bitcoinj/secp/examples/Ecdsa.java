@@ -42,7 +42,7 @@ public class Ecdsa {
             P256k1PubKey pubkey = secp.ecPubKeyCreate(privKey);
 
             /* Serialize the pubkey in a compressed form (33 bytes). */
-            byte[] compressedPubkey = secp.ecPubKeySerialize(pubkey, (int)2L /* secp256k1_h.SECP256K1_EC_COMPRESSED() */);
+            byte[] compressedPubkey = secp.ecPubKeySerialize(pubkey, 258 /* secp256k1_h.SECP256K1_EC_COMPRESSED() */);
 
             /* === Signing === */
 
