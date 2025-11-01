@@ -85,6 +85,6 @@ class P256K1PointUncompressed extends P256K1PointImpl implements P256K1Point.Unc
 
     @Override
     public String toString() {
-        return ByteArrayBase.HEX_FORMAT.formatHex(this.serialize());
+        return ByteArrayBase.toHexString(this.serialize());
     }
 }
