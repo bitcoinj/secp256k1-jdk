@@ -69,6 +69,6 @@ public class P256K1XOnlyPubKeyImpl implements P256K1XOnlyPubKey, ByteArray {
      */
     @Override
     public String toString() {
-        return ByteArray.toHexString(serialize());
+        return ByteArrayBase.toHexString(serialize());
     }
 }
