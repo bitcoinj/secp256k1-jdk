@@ -23,6 +23,15 @@ import org.bitcoinj.secp.ByteArray;
 public abstract class ByteArrayBase implements ByteArray {
     public static final HexFormat HEX_FORMAT = new HexFormat();
 
+    /**
+     * Utility method to format hex bytes as string
+     * @param bytes bytes to format
+     * @return hex-formatted String
+     */
+    public static String toHexString(byte[] bytes) {
+        return HEX_FORMAT.formatHex(bytes);
+    }
+
     @Override
     public abstract byte[] bytes();
 }

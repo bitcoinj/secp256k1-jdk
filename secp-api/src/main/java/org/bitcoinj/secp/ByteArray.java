@@ -36,7 +36,7 @@ public interface ByteArray extends Comparable<ByteArray> {
      * @return hex-formatted string
      */
     default String formatHex() {
-        return toHexString(bytes());
+        return ByteArrayBase.toHexString(bytes());
     }
 
     /**
@@ -64,14 +64,5 @@ public interface ByteArray extends Comparable<ByteArray> {
             }
         }
         return new BigInteger(signum, bytes);
-    }
-
-    /**
-     * Utility method to format hex bytes as string
-     * @param bytes bytes to format
-     * @return hex-formatted String
-     */
-    static String toHexString(byte[] bytes) {
-        return ByteArrayBase.HEX_FORMAT.formatHex(bytes);
     }
 }
