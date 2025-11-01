@@ -21,7 +21,7 @@ import org.bitcoinj.secp.ByteArray;
  * Abstract Base Class for creating ByteArray Implementations
  */
 public abstract class ByteArrayBase implements ByteArray {
-    public static final HexFormat HEX_FORMAT = new HexFormat();
+    static final HexFormat HEX_FORMAT = new HexFormat();
 
     /**
      * Utility method to format hex bytes as string
