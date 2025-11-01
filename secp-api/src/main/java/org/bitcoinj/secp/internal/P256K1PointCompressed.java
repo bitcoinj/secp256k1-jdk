@@ -62,6 +62,6 @@ class P256K1PointCompressed implements P256K1Point.Compressed {
 
     @Override
     public String toString() {
-        return ByteArrayBase.HEX_FORMAT.formatHex(this.serialize());
+        return ByteArrayBase.toHexString(this.serialize());
     }
 }
