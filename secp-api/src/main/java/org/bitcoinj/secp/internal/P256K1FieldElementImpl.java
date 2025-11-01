@@ -67,4 +67,9 @@ public class P256K1FieldElementImpl implements P256K1FieldElement, ByteArray {
     public byte[] bytes() {
         return value.clone();
     }
+
+    @Override
+    public String toString() {
+        return formatHex();
+    }
 }
