@@ -22,7 +22,7 @@ package org.bitcoinj.secp.internal;
  * HexFormat.java in `bitcoinj-base/org.bitcoinj.base.internal`.
  * <p>Thanks to this <a href="https://www.baeldung.com/java-byte-arrays-hex-strings">Baeldung article</a>.
  */
-public class HexFormat {
+class HexFormat {
     public String formatHex(byte[] bytes) {
         StringBuilder stringBuilder = new StringBuilder(bytes.length * 2);
         for (byte aByte : bytes) {
