@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  *
  */
-public class P256K1FieldElementImpl implements P256K1FieldElement {
+public class P256K1FieldElementImpl implements P256K1FieldElement, ByteArray {
     private final byte[] value;
 
     public P256K1FieldElementImpl(BigInteger i) {
@@ -61,5 +61,10 @@ public class P256K1FieldElementImpl implements P256K1FieldElement {
     @Override
     public int hashCode() {
         return Arrays.hashCode(value);
+    }
+
+    @Override
+    public byte[] bytes() {
+        return value.clone();
     }
 }
