@@ -69,7 +69,7 @@ public interface P256K1FieldElement {
      * @return true if valid
      */
     static boolean isInRange(BigInteger e) {
-        return e.signum() >= 0 && e.compareTo(Secp256k1.FIELD.getP()) < 0;
+        return e.signum() >= 0 && e.compareTo(Secp256k1.P) < 0;
     }
 
     /**
