@@ -58,6 +58,10 @@ public interface P256K1Point {
     enum Infinity implements P256K1Point {
         /** Singleton instance */
         INSTANCE;
+
+        public ECPoint toECPoint() {
+            return ECPoint.POINT_INFINITY;
+        }
     }
 
     /**
@@ -130,6 +134,12 @@ public interface P256K1Point {
             System.arraycopy(x().serialize(), 0, uncompressed, 1, 32);
             System.arraycopy(y().serialize(), 0, uncompressed, 33, 32);
             return uncompressed;
+        }
+
+        default ECPoint toECPoint() {
+            return this instanceof P256K1ECPoint
+                    ? (P256K1ECPoint) this
+                    : new ECPoint(x().toBigInteger(), y().toBigInteger());
         }
     }
 }
