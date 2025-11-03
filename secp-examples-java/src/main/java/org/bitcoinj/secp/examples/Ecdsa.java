@@ -90,8 +90,7 @@ public class Ecdsa {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);  // Can't happen.
         }
-        byte[] message = messageString.getBytes();
-        digest.update(message, 0, message.length);
+        digest.update(messageString.getBytes());
         return digest.digest();
     }
 }
