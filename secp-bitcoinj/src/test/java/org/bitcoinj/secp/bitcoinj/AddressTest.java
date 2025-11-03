@@ -91,7 +91,7 @@ public class AddressTest {
             byte[] serial = HexFormat.of().parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
             P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.parse(serial).get();
             BigInteger tweakInt = calcTweak(xOnlyKey);
-            P256k1PubKey G = new P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
+            P256k1PubKey G = new P256k1PubKeyImpl(Secp256k1.G);
             P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
             P256k1PubKey Q = secp.ecPubKeyCombine(new P256k1PubKeyImpl(new ECPoint(xOnlyKey.getX(), BigInteger.ZERO)), P2);
             byte[] witnessProgram = Q.xOnly().serialize();
@@ -120,7 +120,7 @@ public class AddressTest {
             P256k1PubKey pubkey = BC.toP256K1PubKey(ecKey.getPubKeyPoint());
             P256K1XOnlyPubKey xOnlyKey = P256K1XOnlyPubKey.of(internalPubKey);
             BigInteger tweakInt = calcTweak(xOnlyKey);
-            P256k1PubKey G = new P256k1PubKeyImpl(Secp256k1.EC_PARAMS.getGenerator());
+            P256k1PubKey G = new P256k1PubKeyImpl(Secp256k1.G);
             P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
             P256k1PubKey Q = secp.ecPubKeyCombine(pubkey, P2);
             byte[] witnessProgram = Q.xOnly().serialize();

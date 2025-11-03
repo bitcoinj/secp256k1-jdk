@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * Tests of {@link P256K1Point}
  */
 public class P256K1PointTest {
-    static BigInteger p = Secp256k1.FIELD.getP();
+    static BigInteger p = Secp256k1.P;
     static P256K1FieldElement ONE = P256K1FieldElement.of(BigInteger.ONE);
     static P256K1FieldElement MAX = P256K1FieldElement.of(p.subtract(BigInteger.ONE));
     static BigInteger INT_MAX = MAX.toBigInteger();

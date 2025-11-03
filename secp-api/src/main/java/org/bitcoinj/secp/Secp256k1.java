@@ -15,13 +15,14 @@
  */
 package org.bitcoinj.secp;
 
+import org.bitcoinj.secp.internal.P256K1PointUncompressed;
+
 import java.io.Closeable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECFieldFp;
 import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
@@ -51,19 +52,27 @@ import java.util.stream.StreamSupport;
  * </ul>
  */
 public interface Secp256k1 extends Closeable {
+    /**
+     * The prime {@code P}, that defines the secp256k1 field. Note that since the maximum valid value of a field
+     * element is {@code P - 1}, this constant cannot be represented as a {@link P256K1FieldElement}, so we use
+     * {@link BigInteger} instead.
+     */
+    BigInteger P = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16);
+    /** The generator point {@code G} (also known as <i>base point</i>) for secp256k1. */
+    P256K1Point.Uncompressed G = P256K1PointUncompressed.of(
+            new BigInteger("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16),  // G.x
+            new BigInteger("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16)); // G.y
     /** The secp256k1 field definition {@code p} using the standard Java type */
-    ECFieldFp FIELD = new ECFieldFp(new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16));
+    ECFieldFp FIELD = new ECFieldFp(P);
     /** The secp256k1 curve definition using the standard Java type */
     EllipticCurve CURVE = new EllipticCurve(FIELD,
             BigInteger.ZERO,                // Coefficient a
             BigInteger.valueOf(7));         // Coefficient b
     /** The secp256k1 domain parameters definition using the standard Java type */
     ECParameterSpec EC_PARAMS = new ECParameterSpec(CURVE,
-        new ECPoint(
-            new BigInteger("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16),     // Base point G.x
-            new BigInteger("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16)),    // Base point G.y
-        new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16),         // Order n
-        1);     // Cofactor h
+        G.toECPoint(),  // Base point G
+        new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16),  // Order n
+        1);             // Cofactor h
 
     /**
      * Get a stream of all known providers

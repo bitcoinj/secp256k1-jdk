@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests for P256K1FieldElementTest
  */
 public class P256K1FieldElementTest {
-    static BigInteger p = Secp256k1.FIELD.getP();
+    static BigInteger p = Secp256k1.P;
     static List<BigInteger> inRangeFieldInts = List.of(BigInteger.ZERO,BigInteger.ONE, p.subtract(BigInteger.ONE));
     static List<BigInteger> outOfRangeFieldInts =List.of(BigInteger.ONE.negate(), p);
 
