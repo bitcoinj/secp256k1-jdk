@@ -1,0 +1,19 @@
+== Main Release Process
+
+. Use Java 25, Gradle 9.1+ for official builds via Gradle devShell
+.. `nix develop`
+. Set versions
+.. `gradle.properties`
+. Update `README.adoc` and other documentation if necessary
+. Commit version bump (and changelog eventually).
+. Make sure project directory is a clean checkout.
+. Full build, test
+.. `gradle clean build run runEcdsa nativeCompile`
+. Tag: `git tag -a v0.x.y -m "Release v0.x.y"`
+. Push: `git push --tags origin <release-branch>`
+. Publish to Maven Repo (currently on GitLab):
+.. `gradle publish`
+. Publish Javadoc
+.. Download the `secp256k1-jdk-javadoc` artifact from the GHA Gradle build
+.. Publish to https://msgilligan.github.io/javadoc/secp256k1-jdk/0.2/ (for now)
+. Add Release on GitHub
