@@ -187,7 +187,7 @@ public interface Secp256k1 extends Closeable {
      * @param inputData raw data to parse as public key
      * @return public key result or error
      */
-    Result<SecpPubKey> ecPubKeyParse(byte[] inputData);
+    SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData);
 
     /**
      * Sign a message hash using the ECDSA algorithm
@@ -195,7 +195,7 @@ public interface Secp256k1 extends Closeable {
      * @param seckey private key
      * @return the signature
      */
-    Result<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey seckey);
+    SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey seckey);
 
     /**
      * Serialize a {@link EcdsaSignature} as a Bitcoin <i>compact signature</i>. A compact signature is
@@ -213,7 +213,7 @@ public interface Secp256k1 extends Closeable {
      * @param serialized_signature compact signature bytes
      * @return signature object
      */
-    Result<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature);
+    SecpResult<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature);
 
     /**
      * Verify an ECDSA signature.
@@ -222,7 +222,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey The pubkey that must have signed the message
      * @return true, false, or error
      */
-    Result<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, SecpPubKey pubKey);
+    SecpResult<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, SecpPubKey pubKey);
 
     /**
      * Generate a tagged SHA-256 hash.
@@ -257,7 +257,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey x-only pubkey that must have signed the message
      * @return true, false, or error
      */
-    Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey);
+    SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey);
 
     /**
      * Verify a Schnorr signature.
@@ -266,7 +266,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey pubkey that must have signed the message
      * @return true, false, or error
      */
-    default Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpPubKey pubKey) {
+    default SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpPubKey pubKey) {
         return schnorrSigVerify(signature, msg_hash, pubKey.xOnly());
     }
 
@@ -276,7 +276,7 @@ public interface Secp256k1 extends Closeable {
      * @param secKey secret key
      * @return ecdh key agreement
      */
-    Result<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey secKey);
+    SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey secKey);
 
     /**
      * Override close and declare that no checked exceptions are thrown

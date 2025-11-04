@@ -20,8 +20,8 @@ import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpPrivKey;
+import org.bitcoinj.secp.SecpResult;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
-import org.bitcoinj.secp.Result;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
@@ -141,14 +141,14 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public Result<SecpPubKey> ecPubKeyParse(byte[] inputData) {
+    public SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData) {
         org.bouncycastle.math.ec.ECPoint bcPoint = BC_CURVE.getCurve().decodePoint(inputData);
-        return Result.ok(BC.toP256K1PubKey(bcPoint));
+        return SecpResult.ok(BC.toP256K1PubKey(bcPoint));
     }
 
     // TODO: Add constructor to create SignatureData from r and s
     @Override
-    public Result<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey seckey) {
+    public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey seckey) {
         BigInteger privateKeyForSigning = seckey.getS();
         Objects.requireNonNull(privateKeyForSigning);
         ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
@@ -157,7 +157,7 @@ public class Bouncy256k1 implements Secp256k1 {
         BigInteger[] components = signer.generateSignature(msg_hash_data);
         EcdsaSignature signatureData = EcdsaSignature.of(SecpFieldElement.of(components[0]),
                 SecpFieldElement.of(components[1]));
-        return Result.ok(signatureData);
+        return SecpResult.ok(signatureData);
     }
 
     @Override
@@ -165,14 +165,14 @@ public class Bouncy256k1 implements Secp256k1 {
         return sig.bytes();
     }
 
-    // TODO: Return Result.err when parsing fails
+    // TODO: Return SecpResult.err when parsing fails
     @Override
-    public Result<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature) {
-        return Result.ok(EcdsaSignature.of(serialized_signature));
+    public SecpResult<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature) {
+        return SecpResult.ok(EcdsaSignature.of(serialized_signature));
     }
 
     @Override
-    public Result<Boolean> ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, SecpPubKey pubKey) {
+    public SecpResult<Boolean> ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, SecpPubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
         java.security.spec.ECPoint jPoint = pubKey.getW();
         org.bouncycastle.math.ec.ECPoint pubPoint = BC.fromECPoint(jPoint);
@@ -187,7 +187,7 @@ public class Bouncy256k1 implements Secp256k1 {
             //log.error("Caught NPE inside bouncy castle", e);
             result = false;
         }
-        return Result.ok(result);
+        return SecpResult.ok(result);
     }
 
     @Override
@@ -201,16 +201,16 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey) {
-        return Result.err(-1);
+    public SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey) {
+        return SecpResult.err(-1);
     }
 
     @Override
-    public Result<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey secKey) {
+    public SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey secKey) {
         ECPoint point = BC.fromECPoint(pubKey.getW());
         ECPoint ssPoint = point.multiply(secKey.getS()).normalize();
         byte[] hashed = ecdhHash(BC.toP256K1PubKey(ssPoint));
-        return Result.ok(new EcdhSharedSecretImpl(hashed));
+        return SecpResult.ok(new EcdhSharedSecretImpl(hashed));
     }
     
     private byte[] ecdhHash(SecpPubKey sspk) {

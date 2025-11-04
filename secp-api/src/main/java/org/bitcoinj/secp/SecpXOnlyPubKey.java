@@ -40,11 +40,11 @@ public interface SecpXOnlyPubKey {
      * @param serialized byte string in x-only pubkey serialization format
      * @return an instance of the default implementation
      */
-    static Result<SecpXOnlyPubKey> parse(byte[] serialized) {
+    static SecpResult<SecpXOnlyPubKey> parse(byte[] serialized) {
         BigInteger x = new BigInteger(1, serialized);
         return !SecpFieldElement.isInRange(x)
-                ? Result.err(-1)
-                : Result.ok(SecpXOnlyPubKey.of(x));
+                ? SecpResult.err(-1)
+                : SecpResult.ok(SecpXOnlyPubKey.of(x));
     }
 
     /**
