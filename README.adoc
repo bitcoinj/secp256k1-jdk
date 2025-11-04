@@ -22,6 +22,8 @@ to modern, idiomatic, functional-style Java and to use Elliptic Curve types from
 
 The API is distributed as an API-only JAR (```secp-api-_version_.jar```) and there will be multiple implementations of the API. The API JAR currently requires JDK 9 or later but we may backport it to JDK 8 in a future release depending upon feedback from the community.
 
+For details see the https://msgilligan.github.io/javadoc/secp256k1-jdk/0.2[Javadoc].
+
 NOTE:: At this point, we are especially interested in feedback on the API.
 
 == libsecp256k1 FFM ("Panama") Implementation (JDK 24+)
@@ -60,6 +62,53 @@ For information on the in-process refactoring of *bitcoinj*, see the following:
 secp256k1-jdk currently does not use any Java Cryptography Architecture ECC providers nor does it make itself available as a provider. It does use some of the built-in Java ECC interfaces (such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey]) for interoperability and to avoid reinventing the wheel.
 
 The SECG secp256K1 curve was removed from Java in the JDK 16 release (see https://bugs.openjdk.org/browse/JDK-8251547[JDK-8251547]). It is possible that a secp256k1 JCA provider could be developed, but that is not currently a goal of this project.
+
+== Experimental Pre-Release binaries
+
+Binary packages are available on https://gitlab.com/groups/bitcoinj/-/packages[GitLab.com]. You can download JARs or use the provided Maven coordinates to link to them directly from your `pom.xml` or `build.gradle`.
+
+WARNING:: This is an experimental pre-release and should be used only for testing and evaluation only.
+
+=== Add the GitLab Maven Package Repository
+
+To your `pom.xml`:
+
+----
+<repositories>
+  <repository>
+    <id>secpjdk-repo</id>
+    <url>https://gitlab.com/api/v4/projects/55956336/packages/maven</url>
+  </repository>
+</repositories>
+----
+
+Or to your `build.gradle`:
+
+----
+maven {
+    url 'https://gitlab.com/api/v4/projects/55956336/packages/maven'
+}
+----
+
+=== Add Your Module Dependencies
+
+For example to depend on the API only, add the following to your `pom.xml`:
+
+----
+<dependency>
+  <groupId>org.bitcoinj.secp</groupId>
+  <artifactId>secp-api</artifactId>
+  <version>0.2</version>
+</dependency>
+----
+
+Or for Gradle, use:
+
+----
+dependencies {
+    implementation "org.bitcoinj.secp:secp-api:0.2"
+}
+----
 
 == Building secp256k1-jdk
 
