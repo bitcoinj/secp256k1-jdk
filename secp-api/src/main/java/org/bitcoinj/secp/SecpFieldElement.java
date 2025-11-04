@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.P256K1FieldElementImpl;
+import org.bitcoinj.secp.internal.SecpFieldElementImpl;
 
 import java.math.BigInteger;
 
@@ -23,7 +23,7 @@ import java.math.BigInteger;
  * A number that is a valid element of the P256K1 field. We use this instead of {@link BigInteger}
  * so we can use a fixed-length, unsigned representation for simplicity and performance.
  */
-public interface P256K1FieldElement {
+public interface SecpFieldElement {
 
     /**
      * Get the field element as a {@code BigInteger}
@@ -44,12 +44,12 @@ public interface P256K1FieldElement {
     boolean isOdd();
 
     /**
-     * Construct a {@code P256K1FieldElement} from a BigInteger
+     * Construct a {@code SecpFieldElement} from a BigInteger
      * @param i integer
      * @return valid element
      */
-    static P256K1FieldElement of(BigInteger i) {
-        return new P256K1FieldElementImpl(i);
+    static SecpFieldElement of(BigInteger i) {
+        return new SecpFieldElementImpl(i);
     }
 
     /**
@@ -57,8 +57,8 @@ public interface P256K1FieldElement {
      * @param bytes array containing a valid field element
      * @return field element
      */
-    static P256K1FieldElement of(byte[] bytes) {
-        return new P256K1FieldElementImpl(bytes);
+    static SecpFieldElement of(byte[] bytes) {
+        return new SecpFieldElementImpl(bytes);
     }
 
     // TODO: Constant-time implementation?
@@ -80,7 +80,7 @@ public interface P256K1FieldElement {
      */
     static BigInteger checkInRange(BigInteger e) {
         if (!isInRange(e)) {
-            throw new IllegalArgumentException("BigInteger is not a valid P256K1FieldElement: " + e);
+            throw new IllegalArgumentException("BigInteger is not a valid SecpFieldElement: " + e);
         }
         return e;
     }
@@ -95,7 +95,7 @@ public interface P256K1FieldElement {
      */
     static byte[] checkInRange(byte[] e) {
         if (e.length != 32) {
-            throw new IllegalArgumentException("P256K1FieldElement must have 32 bytes, found : " + e.length);
+            throw new IllegalArgumentException("SecpFieldElement must have 32 bytes, found : " + e.length);
         }
         return e;
     }

@@ -16,7 +16,7 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.ByteArray;
-import org.bitcoinj.secp.P256K1FieldElement;
+import org.bitcoinj.secp.SecpFieldElement;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -25,15 +25,15 @@ import java.util.Objects;
 /**
  *
  */
-public class P256K1FieldElementImpl implements P256K1FieldElement, ByteArray {
+public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
     private final byte[] value;
 
-    public P256K1FieldElementImpl(BigInteger i) {
-        value = P256K1FieldElement.integerTo32Bytes(P256K1FieldElement.checkInRange(i));
+    public SecpFieldElementImpl(BigInteger i) {
+        value = SecpFieldElement.integerTo32Bytes(SecpFieldElement.checkInRange(i));
     }
 
-    public P256K1FieldElementImpl(byte[] bytes) {
-        value = P256K1FieldElement.checkInRange(bytes);
+    public SecpFieldElementImpl(byte[] bytes) {
+        value = SecpFieldElement.checkInRange(bytes);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class P256K1FieldElementImpl implements P256K1FieldElement, ByteArray {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        P256K1FieldElementImpl that = (P256K1FieldElementImpl) o;
+        SecpFieldElementImpl that = (SecpFieldElementImpl) o;
         return Objects.deepEquals(value, that.value);
     }
 

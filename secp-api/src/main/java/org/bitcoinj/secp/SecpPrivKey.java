@@ -15,19 +15,19 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.P256k1PrivKeyImpl;
+import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 
 import java.math.BigInteger;
 import java.security.interfaces.ECPrivateKey;
 import java.security.spec.ECParameterSpec;
 
-import static org.bitcoinj.secp.P256K1FieldElement.checkInRange;
+import static org.bitcoinj.secp.SecpFieldElement.checkInRange;
 
 // TODO: Override/prevent serialization
 /**
  * A P256k1 private key.
  */
-public interface P256k1PrivKey extends ECPrivateKey {
+public interface SecpPrivKey extends ECPrivateKey {
 
 
     @Override
@@ -61,8 +61,8 @@ public interface P256k1PrivKey extends ECPrivateKey {
      * @param p Must be a member of the Secp256k1 field
      * @return private key
      */
-    static P256k1PrivKey of(BigInteger p) {
-        return new P256k1PrivKeyImpl(p);
+    static SecpPrivKey of(BigInteger p) {
+        return new SecpPrivKeyImpl(p);
     }
 
     /**
@@ -70,8 +70,8 @@ public interface P256k1PrivKey extends ECPrivateKey {
      * @param bytes bytes
      * @return private key
      */
-    static P256k1PrivKey of(byte[] bytes) {
-        return new P256k1PrivKeyImpl(bytes);
+    static SecpPrivKey of(byte[] bytes) {
+        return new SecpPrivKeyImpl(bytes);
     }
 
     /**

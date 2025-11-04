@@ -15,10 +15,10 @@
  */
 package org.bitcoinj.secp.bitcoinj;
 
-import org.bitcoinj.secp.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.SecpPubKey;
+import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.internal.P256k1PubKeyImpl;
+import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -40,16 +40,16 @@ public class WitnessMaker {
         this.secp = secp;
     }
 
-    public byte[] calcWitnessProgram(P256k1PubKey pubKey) {
-        P256K1XOnlyPubKey xOnlyKey = pubKey.xOnly();
+    public byte[] calcWitnessProgram(SecpPubKey pubKey) {
+        SecpXOnlyPubKey xOnlyKey = pubKey.xOnly();
         BigInteger tweakInt = calcTweak(xOnlyKey);
-        P256k1PubKey G = new P256k1PubKeyImpl(Secp256k1.G);
-        P256k1PubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-        P256k1PubKey Q = secp.ecPubKeyCombine(pubKey, P2);
+        SecpPubKey G = new SecpPubKeyImpl(Secp256k1.G);
+        SecpPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
+        SecpPubKey Q = secp.ecPubKeyCombine(pubKey, P2);
         return Q.xOnly().serialize();
     }
 
-    public static BigInteger calcTweak(P256K1XOnlyPubKey xOnlyPubKey) {
+    public static BigInteger calcTweak(SecpXOnlyPubKey xOnlyPubKey) {
         var digest = newDigest();
         digest.update(tweakPrefix);
         byte[] hash = digest.digest(xOnlyPubKey.serialize());

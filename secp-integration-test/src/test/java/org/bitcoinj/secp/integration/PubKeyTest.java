@@ -15,9 +15,9 @@
  */
 package org.bitcoinj.secp.integration;
 
-import org.bitcoinj.secp.P256K1Point;
-import org.bitcoinj.secp.P256k1PrivKey;
-import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.SecpPoint;
+import org.bitcoinj.secp.SecpPrivKey;
+import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.Secp256k1;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -44,17 +44,17 @@ public class PubKeyTest {
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Test Pubkeys for {0}")
     void testPubKeys(Secp256k1 secp) {
-        P256k1PrivKey privKey = P256k1PrivKey.of(BigInteger.ONE);
-        P256k1PubKey pubKey = secp.ecPubKeyCreate(privKey);
+        SecpPrivKey privKey = SecpPrivKey.of(BigInteger.ONE);
+        SecpPubKey pubKey = secp.ecPubKeyCreate(privKey);
         assertNotNull(pubKey);
         assertEquals("Secp256k1", pubKey.getAlgorithm());
         byte[] pubKeyUncompressed = pubKey.serialize(false);
         System.out.println(HexFormat.of().formatHex(pubKeyUncompressed));
         assertArrayEquals(ONE_SERIALIZED, pubKeyUncompressed);
 
-        P256K1Point.Uncompressed uPoint = pubKey.point();
-        P256K1Point.Compressed cPoint = uPoint.compress();
-        P256K1Point.Uncompressed roundTripPoint = secp.ecPointUncompress(cPoint);
+        SecpPoint.Uncompressed uPoint = pubKey.point();
+        SecpPoint.Compressed cPoint = uPoint.compress();
+        SecpPoint.Uncompressed roundTripPoint = secp.ecPointUncompress(cPoint);
 
         assertEquals(uPoint, roundTripPoint);
     }

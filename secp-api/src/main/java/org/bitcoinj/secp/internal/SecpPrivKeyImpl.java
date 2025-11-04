@@ -16,19 +16,19 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.ByteArray;
-import org.bitcoinj.secp.P256k1PrivKey;
+import org.bitcoinj.secp.SecpPrivKey;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static org.bitcoinj.secp.P256K1FieldElement.checkInRange;
-import static org.bitcoinj.secp.P256K1FieldElement.integerTo32Bytes;
+import static org.bitcoinj.secp.SecpFieldElement.checkInRange;
+import static org.bitcoinj.secp.SecpFieldElement.integerTo32Bytes;
 
 /**
- * Default/internal implementation of {@link P256k1PrivKey}
+ * Default/internal implementation of {@link SecpPrivKey}
  */
-public class P256k1PrivKeyImpl implements P256k1PrivKey {
+public class SecpPrivKeyImpl implements SecpPrivKey {
     /**
      * private key or null if key was destroyed
      */
@@ -40,13 +40,13 @@ public class P256k1PrivKeyImpl implements P256k1PrivKey {
      *
      * @param bytes (will not be defensively copied)
      */
-    public P256k1PrivKeyImpl(byte[] bytes) {
+    public SecpPrivKeyImpl(byte[] bytes) {
         // TODO: Full, constant-time Range validation?
         checkInRange(bytes);
         privKeyBytes = checkInRange(bytes);
     }
 
-    public P256k1PrivKeyImpl(BigInteger privKey) {
+    public SecpPrivKeyImpl(BigInteger privKey) {
         // TODO: Valid integer is valid for field
         this.privKeyBytes = integerTo32Bytes(privKey);
     }

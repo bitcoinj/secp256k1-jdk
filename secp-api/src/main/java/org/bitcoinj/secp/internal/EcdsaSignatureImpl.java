@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.P256K1FieldElement;
+import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.EcdsaSignature;
 
 import java.util.Arrays;
@@ -24,10 +24,10 @@ import java.util.Arrays;
  * Default/Internal implementation of {@link EcdsaSignature}
  */
 public class EcdsaSignatureImpl implements EcdsaSignature {
-    private final P256K1FieldElement r;
-    private final P256K1FieldElement s;
+    private final SecpFieldElement r;
+    private final SecpFieldElement s;
 
-    public EcdsaSignatureImpl(P256K1FieldElement r, P256K1FieldElement s) {
+    public EcdsaSignatureImpl(SecpFieldElement r, SecpFieldElement s) {
         this.r = r;
         this.s = s;
     }
@@ -36,15 +36,15 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
         if (signature.length != 64) {
             throw new IllegalArgumentException("Sig Not 64 bytes");
         }
-        this.r = P256K1FieldElement.of(Arrays.copyOfRange(signature, 0, 32));
-        this.s = P256K1FieldElement.of(Arrays.copyOfRange(signature, 32, 64));
+        this.r = SecpFieldElement.of(Arrays.copyOfRange(signature, 0, 32));
+        this.s = SecpFieldElement.of(Arrays.copyOfRange(signature, 32, 64));
     }
 
-    public P256K1FieldElement r() {
+    public SecpFieldElement r() {
         return r;
     }
 
-    public P256K1FieldElement s() {
+    public SecpFieldElement s() {
         return s;
     }
 

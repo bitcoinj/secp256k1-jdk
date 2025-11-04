@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.P256K1PointUncompressed;
+import org.bitcoinj.secp.internal.SecpPointUncompressed;
 
 import java.io.Closeable;
 import java.math.BigInteger;
@@ -36,7 +36,7 @@ import java.util.stream.StreamSupport;
  * <p>
  * The API is based on the C-language API of <a href="https://github.com/bitcoin-core/secp256k1">libsecp256k1</a>, but
  * is here adapted to modern, idiomatic, functional-style Java and use Elliptic Curve <i>types</i> from the Java Class Library,
- * such as {@link ECPublicKey} via the specialized {@link P256k1PubKey} subclass.
+ * such as {@link ECPublicKey} via the specialized {@link SecpPubKey} subclass.
  * <p>
  * Two implementations are being developed.
  * <ul>
@@ -54,12 +54,12 @@ import java.util.stream.StreamSupport;
 public interface Secp256k1 extends Closeable {
     /**
      * The prime {@code P}, that defines the secp256k1 field. Note that since the maximum valid value of a field
-     * element is {@code P - 1}, this constant cannot be represented as a {@link P256K1FieldElement}, so we use
+     * element is {@code P - 1}, this constant cannot be represented as a {@link SecpFieldElement}, so we use
      * {@link BigInteger} instead.
      */
     BigInteger P = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16);
     /** The generator point {@code G} (also known as <i>base point</i>) for secp256k1. */
-    P256K1Point.Uncompressed G = P256K1PointUncompressed.of(
+    SecpPoint.Uncompressed G = SecpPointUncompressed.of(
             new BigInteger("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16),  // G.x
             new BigInteger("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16)); // G.y
     /** The secp256k1 field definition {@code p} using the standard Java type */
@@ -126,26 +126,26 @@ public interface Secp256k1 extends Closeable {
      * Create a new, randomly-generated private key.
      * @return the private key
      */
-    P256k1PrivKey ecPrivKeyCreate();
+    SecpPrivKey ecPrivKeyCreate();
 
     /**
      * Create a public key from the given private key.
      * @param seckey the private key
      * @return derived public key
      */
-    P256k1PubKey ecPubKeyCreate(P256k1PrivKey seckey);
+    SecpPubKey ecPubKeyCreate(SecpPrivKey seckey);
 
     /**
      * Create a new, randomly-generated private key and return it with its matching public key
      * @return newly generated key pair
      */
-    P256K1KeyPair ecKeyPairCreate();
+    SecpKeyPair ecKeyPairCreate();
 
     /** Create a key pair structure from a known private key
      * @param privKey the private key
      * @return object containing both public and private key
      */
-    P256K1KeyPair ecKeyPairCreate(P256k1PrivKey privKey);
+    SecpKeyPair ecKeyPairCreate(SecpPrivKey privKey);
 
     /**
      * Multiply a public key by a scalar, this is known as key "tweaking"
@@ -153,7 +153,7 @@ public interface Secp256k1 extends Closeable {
      * @param scalarMultiplier scalar multiplier
      * @return the product
      */
-    P256k1PubKey ecPubKeyTweakMul(P256k1PubKey pubKey, BigInteger scalarMultiplier);
+    SecpPubKey ecPubKeyTweakMul(SecpPubKey pubKey, BigInteger scalarMultiplier);
 
     /**
      * Combine two public keys by adding them.
@@ -161,7 +161,7 @@ public interface Secp256k1 extends Closeable {
      * @param key2 second key
      * @return the sum
      */
-    P256k1PubKey ecPubKeyCombine(P256k1PubKey key1, P256k1PubKey key2);
+    SecpPubKey ecPubKeyCombine(SecpPubKey key1, SecpPubKey key2);
 
     /**
      * Serialize a public key
@@ -169,16 +169,16 @@ public interface Secp256k1 extends Closeable {
      * @param flags serialization flags
      * @return pubKey serialized as a byte array
      */
-    byte[] ecPubKeySerialize(P256k1PubKey pubKey, int flags);
+    byte[] ecPubKeySerialize(SecpPubKey pubKey, int flags);
 
     /**
      * Calculate an uncompressed point from a compressed point.
      * @param compressedPoint a compressed point
      * @return The same point, in uncompressed format
      */
-    default P256K1Point.Uncompressed ecPointUncompress(P256K1Point.Compressed compressedPoint) {
+    default SecpPoint.Uncompressed ecPointUncompress(SecpPoint.Compressed compressedPoint) {
         byte[] serializedCompressed = compressedPoint.serialize();
-        P256k1PubKey pub = ecPubKeyParse(serializedCompressed).get();
+        SecpPubKey pub = ecPubKeyParse(serializedCompressed).get();
         return pub.point();
     }
 
@@ -187,7 +187,7 @@ public interface Secp256k1 extends Closeable {
      * @param inputData raw data to parse as public key
      * @return public key result or error
      */
-    Result<P256k1PubKey> ecPubKeyParse(byte[] inputData);
+    Result<SecpPubKey> ecPubKeyParse(byte[] inputData);
 
     /**
      * Sign a message hash using the ECDSA algorithm
@@ -195,7 +195,7 @@ public interface Secp256k1 extends Closeable {
      * @param seckey private key
      * @return the signature
      */
-    Result<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, P256k1PrivKey seckey);
+    Result<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey seckey);
 
     /**
      * Serialize a {@link EcdsaSignature} as a Bitcoin <i>compact signature</i>. A compact signature is
@@ -222,7 +222,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey The pubkey that must have signed the message
      * @return true, false, or error
      */
-    Result<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, P256k1PubKey pubKey);
+    Result<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, SecpPubKey pubKey);
 
     /**
      * Generate a tagged SHA-256 hash.
@@ -248,7 +248,7 @@ public interface Secp256k1 extends Closeable {
      * @param keyPair the keypair for signing
      * @return the signature
      */
-    SchnorrSignature schnorrSigSign32(byte[] msg_hash, P256K1KeyPair keyPair);
+    SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpKeyPair keyPair);
 
     /**
      * Verify a Schnorr signature.
@@ -257,7 +257,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey x-only pubkey that must have signed the message
      * @return true, false, or error
      */
-    Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, P256K1XOnlyPubKey pubKey);
+    Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey);
 
     /**
      * Verify a Schnorr signature.
@@ -266,7 +266,7 @@ public interface Secp256k1 extends Closeable {
      * @param pubKey pubkey that must have signed the message
      * @return true, false, or error
      */
-    default Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, P256k1PubKey pubKey) {
+    default Result<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpPubKey pubKey) {
         return schnorrSigVerify(signature, msg_hash, pubKey.xOnly());
     }
 
@@ -276,7 +276,7 @@ public interface Secp256k1 extends Closeable {
      * @param secKey secret key
      * @return ecdh key agreement
      */
-    Result<EcdhSharedSecret> ecdh(P256k1PubKey pubKey, P256k1PrivKey secKey);
+    Result<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey secKey);
 
     /**
      * Override close and declare that no checked exceptions are thrown

@@ -15,47 +15,47 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.P256K1ECPoint;
-import org.bitcoinj.secp.internal.P256K1PointUncompressed;
+import org.bitcoinj.secp.internal.SecpECPoint;
+import org.bitcoinj.secp.internal.SecpPointUncompressed;
 
 import java.security.spec.ECPoint;
 
 /**
  * A P256K1 point -- either {@link Compressed}, {@link Uncompressed}, or {@link Infinity}. Implementations of this interface
  * <i>need not</i> be subclasses of {@link java.security.spec.ECPoint}. {@code ECPoint} is a concrete class
- * and uses {@link java.math.BigInteger} internally. {@code P256K1Point} uses
- * {@link P256K1FieldElement} to represent point coordinates. If you need a type that
- * is both a {@code P256K1Point} and a {@code ECPoint}, use {@link P256K1ECPoint}.
+ * and uses {@link java.math.BigInteger} internally. {@code SecpPoint} uses
+ * {@link SecpFieldElement} to represent point coordinates. If you need a type that
+ * is both a {@code SecpPoint} and a {@code ECPoint}, use {@link SecpECPoint}.
  */
-public interface P256K1Point {
+public interface SecpPoint {
     /** The P256K1 infinity point */
     Infinity POINT_INFINITY = Infinity.INSTANCE;
 
     /**
-     * Construct an uncompressed P256K1Point from two field elements
+     * Construct an uncompressed SecpPoint from two field elements
      * @param x x component
      * @param y y component
      * @return point
      */
-    static P256K1PointUncompressed of(P256K1FieldElement x, P256K1FieldElement y) {
-        return new P256K1PointUncompressed(x, y);
+    static SecpPointUncompressed of(SecpFieldElement x, SecpFieldElement y) {
+        return new SecpPointUncompressed(x, y);
     }
 
     /**
-     * Construct a P256K1Point from a Java Cryptography {@link ECPoint}
+     * Construct a SecpPoint from a Java Cryptography {@link ECPoint}
      * @param point Java point
-     * @return P256K1Point point
+     * @return SecpPoint point
      */
-    static P256K1Point of(ECPoint point) {
+    static SecpPoint of(ECPoint point) {
         return  point == ECPoint.POINT_INFINITY
-                    ? P256K1Point.POINT_INFINITY
-                    : point instanceof P256K1ECPoint
-                        ? (P256K1ECPoint) point
-                        : P256K1PointUncompressed.of(point);
+                    ? SecpPoint.POINT_INFINITY
+                    : point instanceof SecpECPoint
+                        ? (SecpECPoint) point
+                        : SecpPointUncompressed.of(point);
     }
 
     /** Singleton representing the point-at-infinity */
-    enum Infinity implements P256K1Point {
+    enum Infinity implements SecpPoint {
         /** Singleton instance */
         INSTANCE;
 
@@ -67,12 +67,12 @@ public interface P256K1Point {
     /**
      * A non-infinity point, either {@link Compressed} or {@link Uncompressed}.
      */
-    interface Point extends P256K1Point {
+    interface Point extends SecpPoint {
         /**
          * Get the x-coordinate field value
          * @return x-coordinate
          */
-        P256K1FieldElement x();
+        SecpFieldElement x();
 
         /**
          * Get the parity of the y-coordinate field value
@@ -117,7 +117,7 @@ public interface P256K1Point {
          * Get the y-coordinate field value
          * @return y-coordinate
          */
-        P256K1FieldElement y();
+        SecpFieldElement y();
         /**
          * Convert to a compressed point.
          * @return compressed point
@@ -137,8 +137,8 @@ public interface P256K1Point {
         }
 
         default ECPoint toECPoint() {
-            return this instanceof P256K1ECPoint
-                    ? (P256K1ECPoint) this
+            return this instanceof SecpECPoint
+                    ? (SecpECPoint) this
                     : new ECPoint(x().toBigInteger(), y().toBigInteger());
         }
     }

@@ -16,31 +16,31 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.ByteArray;
-import org.bitcoinj.secp.P256K1FieldElement;
-import org.bitcoinj.secp.P256K1XOnlyPubKey;
-import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.SecpFieldElement;
+import org.bitcoinj.secp.SecpXOnlyPubKey;
+import org.bitcoinj.secp.SecpPubKey;
 
 import java.math.BigInteger;
 
 /**
  * Simple implementation using {code @byte[]} as internal storage.
  */
-public class P256K1XOnlyPubKeyImpl implements P256K1XOnlyPubKey, ByteArray {
+public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
     private final byte[] x;
 
-    public P256K1XOnlyPubKeyImpl(P256k1PubKey pubKey) {
+    public SecpXOnlyPubKeyImpl(SecpPubKey pubKey) {
         // Avoid using pubKey.getXOnly() and possible infinite recursion
         this.x = pubKey.xOnly().serialize();
     }
 
-    public P256K1XOnlyPubKeyImpl(byte[] xBytes) {
+    public SecpXOnlyPubKeyImpl(byte[] xBytes) {
         // Defensive copy
         x = new byte[xBytes.length];
         System.arraycopy(xBytes, 0, x, 0, x.length);
     }
 
-    public P256K1XOnlyPubKeyImpl(BigInteger x) {
-        this.x = P256K1FieldElement.integerTo32Bytes(x);
+    public SecpXOnlyPubKeyImpl(BigInteger x) {
+        this.x = SecpFieldElement.integerTo32Bytes(x);
     }
 
     @Override

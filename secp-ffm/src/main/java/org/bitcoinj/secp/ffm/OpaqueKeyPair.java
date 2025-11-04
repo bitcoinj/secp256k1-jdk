@@ -15,10 +15,10 @@
  */
 package org.bitcoinj.secp.ffm;
 
-import org.bitcoinj.secp.P256K1KeyPair;
-import org.bitcoinj.secp.P256k1PrivKey;
-import org.bitcoinj.secp.P256k1PubKey;
-import org.bitcoinj.secp.internal.P256k1PubKeyImpl;
+import org.bitcoinj.secp.SecpKeyPair;
+import org.bitcoinj.secp.SecpPrivKey;
+import org.bitcoinj.secp.SecpPubKey;
+import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_pubkey;
 
@@ -28,10 +28,10 @@ import java.security.spec.ECPoint;
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 
 /**
- * @deprecated Use {@link P256K1KeyPair}  (@code P256K1KeyPair#P256K1KeyPairImpl}
+ * @deprecated Use {@link SecpKeyPair}  (@code SecpKeyPair#SecpKeyPairImpl}
  */
 @Deprecated
-class OpaqueKeyPair implements P256K1KeyPair {
+class OpaqueKeyPair implements SecpKeyPair {
     private final byte[] opaque;
 
     public OpaqueKeyPair(byte[] opaque) {
@@ -39,21 +39,21 @@ class OpaqueKeyPair implements P256K1KeyPair {
     }
 
     @Override
-    public P256k1PubKey publicKey() {
+    public SecpPubKey publicKey() {
         MemorySegment keyPairSegment = Secp256k1Foreign.globalArena.allocateFrom(JAVA_BYTE, opaque);
         MemorySegment pubKeySegment = secp256k1_pubkey.allocate(Secp256k1Foreign.globalArena);
         int return_val = secp256k1_h.secp256k1_keypair_pub(secp256k1_h.secp256k1_context_static(), pubKeySegment, keyPairSegment);
         assert(return_val == 1);
         ECPoint pubKeyPoint = Secp256k1Foreign.toPoint(pubKeySegment);
-        return new P256k1PubKeyImpl(pubKeyPoint);
+        return new SecpPubKeyImpl(pubKeyPoint);
     }
 
     public byte[] getOpaque() {
         return opaque.clone();
     }
 
-    public P256k1PrivKey privateKey() {
-        return P256k1PrivKey.of(getEncoded());
+    public SecpPrivKey privateKey() {
+        return SecpPrivKey.of(getEncoded());
     }
 
     @Override
