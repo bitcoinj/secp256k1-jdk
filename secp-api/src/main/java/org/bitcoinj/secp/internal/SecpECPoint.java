@@ -15,18 +15,18 @@
  */
 package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.P256K1FieldElement;
-import org.bitcoinj.secp.P256K1Point;
+import org.bitcoinj.secp.SecpFieldElement;
+import org.bitcoinj.secp.SecpPoint;
 
 import java.math.BigInteger;
 import java.security.spec.ECPoint;
 
 /**
- * An {@link ECPoint} that has been validated to also be a {@code P256K1Point}. This class cannot
+ * An {@link ECPoint} that has been validated to also be a {@code SecpPoint}. This class cannot
  * represent the "point at infinity", if you need it use {@link ECPoint#POINT_INFINITY} and the
  * superclass {@link ECPoint}.
  */
-public class P256K1ECPoint extends ECPoint implements P256K1Point.Uncompressed {
+public class SecpECPoint extends ECPoint implements SecpPoint.Uncompressed {
     /**
      * Creates an ECPoint from the specified affine x-coordinate
      * {@code x} and affine y-coordinate {@code y}.
@@ -36,22 +36,22 @@ public class P256K1ECPoint extends ECPoint implements P256K1Point.Uncompressed {
      * @throws NullPointerException if {@code x} or
      *                              {@code y} is null.
      */
-    public P256K1ECPoint(BigInteger x, BigInteger y) {
-        super(P256K1FieldElement.checkInRange(x), P256K1FieldElement.checkInRange(y));
+    public SecpECPoint(BigInteger x, BigInteger y) {
+        super(SecpFieldElement.checkInRange(x), SecpFieldElement.checkInRange(y));
     }
 
-    public P256K1ECPoint(P256K1FieldElement x, P256K1FieldElement y) {
+    public SecpECPoint(SecpFieldElement x, SecpFieldElement y) {
         super(x.toBigInteger(), y.toBigInteger());
     }
 
     @Override
-    public P256K1FieldElement x() {
-        return P256K1FieldElement.of(super.getAffineX());
+    public SecpFieldElement x() {
+        return SecpFieldElement.of(super.getAffineX());
     }
 
     @Override
-    public P256K1FieldElement y() {
-        return P256K1FieldElement.of(super.getAffineY());
+    public SecpFieldElement y() {
+        return SecpFieldElement.of(super.getAffineY());
     }
 
     @Override
@@ -61,6 +61,6 @@ public class P256K1ECPoint extends ECPoint implements P256K1Point.Uncompressed {
 
     @Override
     public boolean isOdd() {
-        return P256K1FieldElement.of(super.getAffineY()).isOdd();
+        return SecpFieldElement.of(super.getAffineY()).isOdd();
     }
 }

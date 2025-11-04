@@ -15,23 +15,23 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.P256K1KeyPairImpl;
+import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 
 /**
  * A single object containing a private key and its derived public key.
  */
-public interface P256K1KeyPair extends P256k1PrivKey {
+public interface SecpKeyPair extends SecpPrivKey {
     /**
      * Get the public key
      * @return public key
      */
-    P256k1PubKey publicKey();
+    SecpPubKey publicKey();
 
     /**
      * Get the private key
      * @return private key
      */
-    P256k1PrivKey privateKey();
+    SecpPrivKey privateKey();
 
     /**
      * Create a keypair from a private key and its matching public key
@@ -39,7 +39,7 @@ public interface P256K1KeyPair extends P256k1PrivKey {
      * @param pubKey matching public key
      * @return key pair
      */
-    static P256K1KeyPair of(P256k1PrivKey privKey, P256k1PubKey pubKey) {
-        return new P256K1KeyPairImpl(privKey, pubKey);
+    static SecpKeyPair of(SecpPrivKey privKey, SecpPubKey pubKey) {
+        return new SecpKeyPairImpl(privKey, pubKey);
     }
 }

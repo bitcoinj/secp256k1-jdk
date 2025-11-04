@@ -25,13 +25,13 @@ public interface EcdsaSignature extends ByteArray {
      * Get field element R
      * @return R
      */
-    P256K1FieldElement r();
+    SecpFieldElement r();
 
     /**
      * Get field element S
      * @return S
      */
-    P256K1FieldElement s();
+    SecpFieldElement s();
 
     /**
      * Create an ECDSA signature from serialized bytes
@@ -48,7 +48,7 @@ public interface EcdsaSignature extends ByteArray {
      * @param s S
      * @return signature
      */
-    static EcdsaSignature of(P256K1FieldElement r, P256K1FieldElement s) {
+    static EcdsaSignature of(SecpFieldElement r, SecpFieldElement s) {
         return new EcdsaSignatureImpl(r,s);
     }
 }

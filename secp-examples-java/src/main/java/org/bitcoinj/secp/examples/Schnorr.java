@@ -29,13 +29,13 @@ public class Schnorr {
             /* === Key Generation === */
 
             /* Return a non-zero, in-range private key */
-            P256K1KeyPair keyPair = secp.ecKeyPairCreate();
-            //P256K1KeyPair keyPair = secp.ecKeyPairCreate(new BouncyPrivKey(BigInteger.ONE));
+            SecpKeyPair keyPair = secp.ecKeyPairCreate();
+            //SecpKeyPair keyPair = secp.ecKeyPairCreate(new BouncyPrivKey(BigInteger.ONE));
 
             /* Public key creation using a valid context with a verified secret key should never fail */
-            P256k1PubKey pubkey = secp.ecPubKeyCreate(keyPair);
+            SecpPubKey pubkey = secp.ecPubKeyCreate(keyPair);
 
-            P256K1XOnlyPubKey xOnly = pubkey.xOnly();
+            SecpXOnlyPubKey xOnly = pubkey.xOnly();
 
             byte[] serializedXOnly = xOnly.serialize();
 
@@ -47,7 +47,7 @@ public class Schnorr {
 
             /* === Verification === */
 
-            P256K1XOnlyPubKey xOnly2 = P256K1XOnlyPubKey.parse(serializedXOnly).get();
+            SecpXOnlyPubKey xOnly2 = SecpXOnlyPubKey.parse(serializedXOnly).get();
 
             /* Compute the tagged hash on the received message using the same tag as the signer. */
             byte[] messageHash2 = secp.taggedSha256(tag, msg);

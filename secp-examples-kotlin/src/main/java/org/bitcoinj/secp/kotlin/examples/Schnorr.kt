@@ -15,7 +15,7 @@
  */
 package org.bitcoinj.secp.kotlin.examples
 
-import org.bitcoinj.secp.P256K1XOnlyPubKey
+import org.bitcoinj.secp.SecpXOnlyPubKey
 import org.bitcoinj.secp.Secp256k1
 
 fun main() {
@@ -41,7 +41,7 @@ fun main() {
         val signature = secp.schnorrSigSign32(messageHash, keyPair)
 
         /* === Verification === */
-        val xOnly2 : P256K1XOnlyPubKey = P256K1XOnlyPubKey.parse(serializedXOnly).get()
+        val xOnly2 : SecpXOnlyPubKey = SecpXOnlyPubKey.parse(serializedXOnly).get()
 
         /* Compute the tagged hash on the received message using the same tag as the signer. */
         val messageHash2 = secp.taggedSha256(tag, msg)

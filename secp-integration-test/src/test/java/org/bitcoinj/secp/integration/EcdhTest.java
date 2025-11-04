@@ -16,8 +16,8 @@
 package org.bitcoinj.secp.integration;
 
 import org.bitcoinj.secp.EcdhSharedSecret;
-import org.bitcoinj.secp.P256k1PrivKey;
-import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.SecpPrivKey;
+import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.Result;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.bouncy.Bouncy256k1;
@@ -32,8 +32,8 @@ public class EcdhTest {
     @Test
     void ecdhSmokeTest() {
         try (Secp256k1 secp = new Secp256k1Foreign()) {
-            P256k1PrivKey secKey = P256k1PrivKey.of(BigInteger.ONE);
-            P256k1PubKey pubKey = secp.ecPubKeyCreate(secKey);
+            SecpPrivKey secKey = SecpPrivKey.of(BigInteger.ONE);
+            SecpPubKey pubKey = secp.ecPubKeyCreate(secKey);
             Result<EcdhSharedSecret> result = secp.ecdh(pubKey, secKey);
             Assertions.assertNotNull(result);
             Assertions.assertInstanceOf(Result.Ok.class, result);
@@ -44,11 +44,11 @@ public class EcdhTest {
     @Test
     void ecdhSameTest() {
         try (Secp256k1 secp = new Secp256k1Foreign()) {
-            P256k1PrivKey secKey1 = secp.ecPrivKeyCreate();
-            P256k1PubKey pubKey1 = secp.ecPubKeyCreate(secKey1);
+            SecpPrivKey secKey1 = secp.ecPrivKeyCreate();
+            SecpPubKey pubKey1 = secp.ecPubKeyCreate(secKey1);
 
-            P256k1PrivKey secKey2 = secp.ecPrivKeyCreate();
-            P256k1PubKey pubKey2 = secp.ecPubKeyCreate(secKey2);
+            SecpPrivKey secKey2 = secp.ecPrivKeyCreate();
+            SecpPubKey pubKey2 = secp.ecPubKeyCreate(secKey2);
 
             // Compute shared secret with secKey1
             Result<EcdhSharedSecret> result1 = secp.ecdh(pubKey2, secKey1);
@@ -70,8 +70,8 @@ public class EcdhTest {
     @Test
     void ecdhSmokeTestBouncy() {
         try (Secp256k1 secp = new Bouncy256k1()) {
-            P256k1PrivKey secKey = P256k1PrivKey.of(BigInteger.ONE);
-            P256k1PubKey pubKey = secp.ecPubKeyCreate(secKey);
+            SecpPrivKey secKey = SecpPrivKey.of(BigInteger.ONE);
+            SecpPubKey pubKey = secp.ecPubKeyCreate(secKey);
             Result<EcdhSharedSecret> result = secp.ecdh(pubKey, secKey);
             Assertions.assertNotNull(result);
             Assertions.assertInstanceOf(Result.Ok.class, result);
@@ -82,11 +82,11 @@ public class EcdhTest {
     @Test
     void ecdhSameTestBouncy() {
         try (Secp256k1 secp = new Bouncy256k1()) {
-            P256k1PrivKey secKey1 = secp.ecPrivKeyCreate();
-            P256k1PubKey pubKey1 = secp.ecPubKeyCreate(secKey1);
+            SecpPrivKey secKey1 = secp.ecPrivKeyCreate();
+            SecpPubKey pubKey1 = secp.ecPubKeyCreate(secKey1);
 
-            P256k1PrivKey secKey2 = secp.ecPrivKeyCreate();
-            P256k1PubKey pubKey2 = secp.ecPubKeyCreate(secKey2);
+            SecpPrivKey secKey2 = secp.ecPrivKeyCreate();
+            SecpPubKey pubKey2 = secp.ecPubKeyCreate(secKey2);
 
             // Compute shared secret with secKey1
             Result<EcdhSharedSecret> result1 = secp.ecdh(pubKey2, secKey1);
@@ -108,8 +108,8 @@ public class EcdhTest {
     @Test
     void ecdhResultCompare() {
         try (Secp256k1Foreign secp1 = new Secp256k1Foreign(); Bouncy256k1 secp2 = new Bouncy256k1()) {
-            P256k1PrivKey secKey = P256k1PrivKey.of(BigInteger.ONE);
-            P256k1PubKey pubKey = secp1.ecPubKeyCreate(secKey);
+            SecpPrivKey secKey = SecpPrivKey.of(BigInteger.ONE);
+            SecpPubKey pubKey = secp1.ecPubKeyCreate(secKey);
             Result<EcdhSharedSecret> result1 = secp1.ecdh(pubKey, secKey);
             Result<EcdhSharedSecret> result2 = secp2.ecdh(pubKey, secKey);
             Assertions.assertEquals(result1.get(), result2.get());
@@ -119,11 +119,11 @@ public class EcdhTest {
     @Test
     void ecdhSameTestCrossCheck() {
         try (Secp256k1 secp1 = new Secp256k1Foreign(); Secp256k1 secp2 = new Bouncy256k1()) {
-            P256k1PrivKey secKey1 = secp1.ecPrivKeyCreate();
-            P256k1PubKey pubKey1 = secp1.ecPubKeyCreate(secKey1);
+            SecpPrivKey secKey1 = secp1.ecPrivKeyCreate();
+            SecpPubKey pubKey1 = secp1.ecPubKeyCreate(secKey1);
 
-            P256k1PrivKey secKey2 = secp2.ecPrivKeyCreate();
-            P256k1PubKey pubKey2 = secp2.ecPubKeyCreate(secKey2);
+            SecpPrivKey secKey2 = secp2.ecPrivKeyCreate();
+            SecpPubKey pubKey2 = secp2.ecPubKeyCreate(secKey2);
 
             // Compute shared secret with secKey1 and secp1 (implementation 1)
             Result<EcdhSharedSecret> result1 = secp1.ecdh(pubKey2, secKey1);

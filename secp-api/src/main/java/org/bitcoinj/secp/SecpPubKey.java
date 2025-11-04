@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.P256K1ECPoint;
-import org.bitcoinj.secp.internal.P256k1PubKeyImpl;
+import org.bitcoinj.secp.internal.SecpECPoint;
+import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -25,7 +25,7 @@ import java.security.spec.ECPoint;
 /**
  * A valid secp256k1 Public Key that is a subclass of {@link ECPublicKey}
  */
-public interface P256k1PubKey extends ECPublicKey {
+public interface SecpPubKey extends ECPublicKey {
     /**
      * Return associated cryptographic algorithm. This implements the {@link java.security.Key} interface.
      * @return string indicating algorithm
@@ -76,7 +76,7 @@ public interface P256k1PubKey extends ECPublicKey {
      * Return as a compressed point
      * @return compressed point
      */
-    default P256K1Point.Compressed getCompressed() {
+    default SecpPoint.Compressed getCompressed() {
         return point().compress();
     }
 
@@ -84,7 +84,7 @@ public interface P256k1PubKey extends ECPublicKey {
      * Return as an uncompressed point
      * @return uncompressed point
      */
-    default P256K1Point.Uncompressed getUncompressed() {
+    default SecpPoint.Uncompressed getUncompressed() {
         return point();
     }
 
@@ -92,12 +92,12 @@ public interface P256k1PubKey extends ECPublicKey {
      * Return the x-only public key.
      * @return x-only pubkey
      */
-    default P256K1XOnlyPubKey xOnly() {
-        return P256K1XOnlyPubKey.of(this.getW().getAffineX());
+    default SecpXOnlyPubKey xOnly() {
+        return SecpXOnlyPubKey.of(this.getW().getAffineX());
     }
 
     /**
-     * Returns this key as a {@link P256K1ECPoint} or, if it is
+     * Returns this key as a {@link SecpECPoint} or, if it is
      * the "point at infinity" it returns {@link ECPoint#POINT_INFINITY}
      * @return point as {@code ECPoint} or subclass.
      */
@@ -105,10 +105,10 @@ public interface P256k1PubKey extends ECPublicKey {
     ECPoint getW();
 
     /**
-     * Get the uncompressed {@link P256K1Point}
+     * Get the uncompressed {@link SecpPoint}
      * @return point
      */
-    P256K1Point.Uncompressed point();
+    SecpPoint.Uncompressed point();
 
     /**
      * Get the Elliptic Curve parameters
@@ -124,16 +124,16 @@ public interface P256k1PubKey extends ECPublicKey {
      * @param ecPoint the point
      * @return the pubkey
      */
-    static P256k1PubKey ofPoint(ECPoint ecPoint) {
-        return new P256k1PubKeyImpl(ecPoint);
+    static SecpPubKey ofPoint(ECPoint ecPoint) {
+        return new SecpPubKeyImpl(ecPoint);
     }
 
     /**
-     * Construct a public key from an {@link P256K1Point.Uncompressed}
+     * Construct a public key from an {@link SecpPoint.Uncompressed}
      * @param point the point
      * @return the pubkey
      */
-    static P256k1PubKey ofPoint(P256K1Point.Uncompressed point) {
-        return new P256k1PubKeyImpl(point);
+    static SecpPubKey ofPoint(SecpPoint.Uncompressed point) {
+        return new SecpPubKeyImpl(point);
     }
 }

@@ -15,40 +15,40 @@
  */
 package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.P256K1Point;
-import org.bitcoinj.secp.P256k1PubKey;
+import org.bitcoinj.secp.SecpPoint;
+import org.bitcoinj.secp.SecpPubKey;
 
 import java.security.spec.ECPoint;
 
 /**
- * Default/Internal P256k1PubKey implementation storing as {@link P256K1PointUncompressed}.
+ * Default/Internal SecpPubKey implementation storing as {@link SecpPointUncompressed}.
  */
-public class P256k1PubKeyImpl implements P256k1PubKey {
-    private final P256K1PointUncompressed point;
+public class SecpPubKeyImpl implements SecpPubKey {
+    private final SecpPointUncompressed point;
 
-    public P256k1PubKeyImpl(P256K1PointUncompressed point) {
+    public SecpPubKeyImpl(SecpPointUncompressed point) {
         this.point = point;
     }
 
-    public P256k1PubKeyImpl(P256K1Point.Uncompressed point) {
-        this.point = new P256K1PointUncompressed(point.x(), point.y());
+    public SecpPubKeyImpl(SecpPoint.Uncompressed point) {
+        this.point = new SecpPointUncompressed(point.x(), point.y());
     }
 
-    public P256k1PubKeyImpl(P256K1ECPoint ecPoint) {
-        this.point = new P256K1PointUncompressed(ecPoint.x(), ecPoint.y());
+    public SecpPubKeyImpl(SecpECPoint ecPoint) {
+        this.point = new SecpPointUncompressed(ecPoint.x(), ecPoint.y());
     }
 
-    public P256k1PubKeyImpl(ECPoint ecPoint) {
-        this.point = P256K1PointUncompressed.of(ecPoint);
-    }
-
-    @Override
-    public P256K1ECPoint getW() {
-        return new P256K1ECPoint(point.x(), point.y());
+    public SecpPubKeyImpl(ECPoint ecPoint) {
+        this.point = SecpPointUncompressed.of(ecPoint);
     }
 
     @Override
-    public P256K1Point.Uncompressed point() {
+    public SecpECPoint getW() {
+        return new SecpECPoint(point.x(), point.y());
+    }
+
+    @Override
+    public SecpPoint.Uncompressed point() {
         return point;
     }
 

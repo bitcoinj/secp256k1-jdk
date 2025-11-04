@@ -36,10 +36,10 @@ public class Ecdsa {
             /* === Key Generation === */
 
             /* Return a non-zero, in-range private key */
-            P256k1PrivKey privKey = secp.ecPrivKeyCreate();
+            SecpPrivKey privKey = secp.ecPrivKeyCreate();
 
             /* Public key creation using a valid context with a verified secret key should never fail */
-            P256k1PubKey pubkey = secp.ecPubKeyCreate(privKey);
+            SecpPubKey pubkey = secp.ecPubKeyCreate(privKey);
 
             /* Serialize the pubkey in a compressed form (33 bytes). */
             byte[] compressedPubkey = pubkey.serialize(true);
@@ -61,7 +61,7 @@ public class Ecdsa {
             assert(Arrays.equals(sig.bytes(), sig2.bytes()));
 
             /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
-            P256k1PubKey pubkey2 = secp.ecPubKeyParse(compressedPubkey).get();
+            SecpPubKey pubkey2 = secp.ecPubKeyParse(compressedPubkey).get();
             assert(pubkey.getW().equals(pubkey2.getW()));
 
             /* Verify a signature. This will return true if it's valid and false if it's not. */

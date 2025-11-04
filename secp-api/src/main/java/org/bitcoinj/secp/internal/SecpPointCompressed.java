@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.P256K1FieldElement;
-import org.bitcoinj.secp.P256K1Point;
+import org.bitcoinj.secp.SecpFieldElement;
+import org.bitcoinj.secp.SecpPoint;
 
 import java.util.Objects;
 
@@ -24,17 +24,17 @@ import java.util.Objects;
  *
  */
 public
-class P256K1PointCompressed implements P256K1Point.Compressed {
-    private final P256K1FieldElement x;
+class SecpPointCompressed implements SecpPoint.Compressed {
+    private final SecpFieldElement x;
     private final boolean isOdd;
 
-    P256K1PointCompressed(P256K1FieldElement x, P256K1FieldElement y) {
+    SecpPointCompressed(SecpFieldElement x, SecpFieldElement y) {
         this.x = x;
         this.isOdd = y.isOdd();
     }
 
     @Override
-    public P256K1FieldElement x() {
+    public SecpFieldElement x() {
         return x;
     }
 
@@ -51,7 +51,7 @@ class P256K1PointCompressed implements P256K1Point.Compressed {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        org.bitcoinj.secp.internal.P256K1PointCompressed that = (org.bitcoinj.secp.internal.P256K1PointCompressed) o;
+        SecpPointCompressed that = (SecpPointCompressed) o;
         return isOdd == that.isOdd && Objects.equals(x, that.x);
     }
 

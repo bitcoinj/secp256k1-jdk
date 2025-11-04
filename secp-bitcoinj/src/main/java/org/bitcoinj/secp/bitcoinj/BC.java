@@ -16,9 +16,9 @@
 package org.bitcoinj.secp.bitcoinj;
 
 import org.bitcoinj.crypto.ECKey;
-import org.bitcoinj.secp.P256k1PubKey;
-import org.bitcoinj.secp.internal.P256K1ECPoint;
-import org.bitcoinj.secp.internal.P256K1PointUncompressed;
+import org.bitcoinj.secp.SecpPubKey;
+import org.bitcoinj.secp.internal.SecpECPoint;
+import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 
 import java.security.spec.ECPoint;
@@ -30,20 +30,20 @@ interface BC {
     /** The parameters of the secp256k1 curve that Bitcoin uses. */
     ECDomainParameters BC_CURVE = ECKey.ecDomainParameters();
 
-    static P256k1PubKey toP256K1PubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
+    static SecpPubKey toP256K1PubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
-        return  P256k1PubKey.ofPoint(BC.toECPoint(bcPoint));
+        return  SecpPubKey.ofPoint(BC.toECPoint(bcPoint));
     }
 
-    static P256K1PointUncompressed toP256K1Point(org.bouncycastle.math.ec.ECPoint bcPoint) {
+    static SecpPointUncompressed toP256K1Point(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
-        return P256K1PointUncompressed.of(bcPoint.getAffineXCoord().toBigInteger(), bcPoint.getAffineYCoord().toBigInteger());
+        return SecpPointUncompressed.of(bcPoint.getAffineXCoord().toBigInteger(), bcPoint.getAffineYCoord().toBigInteger());
     }
 
     static ECPoint toECPoint(org.bouncycastle.math.ec.ECPoint bcPoint) {
         return bcPoint.isInfinity()
                 ? ECPoint.POINT_INFINITY
-                : new P256K1ECPoint(
+                : new SecpECPoint(
                     bcPoint.normalize().getAffineXCoord().toBigInteger(),
                     bcPoint.normalize().getAffineYCoord().toBigInteger());
     }
