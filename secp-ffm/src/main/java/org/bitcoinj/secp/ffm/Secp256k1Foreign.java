@@ -40,6 +40,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.SegmentAllocator;
 import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.ECPoint;
 
@@ -60,7 +61,14 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private static final SecureRandom secureRandom;
     static {
         // TODO: Verify using cryptographic random number generator properly
-        secureRandom = new SecureRandom();
+        try {
+            secureRandom = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            // This should never happen. The Javadoc for getInstanceStrong() says
+            // "Every implementation of the Java platform is required to support
+            // at least one strong SecureRandom implementation."
+            throw new RuntimeException("No strong SecureRandom available", e);
+        }
     }
 
     /**
