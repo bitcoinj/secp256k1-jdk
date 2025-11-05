@@ -75,7 +75,15 @@ public class Bouncy256k1 implements Secp256k1 {
                 BC_CURVE_PARAMS.getN(),
                 BC_CURVE_PARAMS.getH());
         HALF_CURVE_ORDER = BC_CURVE_PARAMS.getN().shiftRight(1);
-        secureRandom = new SecureRandom();
+        // TODO: Verify using cryptographic random number generator properly
+        try {
+            secureRandom = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            // This should never happen. The Javadoc for getInstanceStrong() says
+            // "Every implementation of the Java platform is required to support
+            // at least one strong SecureRandom implementation."
+            throw new RuntimeException("No strong SecureRandom available", e);
+        }
     }
 
     /**
