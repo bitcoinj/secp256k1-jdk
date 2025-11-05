@@ -57,6 +57,12 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private final MemorySegment ctx;
     /* package */ static final Arena globalArena = Arena.ofAuto();
     /* package */ static final MemorySegment secp256k1StaticContext = secp256k1_h.secp256k1_context_static();
+    private static final SecureRandom secureRandom;
+    static {
+        // TODO: Verify using cryptographic random number generator properly
+        secureRandom = new SecureRandom();
+    }
+
     /**
      * TBD: Static verify method that doesn't require a class instance.
      */
@@ -402,10 +408,8 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
      * @return A newly-allocated memory segment full of random data
      */
     public static MemorySegment fill_random(SegmentAllocator allocator, int size) {
-        // TODO: Verify using cryptographic random number generator properly
-        var rnd = new SecureRandom();
         byte[] data = new byte[size];
-        rnd.nextBytes(data);
+        secureRandom.nextBytes(data);
         return allocator.allocateFrom(JAVA_BYTE, data);
     }
 }
