@@ -78,13 +78,5 @@ fun main() {
 }
 
 private fun hash(messageString: String): ByteArray {
-    val digest: MessageDigest
-    try {
-        digest = MessageDigest.getInstance("SHA-256")
-    } catch (e: NoSuchAlgorithmException) {
-        throw RuntimeException(e) // Can't happen.
-    }
-    val message = messageString.toByteArray()
-    digest.update(message, 0, message.size)
-    return digest.digest()
+    return MessageDigest.getInstance("SHA-256").digest(messageString.toByteArray())
 }

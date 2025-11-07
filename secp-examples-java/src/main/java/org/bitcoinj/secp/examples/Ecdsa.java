@@ -84,13 +84,10 @@ public class Ecdsa {
     }
 
     private static byte[] hash(String messageString) {
-        MessageDigest digest;
         try {
-            digest = MessageDigest.getInstance("SHA-256");
+            return MessageDigest.getInstance("SHA-256").digest(messageString.getBytes());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);  // Can't happen.
         }
-        digest.update(messageString.getBytes());
-        return digest.digest();
     }
 }
