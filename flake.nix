@@ -2,7 +2,7 @@
   description = "secp2565k1-jdk (Java API & implementations for secp256k1)";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/release-25.11";
   };
 
   outputs = inputs @ { nixpkgs, ... }:
