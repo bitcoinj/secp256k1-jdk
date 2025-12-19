@@ -65,8 +65,13 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Install secp256k1 with Nix
         run: nix profile install nixpkgs#secp256k1
+      # Pre-build the devShell to allow multiple devShell steps and to have a clear point of failure
+      # should the shell fail to build
+      - name: Pre-build devShell
+        run: nix build --no-link .#devShells.$(nix eval --impure --raw --expr 'builtins.currentSystem').default
       - name: Build in Nix development shell
-        run: nix develop -c gradle build secp-examples-java:nativeCompile
+        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
+        run: gradle build secp-examples-java:nativeCompile
       - name: Run Schnorr Native Example
         run: |
           export LD_LIBRARY_PATH="$HOME/.nix-profile/lib"
