@@ -1,4 +1,4 @@
-name: Gradle Build
+name: Build
 
 on: [push, pull_request, workflow_dispatch]
 
@@ -51,6 +51,45 @@ jobs:
       - name: Print Sha256Sums (macOS)
         if: runner.os == 'macOS'
         run: shasum -a 256 secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*
+
+  build_graalvm_gradle:
+    needs: validate_gradle_wrapper
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-14]
+        java: [ '25' ]
+        distribution: [ 'graalvm' ]
+      fail-fast: false
+    name: ${{ matrix.os }} ${{ matrix.java }} (via setup-graalvm)
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v5
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          distribution: ${{ matrix.distribution }}
+          java-version: ${{ matrix.java }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install secp256k1 with APT
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt install -y libsecp256k1-dev
+          echo "LD_LIBRARY_PATH=/usr/lib/$(uname -m)-linux-gnu" >> $GITHUB_ENV
+      - name: Install secp256k1 with Homebrew
+        if: runner.os == 'macOS'
+        run: |
+          brew install secp256k1
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
+          echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
+      - name: Build (JIT) with Gradle
+        run: ./gradlew build
+      - name: Run Java & Kotlin Examples
+        run: ./gradlew build run runEcdsa
+      - name: Build Native Image with Gradle
+        run: ./gradlew build secp-examples-java:nativeCompile
+      - name: Run Schnorr Native Example
+        run: ./secp-examples-java/build/schnorr-example
 
   javadoc_artifact:
     needs: build_gradle
