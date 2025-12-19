@@ -91,8 +91,16 @@ jobs:
         uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      # Pre-build the devShell to allow multiple devShell steps and to have a clear point of failure
+      # should the shell fail to build
+      - name: Pre-build devShell
+        run: nix build --no-link .#devShells.$(nix eval --impure --raw --expr 'builtins.currentSystem').default
       - name: Build in Nix development shell
-        run: nix develop -c gradle build run runEcdsa
+        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
+        run: gradle build run runEcdsa secp-examples-java:nativeCompile
+      - name: Run Schnorr Native Example
+        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
+        run: ./secp-examples-java/build/schnorr-example
       - name: Print Sha256Sums (Linux)
         if: runner.os == 'Linux'
         run: sha256sum secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*

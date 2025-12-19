@@ -48,28 +48,3 @@ jobs:
         run: ./gradlew build secp-examples-java:nativeCompile
       - name: Run Schnorr Native Example
         run: ./secp-examples-java/build/schnorr-example
-
-  build_nix:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-14]
-      fail-fast: false
-    name: ${{ matrix.os }} Nix
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v5
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      # Pre-build the devShell to allow multiple devShell steps and to have a clear point of failure
-      # should the shell fail to build
-      - name: Pre-build devShell
-        run: nix build --no-link .#devShells.$(nix eval --impure --raw --expr 'builtins.currentSystem').default
-      - name: Build in Nix development shell
-        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
-        run: gradle build secp-examples-java:nativeCompile
-      - name: Run Schnorr Native Example
-        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
-        run: ./secp-examples-java/build/schnorr-example
