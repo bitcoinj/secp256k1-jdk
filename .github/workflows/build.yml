@@ -146,3 +146,9 @@ jobs:
       - name: Print Sha256Sums (macOS)
         if: runner.os == 'macOS'
         run: shasum -a 256 secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*
+
+  build_all_green:
+    runs-on: ubuntu-24.04
+    needs: [validate_gradle_wrapper, build_gradle, build_graalvm_gradle, javadoc_artifact, build_nix]
+    steps:
+      - run: echo "All upstream jobs passed"
