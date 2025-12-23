@@ -20,11 +20,11 @@ subprojects { sub ->
     group = 'org.bitcoinj.secp'
 
     dependencies {
-        testImplementation 'org.junit.jupiter:junit-jupiter:5.14.0'
-        testImplementation "org.junit.jupiter:junit-jupiter-api:5.14.0"
-        testImplementation "org.junit.jupiter:junit-jupiter-params:5.14.0"
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.14.1'
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.14.1"
+        testImplementation "org.junit.jupiter:junit-jupiter-params:5.14.1"
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.14.0"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.14.1"
     }
 
     java {
