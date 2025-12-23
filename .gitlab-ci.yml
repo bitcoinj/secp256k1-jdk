@@ -42,6 +42,6 @@ forky-gradlew:
   image: debian:forky-slim
   before_script:
     - apt-get update
-    - apt-get -y install openjdk-25-jdk-headless libsecp256k1-5 libsecp256k1-dev
+    - apt-get -y install openjdk-25-jdk-headless libsecp256k1-6 libsecp256k1-dev
   script:
     - ./gradlew build run runEcdsa
