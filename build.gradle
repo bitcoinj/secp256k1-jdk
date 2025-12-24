@@ -47,8 +47,8 @@ subprojects { sub ->
     }
 
     tasks.withType(JavaCompile).configureEach {
-        // Default release version, secp-api and secp-bouncy override this to set an earlier release.
-        options.release = 24
+        // Default target JDK version, secp-api and secp-bouncy override this to set an earlier release.
+        options.release = 25
     }
 }
 

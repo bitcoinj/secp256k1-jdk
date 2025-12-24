@@ -12,11 +12,6 @@ dependencies {
     runtimeOnly project(':secp-ffm')
 }
 
-tasks.withType(JavaCompile).configureEach {
-    // Override Default release version
-    options.release = 25
-}
-
 jar {
     inputs.property("moduleName", moduleName)
     manifest {

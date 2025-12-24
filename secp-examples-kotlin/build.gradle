@@ -11,11 +11,6 @@ dependencies {
     runtimeOnly project(':secp-ffm')
 }
 
-tasks.withType(JavaCompile).configureEach {
-    // Override Default release version
-    options.release = 25
-}
-
 kotlin {
     jvmToolchain(javaToolchainVersion as int)
     compilerOptions.jvmTarget = JvmTarget.JVM_25
