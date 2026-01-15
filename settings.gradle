@@ -7,5 +7,6 @@ include 'secp-graalvm'           // GraalVM Foreign Function Registration suppor
 include 'secp-bitcoinj'          // bitcoinj integration utilities and tests (P2TR address generation, etc.)
 include 'secp-integration-test'  // Integration tests of API implementations (ffm and bouncy)
 include 'secp-examples-java'     // Java examples
+include 'secp-examples-jshell'   // jshell example
 include 'secp-examples-kotlin'   // Kotlin examples
 
