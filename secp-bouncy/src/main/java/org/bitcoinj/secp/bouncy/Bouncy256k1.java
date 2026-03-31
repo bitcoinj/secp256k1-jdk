@@ -236,4 +236,9 @@ public class Bouncy256k1 implements Secp256k1 {
     public void close() {
 
     }
+
+    @Override
+    public String toString() {
+        return "Secp256k1(" + ProviderId.BOUNCY_CASTLE + ")";
+    }
 }
