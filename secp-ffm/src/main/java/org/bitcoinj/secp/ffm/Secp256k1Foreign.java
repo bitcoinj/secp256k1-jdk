@@ -420,7 +420,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
      * @param size size in bytes of random data
      * @return A newly-allocated memory segment full of random data
      */
-    public static MemorySegment fill_random(SegmentAllocator allocator, int size) {
+    private static MemorySegment fill_random(SegmentAllocator allocator, int size) {
         byte[] data = new byte[size];
         secureRandom.nextBytes(data);
         return allocator.allocateFrom(JAVA_BYTE, data);
