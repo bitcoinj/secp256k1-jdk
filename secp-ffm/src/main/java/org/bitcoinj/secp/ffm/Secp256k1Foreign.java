@@ -125,12 +125,12 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         /* If the secret key is zero or out of range (bigger than secp256k1's
          * order), we try to sample a new key. Note that the probability of this
          * happening is negligible. */
-        MemorySegment seckey;
+        MemorySegment privKeySeg;
         do {
-            seckey = fill_random(arena, 32);
-        } while (secp256k1_h.secp256k1_ec_seckey_verify(ctx, seckey) != 1);
-        SecpPrivKey privKey = SecpPrivKey.of(seckey.toArray(JAVA_BYTE));
-        seckey.fill((byte) 0x00);   
+            privKeySeg = fill_random(arena, 32);
+        } while (secp256k1_h.secp256k1_ec_seckey_verify(ctx, privKeySeg) != 1);
+        SecpPrivKey privKey = SecpPrivKey.of(privKeySeg.toArray(JAVA_BYTE));
+        privKeySeg.fill((byte) 0x00);
         return privKey;
     }
 
@@ -179,10 +179,10 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         /* If the secret key is zero or out of range (bigger than secp256k1's
          * order), we try to sample a new key. Note that the probability of this
          * happening is negligible. */
-        MemorySegment seckey;
+        MemorySegment privKeySeg;
         do {
-            seckey = fill_random(arena, 32);
-        } while (secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, seckey) != 1);
+            privKeySeg = fill_random(arena, 32);
+        } while (secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, privKeySeg) != 1);
         // TODO: Parse keyPairSeg into standard SecpKeyPairImpl
         SecpKeyPair keyPair = toKeyPair(keyPairSeg);
         keyPairSeg.fill((byte) 0x00);
@@ -192,8 +192,8 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     @Override
     public SecpKeyPair ecKeyPairCreate(SecpPrivKey privKey) {
         MemorySegment keyPairSeg = secp256k1_keypair.allocate(arena);
-        MemorySegment seckey = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
-        int return_val = secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, seckey);
+        MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+        int return_val = secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, privKeySeg);
         assert(return_val == 1);
         // TODO: Parse keyPairSeg into standard SecpKeyPairImpl
         SecpKeyPair keyPair = toKeyPair(keyPairSeg);
@@ -302,7 +302,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey seckey) {
+    public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey) {
         /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
          * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
          * Signing with a valid context, verified secret key
@@ -311,7 +311,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
         MemorySegment nullCallback =  secp256k1_h.NULL(); // Double-check this (normally you shouldn't use a NULL pointer for a null callback)
         MemorySegment nullPointer = secp256k1_h.NULL();
-        MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, seckey.getEncoded());
+        MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
         int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, nullCallback, nullPointer);
         privKeySeg.fill((byte) 0x00);
         return SecpResult.checked(return_val, () -> EcdsaSignature.of(sig.toArray(JAVA_BYTE)));
@@ -399,11 +399,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey secKey) {
+    public SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey privKey) {
         MemorySegment pubKeySeg = pubKeyParse(pubKey);  // Get pubkey in 64-byte internal format
-        MemorySegment secKeySeg = arena.allocateFrom(JAVA_BYTE, secKey.getEncoded());
+        MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
         MemorySegment output = arena.allocate(32);
-        int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, secKeySeg, NULL(), NULL());
+        int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL(), NULL());
         return success == 1
                 ? SecpResult.ok(new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)))
                 : SecpResult.err(-1);
