@@ -19,11 +19,7 @@ import org.bitcoinj.secp.Secp256k1;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.stream.Stream;
-
-import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
-import static org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM;
 
 /**
  * Support methods for {@link org.bitcoinj.secp.integration}
@@ -51,8 +47,7 @@ public interface SecpTestSupport {
      * @return stream of all providers
      */
     static Stream<Secp256k1.Provider> secpProviders() {
-        var providerList = List.of(LIBSECP256K1_FFM.id(), BOUNCY_CASTLE.id());
-        return Secp256k1.findAll(p -> providerList.contains(p.id()));
+        return Secp256k1.all();
     }
 
     /**
