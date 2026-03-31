@@ -409,6 +409,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
                 : SecpResult.err(-1);
     }
 
+    @Override
+    public String toString() {
+        return "Secp256k1(" + ProviderId.LIBSECP256K1_FFM + ")";
+    }
+
     /**
      *
      * @param allocator allocator to create segment with
