@@ -204,7 +204,7 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpKeyPair keyPair) {
+    public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey) {
         throw new UnsupportedOperationException();
     }
 
