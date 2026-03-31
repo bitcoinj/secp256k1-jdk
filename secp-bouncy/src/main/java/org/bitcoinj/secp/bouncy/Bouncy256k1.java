@@ -103,8 +103,8 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SecpPubKey ecPubKeyCreate(SecpPrivKey seckey) {
-        ECPoint pub = BC_CURVE.getG().multiply(seckey.getS()).normalize();
+    public SecpPubKey ecPubKeyCreate(SecpPrivKey privKey) {
+        ECPoint pub = BC_CURVE.getG().multiply(privKey.getS()).normalize();
         return BC.toP256K1PubKey(pub);
     }
 
@@ -156,12 +156,12 @@ public class Bouncy256k1 implements Secp256k1 {
 
     // TODO: Add constructor to create SignatureData from r and s
     @Override
-    public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey seckey) {
-        BigInteger privateKeyForSigning = seckey.getS();
+    public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey) {
+        BigInteger privateKeyForSigning = privKey.getS();
         Objects.requireNonNull(privateKeyForSigning);
         ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
-        ECPrivateKeyParameters privKey = new ECPrivateKeyParameters(privateKeyForSigning, BC_CURVE);
-        signer.init(true, privKey);
+        ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privateKeyForSigning, BC_CURVE);
+        signer.init(true, bouncyPrivKey);
         BigInteger[] components = signer.generateSignature(msg_hash_data);
         EcdsaSignature signatureData = EcdsaSignature.of(SecpFieldElement.of(components[0]),
                 SecpFieldElement.of(components[1]));
@@ -214,9 +214,9 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey secKey) {
+    public SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey privKey) {
         ECPoint point = BC.fromECPoint(pubKey.getW());
-        ECPoint ssPoint = point.multiply(secKey.getS()).normalize();
+        ECPoint ssPoint = point.multiply(privKey.getS()).normalize();
         byte[] hashed = ecdhHash(BC.toP256K1PubKey(ssPoint));
         return SecpResult.ok(new EcdhSharedSecretImpl(hashed));
     }
