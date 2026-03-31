@@ -31,15 +31,11 @@ public interface SecpTestSupport {
      * @return SHA-256 of input string
      */
     static byte[] hash(String messageString) {
-        MessageDigest digest;
         try {
-            digest = MessageDigest.getInstance("SHA-256");
+            return MessageDigest.getInstance("SHA-256").digest(messageString.getBytes());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);  // Can't happen.
         }
-        byte[] message = messageString.getBytes();
-        digest.update(message, 0, message.length);
-        return digest.digest();
     }
 
     /**
