@@ -22,24 +22,14 @@ import org.bitcoinj.secp.EcdsaSignature;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.bitcoinj.secp.integration.SecpTestSupport.hash;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- *
+ * Test ECDA Signing and verification.
  */
-public class EcdsaTest {
+public class EcdsaTest implements SecpTestSupport {
     private static final byte[] msg_hash = hash("Hello, world!");
-
-    public static Stream<Secp256k1> secpImplementations() {
-        return Secp256k1.all().map(Secp256k1.Provider::get);
-    }
 
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Test Ecdsa for {0}")
@@ -49,17 +39,5 @@ public class EcdsaTest {
         EcdsaSignature sig = secp.ecdsaSign(msg_hash, privKey).get();
         boolean validSignature = secp.ecdsaVerify(sig, msg_hash, pubKey).get();
         assertTrue(validSignature);
-    }
-
-    private static byte[] hash(String messageString) {
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);  // Can't happen.
-        }
-        byte[] message = messageString.getBytes();
-        digest.update(message, 0, message.length);
-        return digest.digest();
     }
 }

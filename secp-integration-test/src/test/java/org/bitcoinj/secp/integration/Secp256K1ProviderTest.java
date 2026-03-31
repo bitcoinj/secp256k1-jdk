@@ -19,27 +19,13 @@ import org.bitcoinj.secp.Secp256k1;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
-import static org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
-public class Secp256K1ProviderTest {
-    public static Stream<Secp256k1> secpImplementations() {
-        return secpProviders().map(Secp256k1.Provider::get);
-    }
-
-    public static Stream<Secp256k1.Provider> secpProviders() {
-        var providerList = List.of(LIBSECP256K1_FFM.id(), BOUNCY_CASTLE.id());
-        return Secp256k1.findAll(p -> providerList.contains(p.id()));
-    }
-
+public class Secp256K1ProviderTest implements SecpTestSupport {
     @MethodSource("secpProviders")
     @ParameterizedTest(name = "Provider: {0}")
     void checkProviders(Secp256k1.Provider provider) {
@@ -53,5 +39,4 @@ public class Secp256K1ProviderTest {
         System.out.println("Implementation " + secp);
         assertNotNull(secp);
     }
-
 }
