@@ -354,20 +354,20 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpKeyPair keyPair) {
+    public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey) {
         MemorySegment sig = arena.allocate(64);
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, messageHash);
         MemorySegment auxiliary_rand = fill_random(arena, 32);
         // TODO: Serialize standard SecpKeyPair/SecpKeyPairImpl here
-        MemorySegment keyPairSeg = keyPairToSegment(keyPair);
+        MemorySegment privKeySeg = privKeyToSegment(privKey);
 
-        int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keyPairSeg, auxiliary_rand);
+        int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, privKeySeg, auxiliary_rand);
         assert(return_val == 1);
         return new SchnorrSignatureImpl(sig.toArray(JAVA_BYTE));
     }
 
-    private MemorySegment keyPairToSegment(SecpKeyPair keyPair) {
-        byte[] privBytes = keyPair.getEncoded();
+    private MemorySegment privKeyToSegment(SecpPrivKey privKey) {
+        byte[] privBytes = privKey.getEncoded();
         MemorySegment privSeg = arena.allocateFrom(JAVA_BYTE, privBytes);
         MemorySegment keyPairSeg = secp256k1_keypair.allocate(arena);
         secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, privSeg);
