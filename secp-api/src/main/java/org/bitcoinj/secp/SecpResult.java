@@ -73,6 +73,14 @@ public /* sealed */ interface SecpResult<T> {
     }
 
     /**
+     * Is the result successful ({@link Ok})?
+     * @return true if result is {@code instanceof} {@link Ok}
+     */
+    default boolean isOk() {
+        return this instanceof Ok;
+    }
+
+    /**
      * Static constructor for {@link SecpResult.Ok}
      * @param result result value
      * @return successful result
