@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Tests for P256K1FieldElementTest
+ * Tests for P256K1FieldElement
  */
 public class P256K1FieldElementTest {
     static BigInteger p = Secp256k1.P;
