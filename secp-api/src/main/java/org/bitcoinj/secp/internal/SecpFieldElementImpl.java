@@ -29,11 +29,11 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
     private final byte[] value;
 
     public SecpFieldElementImpl(BigInteger i) {
-        value = SecpFieldElement.integerTo32Bytes(SecpFieldElement.checkInRange(i));
+        value = SecpFieldElementImpl.integerTo32Bytes(SecpFieldElement.checkInRange(i));
     }
 
     public SecpFieldElementImpl(byte[] bytes) {
-        value = SecpFieldElement.checkInRange(bytes);
+        value = SecpFieldElementImpl.checkInRange(bytes);
     }
 
     @Override
@@ -71,5 +71,39 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
     @Override
     public String toString() {
         return formatHex();
+    }
+
+    /**
+     * Convert a BigInteger to a fixed-length byte array
+     * @param i an unsigned BigInteger containing a valid Secp256k1 field value
+     * @return a 32-byte, big-endian unsigned integer value
+     */
+    public static byte[] integerTo32Bytes(BigInteger i) {
+        SecpFieldElement.checkInRange(i);
+        byte[] minBytes = i.toByteArray(); // return minimum, signed bytes
+        // Since toByteArray() returns a sign bit (even though we know there isn't one) and a variable
+        // length result, we need to convert to fixed 32-byte length with no sign bit.
+        byte[] result = new byte[32];
+        System.arraycopy(minBytes,                                  // src
+                minBytes.length == 33 ? 1 : 0,                      // src pos (skip sign byte if present)
+                result,                                             // dest
+                minBytes.length == 33 ? 0 : 32 - minBytes.length,   // dest pos
+                minBytes.length == 33 ? 32 : minBytes.length);      // num bytes to copy
+        return result;
+    }
+
+    // TODO: Full-validation (i.e. check for < P), constant-time implementation?
+    /**
+     * Throw {@link IllegalArgumentException} if the byte array is not the length.
+     * <p>
+     * <b>NOTE:</b> We are not currently validating for value less than {@code P}
+     * @param e unvalidated integer
+     * @return a validated integer
+     */
+    public static byte[] checkInRange(byte[] e) {
+        if (e.length != 32) {
+            throw new IllegalArgumentException("SecpFieldElement must have 32 bytes, found : " + e.length);
+        }
+        return e;
     }
 }

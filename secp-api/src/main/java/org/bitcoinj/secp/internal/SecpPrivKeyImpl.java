@@ -22,8 +22,8 @@ import org.jspecify.annotations.Nullable;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static org.bitcoinj.secp.SecpFieldElement.checkInRange;
-import static org.bitcoinj.secp.SecpFieldElement.integerTo32Bytes;
+import static org.bitcoinj.secp.internal.SecpFieldElementImpl.checkInRange;
+import static org.bitcoinj.secp.internal.SecpFieldElementImpl.integerTo32Bytes;
 
 /**
  * Default/internal implementation of {@link SecpPrivKey}

@@ -17,7 +17,6 @@ package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.ByteArray;
 import org.bitcoinj.secp.EcdhSharedSecret;
-import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpResult;
@@ -27,6 +26,7 @@ import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
+import org.bitcoinj.secp.internal.SecpFieldElementImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
@@ -204,7 +204,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     @Override
     public SecpPubKey ecPubKeyTweakMul(SecpPubKey pubKey, BigInteger scalarMultiplier) {
         MemorySegment pubKeySeg = pubKeyParse(pubKey);
-        byte[] tweakBytes = SecpFieldElement.integerTo32Bytes(scalarMultiplier);
+        byte[] tweakBytes = SecpFieldElementImpl.integerTo32Bytes(scalarMultiplier);
         MemorySegment tweakSeg = arena.allocateFrom(JAVA_BYTE, tweakBytes);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_tweak_mul(ctx, pubKeySeg, tweakSeg);
         if (return_val != 1) {
