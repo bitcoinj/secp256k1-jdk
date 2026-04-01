@@ -21,16 +21,15 @@ import java.util.Comparator;
  *
  */
 public class ByteUtils {
+    // In Java 9+, this can be replaced with Arrays.compareUnsigned()
     /**
-     * Provides a byte array comparator.
-     * @return A comparator for byte[]
+     * Compare byte arrays treating each byte as unsigned.
+     * @param a byte array to compare
+     * @param b byte array to compare
+     * @return a negative integer if {@code a < b}, zero if {@code a == b},
+     * or a positive integer if {@code a > b}
      */
-    public static Comparator<byte[]> arrayUnsignedComparator() {
-        return ARRAY_UNSIGNED_COMPARATOR;
-    }
-
-    // In Java 9, this can be replaced with Arrays.compareUnsigned()
-    private static final Comparator<byte[]> ARRAY_UNSIGNED_COMPARATOR = (a, b) -> {
+    public static int compareUnsigned(byte[] a, byte[] b) {
         int minLength = Math.min(a.length, b.length);
         for (int i = 0; i < minLength; i++) {
             int result = compareUnsigned(a[i], b[i]);
@@ -39,7 +38,7 @@ public class ByteUtils {
             }
         }
         return a.length - b.length;
-    };
+    }
 
     private static int compareUnsigned(byte a, byte b) {
         return Byte.toUnsignedInt(a) - Byte.toUnsignedInt(b);

@@ -47,7 +47,7 @@ public interface ByteArray extends Comparable<ByteArray> {
      */
     @Override
     default int compareTo(ByteArray o) {
-        return ByteUtils.arrayUnsignedComparator().compare(bytes(), o.bytes());
+        return ByteUtils.compareUnsigned(bytes(), o.bytes());
     }
 
     /**
