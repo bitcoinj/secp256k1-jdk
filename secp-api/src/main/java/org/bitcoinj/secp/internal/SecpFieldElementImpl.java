@@ -24,10 +24,11 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- *
+ * Implementation of {@link SecpFieldElement} as an array of bytes.
  */
 public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
     static byte[] MAX_VALUE_BYTES = integerTo32Bytes(Secp256k1.P.subtract(BigInteger.ONE));
+    /** field element as a 32-byte big-endian byte array */
     private final byte[] value;
 
     public SecpFieldElementImpl(BigInteger i) {
@@ -96,8 +97,8 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
      * Throw {@link IllegalArgumentException} if the byte array is not the length.
      * <p>
      * <b>NOTE:</b> We are not currently validating for value less than {@code P}
-     * @param e unvalidated integer
-     * @return a validated integer
+     * @param e unvalidated integer ({@code byte[]} format)
+     * @return a validated integer ({@code byte[]} format)
      */
     public static byte[] checkInRange(byte[] e) {
         if (e.length != 32) {
