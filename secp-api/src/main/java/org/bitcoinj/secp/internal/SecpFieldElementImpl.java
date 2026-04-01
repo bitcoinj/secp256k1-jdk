@@ -31,7 +31,7 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
     private final byte[] value;
 
     public SecpFieldElementImpl(BigInteger i) {
-        value = SecpFieldElementImpl.integerTo32Bytes(SecpFieldElement.checkInRange(i));
+        value = SecpFieldElementImpl.integerTo32Bytes(i);
     }
 
     public SecpFieldElementImpl(byte[] bytes) {
@@ -76,7 +76,7 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
     }
 
     /**
-     * Convert a BigInteger to a fixed-length byte array
+     * Convert a BigInteger to a fixed-length byte array verifying it's a valid P256k1 field element.
      * @param i an unsigned BigInteger containing a valid Secp256k1 field value
      * @return a 32-byte, big-endian unsigned integer value
      */
