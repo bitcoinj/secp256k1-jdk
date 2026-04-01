@@ -60,7 +60,7 @@ public class Bouncy256k1 implements Secp256k1 {
     static final ECDomainParameters BC_CURVE;
 
     /**
-     * Equal to CURVE.getN().shiftRight(1), used for canonicalising the S value of a signature. If you aren't
+     * Equal to CURVE.getN().shiftRight(1), used for canonicalizing the S value of a signature. If you aren't
      * sure what this is about, you can ignore it.
      */
     private static final BigInteger HALF_CURVE_ORDER;
