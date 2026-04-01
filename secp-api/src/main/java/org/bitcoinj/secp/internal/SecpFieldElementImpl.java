@@ -79,17 +79,7 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
      * @return a 32-byte, big-endian unsigned integer value
      */
     public static byte[] integerTo32Bytes(BigInteger i) {
-        SecpFieldElement.checkInRange(i);
-        byte[] minBytes = i.toByteArray(); // return minimum, signed bytes
-        // Since toByteArray() returns a sign bit (even though we know there isn't one) and a variable
-        // length result, we need to convert to fixed 32-byte length with no sign bit.
-        byte[] result = new byte[32];
-        System.arraycopy(minBytes,                                  // src
-                minBytes.length == 33 ? 1 : 0,                      // src pos (skip sign byte if present)
-                result,                                             // dest
-                minBytes.length == 33 ? 0 : 32 - minBytes.length,   // dest pos
-                minBytes.length == 33 ? 32 : minBytes.length);      // num bytes to copy
-        return result;
+        return UInt256.integerTo32Bytes(SecpFieldElement.checkInRange(i));
     }
 
     // TODO: Full-validation (i.e. check for < P), constant-time implementation?
