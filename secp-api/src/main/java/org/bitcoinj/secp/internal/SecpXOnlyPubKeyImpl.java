@@ -16,7 +16,6 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.ByteArray;
-import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.SecpPubKey;
 
@@ -40,7 +39,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
     }
 
     public SecpXOnlyPubKeyImpl(BigInteger x) {
-        this.x = SecpFieldElement.integerTo32Bytes(x);
+        this.x = SecpFieldElementImpl.integerTo32Bytes(x);
     }
 
     @Override
