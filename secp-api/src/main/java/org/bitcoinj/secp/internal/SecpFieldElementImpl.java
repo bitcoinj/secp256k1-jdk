@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.ByteArray;
+import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpFieldElement;
 
 import java.math.BigInteger;
@@ -26,6 +27,7 @@ import java.util.Objects;
  *
  */
 public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
+    static byte[] MAX_VALUE_BYTES = integerTo32Bytes(Secp256k1.P.subtract(BigInteger.ONE));
     private final byte[] value;
 
     public SecpFieldElementImpl(BigInteger i) {
@@ -82,7 +84,14 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
         return UInt256.integerTo32Bytes(SecpFieldElement.checkInRange(i));
     }
 
-    // TODO: Full-validation (i.e. check for < P), constant-time implementation?
+    static boolean isInRange(byte[] e) {
+        if (e.length != 32) {
+            throw new IllegalArgumentException("SecpFieldElement must have 32 bytes, found : " + e.length);
+        }
+        return ByteUtils.arrayUnsignedComparator().compare(e, SecpFieldElementImpl.MAX_VALUE_BYTES) <= 0;
+    }
+
+    // TODO: constant-time implementation?
     /**
      * Throw {@link IllegalArgumentException} if the byte array is not the length.
      * <p>
@@ -93,6 +102,9 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
     public static byte[] checkInRange(byte[] e) {
         if (e.length != 32) {
             throw new IllegalArgumentException("SecpFieldElement must have 32 bytes, found : " + e.length);
+        }
+        if (!isInRange(e)) {
+            throw new IllegalArgumentException("byte[] is not a valid SecpFieldElement: " + ByteArrayBase.toHexString(e));
         }
         return e;
     }
