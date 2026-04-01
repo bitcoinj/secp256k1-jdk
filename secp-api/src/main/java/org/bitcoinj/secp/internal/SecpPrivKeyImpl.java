@@ -22,9 +22,6 @@ import org.jspecify.annotations.Nullable;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-import static org.bitcoinj.secp.internal.SecpFieldElementImpl.checkInRange;
-import static org.bitcoinj.secp.internal.SecpFieldElementImpl.integerTo32Bytes;
-
 /**
  * Default/internal implementation of {@link SecpPrivKey}
  */
@@ -41,14 +38,11 @@ public class SecpPrivKeyImpl implements SecpPrivKey {
      * @param bytes (will not be defensively copied)
      */
     public SecpPrivKeyImpl(byte[] bytes) {
-        // TODO: Full, constant-time Range validation?
-        checkInRange(bytes);
-        privKeyBytes = checkInRange(bytes);
+        privKeyBytes = SecpFieldElementImpl.checkInRange(bytes);
     }
 
     public SecpPrivKeyImpl(BigInteger privKey) {
-        // TODO: Valid integer is valid for field
-        this.privKeyBytes = integerTo32Bytes(privKey);
+        this.privKeyBytes = SecpFieldElementImpl.integerTo32Bytes(privKey);
     }
 
     @Override
