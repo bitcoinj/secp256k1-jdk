@@ -27,6 +27,7 @@ subprojects { sub ->
         testImplementation "org.junit.jupiter:junit-jupiter-params:6.0.3"
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:6.0.3"
+        testImplementation "com.opencsv:opencsv:5.12.0"
     }
 
     java {
