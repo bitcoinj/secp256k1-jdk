@@ -18,6 +18,7 @@ package org.bitcoinj.secp.internal;
 import org.bitcoinj.secp.ByteArray;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpFieldElement;
+import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -55,7 +56,7 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SecpFieldElementImpl that = (SecpFieldElementImpl) o;
         return Objects.deepEquals(value, that.value);
