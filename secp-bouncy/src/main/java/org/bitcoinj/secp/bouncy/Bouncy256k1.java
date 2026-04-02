@@ -53,17 +53,11 @@ import java.util.Objects;
  */
 public class Bouncy256k1 implements Secp256k1 {
 
-    // The parameters of the secp256k1 curve that Bitcoin uses.
+    // The Bouncy Castle class containing parameters of the secp256k1 curve that Bitcoin uses.
     private static final X9ECParameters BC_CURVE_PARAMS = CustomNamedCurves.getByName("secp256k1");
 
-    /** The parameters of the secp256k1 curve that Bitcoin uses. */
+    /** The Bouncy Castle class containing parameters of the secp256k1 curve that Bitcoin uses. */
     static final ECDomainParameters BC_CURVE;
-
-    /**
-     * Equal to CURVE.getN().shiftRight(1), used for canonicalizing the S value of a signature. If you aren't
-     * sure what this is about, you can ignore it.
-     */
-    private static final BigInteger HALF_CURVE_ORDER;
 
     private static final SecureRandom secureRandom;
 
@@ -74,7 +68,6 @@ public class Bouncy256k1 implements Secp256k1 {
                 BC_CURVE_PARAMS.getG(),
                 BC_CURVE_PARAMS.getN(),
                 BC_CURVE_PARAMS.getH());
-        HALF_CURVE_ORDER = BC_CURVE_PARAMS.getN().shiftRight(1);
         // TODO: Verify using cryptographic random number generator properly
         try {
             secureRandom = SecureRandom.getInstanceStrong();

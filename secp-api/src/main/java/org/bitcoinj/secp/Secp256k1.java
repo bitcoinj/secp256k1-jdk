@@ -75,6 +75,12 @@ public interface Secp256k1 extends Closeable {
         1);             // Cofactor h
 
     /**
+     * Equal to {@code EC_PARAMS.getOrder().shiftRight(1)}, used for canonicalizing the S value of a signature. If you aren't
+     * sure what this is about, you can ignore it.
+     */
+    SecpFieldElement HALF_CURVE_ORDER = SecpFieldElement.of(EC_PARAMS.getOrder().shiftRight(1));
+
+    /**
      * Get a stream of all known providers
      * @return stream of all known providers
      */
