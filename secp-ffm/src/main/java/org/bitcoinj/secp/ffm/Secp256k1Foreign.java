@@ -367,6 +367,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey) {
+        checkArg(messageHash.length == 32, "Message must be 32-byte (hash)");
         MemorySegment auxiliary_rand = fill_random(arena, 32);
         return schnorrSigSign32(messageHash, privKey, auxiliary_rand);
     }
@@ -379,6 +380,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
      * @return the signature
      */
     public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
+        checkArg(messageHash.length == 32, "Message must be 32-byte (hash)");
         MemorySegment auxiliary_rand = arena.allocateFrom(JAVA_BYTE, auxiliaryRandom);
         return schnorrSigSign32(messageHash, privKey, auxiliary_rand);
     }
@@ -452,5 +454,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         byte[] data = new byte[size];
         secureRandom.nextBytes(data);
         return allocator.allocateFrom(JAVA_BYTE, data);
+    }
+
+    private static void checkArg(boolean condition, String string) {
+        if (!condition) {
+            throw new IllegalArgumentException(string);
+        }
     }
 }
