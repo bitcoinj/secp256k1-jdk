@@ -7,8 +7,8 @@ jobs:
     name: "Validate Gradle Wrapper"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: gradle/actions/wrapper-validation@v4
+      - uses: actions/checkout@v6
+      - uses: gradle/actions/wrapper-validation@v5
 
   build_gradle:
     needs: validate_gradle_wrapper
@@ -21,7 +21,7 @@ jobs:
     name: ${{ matrix.os }} JDK 25 (via Gradle Java toolchains)
     steps:
       - name: Git checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
@@ -64,7 +64,7 @@ jobs:
     name: ${{ matrix.os }} ${{ matrix.java }} (via setup-graalvm)
     steps:
       - name: Git checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
@@ -97,7 +97,7 @@ jobs:
     name: Publish Aggregated Javadoc artifact
     steps:
       - name: Git checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
@@ -111,7 +111,7 @@ jobs:
       - name: Build Aggregate Modular Javadoc with Gradle
         run: ./gradlew javadoc
       - name: Upload Javadoc as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: secp256k1-jdk-javadoc
           path: build/docs/javadoc/
@@ -125,7 +125,7 @@ jobs:
     name: ${{ matrix.os }} Nix
     steps:
       - name: Git checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
