@@ -16,13 +16,16 @@
 package org.bitcoinj.secp.internal;
 
 /**
+ * Utility to parse hex strings and convert to {@code byte[]} and to format {@code byte[]} as <b>UPPERCASE</b>.
+ * <p>
  * This class implements a subset of the functionality of the {@code HexFormat} class available in Java 17 and later.
- * Its behavior is the same as an instance of Java 17 {@code HexFormat} created with {@code HexFormat.of()}.
- * It is an internal class and may be removed in the future when and if we have a Java 17 baseline. This is a copy of
- * HexFormat.java in `bitcoinj-base/org.bitcoinj.base.internal`.
+ * Its behavior is similar to an instance of Java 17 {@code HexFormat} constructed with {@code HexFormat.of()},
+ * with one exception: it <b>converts to uppercase hex</b>.
+ * It is an internal class and may be removed in the future when and if we have a Java 17 baseline. This is a
+ * modified copy of {@code HexFormat.java} in {@code bitcoinj-base/org.bitcoinj.base.internal`}.
  * <p>Thanks to this <a href="https://www.baeldung.com/java-byte-arrays-hex-strings">Baeldung article</a>.
  */
-class HexFormat {
+public class HexFormat {
     public String formatHex(byte[] bytes) {
         StringBuilder stringBuilder = new StringBuilder(bytes.length * 2);
         for (byte aByte : bytes) {
@@ -46,7 +49,7 @@ class HexFormat {
         char[] hexDigits = new char[2];
         hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
         hexDigits[1] = Character.forDigit((num & 0xF), 16);
-        return new String(hexDigits);
+        return new String(hexDigits).toUpperCase();
     }
 
     private byte hexToByte(String hexString) {
