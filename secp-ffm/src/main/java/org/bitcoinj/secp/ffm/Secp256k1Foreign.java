@@ -203,7 +203,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public SecpPubKey ecPubKeyTweakMul(SecpPubKey pubKey, BigInteger scalarMultiplier) {
-        MemorySegment pubKeySeg = pubKeyParse(pubKey);
+        MemorySegment pubKeySeg = pubKeyParse(pubKey).get();
         byte[] tweakBytes = SecpFieldElementImpl.integerTo32Bytes(scalarMultiplier);
         MemorySegment tweakSeg = arena.allocateFrom(JAVA_BYTE, tweakBytes);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_tweak_mul(ctx, pubKeySeg, tweakSeg);
@@ -217,8 +217,8 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     public SecpPubKey ecPubKeyCombine(SecpPubKey key1, SecpPubKey key2) {
         MemorySegment resultKeySeg = secp256k1_pubkey.allocate(arena);
         MemorySegment ins = arena.allocate(C_POINTER, 2);
-        ins.setAtIndex(C_POINTER, 0, pubKeyParse(key1));
-        ins.setAtIndex(C_POINTER, 1, pubKeyParse(key2));
+        ins.setAtIndex(C_POINTER, 0, pubKeyParse(key1).get());
+        ins.setAtIndex(C_POINTER, 1, pubKeyParse(key2).get());
         int return_val = secp256k1_h.secp256k1_ec_pubkey_combine(ctx, resultKeySeg, ins, 2);
         if (return_val != 1) {
             throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
@@ -229,7 +229,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     public SecpPubKey ecPubKeyCombine(SecpPubKey key1) {
         MemorySegment resultKeySeg = secp256k1_pubkey.allocate(arena);
         MemorySegment ins = arena.allocate(C_POINTER, 1);
-        ins.setAtIndex(C_POINTER, 0, pubKeyParse(key1));
+        ins.setAtIndex(C_POINTER, 0, pubKeyParse(key1).get());
         int return_val = secp256k1_h.secp256k1_ec_pubkey_combine(ctx, resultKeySeg, ins, 1);
         if (return_val != 1) {
             throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
@@ -291,14 +291,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return SecpResult.checked(return_val, () -> new SecpPubKeyImpl(toPoint(pubkey)));
     }
 
-    private MemorySegment pubKeyParse(SecpPubKey pubKeyData) {
+    private SecpResult<MemorySegment> pubKeyParse(SecpPubKey pubKeyData) {
         MemorySegment input = arena.allocateFrom(JAVA_BYTE, pubKeyData.getEncoded()); // 65 byte, uncompressed format
         MemorySegment pubkey = secp256k1_pubkey.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
-        if (return_val != 1) {
-            throw new IllegalStateException("Unexpected Failure parsing uncompressed public key");
-        }
-        return pubkey;
+        return SecpResult.checked(return_val, () -> pubkey);
     }
 
     @Override
@@ -336,10 +333,12 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
          * Signing with a valid context, verified secret key
          * and the default nonce function should never fail. */
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, msg_hash_data);
+        SecpResult<MemorySegment> parsedPubKey = pubKeyParse(pubKey);
+        if (parsedPubKey instanceof SecpResult.Err<MemorySegment> err) return SecpResult.err(err.code());
         int return_val = secp256k1_h.secp256k1_ecdsa_verify(ctx,
                 arena.allocateFrom(JAVA_BYTE, sig.bytes()),
                 msg_hash,
-                pubKeyParse(pubKey));
+                parsedPubKey.get());
         return SecpResult.ok(return_val == 1);
     }
 
@@ -414,7 +413,9 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey privKey) {
-        MemorySegment pubKeySeg = pubKeyParse(pubKey);  // Get pubkey in 64-byte internal format
+        SecpResult<MemorySegment> parsedPubKey = pubKeyParse(pubKey);
+        if (parsedPubKey instanceof SecpResult.Err<MemorySegment> err) return SecpResult.err(err.code());
+        MemorySegment pubKeySeg = parsedPubKey.get();  // Get pubkey in 64-byte internal format
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
         MemorySegment output = arena.allocate(32);
         int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL(), NULL());
