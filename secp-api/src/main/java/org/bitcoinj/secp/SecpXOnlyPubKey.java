@@ -46,22 +46,4 @@ public interface SecpXOnlyPubKey {
                 ? SecpResult.err(-1)
                 : SecpResult.ok(new SecpXOnlyPubKeyImpl(SecpFieldElement.of(serialized)));
     }
-
-    /**
-     * Create an X-only public key from a {@link BigInteger}.
-     * @param x X
-     * @return an instance of the default implementation
-     */
-    static SecpXOnlyPubKey of(BigInteger x) {
-        return new SecpXOnlyPubKeyImpl(x);
-    }
-
-    /**
-     * Create an X-only public key from a 32-byte, big-endian {@code byte[]}.
-     * @param xBytes X
-     * @return an instance of the default implementation
-     */
-    static SecpXOnlyPubKey of(byte[] xBytes) {
-        return new SecpXOnlyPubKeyImpl(xBytes);
-    }
 }
