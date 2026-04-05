@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp;
 
+import org.bitcoinj.secp.internal.SecpFieldElementImpl;
 import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
 
 import java.math.BigInteger;
@@ -41,10 +42,9 @@ public interface SecpXOnlyPubKey {
      * @return an instance of the default implementation
      */
     static SecpResult<SecpXOnlyPubKey> parse(byte[] serialized) {
-        BigInteger x = new BigInteger(1, serialized);
-        return !SecpFieldElement.isInRange(x)
+        return !SecpFieldElementImpl.isInRange(serialized)
                 ? SecpResult.err(-1)
-                : SecpResult.ok(SecpXOnlyPubKey.of(x));
+                : SecpResult.ok(new SecpXOnlyPubKeyImpl(SecpFieldElement.of(serialized)));
     }
 
     /**
