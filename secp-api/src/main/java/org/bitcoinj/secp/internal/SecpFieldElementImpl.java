@@ -84,7 +84,7 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
         return UInt256.integerTo32Bytes(SecpFieldElement.checkInRange(i));
     }
 
-    static boolean isInRange(byte[] e) {
+    public static boolean isInRange(byte[] e) {
         if (e.length != 32) {
             throw new IllegalArgumentException("SecpFieldElement must have 32 bytes, found : " + e.length);
         }
