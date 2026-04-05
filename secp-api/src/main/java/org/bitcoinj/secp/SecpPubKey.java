@@ -16,7 +16,6 @@
 package org.bitcoinj.secp;
 
 import org.bitcoinj.secp.internal.SecpECPoint;
-import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
 
 import java.security.interfaces.ECPublicKey;
@@ -118,14 +117,5 @@ public interface SecpPubKey extends ECPublicKey {
     @Override
     default ECParameterSpec getParams() {
         return Secp256k1.EC_PARAMS;
-    }
-
-    /**
-     * Construct a public key from an {@link ECPoint}
-     * @param ecPoint the point
-     * @return the pubkey
-     */
-    static SecpPubKey ofPoint(ECPoint ecPoint) {
-        return new SecpPubKeyImpl(ecPoint);
     }
 }
