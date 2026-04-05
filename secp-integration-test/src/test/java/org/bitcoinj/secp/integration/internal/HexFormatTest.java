@@ -40,11 +40,26 @@ public class HexFormatTest {
             ).entrySet().stream()
             .map(e -> new Pair(e.getKey(), e.getValue()))
             .toList();
+    public static final List<String> INVALID_HEX_STRINGS = List.of(
+            "0",
+            "000",
+            "G",
+            "GG",
+            "?",
+            "??");
 
     @FieldSource("VALID_PAIRS")
     @ParameterizedTest(name = "n: {0}")
     void testFormat(Pair p) {
         Assertions.assertEquals(p.hex, HEX_FORMAT.formatHex(p.bytes));
+    }
+
+    @FieldSource("INVALID_HEX_STRINGS")
+    @ParameterizedTest(name = "n: {0}")
+    void testInvalidParse(String s) {
+        // Test parsing both uppercase and lowercase hex
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HEX_FORMAT.parseHex(s));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HEX_FORMAT.parseHex(s.toLowerCase()));
     }
 
     @FieldSource("VALID_PAIRS")
@@ -70,6 +85,14 @@ public class HexFormatTest {
         // Test parsing both uppercase and lowercase hex
         Assertions.assertArrayEquals(p.bytes, HexFormat.of().parseHex(p.hex));
         Assertions.assertArrayEquals(p.bytes, HexFormat.of().parseHex(p.hex.toLowerCase()));
+    }
+
+    @FieldSource("INVALID_HEX_STRINGS")
+    @ParameterizedTest(name = "n: {0}")
+    void testJDKInvalidParse(String s) {
+        // Test parsing both uppercase and lowercase hex
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HexFormat.of().parseHex(s));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HexFormat.of().parseHex(s.toLowerCase()));
     }
 
     /** helper method for specifying {@code byte[]} values */
