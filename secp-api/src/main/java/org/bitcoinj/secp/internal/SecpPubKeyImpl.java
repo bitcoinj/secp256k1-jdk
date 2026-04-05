@@ -42,6 +42,15 @@ public class SecpPubKeyImpl implements SecpPubKey {
         this.point = SecpPointUncompressed.of(ecPoint);
     }
 
+    /**
+     * Construct a public key from an {@link ECPoint}
+     * @param ecPoint the point
+     * @return the pubkey
+     */
+    public static SecpPubKey ofPoint(ECPoint ecPoint) {
+        return new SecpPubKeyImpl(ecPoint);
+    }
+
     @Override
     public SecpECPoint getW() {
         return new SecpECPoint(point.x(), point.y());

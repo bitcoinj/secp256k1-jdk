@@ -18,6 +18,7 @@ package org.bitcoinj.secp.bouncy;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.internal.SecpECPoint;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
+import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 
 import java.security.spec.ECPoint;
 
@@ -30,7 +31,7 @@ interface BC {
 
     static SecpPubKey toP256K1PubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
-        return  SecpPubKey.ofPoint(BC.toECPoint(bcPoint));
+        return  SecpPubKeyImpl.ofPoint(BC.toECPoint(bcPoint));
     }
 
     static SecpPointUncompressed toP256K1Point(org.bouncycastle.math.ec.ECPoint bcPoint) {
