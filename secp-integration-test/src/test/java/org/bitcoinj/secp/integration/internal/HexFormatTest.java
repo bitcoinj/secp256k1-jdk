@@ -30,8 +30,13 @@ public class HexFormatTest {
     public record Pair(String hex, byte[] bytes) {}
     public static final org.bitcoinj.secp.internal.HexFormat HEX_FORMAT = new org.bitcoinj.secp.internal.HexFormat();
     public static final List<Pair> VALID_PAIRS = Map.of(
-                "00", b(0x00),
-                "FF", b(0xFF)
+                "",     b(),
+                "00",   b(0x00),
+                "7F",   b(0x7F),
+                "80",   b(0x80),
+                "8000", b(0x80, 0x00),
+                "FF",   b(0xFF),
+                "FFFF", b(0xFF, 0xFF)
             ).entrySet().stream()
             .map(e -> new Pair(e.getKey(), e.getValue()))
             .toList();
