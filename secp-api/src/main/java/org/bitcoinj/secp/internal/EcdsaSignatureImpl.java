@@ -40,15 +40,16 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
         this.s = SecpFieldElement.of(Arrays.copyOfRange(signature, 32, 64));
     }
 
+    @Override
     public SecpFieldElement r() {
         return r;
     }
 
+    @Override
     public SecpFieldElement s() {
         return s;
     }
-
-
+    
     @Override
     public byte[] bytes() {
         byte[] signature = new byte[64];
