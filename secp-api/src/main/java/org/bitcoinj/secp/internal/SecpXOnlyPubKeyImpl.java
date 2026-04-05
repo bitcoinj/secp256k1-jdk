@@ -31,16 +31,6 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
         this.x = x.serialize();
     }
 
-    public SecpXOnlyPubKeyImpl(byte[] xBytes) {
-        // Defensive copy
-        x = new byte[xBytes.length];
-        System.arraycopy(xBytes, 0, x, 0, x.length);
-    }
-
-    public SecpXOnlyPubKeyImpl(BigInteger x) {
-        this.x = SecpFieldElementImpl.integerTo32Bytes(x);
-    }
-
     @Override
     public BigInteger getX() {
         return ByteArray.toInteger(x);
