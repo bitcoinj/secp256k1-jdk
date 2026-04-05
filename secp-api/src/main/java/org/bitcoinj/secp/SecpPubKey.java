@@ -17,6 +17,7 @@ package org.bitcoinj.secp;
 
 import org.bitcoinj.secp.internal.SecpECPoint;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
+import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
 
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -93,7 +94,7 @@ public interface SecpPubKey extends ECPublicKey {
      * @return x-only pubkey
      */
     default SecpXOnlyPubKey xOnly() {
-        return SecpXOnlyPubKey.of(this.getW().getAffineX());
+        return new SecpXOnlyPubKeyImpl(this.point().x());
     }
 
     /**

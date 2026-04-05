@@ -16,8 +16,8 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.ByteArray;
+import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
-import org.bitcoinj.secp.SecpPubKey;
 
 import java.math.BigInteger;
 
@@ -27,9 +27,8 @@ import java.math.BigInteger;
 public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
     private final byte[] x;
 
-    public SecpXOnlyPubKeyImpl(SecpPubKey pubKey) {
-        // Avoid using pubKey.getXOnly() and possible infinite recursion
-        this.x = pubKey.xOnly().serialize();
+    public SecpXOnlyPubKeyImpl(SecpFieldElement x) {
+        this.x = x.serialize();
     }
 
     public SecpXOnlyPubKeyImpl(byte[] xBytes) {
