@@ -15,8 +15,30 @@
  */
 package org.bitcoinj.secp;
 
+import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
+
 /**
  * A secp256k1 Schnorr signature.
  */
 public interface SchnorrSignature extends ByteArray {
+    /**
+     * Get field element R
+     * @return R
+     */
+    SecpFieldElement r();
+
+    /**
+     * Get field element S
+     * @return S
+     */
+    SecpFieldElement s();
+
+    /**
+     * Create an ECDSA signature from serialized bytes
+     * @param bytes bytes
+     * @return signature
+     */
+    static SchnorrSignature of(byte[] bytes) {
+        return new SchnorrSignatureImpl(bytes);
+    }
 }

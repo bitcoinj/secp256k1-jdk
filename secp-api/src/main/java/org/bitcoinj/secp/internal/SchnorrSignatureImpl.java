@@ -15,24 +15,47 @@
  */
 package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.ByteArray;
 import org.bitcoinj.secp.SchnorrSignature;
+import org.bitcoinj.secp.SecpFieldElement;
 
 import java.util.Arrays;
 
 /**
- * A secp256k1 Schnorr signature, stored as a {@link ByteArray}.
+ * A secp256k1 Schnorr signature.
  */
 public class SchnorrSignatureImpl implements SchnorrSignature {
-    private final byte[] bytes;
+    private final SecpFieldElement r;
+    private final SecpFieldElement s;
 
-    public SchnorrSignatureImpl(byte[] bytes) {
-        this.bytes = Arrays.copyOf(bytes, bytes.length);
+    public SchnorrSignatureImpl(SecpFieldElement r, SecpFieldElement s) {
+        this.r = r;
+        this.s = s;
+    }
+
+    public SchnorrSignatureImpl(byte[] signature) {
+        if (signature.length != 64) {
+            throw new IllegalArgumentException("Sig Not 64 bytes");
+        }
+        this.r = SecpFieldElement.of(Arrays.copyOfRange(signature, 0, 32));
+        this.s = SecpFieldElement.of(Arrays.copyOfRange(signature, 32, 64));
+    }
+
+    @Override
+    public SecpFieldElement r() {
+        return r;
+    }
+
+    @Override
+    public SecpFieldElement s() {
+        return s;
     }
 
     @Override
     public byte[] bytes() {
-        return Arrays.copyOf(bytes, bytes.length);
+        byte[] signature = new byte[64];
+        System.arraycopy(r.serialize(), 0, signature, 0, 32);
+        System.arraycopy(s.serialize(), 0, signature, 32, 32);
+        return signature;
     }
 
     @Override
