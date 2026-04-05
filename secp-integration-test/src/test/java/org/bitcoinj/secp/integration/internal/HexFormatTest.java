@@ -30,8 +30,9 @@ public class HexFormatTest {
     public record Pair(String hex, byte[] bytes) {}
     public static final org.bitcoinj.secp.internal.HexFormat HEX_FORMAT = new org.bitcoinj.secp.internal.HexFormat();
     public static final List<Pair> VALID_PAIRS = Map.of(
-            "00", new byte[]{0x00},
-            "FF", new byte[]{(byte) 0xFF}).entrySet().stream()
+                "00", new byte[]{0x00},
+                "FF", new byte[]{(byte) 0xFF}
+            ).entrySet().stream()
             .map(e -> new Pair(e.getKey(), e.getValue()))
             .toList();
 
@@ -65,5 +66,4 @@ public class HexFormatTest {
         Assertions.assertArrayEquals(p.bytes, HexFormat.of().parseHex(p.hex));
         Assertions.assertArrayEquals(p.bytes, HexFormat.of().parseHex(p.hex.toLowerCase()));
     }
-
 }
