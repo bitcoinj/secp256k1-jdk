@@ -128,13 +128,4 @@ public interface SecpPubKey extends ECPublicKey {
     static SecpPubKey ofPoint(ECPoint ecPoint) {
         return new SecpPubKeyImpl(ecPoint);
     }
-
-    /**
-     * Construct a public key from an {@link SecpPoint.Uncompressed}
-     * @param point the point
-     * @return the pubkey
-     */
-    static SecpPubKey ofPoint(SecpPoint.Uncompressed point) {
-        return new SecpPubKeyImpl(point);
-    }
 }
