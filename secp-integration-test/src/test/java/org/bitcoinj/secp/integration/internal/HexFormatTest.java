@@ -23,6 +23,10 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Test the HexFormat utility in our internal module. Compare with the JDK 16+ implementation.
  */
@@ -52,30 +56,30 @@ public class HexFormatTest {
     @FieldSource("VALID_PAIRS")
     @ParameterizedTest(name = "n: {0}")
     void testFormat(Pair p) {
-        Assertions.assertEquals(p.hex, HEX_FORMAT.formatHex(p.bytes));
+        assertEquals(p.hex, HEX_FORMAT.formatHex(p.bytes));
     }
 
     @FieldSource("INVALID_HEX_STRINGS")
     @ParameterizedTest(name = "n: {0}")
     void testInvalidParse(String s) {
         // Test parsing both uppercase and lowercase hex
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HEX_FORMAT.parseHex(s));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HEX_FORMAT.parseHex(s.toLowerCase()));
+        assertThrows(IllegalArgumentException.class, () -> HEX_FORMAT.parseHex(s));
+        assertThrows(IllegalArgumentException.class, () -> HEX_FORMAT.parseHex(s.toLowerCase()));
     }
 
     @FieldSource("VALID_PAIRS")
     @ParameterizedTest(name = "n: {0}")
     void testParse(Pair p) {
         // Test parsing both uppercase and lowercase hex
-        Assertions.assertArrayEquals(p.bytes, HEX_FORMAT.parseHex(p.hex));
-        Assertions.assertArrayEquals(p.bytes, HEX_FORMAT.parseHex(p.hex.toLowerCase()));
+        assertArrayEquals(p.bytes, HEX_FORMAT.parseHex(p.hex));
+        assertArrayEquals(p.bytes, HEX_FORMAT.parseHex(p.hex.toLowerCase()));
     }
 
     @FieldSource("VALID_PAIRS")
     @ParameterizedTest(name = "n: {0}")
     void testJDKFormat(Pair p) {
         // Test the JDK implementation for comparison
-        Assertions.assertEquals(p.hex, JDK_FORMAT.formatHex(p.bytes));
+        assertEquals(p.hex, JDK_FORMAT.formatHex(p.bytes));
     }
 
     @FieldSource("VALID_PAIRS")
@@ -83,16 +87,16 @@ public class HexFormatTest {
     void testJDKParse(Pair p) {
         // Test the JDK implementation for comparison
         // Test parsing both uppercase and lowercase hex
-        Assertions.assertArrayEquals(p.bytes, JDK_FORMAT.parseHex(p.hex));
-        Assertions.assertArrayEquals(p.bytes, JDK_FORMAT.parseHex(p.hex.toLowerCase()));
+        assertArrayEquals(p.bytes, JDK_FORMAT.parseHex(p.hex));
+        assertArrayEquals(p.bytes, JDK_FORMAT.parseHex(p.hex.toLowerCase()));
     }
 
     @FieldSource("INVALID_HEX_STRINGS")
     @ParameterizedTest(name = "n: {0}")
     void testJDKInvalidParse(String s) {
         // Test parsing both uppercase and lowercase hex
-        Assertions.assertThrows(IllegalArgumentException.class, () -> JDK_FORMAT.parseHex(s));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> JDK_FORMAT.parseHex(s.toLowerCase()));
+        assertThrows(IllegalArgumentException.class, () -> JDK_FORMAT.parseHex(s));
+        assertThrows(IllegalArgumentException.class, () -> JDK_FORMAT.parseHex(s.toLowerCase()));
     }
 
     /** helper method for specifying {@code byte[]} values */
