@@ -29,6 +29,7 @@ import java.util.Map;
 public class HexFormatTest {
     public record Pair(String hex, byte[] bytes) {}
     public static final org.bitcoinj.secp.internal.HexFormat HEX_FORMAT = new org.bitcoinj.secp.internal.HexFormat();
+    public static final HexFormat JDK_FORMAT = HexFormat.of().withUpperCase();
     public static final List<Pair> VALID_PAIRS = Map.of(
                 "",     b(),
                 "00",   b(0x00),
@@ -74,8 +75,7 @@ public class HexFormatTest {
     @ParameterizedTest(name = "n: {0}")
     void testJDKFormat(Pair p) {
         // Test the JDK implementation for comparison
-        // Note: output of JDK formatHex is expected to be lower-case.
-        Assertions.assertEquals(p.hex.toLowerCase(), HexFormat.of().formatHex(p.bytes));
+        Assertions.assertEquals(p.hex, JDK_FORMAT.formatHex(p.bytes));
     }
 
     @FieldSource("VALID_PAIRS")
@@ -83,16 +83,16 @@ public class HexFormatTest {
     void testJDKParse(Pair p) {
         // Test the JDK implementation for comparison
         // Test parsing both uppercase and lowercase hex
-        Assertions.assertArrayEquals(p.bytes, HexFormat.of().parseHex(p.hex));
-        Assertions.assertArrayEquals(p.bytes, HexFormat.of().parseHex(p.hex.toLowerCase()));
+        Assertions.assertArrayEquals(p.bytes, JDK_FORMAT.parseHex(p.hex));
+        Assertions.assertArrayEquals(p.bytes, JDK_FORMAT.parseHex(p.hex.toLowerCase()));
     }
 
     @FieldSource("INVALID_HEX_STRINGS")
     @ParameterizedTest(name = "n: {0}")
     void testJDKInvalidParse(String s) {
         // Test parsing both uppercase and lowercase hex
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HexFormat.of().parseHex(s));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HexFormat.of().parseHex(s.toLowerCase()));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> JDK_FORMAT.parseHex(s));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> JDK_FORMAT.parseHex(s.toLowerCase()));
     }
 
     /** helper method for specifying {@code byte[]} values */
