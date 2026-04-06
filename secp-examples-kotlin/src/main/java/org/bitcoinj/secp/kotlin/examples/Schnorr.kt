@@ -41,7 +41,7 @@ fun main() {
         val signature = secp.schnorrSigSign32(messageHash, keyPair)
 
         /* === Verification === */
-        val xOnly2 : SecpXOnlyPubKey = SecpXOnlyPubKey.parse(serializedXOnly).get()
+        val xOnly2 : SecpXOnlyPubKey = secp.xOnlyPubKeyParse(serializedXOnly).get()
 
         /* Compute the tagged hash on the received message using the same tag as the signer. */
         val messageHash2 = secp.taggedSha256(tag, msg)

@@ -38,9 +38,13 @@ public interface SecpXOnlyPubKey {
 
     /**
      * Parses a serialized x-only pubkey and returns an instance of the default implementation
+     * <p>
+     * This method is <b>deprecated</b> because it <b>does not validate</b> they x-only pubkey.
      * @param serialized byte string in x-only pubkey serialization format
      * @return an instance of the default implementation
+     * @deprecated Use {@link Secp256k1#xOnlyPubKeyParse(byte[])} instead
      */
+    @Deprecated(forRemoval = true)
     static SecpResult<SecpXOnlyPubKey> parse(byte[] serialized) {
         return !SecpFieldElementImpl.isInRange(serialized)
                 ? SecpResult.err(-1)

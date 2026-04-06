@@ -90,6 +90,8 @@ public class AddressTest {
         Address tapRootAddress;
         try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
             byte[] serial = HexFormat.of().parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
+            // TODO: Use `secp.xOnlyPubKeyParse(serial)` here instead of `SecpXOnlyPubKey.parse(serial)`
+            // We need a Bouncy Castle Implementation first
             SecpXOnlyPubKey xOnlyKey = SecpXOnlyPubKey.parse(serial).get();
             BigInteger tweakInt = calcTweak(xOnlyKey);
             SecpPubKey G = new SecpPubKeyImpl(Secp256k1.G);
@@ -119,6 +121,8 @@ public class AddressTest {
             System.arraycopy(xbytes, 0, compressed, 1, 32);
             ECKey ecKey = ECKey.fromPublicOnly(compressed);
             SecpPubKey pubkey = BC.toP256K1PubKey(ecKey.getPubKeyPoint());
+            // TODO: Use `secp.xOnlyPubKeyParse(serial)` here instead of `SecpXOnlyPubKey.parse(serial)`
+            // We need a Bouncy Castle Implementation first
             SecpXOnlyPubKey xOnlyKey = SecpXOnlyPubKey.parse(UInt256.integerTo32Bytes(internalPubKey)).get();
             BigInteger tweakInt = calcTweak(xOnlyKey);
             SecpPubKey G = new SecpPubKeyImpl(Secp256k1.G);
