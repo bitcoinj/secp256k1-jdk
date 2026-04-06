@@ -31,6 +31,11 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
         this.x = x.serialize();
     }
 
+    // Only call this method for x-only pubkeys that have been verified as valid
+    public static SecpXOnlyPubKeyImpl ofVerifiedBytes(byte[] bytes) {
+        return new SecpXOnlyPubKeyImpl(SecpFieldElement.of(bytes));
+    }
+
     @Override
     public BigInteger getX() {
         return ByteArray.toInteger(x);
