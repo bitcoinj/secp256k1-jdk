@@ -15,7 +15,6 @@
  */
 package org.bitcoinj.secp.ffm;
 
-import org.bitcoinj.secp.ByteArray;
 import org.bitcoinj.secp.EcdhSharedSecret;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
@@ -29,6 +28,7 @@ import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.SecpFieldElementImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
+import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
@@ -44,7 +44,6 @@ import java.lang.foreign.SegmentAllocator;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.ECPoint;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
@@ -155,7 +154,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return pubkey;
     }
 
-    static /* package */ ECPoint toPoint(MemorySegment pubKeySegment) {
+    static /* package */ SecpPointUncompressed toPoint(MemorySegment pubKeySegment) {
         // Serialize uncompressed
         MemorySegment serialized_pubkey = pubKeySerializeSegment(pubKeySegment, SECP256K1_EC_UNCOMPRESSED());
 
@@ -164,16 +163,14 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return toPoint(uncompressed_bytes);
     }
 
-    static /* package */ ECPoint toPoint(byte[] uncompressed_bytes) {
+    static /* package */ SecpPointUncompressed toPoint(byte[] uncompressed_bytes) {
         // Extract x and y, create an ECPoint and return it
         byte[] xbytes = new byte[32];
         byte[] ybytes = new byte[32];
         System.arraycopy(uncompressed_bytes,  1, xbytes, 0, 32);
         System.arraycopy(uncompressed_bytes, 33, ybytes, 0, 32);
         // TODO: How to handle point at infinity?
-        BigInteger x = ByteArray.toInteger(xbytes);
-        BigInteger y = ByteArray.toInteger(ybytes);
-        return new ECPoint(x, y);
+        return new SecpPointUncompressed(SecpFieldElement.of(xbytes), SecpFieldElement.of(ybytes));
     }
 
     @Override
