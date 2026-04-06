@@ -196,6 +196,13 @@ public interface Secp256k1 extends Closeable {
     SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData);
 
     /**
+     * Parse a byte array as an x-only public key
+     * @param inputData raw data to parse as an x-only public key
+     * @return an x-only public key result or error
+     */
+    SecpResult<SecpXOnlyPubKey> xOnlyPubKeyParse(byte[] inputData);
+
+    /**
      * Sign a message hash using the ECDSA algorithm
      * @param msg_hash_data hash of message to sign
      * @param seckey private key

@@ -47,7 +47,7 @@ public class Schnorr {
 
             /* === Verification === */
 
-            SecpXOnlyPubKey xOnly2 = SecpXOnlyPubKey.parse(serializedXOnly).get();
+            SecpXOnlyPubKey xOnly2 = secp.xOnlyPubKeyParse(serializedXOnly).get();
 
             /* Compute the tagged hash on the received message using the same tag as the signer. */
             byte[] messageHash2 = secp.taggedSha256(tag, msg);

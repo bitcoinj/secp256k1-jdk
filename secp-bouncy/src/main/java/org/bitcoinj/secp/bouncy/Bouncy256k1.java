@@ -147,6 +147,11 @@ public class Bouncy256k1 implements Secp256k1 {
         return SecpResult.ok(BC.toP256K1PubKey(bcPoint));
     }
 
+    @Override
+    public SecpResult<SecpXOnlyPubKey> xOnlyPubKeyParse(byte[] inputData) {
+        throw new UnsupportedOperationException();
+    }
+
     // TODO: Add constructor to create SignatureData from r and s
     @Override
     public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey) {

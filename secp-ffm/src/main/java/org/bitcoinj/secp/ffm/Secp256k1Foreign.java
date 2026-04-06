@@ -17,6 +17,7 @@ package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.ByteArray;
 import org.bitcoinj.secp.EcdhSharedSecret;
+import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpResult;
@@ -35,6 +36,7 @@ import org.bitcoinj.secp.ffm.jextract.secp256k1_keypair;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_pubkey;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_xonly_pubkey;
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
+import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
 
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
@@ -49,6 +51,7 @@ import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.NULL;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
+import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_xonly_pubkey_serialize;
 
 /**
  * Implementation of {@link Secp256k1} using the {@code secp256k1} C-language library and the Java Foreign Function &amp; Memory API.
@@ -289,6 +292,19 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             System.out.println("Failed parsing the public key\n");
         }
         return SecpResult.checked(return_val, () -> new SecpPubKeyImpl(toPoint(pubkey)));
+    }
+
+    @Override
+    public SecpResult<SecpXOnlyPubKey> xOnlyPubKeyParse(byte[] inputData) {
+        if (inputData.length != 32) throw new IllegalArgumentException("length != 32");
+        MemorySegment input = arena.allocateFrom(JAVA_BYTE, inputData);
+        MemorySegment xOnly = secp256k1_xonly_pubkey.allocate(arena);
+        int return_val = secp256k1_h.secp256k1_xonly_pubkey_parse(ctx, xOnly, input);
+        if (return_val != 1) return SecpResult.err(return_val);
+        // Surprisingly, secp256k1_xonly_pubkey is 64 opaque bytes, so we need to serialize to get 32 bytes
+        MemorySegment serializedXOnly = arena.allocate(32);
+        secp256k1_xonly_pubkey_serialize(ctx, serializedXOnly, xOnly);  // Always returns 1
+        return SecpResult.ok(new SecpXOnlyPubKeyImpl(SecpFieldElement.of(serializedXOnly.toArray(JAVA_BYTE))));
     }
 
     private SecpResult<MemorySegment> pubKeyParse(SecpPubKey pubKeyData) {
