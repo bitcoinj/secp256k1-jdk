@@ -143,7 +143,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment pubKey = ecPubKeyCreate(privkeySegment);
         privkeySegment.fill((byte) 0x00);
         // Return serialized pubkey
-        return new SecpPubKeyImpl(toPoint(pubKey));
+        return toSecpPubKey(pubKey);
     }
 
     /* package */ MemorySegment ecPubKeyCreate(MemorySegment privkeySegment) {
@@ -154,11 +154,10 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return pubkey;
     }
 
-    /// Convert a pubKey [MemorySegment] to a [SecpPointUncompressed]
-    static private SecpPointUncompressed toPoint(MemorySegment pubKeySegment) {
-        // Serialize uncompressed
+    /// Convert a pubKey [MemorySegment] to a [SecpPubKeyImpl]
+    static private SecpPubKeyImpl toSecpPubKey(MemorySegment pubKeySegment) {
         MemorySegment serialized_pubkey = pubKeySerializeSegment(pubKeySegment, SECP256K1_EC_UNCOMPRESSED());
-        return serializedPubKeyToPoint(serialized_pubkey);
+        return new SecpPubKeyImpl(serializedPubKeyToPoint(serialized_pubkey));
     }
 
     /// Convert a serialized, uncompressed pubKey [MemorySegment] to a [SecpPointUncompressed]
@@ -207,7 +206,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             throw new IllegalStateException("Tweak_mul failed");
         }
-        return new SecpPubKeyImpl(toPoint(pubKeySeg));
+        return toSecpPubKey(pubKeySeg);
     }
 
     @Override
@@ -220,7 +219,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
         }
-        return new SecpPubKeyImpl(toPoint(resultKeySeg));
+        return toSecpPubKey(resultKeySeg);
     }
 
     public SecpPubKey ecPubKeyCombine(SecpPubKey key1) {
@@ -231,7 +230,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         if (return_val != 1) {
             throw new IllegalStateException("secp256k1_ec_pubkey_combine failed");
         }
-        return new SecpPubKeyImpl(toPoint(resultKeySeg));
+        return toSecpPubKey(resultKeySeg);
     }
 
 
@@ -282,7 +281,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment input = arena.allocateFrom(JAVA_BYTE, inputData);
         MemorySegment pubkey = secp256k1_pubkey.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
-        return SecpResult.checked(return_val, () -> new SecpPubKeyImpl(toPoint(pubkey)));
+        return SecpResult.checked(return_val, () -> toSecpPubKey(pubkey));
     }
 
     @Override
@@ -400,7 +399,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment pubKeySegment = secp256k1_pubkey.allocate(Secp256k1Foreign.globalArena);
         int return_val = secp256k1_h.secp256k1_keypair_pub(ctx, pubKeySegment, keyPairSegment);
         assert(return_val == 1);
-        SecpPubKey pubKey = new SecpPubKeyImpl(toPoint(pubKeySegment));
+        SecpPubKey pubKey = toSecpPubKey(pubKeySegment);
         MemorySegment privKeySegment = Secp256k1Foreign.globalArena.allocate(32);
         int return_val2 = secp256k1_h.secp256k1_keypair_sec(ctx, privKeySegment, keyPairSegment);
         assert(return_val2 == 1);
