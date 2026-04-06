@@ -154,7 +154,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return pubkey;
     }
 
-    static /* package */ SecpPointUncompressed toPoint(MemorySegment pubKeySegment) {
+    static private SecpPointUncompressed toPoint(MemorySegment pubKeySegment) {
         // Serialize uncompressed
         MemorySegment serialized_pubkey = pubKeySerializeSegment(pubKeySegment, SECP256K1_EC_UNCOMPRESSED());
 
@@ -163,7 +163,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return toPoint(uncompressed_bytes);
     }
 
-    static /* package */ SecpPointUncompressed toPoint(byte[] uncompressed_bytes) {
+    static private SecpPointUncompressed toPoint(byte[] uncompressed_bytes) {
         // Extract x and y, create an ECPoint and return it
         byte[] xbytes = new byte[32];
         byte[] ybytes = new byte[32];
