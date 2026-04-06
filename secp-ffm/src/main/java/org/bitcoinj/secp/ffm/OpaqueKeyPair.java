@@ -40,16 +40,15 @@ class OpaqueKeyPair implements SecpKeyPair {
 
     @Override
     public SecpPubKey publicKey() {
+        // Create a keyPairSegment from opaque
         MemorySegment keyPairSegment = Secp256k1Foreign.globalArena.allocateFrom(JAVA_BYTE, opaque);
+        // Create a pubKeySegment from a keyPairSegment using secp256k1_context_static()
         MemorySegment pubKeySegment = secp256k1_pubkey.allocate(Secp256k1Foreign.globalArena);
         int return_val = secp256k1_h.secp256k1_keypair_pub(secp256k1_h.secp256k1_context_static(), pubKeySegment, keyPairSegment);
         assert(return_val == 1);
+        // Convert the pubKeySegment to a SecpPubKey
         ECPoint pubKeyPoint = Secp256k1Foreign.toPoint(pubKeySegment);
         return new SecpPubKeyImpl(pubKeyPoint);
-    }
-
-    public byte[] getOpaque() {
-        return opaque.clone();
     }
 
     public SecpPrivKey privateKey() {
@@ -58,15 +57,17 @@ class OpaqueKeyPair implements SecpKeyPair {
 
     @Override
     public byte[] getEncoded() {
+        // Create a keyPairSegment from opaque
         MemorySegment keyPairSegment = Secp256k1Foreign.globalArena.allocateFrom(JAVA_BYTE, opaque);
+        // Create a privKeySegment from a keyPairSegment using secp256k1_context_static()
         MemorySegment privKeySegment = Secp256k1Foreign.globalArena.allocate(32);
         int return_val = secp256k1_h.secp256k1_keypair_sec(secp256k1_h.secp256k1_context_static(), privKeySegment, keyPairSegment);
         assert(return_val == 1);
+        // return the private key as byte[]
         return privKeySegment.toArray(JAVA_BYTE);
     }
 
     @Override
     public void destroy() {
-        // TODO
     }
 }
