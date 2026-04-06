@@ -154,17 +154,17 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return pubkey;
     }
 
+    /// Convert a pubKey [MemorySegment] to a [SecpPointUncompressed]
     static private SecpPointUncompressed toPoint(MemorySegment pubKeySegment) {
         // Serialize uncompressed
         MemorySegment serialized_pubkey = pubKeySerializeSegment(pubKeySegment, SECP256K1_EC_UNCOMPRESSED());
-
-        // Extract x and y, create an ECPoint and return it
-        byte[] uncompressed_bytes = serialized_pubkey.toArray(JAVA_BYTE);
-        return toPoint(uncompressed_bytes);
+        return serializedPubKeyToPoint(serialized_pubkey);
     }
 
-    static private SecpPointUncompressed toPoint(byte[] uncompressed_bytes) {
-        // Extract x and y, create an ECPoint and return it
+    /// Convert a serialized, uncompressed pubKey [MemorySegment] to a [SecpPointUncompressed]
+    static private SecpPointUncompressed serializedPubKeyToPoint(MemorySegment serializedPubKeySegment) {
+        // Extract x and y, create an [SecpPointUncompressed] and return it
+        byte[] uncompressed_bytes = serializedPubKeySegment.toArray(JAVA_BYTE);
         byte[] xbytes = new byte[32];
         byte[] ybytes = new byte[32];
         System.arraycopy(uncompressed_bytes,  1, xbytes, 0, 32);
