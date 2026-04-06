@@ -301,7 +301,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         // Surprisingly, secp256k1_xonly_pubkey is 64 opaque bytes, so we need to serialize to get 32 bytes
         MemorySegment serializedXOnly = arena.allocate(32);
         secp256k1_xonly_pubkey_serialize(ctx, serializedXOnly, xOnly);  // Always returns 1
-        return SecpResult.ok(new SecpXOnlyPubKeyImpl(SecpFieldElement.of(serializedXOnly.toArray(JAVA_BYTE))));
+        return SecpResult.ok(SecpXOnlyPubKeyImpl.ofVerifiedBytes(serializedXOnly.toArray(JAVA_BYTE)));
     }
 
     private SecpResult<MemorySegment> pubKeyParse(SecpPubKey pubKeyData) {
