@@ -36,10 +36,6 @@ public class SecpPubKeyImpl implements SecpPubKey {
                 : new SecpPointUncompressed(point.x(), point.y());
     }
 
-    public SecpPubKeyImpl(SecpECPoint ecPoint) {
-        this.point = new SecpPointUncompressed(ecPoint.x(), ecPoint.y());
-    }
-
     public SecpPubKeyImpl(ECPoint ecPoint) {
         this.point = SecpPointUncompressed.of(ecPoint);
     }
