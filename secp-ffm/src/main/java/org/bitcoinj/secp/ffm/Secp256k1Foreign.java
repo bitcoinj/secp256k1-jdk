@@ -288,9 +288,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment input = arena.allocateFrom(JAVA_BYTE, inputData);
         MemorySegment pubkey = secp256k1_pubkey.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
-        if (return_val != 1) {
-            System.out.println("Failed parsing the public key\n");
-        }
         return SecpResult.checked(return_val, () -> new SecpPubKeyImpl(toPoint(pubkey)));
     }
 
