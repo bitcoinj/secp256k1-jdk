@@ -164,13 +164,10 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     /// Convert a serialized, uncompressed pubKey [MemorySegment] to a [SecpPointUncompressed]
     static private SecpPointUncompressed serializedPubKeyToPoint(MemorySegment serializedPubKeySegment) {
         // Extract x and y, create an [SecpPointUncompressed] and return it
-        byte[] uncompressed_bytes = serializedPubKeySegment.toArray(JAVA_BYTE);
-        byte[] xbytes = new byte[32];
-        byte[] ybytes = new byte[32];
-        System.arraycopy(uncompressed_bytes,  1, xbytes, 0, 32);
-        System.arraycopy(uncompressed_bytes, 33, ybytes, 0, 32);
+        byte[] xBytes = serializedPubKeySegment.asSlice(1, 32).toArray(JAVA_BYTE);
+        byte[] yBytes = serializedPubKeySegment.asSlice(33, 32).toArray(JAVA_BYTE);
         // TODO: How to handle point at infinity?
-        return new SecpPointUncompressed(SecpFieldElement.of(xbytes), SecpFieldElement.of(ybytes));
+        return new SecpPointUncompressed(SecpFieldElement.of(xBytes), SecpFieldElement.of(yBytes));
     }
 
     @Override
