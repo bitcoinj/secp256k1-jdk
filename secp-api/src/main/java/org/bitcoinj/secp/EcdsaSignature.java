@@ -34,6 +34,13 @@ public interface EcdsaSignature extends ByteArray {
     SecpFieldElement s();
 
     /**
+     * Is this signature a "low R" signature.
+     * In other words: In a 256-bit big-endian representation of {@code R}, the high-bit is zero.
+     * @return true if this signature has a <i>low R</i> value.
+     */
+    boolean hasLowR();
+
+    /**
      * Create an ECDSA signature from serialized bytes
      * @param bytes bytes
      * @return signature

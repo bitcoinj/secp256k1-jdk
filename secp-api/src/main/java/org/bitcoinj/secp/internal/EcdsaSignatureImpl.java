@@ -49,7 +49,13 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
     public SecpFieldElement s() {
         return s;
     }
-    
+
+    @Override
+    public boolean hasLowR() {
+        // Is the high-bit of the first (high, big-endian) byte zero?
+        return this.r().serialize()[0] >= 0;
+    }
+
     @Override
     public byte[] bytes() {
         byte[] signature = new byte[64];
