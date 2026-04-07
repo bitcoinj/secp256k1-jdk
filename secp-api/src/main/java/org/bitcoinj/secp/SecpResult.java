@@ -81,6 +81,14 @@ public /* sealed */ interface SecpResult<T> {
     }
 
     /**
+     * Return the error code
+     * @return error code -- {@code 1} for success
+     */
+    default int errorCode() {
+        return (this instanceof Ok) ? 1 : ((Err<T>) this).code();
+    }
+
+    /**
      * Static constructor for {@link SecpResult.Ok}
      * @param result result value
      * @return successful result
