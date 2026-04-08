@@ -19,9 +19,14 @@ import java.util.function.Supplier;
 
 /**
  * Functional-style result for secp256k1 -- either {@link Ok} or {@link Err}.
- * If result is {@code Ok} the success result is in {@link Ok#result()}, if a failure
+ * If result is {@code Ok} the return value is in {@link Ok#result()}, if a failure
  * occurred the error code is in {@link Err#code()}.
- * @param <T> type of the successful result
+ * <p>
+ * The error code (or <q>return value</q> as it is called in the C API) for {@link #OK} or
+ * <q>success</q> is {@code 1}. For almost all calls the <i>error code</i> for <q>failure</q>
+ * is {@code 0} -- so the behavior is similar to a {@code boolean}. However, the C API uses
+ * a (C) `int`, so we return a (Java) `int` for future compatibility.
+ * @param <T> type of the return value in a successful result
  */
 public /* sealed */ interface SecpResult<T> {
     /**
@@ -71,6 +76,8 @@ public /* sealed */ interface SecpResult<T> {
             return code;
         }
     }
+    /** Error return integer value for success */
+    int OK = 1;
 
     /**
      * Is the result successful ({@link Ok})?
@@ -82,10 +89,10 @@ public /* sealed */ interface SecpResult<T> {
 
     /**
      * Return the error code
-     * @return error code -- {@code 1} for success
+     * @return error code -- {@link #OK} for success
      */
     default int errorCode() {
-        return (this instanceof Ok) ? 1 : ((Err<T>) this).code();
+        return (this instanceof Ok) ? OK : ((Err<T>) this).code();
     }
 
     /**
@@ -110,7 +117,7 @@ public /* sealed */ interface SecpResult<T> {
 
     /**
      * Create a result from an error code and a supplier function. If the error code
-     * is {@code 1} (no error), the supplier function is invoked to produce a successful result.
+     * is {@code 1} ({@link #OK}), the supplier function is invoked to produce a successful result.
      * Otherwise, an error result is returned containing the error code.
      * @param error_code error code
      * @param supplier value supplier
@@ -118,7 +125,7 @@ public /* sealed */ interface SecpResult<T> {
      * @param <T> result value type
      */
     static <T> SecpResult<T> checked(int error_code, Supplier<T> supplier) {
-        return (error_code == 1) ? SecpResult.ok(supplier.get()) : SecpResult.err(error_code);
+        return (error_code == OK) ? SecpResult.ok(supplier.get()) : SecpResult.err(error_code);
     }
 
     // TODO: define well-known error codes and messages and map between them
