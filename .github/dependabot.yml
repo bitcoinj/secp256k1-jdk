@@ -1,0 +1,14 @@
+# secp256k1-jdk Dependabot updates for Gradle and Nix
+# Please see the documentation for all configuration options:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nix"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "weekly"
