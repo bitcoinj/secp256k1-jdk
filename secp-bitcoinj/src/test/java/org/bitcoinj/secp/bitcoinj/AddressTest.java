@@ -32,12 +32,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.FieldSource;
 
 import java.math.BigInteger;
 import java.security.spec.ECPoint;
 import java.util.HexFormat;
-import java.util.stream.Stream;
+import java.util.List;
 
 import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
 import static org.bitcoinj.secp.bitcoinj.WitnessMaker.calcTweak;
@@ -47,7 +47,7 @@ import static org.bitcoinj.secp.bitcoinj.WitnessMaker.calcTweak;
  */
 public class AddressTest {
     final static Network network = BitcoinNetwork.MAINNET;
-    @MethodSource("keyAddressArgs")
+    @FieldSource("keyAddressArgs")
     @ParameterizedTest(name = "key {0} -> Address {1}")
     void createAddressTest(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
@@ -66,7 +66,7 @@ public class AddressTest {
         Assertions.assertEquals(address, tapRootAddress.toString());
     }
 
-    @MethodSource("keyAddressArgs")
+    @FieldSource("keyAddressArgs")
     @ParameterizedTest(name = "key {0} -> Address {1}")
     void createAddressTestBouncy(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
@@ -104,12 +104,11 @@ public class AddressTest {
     }
 
 
-    private static Stream<Arguments> keyAddressArgs() {
-        return Stream.of(
-                Arguments.of(BigInteger.ONE, "bc1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5sspknck9"),
-                Arguments.of(BigInteger.TEN, "bc1pz6sunwdvdy6t4df4wynddj8wv7rttzl8m384h72ghnxlu2wcquks3sgk7p")
-        );
-    }
+    private static final List<Arguments> keyAddressArgs = List.of(
+            Arguments.of(BigInteger.ONE, "bc1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5sspknck9"),
+            Arguments.of(BigInteger.TEN, "bc1pz6sunwdvdy6t4df4wynddj8wv7rttzl8m384h72ghnxlu2wcquks3sgk7p")
+    );
+
     @Test
     void createAddressTest2() throws Exception {
         Address tapRootAddress;
