@@ -6,6 +6,10 @@ tasks.withType(JavaCompile).configureEach {
     options.release = 9
 }
 
+tasks.compileTestJava {
+    options.release = 17 // test code can use Java 17+ features, e.g. JUnit 6
+}
+
 ext.moduleName = 'org.bitcoinj.secp'
 
 dependencies {
