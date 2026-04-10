@@ -44,9 +44,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
     @Override
     public byte[] bytes() {
         // Defensive copy
-        byte[] result = new byte[x.length];
-        System.arraycopy(x, 0, result, 0, x.length);
-        return result;
+        return x.clone();
     }
 
     /**
