@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * Implementation of {@link SecpFieldElement} as an array of bytes.
  */
-public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
+public class SecpFieldElementImpl implements SecpFieldElement {
     static byte[] MAX_VALUE_BYTES = integerTo32Bytes(Secp256k1.P.subtract(BigInteger.ONE));
     /** field element as a 32-byte big-endian byte array */
     private final byte[] value;
@@ -68,13 +68,8 @@ public class SecpFieldElementImpl implements SecpFieldElement, ByteArray {
     }
 
     @Override
-    public byte[] bytes() {
-        return value.clone();
-    }
-
-    @Override
     public String toString() {
-        return formatHex();
+        return ByteArrayBase.toHexString(value);
     }
 
     /**
