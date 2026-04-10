@@ -38,11 +38,11 @@ public class EcdhSharedSecretImpl  implements EcdhSharedSecret {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(bytes());
+        return Arrays.hashCode(bytes);
     }
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof EcdhSharedSecretImpl && MessageDigest.isEqual(bytes(), ((EcdhSharedSecretImpl) o).bytes());
+        return o instanceof EcdhSharedSecretImpl && MessageDigest.isEqual(bytes, ((EcdhSharedSecretImpl) o).bytes);
     }
 }
