@@ -11,7 +11,6 @@ jobs:
       - uses: gradle/actions/wrapper-validation@v5
 
   build_gradle:
-    needs: validate_gradle_wrapper
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -30,6 +29,10 @@ jobs:
           java-version: |
             25
           cache: 'gradle'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.4.1'
       - name: Install secp256k1 with APT
         if: runner.os == 'Linux'
         run: |
@@ -42,9 +45,9 @@ jobs:
           echo "DYLD_LIBRARY_PATH=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
           echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
       - name: Build with Gradle
-        run: ./gradlew build
+        run: gradle build
       - name: Run Java & Kotlin Examples
-        run: ./gradlew run runEcdsa
+        run: gradle run runEcdsa
       - name: Print Sha256Sums (Linux)
         if: runner.os == 'Linux'
         run: sha256sum secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*
@@ -53,7 +56,6 @@ jobs:
         run: shasum -a 256 secp-api/build/libs/* secp-bouncy/build/libs/* secp-ffm/build/libs/* secp-graalvm/build/libs/*
 
   build_graalvm_gradle:
-    needs: validate_gradle_wrapper
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -71,6 +73,10 @@ jobs:
           distribution: ${{ matrix.distribution }}
           java-version: ${{ matrix.java }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.4.1'
       - name: Install secp256k1 with APT
         if: runner.os == 'Linux'
         run: |
@@ -83,11 +89,11 @@ jobs:
           echo "DYLD_LIBRARY_PATH=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
           echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
       - name: Build (JIT) with Gradle
-        run: ./gradlew build
+        run: gradle build
       - name: Run Java & Kotlin Examples
-        run: ./gradlew build run runEcdsa
+        run: gradle build run runEcdsa
       - name: Build Native Image with Gradle
-        run: ./gradlew build secp-examples-java:nativeCompile
+        run: gradle build secp-examples-java:nativeCompile
       - name: Run Schnorr Native Example
         run: ./secp-examples-java/build/schnorr-example
 
@@ -104,12 +110,16 @@ jobs:
           distribution: 'temurin'
           java-version: 25
           cache: 'gradle'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.4.1'
       - name: Install secp256k1 with APT
         run: |
           sudo apt install -y libsecp256k1-dev
           echo "LD_LIBRARY_PATH=/usr/lib/$(uname -m)-linux-gnu" >> $GITHUB_ENV
       - name: Build Aggregate Modular Javadoc with Gradle
-        run: ./gradlew javadoc
+        run: gradle javadoc
       - name: Upload Javadoc as artifact
         uses: actions/upload-artifact@v6
         with:
