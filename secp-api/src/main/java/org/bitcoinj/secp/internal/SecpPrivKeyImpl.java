@@ -48,9 +48,7 @@ public class SecpPrivKeyImpl implements SecpPrivKey {
     @Override
     public byte[] getEncoded() {
         if (privKeyBytes == null) throwKeyDestroyed();
-        byte[] copy = new byte[privKeyBytes.length];
-        System.arraycopy(privKeyBytes, 0, copy, 0, privKeyBytes.length);
-        return copy;
+        return privKeyBytes.clone();
     }
 
     @Override

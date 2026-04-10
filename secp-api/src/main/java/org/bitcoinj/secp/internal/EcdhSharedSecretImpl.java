@@ -28,12 +28,12 @@ public class EcdhSharedSecretImpl  implements EcdhSharedSecret {
     private final byte[] bytes;
 
     public EcdhSharedSecretImpl(byte[] bytes) {
-        this.bytes = Arrays.copyOf(bytes, bytes.length);
+        this.bytes = bytes.clone();
     }
 
     @Override
     public byte[] bytes() {
-        return Arrays.copyOf(bytes, bytes.length);
+        return bytes.clone();
     }
 
     @Override
