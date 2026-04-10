@@ -52,7 +52,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
      */
     @Override
     public byte[] serialize() {
-        return bytes();
+        return x.clone();
     }
 
     /**
