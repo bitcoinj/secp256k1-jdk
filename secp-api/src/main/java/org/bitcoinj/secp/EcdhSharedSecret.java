@@ -18,5 +18,10 @@ package org.bitcoinj.secp;
 /**
  * An secp256k1 ECDH shared secret (a 32-byte hash.)
  */
-public interface EcdhSharedSecret extends ByteArray {
+public interface EcdhSharedSecret {
+    /**
+     * Get the 32-byte hash as a {@code byte[]}
+     * @return the secret bytes
+     */
+    byte[] bytes();
 }
