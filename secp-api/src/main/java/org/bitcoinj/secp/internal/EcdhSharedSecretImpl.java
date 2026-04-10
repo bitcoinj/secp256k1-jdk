@@ -18,6 +18,7 @@ package org.bitcoinj.secp.internal;
 import org.bitcoinj.secp.ByteArray;
 import org.bitcoinj.secp.EcdhSharedSecret;
 
+import java.security.MessageDigest;
 import java.util.Arrays;
 
 /**
@@ -42,6 +43,6 @@ public class EcdhSharedSecretImpl  implements EcdhSharedSecret {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof EcdhSharedSecretImpl && Arrays.equals(bytes(), ((EcdhSharedSecretImpl) o).bytes());
+        return o instanceof EcdhSharedSecretImpl && MessageDigest.isEqual(bytes(), ((EcdhSharedSecretImpl) o).bytes());
     }
 }
