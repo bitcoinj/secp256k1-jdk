@@ -21,8 +21,8 @@ import org.bitcoinj.secp.SecpFieldElement;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Implementation of {@link SecpFieldElement} as an array of bytes.
@@ -59,7 +59,7 @@ public class SecpFieldElementImpl implements SecpFieldElement {
     public boolean equals(@Nullable Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SecpFieldElementImpl that = (SecpFieldElementImpl) o;
-        return Objects.deepEquals(value, that.value);
+        return MessageDigest.isEqual(value, that.value);
     }
 
     @Override
