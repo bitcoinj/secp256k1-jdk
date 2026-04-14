@@ -1,6 +1,8 @@
+import org.gradle.util.GradleVersion
+
 plugins {
     id 'com.github.hierynomus.license'      version '0.16.1' apply false
-    id 'io.freefair.aggregate-javadoc'      version '9.4.0'
+    id 'io.freefair.aggregate-javadoc'      version '9.4.0' apply false
 }
 
 // Projects to be published with maven-publish
@@ -52,11 +54,14 @@ subprojects { sub ->
     }
 }
 
+if (GradleVersion.current() > GradleVersion.version("9.2")) {
 // Aggregated Javadoc depends upon subprojects in publishedProjects
-dependencies {
-    subprojects {
-        if (it.name in publishedProjects) {
-            javadoc it
+    apply plugin: 'io.freefair.aggregate-javadoc'
+    dependencies {
+        subprojects {
+            if (it.name in publishedProjects) {
+                javadoc it
+            }
         }
     }
 }
