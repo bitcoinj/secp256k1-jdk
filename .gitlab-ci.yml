@@ -45,3 +45,12 @@ forky-gradlew:
     - apt-get -y install openjdk-25-jdk-headless libsecp256k1-6 libsecp256k1-dev
   script:
     - ./gradlew build run runEcdsa
+
+stages:
+  - test
+
+sast:
+  stage: test
+
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
