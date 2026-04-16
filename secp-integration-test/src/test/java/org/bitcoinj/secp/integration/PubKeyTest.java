@@ -25,6 +25,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.math.BigInteger;
 import java.util.HexFormat;
 
+import static org.bitcoinj.secp.integration.SecpTestSupport.parseHex;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  */
 public class PubKeyTest implements SecpTestSupport {
-    byte[] ONE_SERIALIZED = HexFormat.of().parseHex("0479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8");
+    byte[] ONE_SERIALIZED = parseHex("0479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8");
 
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Test Pubkeys for {0}")
