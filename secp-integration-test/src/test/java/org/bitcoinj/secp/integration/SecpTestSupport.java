@@ -19,6 +19,7 @@ import org.bitcoinj.secp.Secp256k1;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.stream.Stream;
 
 /**
@@ -52,5 +53,9 @@ public interface SecpTestSupport {
      */
     static Stream<Secp256k1> secpImplementations() {
         return Secp256k1.all().map(Secp256k1.Provider::get);
+    }
+
+    static byte[] parseHex(String hex) {
+        return HexFormat.of().parseHex(hex);
     }
 }
