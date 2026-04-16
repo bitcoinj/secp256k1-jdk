@@ -55,7 +55,7 @@ fun main() {
 
         /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
         val sig2 = secp.ecdsaSignatureParseCompact(serializedSignature).get()
-        assert(sig.bytes().contentEquals(sig2.bytes()))
+        assert(sig.serializeCompact().contentEquals(sig2.serializeCompact()))
         /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
         val pubkey2 = secp.ecPubKeyParse(compressedPubkey).get()
         assert(pubkey.w == pubkey2.w)

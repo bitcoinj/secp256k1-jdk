@@ -57,7 +57,7 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
     }
 
     @Override
-    public byte[] bytes() {
+    public byte[] serializeCompact() {
         byte[] signature = new byte[64];
         System.arraycopy(r.serialize(), 0, signature, 0, 32);
         System.arraycopy(s.serialize(), 0, signature, 32, 32);
@@ -66,6 +66,6 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
 
     @Override
     public String toString() {
-        return this.formatHex();
+        return ByteArrayBase.toHexString(serializeCompact());
     }
 }
