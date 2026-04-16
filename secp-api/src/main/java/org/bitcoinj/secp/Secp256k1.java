@@ -136,10 +136,10 @@ public interface Secp256k1 extends Closeable {
 
     /**
      * Create a public key from the given private key.
-     * @param seckey the private key
+     * @param privKey the private key
      * @return derived public key
      */
-    SecpPubKey ecPubKeyCreate(SecpPrivKey seckey);
+    SecpPubKey ecPubKeyCreate(SecpPrivKey privKey);
 
     /**
      * Create a new, randomly-generated private key and return it with its matching public key
@@ -205,10 +205,10 @@ public interface Secp256k1 extends Closeable {
     /**
      * Sign a message hash using the ECDSA algorithm
      * @param msg_hash_data hash of message to sign
-     * @param seckey private key
+     * @param privKey private key
      * @return the signature
      */
-    SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey seckey);
+    SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey);
 
     /**
      * Serialize a {@link EcdsaSignature} as a Bitcoin <i>compact signature</i>. A compact signature is
@@ -286,10 +286,10 @@ public interface Secp256k1 extends Closeable {
     /**
      * ECDH key agreement
      * @param pubKey pubkey of the other party
-     * @param secKey secret key
+     * @param privKey private key
      * @return ecdh key agreement
      */
-    SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey secKey);
+    SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey privKey);
 
     /**
      * Override close and declare that no checked exceptions are thrown
