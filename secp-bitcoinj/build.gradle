@@ -6,7 +6,7 @@ ext.moduleName = 'org.bitcoinj.secp.bitcoinj'
 
 dependencies {
     api project(':secp-api')
-    api("org.bitcoinj:bitcoinj-core:0.17");
+    api("org.bitcoinj:bitcoinj-core:0.17.1");
 
     runtimeOnly project(':secp-bouncy')
     runtimeOnly project(':secp-ffm')
