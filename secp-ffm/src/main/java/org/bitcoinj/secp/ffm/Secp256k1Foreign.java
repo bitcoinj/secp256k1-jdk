@@ -311,13 +311,15 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
          * Signing with a valid context, verified secret key
          * and the default nonce function should never fail. */
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, msg_hash_data);
-        MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
+        MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);          // internal signature format
+        MemorySegment serSigSeg = secp256k1_ecdsa_signature.allocate(arena);    // serialized signature format
         MemorySegment nullCallback =  secp256k1_h.NULL(); // Double-check this (normally you shouldn't use a NULL pointer for a null callback)
         MemorySegment nullPointer = secp256k1_h.NULL();
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
         int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, nullCallback, nullPointer);
         privKeySeg.fill((byte) 0x00);
-        return SecpResult.checked(return_val, () -> EcdsaSignature.of(sig.toArray(JAVA_BYTE)));
+        secp256k1_h.secp256k1_ecdsa_signature_serialize_compact(ctx, serSigSeg, sig);
+        return SecpResult.checked(return_val, () -> EcdsaSignature.of(serSigSeg.toArray(JAVA_BYTE)));
     }
 
     @Override
@@ -340,9 +342,12 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
          * and the default nonce function should never fail. */
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, msg_hash_data);
         SecpResult<MemorySegment> parsedPubKey = pubKeyParse(pubKey);
+        MemorySegment serSigSeg =  arena.allocateFrom(JAVA_BYTE, sig.serializeCompact());
+        MemorySegment sigSeg = secp256k1_ecdsa_signature.allocate(arena);   // internal format
+        secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sigSeg, serSigSeg);
         if (parsedPubKey instanceof SecpResult.Err<MemorySegment> err) return SecpResult.err(err.code());
         int return_val = secp256k1_h.secp256k1_ecdsa_verify(ctx,
-                arena.allocateFrom(JAVA_BYTE, sig.serializeCompact()),
+                sigSeg,
                 msg_hash,
                 parsedPubKey.get());
         return SecpResult.ok(return_val == 1);
