@@ -32,7 +32,7 @@ public interface SecpFieldElement {
     BigInteger toBigInteger();
 
     /**
-     * Get serialized field element (32 bytes unsigned)
+     * Get serialized (big-endian) field element (32 bytes unsigned)
      * @return serialized field element
      */
     byte[] serialize();
@@ -53,7 +53,7 @@ public interface SecpFieldElement {
     }
 
     /**
-     * Construct a field element from a byte-array of 32 bytes
+     * Construct a field element from a big-endian byte-array of 32 bytes
      * @param bytes array containing a valid field element
      * @return field element
      */
