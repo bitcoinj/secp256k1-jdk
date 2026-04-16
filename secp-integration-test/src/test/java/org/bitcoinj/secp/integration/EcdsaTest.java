@@ -19,10 +19,14 @@ import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
+import org.bitcoinj.secp.bouncy.Bouncy256k1;
+import org.bitcoinj.secp.ffm.Secp256k1Foreign;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.bitcoinj.secp.integration.SecpTestSupport.hash;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -39,5 +43,28 @@ public class EcdsaTest implements SecpTestSupport {
         EcdsaSignature sig = secp.ecdsaSign(msg_hash, privKey).get();
         boolean validSignature = secp.ecdsaVerify(sig, msg_hash, pubKey).get();
         assertTrue(validSignature);
+    }
+
+    @Test
+    void ecdsaCrossCheck() {
+        try (Secp256k1 secp1 = new Secp256k1Foreign(); Secp256k1 secp2 = new Bouncy256k1()) {
+            SecpPrivKey secKey1 = secp1.ecPrivKeyCreate();
+            SecpPubKey pubKey1 = secp1.ecPubKeyCreate(secKey1);
+
+            SecpPrivKey secKey2 = secKey1;
+            SecpPubKey pubKey2 = secp2.ecPubKeyCreate(secKey1);
+
+            assertArrayEquals(pubKey1.serialize(), pubKey2.serialize());
+
+            EcdsaSignature sig1 = secp1.ecdsaSign(msg_hash, secKey1).get();
+            EcdsaSignature sig2 = secp2.ecdsaSign(msg_hash, secKey2).get();
+
+            assertArrayEquals(sig1.serializeCompact(), sig2.serializeCompact());
+
+            assertTrue(secp1.ecdsaVerify(sig1, msg_hash, pubKey1).get());
+            assertTrue(secp1.ecdsaVerify(sig2, msg_hash, pubKey2).get());
+            assertTrue(secp2.ecdsaVerify(sig1, msg_hash, pubKey1).get());
+            assertTrue(secp2.ecdsaVerify(sig2, msg_hash, pubKey2).get());
+        }
     }
 }
