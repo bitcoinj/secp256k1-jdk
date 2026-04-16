@@ -434,7 +434,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public String toString() {
-        return "Secp256k1(" + ProviderId.LIBSECP256K1_FFM + ")";
+        return "Secp256k1/" + ProviderId.LIBSECP256K1_FFM;
     }
 
     /**
