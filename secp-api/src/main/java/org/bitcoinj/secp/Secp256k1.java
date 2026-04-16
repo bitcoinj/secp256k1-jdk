@@ -104,7 +104,7 @@ public interface Secp256k1 extends Closeable {
      */
     enum ProviderId {
         /** libsecp256k1 'C" library accessed through Java FFM */
-        LIBSECP256K1_FFM("libsecp256k1-ffm"),
+        LIBSECP256K1_FFM("secp256k1-ffm"),
         /** Bouncy Castle library */
         BOUNCY_CASTLE("bouncy-castle");
 
