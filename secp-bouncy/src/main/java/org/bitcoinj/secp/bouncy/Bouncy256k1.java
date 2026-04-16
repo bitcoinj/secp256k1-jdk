@@ -59,6 +59,12 @@ public class Bouncy256k1 implements Secp256k1 {
     /** The Bouncy Castle class containing parameters of the secp256k1 curve that Bitcoin uses. */
     static final ECDomainParameters BC_CURVE;
 
+    /**
+     * Equal to CURVE.getN().shiftRight(1), used for canonicalizing the S value of a signature. If you aren't
+     * sure what this is about, you can ignore it.
+     */
+    private static final BigInteger HALF_CURVE_ORDER;
+
     private static final SecureRandom secureRandom;
 
     static {
@@ -68,6 +74,7 @@ public class Bouncy256k1 implements Secp256k1 {
                 BC_CURVE_PARAMS.getG(),
                 BC_CURVE_PARAMS.getN(),
                 BC_CURVE_PARAMS.getH());
+        HALF_CURVE_ORDER = BC_CURVE_PARAMS.getN().shiftRight(1);
         // TODO: Verify using cryptographic random number generator properly
         try {
             secureRandom = SecureRandom.getInstanceStrong();
@@ -161,9 +168,16 @@ public class Bouncy256k1 implements Secp256k1 {
         ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privateKeyForSigning, BC_CURVE);
         signer.init(true, bouncyPrivKey);
         BigInteger[] components = signer.generateSignature(msg_hash_data);
+        BigInteger s = canonicalize(components[1]);
         EcdsaSignature signatureData = EcdsaSignature.of(SecpFieldElement.of(components[0]),
-                SecpFieldElement.of(components[1]));
+                SecpFieldElement.of(s));
         return SecpResult.ok(signatureData);
+    }
+
+    private BigInteger canonicalize(BigInteger s) {
+        return s.compareTo(HALF_CURVE_ORDER) <= 0
+                ? s
+                : BC_CURVE.getN().subtract(s);
     }
 
     @Override
