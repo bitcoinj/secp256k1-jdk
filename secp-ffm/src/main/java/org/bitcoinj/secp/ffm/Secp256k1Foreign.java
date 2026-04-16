@@ -322,7 +322,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public byte[] ecdsaSignatureSerializeCompact(EcdsaSignature sig) {
-        return sig.bytes();
+        return sig.serializeCompact();
     }
 
     @Override
@@ -342,7 +342,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         SecpResult<MemorySegment> parsedPubKey = pubKeyParse(pubKey);
         if (parsedPubKey instanceof SecpResult.Err<MemorySegment> err) return SecpResult.err(err.code());
         int return_val = secp256k1_h.secp256k1_ecdsa_verify(ctx,
-                arena.allocateFrom(JAVA_BYTE, sig.bytes()),
+                arena.allocateFrom(JAVA_BYTE, sig.serializeCompact()),
                 msg_hash,
                 parsedPubKey.get());
         return SecpResult.ok(return_val == 1);

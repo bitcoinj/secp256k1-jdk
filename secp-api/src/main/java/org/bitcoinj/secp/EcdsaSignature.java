@@ -20,7 +20,7 @@ import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 /**
  * An secp256k1 ECDSA signature.
  */
-public interface EcdsaSignature extends ByteArray {
+public interface EcdsaSignature {
     /**
      * Get field element R
      * @return R
@@ -32,6 +32,13 @@ public interface EcdsaSignature extends ByteArray {
      * @return S
      */
     SecpFieldElement s();
+
+    /**
+     * Serialize as a Bitcoin <i>compact signature</i>. A compact signature is  the two signature component
+     * field integers (known as {@code r} and {@code s}) serialized in-order as binary data in big-endian format.
+     * @return a Bitcoin compact signature
+     */
+    byte[] serializeCompact();
 
     /**
      * Is this signature a "low R" signature.
