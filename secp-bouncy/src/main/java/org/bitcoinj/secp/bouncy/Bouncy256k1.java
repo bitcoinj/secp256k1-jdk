@@ -159,7 +159,6 @@ public class Bouncy256k1 implements Secp256k1 {
         throw new UnsupportedOperationException();
     }
 
-    // TODO: Add constructor to create SignatureData from r and s
     @Override
     public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey) {
         BigInteger privateKeyForSigning = privKey.getS();
@@ -168,10 +167,15 @@ public class Bouncy256k1 implements Secp256k1 {
         ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privateKeyForSigning, BC_CURVE);
         signer.init(true, bouncyPrivKey);
         BigInteger[] components = signer.generateSignature(msg_hash_data);
-        BigInteger s = canonicalize(components[1]);
-        EcdsaSignature signatureData = EcdsaSignature.of(SecpFieldElement.of(components[0]),
-                SecpFieldElement.of(s));
-        return SecpResult.ok(signatureData);
+        return SecpResult.ok(ecdsaSignature(components));
+    }
+
+    // Convert and canonicalize signature
+    private EcdsaSignature ecdsaSignature(BigInteger[] components) {
+        return EcdsaSignature.of(
+                SecpFieldElement.of(components[0]),
+                SecpFieldElement.of(canonicalize(components[1]))
+        );
     }
 
     private BigInteger canonicalize(BigInteger s) {
