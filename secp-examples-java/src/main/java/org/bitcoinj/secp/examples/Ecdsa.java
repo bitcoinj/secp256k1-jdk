@@ -21,6 +21,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import static java.lang.IO.println;
+
 /// Java version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [ecdsa.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/ecdsa.c).
 public class Ecdsa {
     /* Instead of signing the message directly, we must sign a 32-byte hash.
@@ -30,7 +32,7 @@ public class Ecdsa {
     final byte[] messageHash = hash("Hello, world!");
 
     void main() {
-        IO.println("Running secp256k1-jdk Ecdsa example...");
+        println("Running secp256k1-jdk Ecdsa example...");
         /* Use a java try-with-resources to allocate and cleanup -- secp256k1_context_destroy is automatically called */
         try (Secp256k1 secp = Secp256k1.get()) {
             /* === Key Generation === */
@@ -67,11 +69,11 @@ public class Ecdsa {
             /* Verify a signature. This will return true if it's valid and false if it's not. */
             boolean isValidSignature = secp.ecdsaVerify(sig2, messageHash, pubkey2).get();
 
-            IO.println("Is the signature valid? " + isValidSignature);
-            IO.println("Secret Key: " + privKey.getS().toString(16));
-            IO.println("Public Key (Uncompressed): " + pubkey);
-            IO.println("Public Key (Compressed)  : " + pubkey.getCompressed());
-            IO.println("Signature: " + sig);
+            println("Is the signature valid? " + isValidSignature);
+            println("Secret Key: " + privKey.getS().toString(16));
+            println("Public Key (Uncompressed): " + pubkey);
+            println("Public Key (Compressed)  : " + pubkey.getCompressed());
+            println("Signature: " + sig);
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for

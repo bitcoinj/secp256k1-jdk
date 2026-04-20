@@ -17,13 +17,15 @@ package org.bitcoinj.secp.examples;
 
 import module org.bitcoinj.secp;
 
+import static java.lang.IO.println;
+
 /// Java version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [schnorr.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/schnorr.c).
 public class Schnorr {
     final String msg = "Hello, world!";
     final String tag = "my_fancy_protocol";
 
     void main() {
-        IO.println("Running secp256k1-jdk Schnorr example...");
+        println("Running secp256k1-jdk Schnorr example...");
         /* Use a java try-with-resources to allocate and cleanup -- secp256k1_context_destroy is automatically called */
         try (Secp256k1 secp = Secp256k1.get()) {
             /* === Key Generation === */
@@ -54,10 +56,10 @@ public class Schnorr {
 
             boolean isValidSignature = secp.schnorrSigVerify(signature, messageHash2, xOnly2).get();
 
-            IO.println("Is the signature valid? " + isValidSignature);
-            IO.println("Secret Key: " + keyPair.getS().toString(16));
-            IO.println("Public Key (x-only): " + xOnly2);
-            IO.println("Signature: " + signature);
+            println("Is the signature valid? " + isValidSignature);
+            println("Secret Key: " + keyPair.getS().toString(16));
+            println("Public Key (x-only): " + xOnly2);
+            println("Signature: " + signature);
 
             /* It's best practice to try to clear secrets from memory after using them.
              * This is done because some bugs can allow an attacker to leak memory, for
