@@ -58,11 +58,11 @@ public class Ecdsa {
 
             /* === Verification === */
 
-            /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
+            /* Deserialize the signature. get() will throw if the signature can't be parsed correctly. */
             EcdsaSignature sig2 = secp.ecdsaSignatureParseCompact(serializedSignature).get();
             assert(Arrays.equals(sig.serializeCompact(), sig2.serializeCompact()));
 
-            /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
+            /* Deserialize the public key. get() will throw if the public key can't be parsed correctly. */
             SecpPubKey pubkey2 = secp.ecPubKeyParse(compressedPubkey).get();
             assert(pubkey.getW().equals(pubkey2.getW()));
 
