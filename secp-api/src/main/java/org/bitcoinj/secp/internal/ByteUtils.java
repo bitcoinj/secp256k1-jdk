@@ -21,6 +21,7 @@ import java.util.Comparator;
  *
  */
 public class ByteUtils {
+    static final HexFormat HEX_FORMAT = new HexFormat();
     // In Java 9+, this can be replaced with Arrays.compareUnsigned()
     /**
      * Compare byte arrays treating each byte as unsigned.
@@ -42,5 +43,14 @@ public class ByteUtils {
 
     private static int compareUnsigned(byte a, byte b) {
         return Byte.toUnsignedInt(a) - Byte.toUnsignedInt(b);
+    }
+
+    /**
+     * Utility method to format hex bytes as string
+     * @param bytes bytes to format
+     * @return hex-formatted String
+     */
+    public static String toHexString(byte[] bytes) {
+        return HEX_FORMAT.formatHex(bytes);
     }
 }

@@ -66,6 +66,6 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
 
     @Override
     public String toString() {
-        return ByteArrayBase.toHexString(serializeCompact());
+        return ByteUtils.toHexString(serializeCompact());
     }
 }
