@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp;
 
+import org.bitcoinj.secp.internal.ByteArray;
 import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 
 import java.math.BigInteger;
