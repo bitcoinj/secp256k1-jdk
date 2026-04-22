@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp.internal;
 
+import org.bitcoinj.secp.ByteArray;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.SecpFieldElement;
 
@@ -23,7 +24,7 @@ import java.util.Arrays;
 /**
  * A secp256k1 Schnorr signature.
  */
-public class SchnorrSignatureImpl implements SchnorrSignature {
+public class SchnorrSignatureImpl implements SchnorrSignature, ByteArray {
     private final SecpFieldElement r;
     private final SecpFieldElement s;
 
