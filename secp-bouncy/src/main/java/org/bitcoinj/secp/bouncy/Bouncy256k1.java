@@ -63,7 +63,7 @@ public class Bouncy256k1 implements Secp256k1 {
      * Equal to CURVE.getN().shiftRight(1), used for canonicalizing the S value of a signature. If you aren't
      * sure what this is about, you can ignore it.
      */
-    private static final BigInteger HALF_CURVE_ORDER;
+    static final BigInteger HALF_CURVE_ORDER;
 
     private static final SecureRandom secureRandom;
 
@@ -178,7 +178,7 @@ public class Bouncy256k1 implements Secp256k1 {
         );
     }
 
-    private BigInteger canonicalize(BigInteger s) {
+    BigInteger canonicalize(BigInteger s) {
         return s.compareTo(HALF_CURVE_ORDER) <= 0
                 ? s
                 : BC_CURVE.getN().subtract(s);
