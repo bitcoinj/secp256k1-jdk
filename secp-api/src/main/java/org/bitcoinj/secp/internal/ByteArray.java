@@ -48,11 +48,12 @@ public interface ByteArray extends Comparable<ByteArray> {
     }
 
     /**
-     * Utility to convert big-endian {@code byte[]} to integer
+     * Utility to convert unsigned big-endian {@code byte[]} to integer
      * @param bytes bytes
-     * @return integer representation of big-endian bytes
+     * @return integer representation of unsigned, big-endian bytes
      */
     static BigInteger toInteger(byte[] bytes) {
+        // byte[] is unsigned, so `signum` can be 0 or 1: default to 0 then search for nonzero bytes
         int signum = 0;
         for (byte b : bytes) {
             if (b != 0) {
