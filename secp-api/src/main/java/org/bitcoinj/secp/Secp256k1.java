@@ -58,6 +58,10 @@ public interface Secp256k1 extends Closeable {
      * {@link BigInteger} instead.
      */
     BigInteger P = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16);
+    /**
+     * The prime {@code N}, that represents the order of the generator point, i.e. the number of points on the curve.
+     */
+    BigInteger N = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16);
     /** The generator point {@code G} (also known as <i>base point</i>) for secp256k1. */
     SecpPoint.Uncompressed G = SecpPointUncompressed.of(
             new BigInteger("79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", 16),  // G.x
@@ -71,7 +75,7 @@ public interface Secp256k1 extends Closeable {
     /** The secp256k1 domain parameters definition using the standard Java type */
     ECParameterSpec EC_PARAMS = new ECParameterSpec(CURVE,
         G.toECPoint(),  // Base point G
-        new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", 16),  // Order n
+        N,              // Order n
         1);             // Cofactor h
 
     /**
