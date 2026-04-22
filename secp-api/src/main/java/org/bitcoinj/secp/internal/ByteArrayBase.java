@@ -31,7 +31,4 @@ public abstract class ByteArrayBase implements ByteArray {
     public static String toHexString(byte[] bytes) {
         return HEX_FORMAT.formatHex(bytes);
     }
-
-    @Override
-    public abstract byte[] bytes();
 }
