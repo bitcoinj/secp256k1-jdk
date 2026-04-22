@@ -52,7 +52,7 @@ public class Schnorr {
             /* Compute the tagged hash on the received message using the same tag as the signer. */
             byte[] messageHash2 = secp.taggedSha256(tag, msg);
 
-            boolean isValidSignature = secp.schnorrSigVerify(signature, messageHash2, xOnly2).get();
+            boolean isValidSignature = secp.schnorrSigVerify(signature, messageHash2, xOnly2);
 
             IO.println("Is the signature valid? " + isValidSignature);
             IO.println("Secret Key: " + keyPair.getS().toString(16));
