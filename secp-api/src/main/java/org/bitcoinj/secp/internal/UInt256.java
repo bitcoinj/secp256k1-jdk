@@ -27,6 +27,7 @@ public interface UInt256 {
     BigInteger MIN_VALUE = BigInteger.ZERO;
     /** The maximum unsigned 32-byte / 256-bit value. ({@code 2^256 - 1}) */
     BigInteger MAX_VALUE = BigInteger.ONE.shiftLeft(256).subtract(BigInteger.ONE);
+    byte[] ZERO_VALUE = new byte[32];
 
     /**
      * Convert a BigInteger to a 32-byte fixed-length byte array (UInt256).

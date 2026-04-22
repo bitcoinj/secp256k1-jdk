@@ -16,7 +16,6 @@
 package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.EcdhSharedSecret;
-import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpPrivKey;
@@ -27,6 +26,7 @@ import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
+import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -173,8 +173,8 @@ public class Bouncy256k1 implements Secp256k1 {
     // Convert and canonicalize signature
     private EcdsaSignature ecdsaSignature(BigInteger[] components) {
         return EcdsaSignature.of(
-                SecpFieldElement.of(components[0]),
-                SecpFieldElement.of(canonicalize(components[1]))
+                new SecpScalarImpl(components[0]),
+                new SecpScalarImpl(canonicalize(components[1]))
         );
     }
 

@@ -22,16 +22,16 @@ import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
  */
 public interface SchnorrSignature {
     /**
-     * Get field element R
+     * Get scalar R
      * @return R
      */
-    SecpFieldElement r();
+    SecpScalar r();
 
     /**
-     * Get field element S
+     * Get scalar S
      * @return S
      */
-    SecpFieldElement s();
+    SecpScalar s();
 
     /**
      * Serialize to 64-byte raw format in a {@code byte[]}.

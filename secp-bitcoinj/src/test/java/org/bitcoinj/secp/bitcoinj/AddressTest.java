@@ -27,6 +27,7 @@ import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.internal.SecpFieldElementImpl;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
+import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.UInt256;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -116,7 +117,7 @@ public class AddressTest {
             BigInteger internalPubKey = new BigInteger("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d", 16);
             byte[] compressed = new byte[33];
             compressed[0] = 0x02;
-            byte[] xbytes = SecpFieldElementImpl.integerTo32Bytes(internalPubKey);
+            byte[] xbytes = SecpScalarImpl.integerTo32Bytes(internalPubKey);
             System.arraycopy(xbytes, 0, compressed, 1, 32);
             ECKey ecKey = ECKey.fromPublicOnly(compressed);
             SecpPubKey pubkey = BC.toP256K1PubKey(ecKey.getPubKeyPoint());

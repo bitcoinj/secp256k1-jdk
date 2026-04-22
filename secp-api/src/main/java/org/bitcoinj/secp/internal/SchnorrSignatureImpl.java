@@ -16,7 +16,7 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.SchnorrSignature;
-import org.bitcoinj.secp.SecpFieldElement;
+import org.bitcoinj.secp.SecpScalar;
 
 import java.util.Arrays;
 
@@ -24,29 +24,24 @@ import java.util.Arrays;
  * A secp256k1 Schnorr signature.
  */
 public class SchnorrSignatureImpl implements SchnorrSignature, ByteArray {
-    private final SecpFieldElement r;
-    private final SecpFieldElement s;
-
-    public SchnorrSignatureImpl(SecpFieldElement r, SecpFieldElement s) {
-        this.r = r;
-        this.s = s;
-    }
+    private final SecpScalar r;
+    private final SecpScalar s;
 
     public SchnorrSignatureImpl(byte[] signature) {
         if (signature.length != 64) {
             throw new IllegalArgumentException("Sig Not 64 bytes");
         }
-        this.r = SecpFieldElement.of(Arrays.copyOfRange(signature, 0, 32));
-        this.s = SecpFieldElement.of(Arrays.copyOfRange(signature, 32, 64));
+        this.r = new SecpScalarImpl(Arrays.copyOfRange(signature, 0, 32));
+        this.s = new SecpScalarImpl(Arrays.copyOfRange(signature, 32, 64));
     }
 
     @Override
-    public SecpFieldElement r() {
+    public SecpScalar r() {
         return r;
     }
 
     @Override
-    public SecpFieldElement s() {
+    public SecpScalar s() {
         return s;
     }
 
