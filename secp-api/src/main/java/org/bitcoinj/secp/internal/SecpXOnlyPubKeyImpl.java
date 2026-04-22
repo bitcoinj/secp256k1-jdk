@@ -60,6 +60,6 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
      */
     @Override
     public String toString() {
-        return ByteArrayBase.toHexString(serialize());
+        return ByteUtils.toHexString(serialize());
     }
 }

@@ -15,7 +15,6 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.ByteArrayBase;
 import org.bitcoinj.secp.internal.ByteUtils;
 
 import java.math.BigInteger;
@@ -36,7 +35,7 @@ public interface ByteArray extends Comparable<ByteArray> {
      * @return hex-formatted string
      */
     default String formatHex() {
-        return ByteArrayBase.toHexString(bytes());
+        return ByteUtils.toHexString(bytes());
     }
 
     /**
