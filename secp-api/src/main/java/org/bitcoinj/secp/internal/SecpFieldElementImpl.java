@@ -15,7 +15,6 @@
  */
 package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.ByteArray;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.jspecify.annotations.Nullable;

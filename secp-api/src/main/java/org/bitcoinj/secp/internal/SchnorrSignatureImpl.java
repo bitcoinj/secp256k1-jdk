@@ -15,7 +15,6 @@
  */
 package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.ByteArray;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.SecpFieldElement;
 
