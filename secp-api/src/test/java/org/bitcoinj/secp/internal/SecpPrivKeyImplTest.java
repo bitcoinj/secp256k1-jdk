@@ -15,77 +15,71 @@
  */
 package org.bitcoinj.secp.internal;
 
-import org.junit.jupiter.api.Assertions;
+import org.bitcoinj.secp.SecpScalar;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
 
 import java.math.BigInteger;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.bitcoinj.secp.Secp256k1.N;
+import static org.bitcoinj.secp.Secp256k1.P;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Tests for UInt256Test
- */
-public class UInt256Test {
-    static BigInteger P = new BigInteger("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F", 16);
-    static List<BigInteger> inRangeInts = List.of(
-            BigInteger.ZERO,
-            BigInteger.ONE,
-            P.subtract(BigInteger.ONE),
-            P,
-            UInt256.MAX_VALUE);
-    static List<BigInteger> outOfRangeInts = List.of(
-            BigInteger.ONE.negate(),
-            UInt256.MAX_VALUE.add(BigInteger.ONE));
+public class SecpPrivKeyImplTest {
+    static List<BigInteger> inRangeScalarInts = List.of(BigInteger.ONE, N.subtract(BigInteger.ONE));
+    static List<BigInteger> outOfRangeScalarInts = List.of(BigInteger.ONE.negate(), BigInteger.ZERO, N, P);
 
-    @FieldSource("inRangeInts")
+    @FieldSource("inRangeScalarInts")
     @ParameterizedTest(name = "n: {0}")
     void testIsInRange(BigInteger n) {
-        assertTrue(UInt256.isInRange(n));
+        assertTrue(SecpScalar.isInRange(n));
+        assertTrue(SecpScalarImpl.isInRange(UInt256.integerTo32Bytes(n)));
     }
 
-    @FieldSource("outOfRangeInts")
+    @FieldSource("outOfRangeScalarInts")
     @ParameterizedTest(name = "n: {0}")
     void testIsOutOfRange(BigInteger n) {
-        assertFalse(UInt256.isInRange(n));
+        assertFalse(SecpScalar.isInRange(n));
+        if (UInt256.isInRange(n)) {
+            // Integer is a valid UInt256, isInRange should report `false`
+            byte[] bytes = UInt256.integerTo32Bytes(n);
+            assertFalse(SecpScalarImpl.isInRange(bytes));
+        } else {
+            // Integer is not a valid UInt256, attempt to convert should throw
+            assertThrows(IllegalArgumentException.class,
+                    () -> UInt256.integerTo32Bytes(n)
+            );
+        }
     }
 
-    @FieldSource("inRangeInts")
+    @FieldSource("inRangeScalarInts")
     @ParameterizedTest(name = "n: {0}")
     void testCheckInRangeValid(BigInteger n) {
         assertDoesNotThrow(
-            () -> UInt256.checkInRange(n)
+                () -> SecpScalar.checkInRange(n)
         );
-        assertEquals(n, UInt256.checkInRange(n));
+        assertEquals(n, SecpScalar.checkInRange(n));
+        byte[] bytes = UInt256.integerTo32Bytes(n);
+        assertDoesNotThrow(
+                () -> SecpScalarImpl.checkInRange(bytes)
+        );
+        assertEquals(bytes, SecpScalarImpl.checkInRange(bytes));
     }
 
-    @FieldSource("outOfRangeInts")
+    @FieldSource("outOfRangeScalarInts")
     @ParameterizedTest(name = "n: {0}")
     void testCheckInRangeInvalid(BigInteger n) {
         assertThrows(IllegalArgumentException.class,
-            () -> UInt256.checkInRange(n)
+                () -> SecpScalar.checkInRange(n)
         );
-    }
-
-    @FieldSource("inRangeInts")
-    @ParameterizedTest(name = "n: {0}")
-    void testIntToBytesValid(BigInteger n) {
-        assertDoesNotThrow(
-                () -> UInt256.integerTo32Bytes(n)
-        );
-    }
-
-    @FieldSource("outOfRangeInts")
-    @ParameterizedTest(name = "n: {0}")
-    void testIntToBytesInvalid(BigInteger n) {
+        byte[] bytes = n.toByteArray();
         assertThrows(IllegalArgumentException.class,
-                () -> UInt256.integerTo32Bytes(n)
+                () -> SecpScalarImpl.checkInRange(bytes)
         );
     }
 }

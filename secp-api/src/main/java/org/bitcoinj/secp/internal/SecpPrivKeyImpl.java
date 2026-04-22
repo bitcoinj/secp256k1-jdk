@@ -37,11 +37,11 @@ public class SecpPrivKeyImpl implements SecpPrivKey {
      * @param bytes (will not be defensively copied)
      */
     public SecpPrivKeyImpl(byte[] bytes) {
-        privKeyBytes = SecpFieldElementImpl.checkInRange(bytes);
+        privKeyBytes = SecpScalarImpl.checkInRange(bytes);
     }
 
     public SecpPrivKeyImpl(BigInteger privKey) {
-        this.privKeyBytes = SecpFieldElementImpl.integerTo32Bytes(privKey);
+        this.privKeyBytes = SecpScalarImpl.integerTo32Bytes(privKey);
     }
 
     @Override

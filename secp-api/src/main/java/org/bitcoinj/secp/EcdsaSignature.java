@@ -22,20 +22,20 @@ import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
  */
 public interface EcdsaSignature {
     /**
-     * Get field element R
+     * Get scalar R
      * @return R
      */
-    SecpFieldElement r();
+    SecpScalar r();
 
     /**
-     * Get field element S
+     * Get scalar S
      * @return S
      */
-    SecpFieldElement s();
+    SecpScalar s();
 
     /**
      * Serialize as a Bitcoin <i>compact signature</i>. A compact signature is  the two signature component
-     * field integers (known as {@code r} and {@code s}) serialized in-order as binary data in big-endian format.
+     * scalars (known as {@code r} and {@code s}) serialized in-order as binary data in big-endian format.
      * @return a Bitcoin compact signature
      */
     byte[] serializeCompact();
@@ -62,7 +62,7 @@ public interface EcdsaSignature {
      * @param s S
      * @return signature
      */
-    static EcdsaSignature of(SecpFieldElement r, SecpFieldElement s) {
-        return new EcdsaSignatureImpl(r,s);
+    static EcdsaSignature of(SecpScalar r, SecpScalar s) {
+        return new EcdsaSignatureImpl(r, s);
     }
 }

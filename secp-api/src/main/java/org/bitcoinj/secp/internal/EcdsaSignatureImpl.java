@@ -15,8 +15,8 @@
  */
 package org.bitcoinj.secp.internal;
 
-import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.EcdsaSignature;
+import org.bitcoinj.secp.SecpScalar;
 
 import java.util.Arrays;
 
@@ -24,29 +24,34 @@ import java.util.Arrays;
  * Default/Internal implementation of {@link EcdsaSignature}
  */
 public class EcdsaSignatureImpl implements EcdsaSignature {
-    private final SecpFieldElement r;
-    private final SecpFieldElement s;
+    private final SecpScalarImpl r;
+    private final SecpScalarImpl s;
 
-    public EcdsaSignatureImpl(SecpFieldElement r, SecpFieldElement s) {
+    public EcdsaSignatureImpl(SecpScalarImpl r, SecpScalarImpl s) {
         this.r = r;
         this.s = s;
+    }
+
+    public EcdsaSignatureImpl(SecpScalar r, SecpScalar s) {
+        this.r = new SecpScalarImpl(r.serialize());
+        this.s = new SecpScalarImpl(s.serialize());
     }
 
     public EcdsaSignatureImpl(byte[] signature) {
         if (signature.length != 64) {
             throw new IllegalArgumentException("Sig Not 64 bytes");
         }
-        this.r = SecpFieldElement.of(Arrays.copyOfRange(signature, 0, 32));
-        this.s = SecpFieldElement.of(Arrays.copyOfRange(signature, 32, 64));
+        this.r = new SecpScalarImpl(Arrays.copyOfRange(signature, 0, 32));
+        this.s = new SecpScalarImpl(Arrays.copyOfRange(signature, 32, 64));
     }
 
     @Override
-    public SecpFieldElement r() {
+    public SecpScalarImpl r() {
         return r;
     }
 
     @Override
-    public SecpFieldElement s() {
+    public SecpScalarImpl s() {
         return s;
     }
 
