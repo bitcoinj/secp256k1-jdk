@@ -185,10 +185,13 @@ public class Bouncy256k1 implements Secp256k1 {
         return sig.serializeCompact();
     }
 
-    // TODO: Return SecpResult.err when parsing fails
     @Override
     public SecpResult<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature) {
-        return SecpResult.ok(EcdsaSignature.of(serialized_signature));
+        try {
+            return SecpResult.ok(EcdsaSignature.of(serialized_signature));
+        } catch (IllegalArgumentException iae) {
+            return SecpResult.err(0);
+        }
     }
 
     @Override
