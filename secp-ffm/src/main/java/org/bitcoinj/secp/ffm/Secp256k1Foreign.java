@@ -430,9 +430,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
         MemorySegment output = arena.allocate(32);
         int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL, NULL);
-        return success == 1
-                ? SecpResult.ok(new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)))
-                : SecpResult.err(-1);
+        return SecpResult.checked(success, () -> new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)));
     }
 
     @Override
