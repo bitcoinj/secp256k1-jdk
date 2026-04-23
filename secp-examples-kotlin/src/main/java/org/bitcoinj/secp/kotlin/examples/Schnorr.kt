@@ -21,13 +21,18 @@ import org.bitcoinj.secp.Secp256k1
 import org.bitcoinj.secp.SecpKeyPair
 import org.bitcoinj.secp.SecpPubKey
 
+/**
+ * Kotlin version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [schnorr.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/schnorr.c).
+ */
 fun main() {
     val msg = "Hello, world!"
     val tag = "my_fancy_protocol"
 
     println("Running secp256k1-jdk Schnorr example...")
+    /* Kotlin `use` handles cleanup of `Closeable`  -- secp256k1_context_destroy is automatically called */
     Secp256k1.get().use { secp ->
         /* === Key Generation === */
+
         /* Return a non-zero, in-range private key */
         val keyPair : SecpKeyPair = secp.ecKeyPairCreate()
 
@@ -39,11 +44,13 @@ fun main() {
         val serializedXOnly : ByteArray = xOnly.serialize()
 
         /* === Signing === */
+
         val messageHash : ByteArray = secp.taggedSha256(tag, msg)
 
         val signature : SchnorrSignature = secp.schnorrSigSign32(messageHash, keyPair)
 
         /* === Verification === */
+
         val xOnly2 : SecpXOnlyPubKey = secp.xOnlyPubKeyParse(serializedXOnly).get()
 
         /* Compute the tagged hash on the received message using the same tag as the signer. */
