@@ -20,10 +20,9 @@ import org.bitcoinj.secp.Secp256k1
 import org.bitcoinj.secp.SecpPrivKey
 import org.bitcoinj.secp.SecpPubKey
 import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 
 /**
- * Port of secp256k1 sample `ecdsa.c` to Kotlin
+ * Kotlin version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [ecdsa.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/ecdsa.c).
  */
 fun main() {
     /* Instead of signing the message directly, we must sign a 32-byte hash.
@@ -33,8 +32,10 @@ fun main() {
     val messageHash : ByteArray = hash("Hello, world!")
 
     println("Running secp256k1-jdk Ecdsa example...")
+    /* Kotlin `use` handles cleanup of `Closeable`  -- secp256k1_context_destroy is automatically called */
     Secp256k1.get().use { secp ->
         /* === Key Generation === */
+
         /* Return a non-zero, in-range private key */
         val privKey : SecpPrivKey = secp.ecPrivKeyCreate()
 
@@ -59,9 +60,11 @@ fun main() {
         /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
         val sig2 : EcdsaSignature = secp.ecdsaSignatureParseCompact(serializedSignature).get()
         assert(sig.serializeCompact().contentEquals(sig2.serializeCompact()))
+
         /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
         val pubkey2 : SecpPubKey = secp.ecPubKeyParse(compressedPubkey).get()
         assert(pubkey.w == pubkey2.w)
+
         /* Verify a signature. This will return true if it's valid and false if it's not. */
         val isValidSignature : Boolean = secp.ecdsaVerify(sig2, messageHash, pubkey2).get()
 
