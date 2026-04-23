@@ -15,7 +15,10 @@
  */
 package org.bitcoinj.secp.kotlin.examples
 
+import org.bitcoinj.secp.EcdsaSignature
 import org.bitcoinj.secp.Secp256k1
+import org.bitcoinj.secp.SecpPrivKey
+import org.bitcoinj.secp.SecpPubKey
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -27,40 +30,40 @@ fun main() {
      * Here the message is "Hello, world!" and the hash function is SHA-256.
      * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116
      */
-    val messageHash = hash("Hello, world!")
+    val messageHash : ByteArray = hash("Hello, world!")
 
     println("Running secp256k1-jdk Ecdsa example...")
     Secp256k1.get().use { secp ->
         /* === Key Generation === */
         /* Return a non-zero, in-range private key */
-        val privKey = secp.ecPrivKeyCreate()
+        val privKey : SecpPrivKey = secp.ecPrivKeyCreate()
 
         /* Public key creation using a valid context with a verified secret key should never fail */
-        val pubkey = secp.ecPubKeyCreate(privKey)
+        val pubkey : SecpPubKey = secp.ecPubKeyCreate(privKey)
 
         /* Serialize the pubkey in a compressed form(33 bytes). */
-        val compressedPubkey = pubkey.serialize(true);
+        val compressedPubkey : ByteArray = pubkey.serialize(true);
 
         /* === Signing === */
 
         /* Generate an ECDSA signature using the RFC-6979 safe default nonce.
          * Signing with a valid context, verified secret key and the default nonce function should never fail. */
-        val sig = secp.ecdsaSign(messageHash, privKey).get()
+        val sig : EcdsaSignature = secp.ecdsaSign(messageHash, privKey).get()
 
         /* Serialize the signature in a compact form. Should always succeed according to
          the documentation in secp256k1.h. */
-        val serializedSignature = secp.ecdsaSignatureSerializeCompact(sig)
+        val serializedSignature : ByteArray = secp.ecdsaSignatureSerializeCompact(sig)
 
         /* === Verification === */
 
         /* Deserialize the signature. This will return empty if the signature can't be parsed correctly. */
-        val sig2 = secp.ecdsaSignatureParseCompact(serializedSignature).get()
+        val sig2 : EcdsaSignature = secp.ecdsaSignatureParseCompact(serializedSignature).get()
         assert(sig.serializeCompact().contentEquals(sig2.serializeCompact()))
         /* Deserialize the public key. This will return empty if the public key can't be parsed correctly. */
-        val pubkey2 = secp.ecPubKeyParse(compressedPubkey).get()
+        val pubkey2 : SecpPubKey = secp.ecPubKeyParse(compressedPubkey).get()
         assert(pubkey.w == pubkey2.w)
         /* Verify a signature. This will return true if it's valid and false if it's not. */
-        val isValidSignature = secp.ecdsaVerify(sig2, messageHash, pubkey2).get()
+        val isValidSignature : Boolean = secp.ecdsaVerify(sig2, messageHash, pubkey2).get()
 
         println("Is the signature valid? $isValidSignature")
         println("Secret Key: ${privKey.s.toString(16)}")
