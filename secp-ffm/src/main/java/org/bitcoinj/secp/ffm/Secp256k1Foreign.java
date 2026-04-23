@@ -49,7 +49,6 @@ import java.security.SecureRandom;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
-import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.NULL;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_xonly_pubkey_serialize;
@@ -62,6 +61,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private final MemorySegment ctx;
     /* package */ static final Arena globalArena = Arena.ofAuto();
     /* package */ static final MemorySegment secp256k1StaticContext = secp256k1_h.secp256k1_context_static();
+    private static final MemorySegment NULL = MemorySegment.ofAddress(0L);
     private static final SecureRandom secureRandom;
     static {
         // TODO: Verify using cryptographic random number generator properly
@@ -315,10 +315,8 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, msg_hash_data);
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);          // internal signature format
         MemorySegment serSigSeg = secp256k1_ecdsa_signature.allocate(arena);    // serialized signature format
-        MemorySegment nullCallback =  secp256k1_h.NULL(); // Double-check this (normally you shouldn't use a NULL pointer for a null callback)
-        MemorySegment nullPointer = secp256k1_h.NULL();
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
-        int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, nullCallback, nullPointer);
+        int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, NULL, NULL);
         privKeySeg.fill((byte) 0x00);
         secp256k1_h.secp256k1_ecdsa_signature_serialize_compact(ctx, serSigSeg, sig);
         return SecpResult.checked(return_val, () -> EcdsaSignature.of(serSigSeg.toArray(JAVA_BYTE)));
@@ -433,7 +431,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment pubKeySeg = parsedPubKey.get();  // Get pubkey in 64-byte internal format
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
         MemorySegment output = arena.allocate(32);
-        int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL(), NULL());
+        int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL, NULL);
         return success == 1
                 ? SecpResult.ok(new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)))
                 : SecpResult.err(-1);
