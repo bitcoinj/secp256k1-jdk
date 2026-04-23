@@ -82,7 +82,6 @@ public class Ecdsa {
              */
             privKey.destroy();
         }
-
     }
 
     private static byte[] hash(String messageString) {
