@@ -32,7 +32,6 @@ public class Schnorr {
 
             /* Return a non-zero, in-range private key */
             SecpKeyPair keyPair = secp.ecKeyPairCreate();
-            //SecpKeyPair keyPair = secp.ecKeyPairCreate(new BouncyPrivKey(BigInteger.ONE));
 
             /* Public key creation using a valid context with a verified secret key should never fail */
             SecpPubKey pubkey = secp.ecPubKeyCreate(keyPair);
