@@ -46,7 +46,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Objects;
 
 /**
  * Implementation of {@link Secp256k1} using the Bouncy Castle library.
@@ -161,10 +160,8 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey) {
-        BigInteger privateKeyForSigning = privKey.getS();
-        Objects.requireNonNull(privateKeyForSigning);
         ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
-        ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privateKeyForSigning, BC_CURVE);
+        ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privKey.getS(), BC_CURVE);
         signer.init(true, bouncyPrivKey);
         BigInteger[] components = signer.generateSignature(msg_hash_data);
         return SecpResult.ok(ecdsaSignature(components));
