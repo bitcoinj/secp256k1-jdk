@@ -175,7 +175,7 @@ public interface Secp256k1 extends Closeable {
      * @param scalarMultiplier scalar multiplier
      * @return the product
      */
-    SecpPubKey ecPubKeyTweakMul(SecpPubKey pubKey, BigInteger scalarMultiplier);
+    SecpPubKey ecPubKeyTweakMul(SecpPoint.Uncompressed pubKey, BigInteger scalarMultiplier);
 
     /**
      * Combine two public keys by adding them.
@@ -183,7 +183,7 @@ public interface Secp256k1 extends Closeable {
      * @param key2 second key
      * @return the sum
      */
-    SecpPubKey ecPubKeyCombine(SecpPubKey key1, SecpPubKey key2);
+    SecpPubKey ecPubKeyCombine(SecpPoint.Uncompressed key1, SecpPoint.Uncompressed key2);
 
     /**
      * Serialize a public key

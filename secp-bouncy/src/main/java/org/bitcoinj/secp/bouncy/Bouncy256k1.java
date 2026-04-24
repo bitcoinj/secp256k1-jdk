@@ -17,6 +17,7 @@ package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.EcdhSharedSecret;
 import org.bitcoinj.secp.SecpKeyPair;
+import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpResult;
@@ -126,16 +127,16 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SecpPubKey ecPubKeyTweakMul(SecpPubKey pubKey, BigInteger scalarMultiplier) {
-        ECPoint pubKeyBC = BC_CURVE.createPoint(pubKey.getW().getAffineX(), pubKey.getW().getAffineY());
+    public SecpPubKey ecPubKeyTweakMul(SecpPoint.Uncompressed pubKey, BigInteger scalarMultiplier) {
+        ECPoint pubKeyBC = BC_CURVE.createPoint(pubKey.x().toBigInteger(), pubKey.y().toBigInteger());
         ECPoint pub = new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier).normalize();
         return BC.toSecpPubKey(pub);
     }
 
     @Override
-    public SecpPubKey ecPubKeyCombine(SecpPubKey key1, SecpPubKey key2) {
-        ECPoint pubKey1BC = BC_CURVE.createPoint(key1.getW().getAffineX(), key1.getW().getAffineY());
-        ECPoint pubKey2BC = BC_CURVE.createPoint(key2.getW().getAffineX(), key2.getW().getAffineY());
+    public SecpPubKey ecPubKeyCombine(SecpPoint.Uncompressed  key1, SecpPoint.Uncompressed  key2) {
+        ECPoint pubKey1BC = BC_CURVE.createPoint(key1.x().toBigInteger(), key1.y().toBigInteger());
+        ECPoint pubKey2BC = BC_CURVE.createPoint(key2.x().toBigInteger(), key2.y().toBigInteger());
         ECPoint result = pubKey1BC.add(pubKey2BC);
         return BC.toSecpPubKey(result);
     }
