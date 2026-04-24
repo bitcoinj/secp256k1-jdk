@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp.internal;
 
+import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
 
@@ -62,5 +63,25 @@ public class SecpPubKeyImpl implements SecpPubKey {
     @Override
     public String toString() {
         return ByteUtils.toHexString(point.serialize());
+    }
+
+    @Override
+    public SecpFieldElement y() {
+        return point.y();
+    }
+
+    @Override
+    public Compressed compress() {
+        return point.compress();
+    }
+
+    @Override
+    public SecpFieldElement x() {
+        return point.x();
+    }
+
+    @Override
+    public boolean isOdd() {
+        return point.isOdd();
     }
 }

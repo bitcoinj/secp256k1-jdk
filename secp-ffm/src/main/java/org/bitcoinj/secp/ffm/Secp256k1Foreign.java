@@ -18,6 +18,7 @@ package org.bitcoinj.secp.ffm;
 import org.bitcoinj.secp.EcdhSharedSecret;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
+import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpResult;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
@@ -200,7 +201,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public SecpPubKey ecPubKeyTweakMul(SecpPubKey pubKey, BigInteger scalarMultiplier) {
+    public SecpPubKey ecPubKeyTweakMul(SecpPoint.Uncompressed pubKey, BigInteger scalarMultiplier) {
         MemorySegment pubKeySeg = pubKeyParse(pubKey).get();
         byte[] tweakBytes = SecpScalarImpl.integerTo32Bytes(scalarMultiplier);
         MemorySegment tweakSeg = arena.allocateFrom(JAVA_BYTE, tweakBytes);
@@ -212,7 +213,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public SecpPubKey ecPubKeyCombine(SecpPubKey key1, SecpPubKey key2) {
+    public SecpPubKey ecPubKeyCombine(SecpPoint.Uncompressed key1, SecpPoint.Uncompressed key2) {
         MemorySegment resultKeySeg = secp256k1_pubkey.allocate(arena);
         MemorySegment ins = arena.allocate(C_POINTER, 2);
         ins.setAtIndex(C_POINTER, 0, pubKeyParse(key1).get());
@@ -299,8 +300,8 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return SecpResult.ok(SecpXOnlyPubKeyImpl.ofVerifiedBytes(serializedXOnly.toArray(JAVA_BYTE)));
     }
 
-    private SecpResult<MemorySegment> pubKeyParse(SecpPubKey pubKeyData) {
-        MemorySegment input = arena.allocateFrom(JAVA_BYTE, pubKeyData.getEncoded()); // 65 byte, uncompressed format
+    private SecpResult<MemorySegment> pubKeyParse(SecpPoint.Uncompressed pubKeyData) {
+        MemorySegment input = arena.allocateFrom(JAVA_BYTE, pubKeyData.serialize()); // 65 byte, uncompressed format
         MemorySegment pubkey = secp256k1_pubkey.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
         return SecpResult.checked(return_val, () -> pubkey);

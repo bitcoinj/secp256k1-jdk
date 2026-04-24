@@ -23,9 +23,9 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 
 /**
- * A valid secp256k1 Public Key that is a subclass of {@link ECPublicKey}
+ * A valid secp256k1 Public Key that is a subclass of {@link ECPublicKey}.
  */
-public interface SecpPubKey extends ECPublicKey {
+public interface SecpPubKey extends ECPublicKey, SecpPoint.Uncompressed {
     /**
      * Return associated cryptographic algorithm. This implements the {@link java.security.Key} interface.
      * @return string indicating algorithm

@@ -21,10 +21,14 @@ import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import java.security.spec.ECPoint;
 
 /**
- * A P256K1 point -- either {@link Compressed}, {@link Uncompressed}, or {@link Infinity}. Implementations of this interface
- * <i>need not</i> be subclasses of {@link java.security.spec.ECPoint}. {@code ECPoint} is a concrete class
- * and uses {@link java.math.BigInteger} internally. {@code SecpPoint} uses
- * {@link SecpFieldElement} to represent point coordinates. If you need a type that
+ * A P256K1 point -- either {@link Compressed}, {@link Uncompressed}, or {@link Infinity}.
+ * <p>
+ * {@link SecpPubKey} implements {@code SecpPoint.Uncompressed} and Java's {@link java.security.interfaces.ECPublicKey}
+ * interface.
+ * <p>
+ * Implementations of this interface <i>need not</i> be subclasses of {@link java.security.spec.ECPoint}.
+ * {@code ECPoint} is a concrete class and uses {@link java.math.BigInteger} internally.
+ * {@code SecpPoint} may use {@link SecpFieldElement} to represent point coordinates. If you need a type that
  * is both a {@code SecpPoint} and a {@code ECPoint}, use {@link SecpECPoint}.
  */
 public interface SecpPoint {
