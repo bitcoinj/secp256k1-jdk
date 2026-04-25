@@ -215,6 +215,16 @@ public interface Secp256k1 extends Closeable {
     SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey);
 
     /**
+     * Sign a message hash using the ECDSA algorithm and Low-R signature griding
+     * <p>
+     * This uses the same nonce-incrementing algorithm as Bitcoin Core to ensure a low-R signature.
+     * @param messageHashData hash of message to sign
+     * @param privKey private key
+     * @return the signature
+     */
+    SecpResult<EcdsaSignature> ecdsaSignLowR(byte[] messageHashData, SecpPrivKey privKey);
+
+    /**
      * Serialize a {@link EcdsaSignature} as a Bitcoin <i>compact signature</i>. A compact signature is
      * the two signature component field integers (known as {@code r} and {@code s}) serialized in-order as
      * binary data in big-endian format.
