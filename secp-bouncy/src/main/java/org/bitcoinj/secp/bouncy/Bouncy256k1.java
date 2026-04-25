@@ -167,6 +167,27 @@ public class Bouncy256k1 implements Secp256k1 {
         return SecpResult.ok(ecdsaSignature(components));
     }
 
+    @Override
+    public SecpResult<EcdsaSignature> ecdsaSignLowR(byte[] messageHashData, SecpPrivKey privKey) {
+        HMacDSAKCalculatorWithEntropy kCalculator = new HMacDSAKCalculatorWithEntropy(new SHA256Digest());
+        ECDSASigner signer = new ECDSASigner(kCalculator);
+        ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privKey.getS(), BC_CURVE);
+        signer.init(true, bouncyPrivKey);
+        BigInteger[] components = signer.generateSignature(messageHashData);
+        // grind for low R values by adding entropy to the K calculation via RFC 6979 section 3.6.
+        // see discussion at https://github.com/bitcoin/bitcoin/pull/13666
+        for (int counter = 1; !hasLowR(components[0]) && counter < Integer.MAX_VALUE; counter++) {
+            kCalculator.setEntropy(counter);
+            components = signer.generateSignature(messageHashData);
+        }
+        return SecpResult.ok(ecdsaSignature(components));
+    }
+
+    private static boolean hasLowR(BigInteger r) {
+        // TODO: check low-r directly on BigInteger
+        return SecpScalarImpl.integerTo32Bytes(r)[0] >= 0;
+    }
+
     // Convert and canonicalize signature
     private EcdsaSignature ecdsaSignature(BigInteger[] components) {
         return EcdsaSignature.of(
