@@ -16,6 +16,7 @@
 package org.bitcoinj.secp;
 
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
+import org.bitcoinj.secp.internal.SecpFieldElementImpl;
 
 /**
  * A secp256k1 Schnorr signature.
@@ -25,7 +26,7 @@ public interface SchnorrSignature {
      * Get scalar R
      * @return R
      */
-    SecpScalar r();
+    SecpFieldElement r();
 
     /**
      * Get scalar S
