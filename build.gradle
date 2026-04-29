@@ -2,7 +2,7 @@ import org.gradle.util.GradleVersion
 
 plugins {
     id 'com.github.hierynomus.license'      version '0.16.1' apply false
-    id 'io.freefair.aggregate-javadoc'      version '9.4.0' apply false
+    id 'io.freefair.aggregate-javadoc'      version '9.5.0' apply false
 }
 
 // Projects to be published with maven-publish
