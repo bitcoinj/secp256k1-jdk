@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp.bouncy;
 
+import org.bitcoinj.secp.SecpPoint;
 import org.junit.jupiter.api.Test;
 
 import java.security.spec.ECPoint;
@@ -31,17 +32,17 @@ public class BouncyPubKeyTest {
 
     @Test
     public void convertRandomPoint() {
-        // Create a random JCA ECPoint
-        ECPoint point;
+        // Create a random SecpPoint
+        SecpPoint.Uncompressed point;
         try (Bouncy256k1 secp = new Bouncy256k1()) {
-            point = secp.ecPubKeyCreate(secp.ecPrivKeyCreate()).getW();
+            point = secp.ecPubKeyCreate(secp.ecPrivKeyCreate()).point();
         }
         assertNotNull(point);
-        org.bouncycastle.math.ec.ECPoint bcPoint = BC.fromECPoint(point);
+        org.bouncycastle.math.ec.ECPoint bcPoint = BC.fromSecpPoint(point);
 
         assertNotNull(bcPoint);
-        assertEquals(point.getAffineX(), bcPoint.getAffineXCoord().toBigInteger());
-        assertEquals(point.getAffineY(), bcPoint.getAffineYCoord().toBigInteger());
+        assertEquals(point.x().toBigInteger(), bcPoint.getAffineXCoord().toBigInteger());
+        assertEquals(point.y().toBigInteger(), bcPoint.getAffineYCoord().toBigInteger());
     }
 
     @Test
