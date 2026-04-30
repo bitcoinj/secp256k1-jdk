@@ -16,7 +16,6 @@
 package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.SecpPubKey;
-import org.bitcoinj.secp.internal.SecpECPoint;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 
@@ -31,20 +30,14 @@ interface BC {
 
     static SecpPubKey toSecpPubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
-        return  SecpPubKeyImpl.ofPoint(BC.toECPoint(bcPoint));
+        return  new SecpPubKeyImpl(BC.toSecpPoint(bcPoint));
     }
 
     static SecpPointUncompressed toSecpPoint(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
-        return SecpPointUncompressed.of(bcPoint.getAffineXCoord().toBigInteger(), bcPoint.getAffineYCoord().toBigInteger());
-    }
-
-    static ECPoint toECPoint(org.bouncycastle.math.ec.ECPoint bcPoint) {
-        return bcPoint.isInfinity()
-                ? ECPoint.POINT_INFINITY
-                : new SecpECPoint(
-                    bcPoint.normalize().getAffineXCoord().toBigInteger(),
-                    bcPoint.normalize().getAffineYCoord().toBigInteger());
+        return SecpPointUncompressed.of(
+                bcPoint.normalize().getAffineXCoord().toBigInteger(),
+                bcPoint.normalize().getAffineYCoord().toBigInteger());
     }
 
     static org.bouncycastle.math.ec.ECPoint fromECPoint(ECPoint point) {
