@@ -34,7 +34,7 @@ interface BC {
         return  SecpPubKeyImpl.ofPoint(BC.toECPoint(bcPoint));
     }
 
-    static SecpPointUncompressed toP256K1Point(org.bouncycastle.math.ec.ECPoint bcPoint) {
+    static SecpPointUncompressed toSecpPoint(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
         return SecpPointUncompressed.of(bcPoint.getAffineXCoord().toBigInteger(), bcPoint.getAffineYCoord().toBigInteger());
     }
