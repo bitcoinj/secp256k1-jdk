@@ -149,7 +149,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData) {
-        org.bouncycastle.math.ec.ECPoint bcPoint = BC_CURVE.getCurve().decodePoint(inputData);
+        ECPoint bcPoint = BC_CURVE.getCurve().decodePoint(inputData);
         return SecpResult.ok(BC.toSecpPubKey(bcPoint));
     }
 
@@ -219,7 +219,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpResult<Boolean> ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, SecpPubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
-        org.bouncycastle.math.ec.ECPoint pubPoint = BC.fromSecpPoint(pubKey.point());
+        ECPoint pubPoint = BC.fromSecpPoint(pubKey.point());
         ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_CURVE);
         signer.init(false, params);
         boolean result;
