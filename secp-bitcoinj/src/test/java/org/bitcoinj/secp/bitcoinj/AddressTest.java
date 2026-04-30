@@ -120,7 +120,7 @@ public class AddressTest {
             byte[] xbytes = SecpScalarImpl.integerTo32Bytes(internalPubKey);
             System.arraycopy(xbytes, 0, compressed, 1, 32);
             ECKey ecKey = ECKey.fromPublicOnly(compressed);
-            SecpPubKey pubkey = BC.toP256K1PubKey(ecKey.getPubKeyPoint());
+            SecpPubKey pubkey = secp.ecPubKeyParse(compressed).get();
             // TODO: Use `secp.xOnlyPubKeyParse(serial)` here instead of `SecpXOnlyPubKey.parse(serial)`
             // We need a Bouncy Castle Implementation first
             SecpXOnlyPubKey xOnlyKey = SecpXOnlyPubKey.parse(UInt256.integerTo32Bytes(internalPubKey)).get();
