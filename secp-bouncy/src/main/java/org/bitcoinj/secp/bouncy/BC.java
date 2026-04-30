@@ -19,6 +19,7 @@ import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
+import org.bouncycastle.math.ec.ECPoint;
 
 import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
 
@@ -27,19 +28,19 @@ import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
  */
 interface BC {
 
-    static SecpPubKey toSecpPubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
+    static SecpPubKey toSecpPubKey(ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
         return  new SecpPubKeyImpl(BC.toSecpPoint(bcPoint));
     }
 
-    static SecpPointUncompressed toSecpPoint(org.bouncycastle.math.ec.ECPoint bcPoint) {
+    static SecpPointUncompressed toSecpPoint(ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
         return SecpPointUncompressed.of(
                 bcPoint.normalize().getAffineXCoord().toBigInteger(),
                 bcPoint.normalize().getAffineYCoord().toBigInteger());
     }
 
-    static org.bouncycastle.math.ec.ECPoint fromSecpPoint(SecpPoint.Uncompressed point) {
+    static ECPoint fromSecpPoint(SecpPoint.Uncompressed point) {
         return BC_CURVE.getCurve().createPoint(point.x().toBigInteger(), point.y().toBigInteger());
     }
 }
