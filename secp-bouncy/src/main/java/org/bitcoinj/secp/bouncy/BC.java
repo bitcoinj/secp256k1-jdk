@@ -29,7 +29,7 @@ import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
  */
 interface BC {
 
-    static SecpPubKey toP256K1PubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
+    static SecpPubKey toSecpPubKey(org.bouncycastle.math.ec.ECPoint bcPoint) {
         if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
         return  SecpPubKeyImpl.ofPoint(BC.toECPoint(bcPoint));
     }

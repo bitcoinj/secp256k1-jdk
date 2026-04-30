@@ -47,7 +47,7 @@ public class BouncyPubKeyTest {
     @Test
     public void infinityConversionTest() {
         assertThrows(IllegalArgumentException.class,
-                () -> BC.toP256K1PubKey(BOUNCY_INFINITY)
+                () -> BC.toSecpPubKey(BOUNCY_INFINITY)
         );
     }
 }
