@@ -58,7 +58,7 @@ public class Bouncy256k1 implements Secp256k1 {
     private static final X9ECParameters BC_CURVE_PARAMS = CustomNamedCurves.getByName("secp256k1");
 
     /** The Bouncy Castle class containing parameters of the secp256k1 curve that Bitcoin uses. */
-    static final ECDomainParameters BC_CURVE;
+    static final ECDomainParameters BC_ECDOMAIN_PARAMS;
 
     /**
      * Equal to CURVE.getN().shiftRight(1), used for canonicalizing the S value of a signature. If you aren't
@@ -71,7 +71,7 @@ public class Bouncy256k1 implements Secp256k1 {
     static {
         // Tell Bouncy Castle to precompute data that's needed during secp256k1 calculations.
         FixedPointUtil.precompute(BC_CURVE_PARAMS.getG());
-        BC_CURVE = new ECDomainParameters(BC_CURVE_PARAMS.getCurve(),
+        BC_ECDOMAIN_PARAMS = new ECDomainParameters(BC_CURVE_PARAMS.getCurve(),
                 BC_CURVE_PARAMS.getG(),
                 BC_CURVE_PARAMS.getN(),
                 BC_CURVE_PARAMS.getH());
@@ -96,7 +96,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpPrivKey ecPrivKeyCreate() {
         ECKeyPairGenerator generator = new ECKeyPairGenerator();
-        ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(BC_CURVE, secureRandom);
+        ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(BC_ECDOMAIN_PARAMS, secureRandom);
         generator.init(keygenParams);
         AsymmetricCipherKeyPair keypair = generator.generateKeyPair();
         ECPrivateKeyParameters privParams = (ECPrivateKeyParameters) keypair.getPrivate();
@@ -105,7 +105,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpPubKey ecPubKeyCreate(SecpPrivKey privKey) {
-        ECPoint pub = BC_CURVE.getG().multiply(privKey.getS()).normalize();
+        ECPoint pub = BC_ECDOMAIN_PARAMS.getG().multiply(privKey.getS()).normalize();
         return BC.toSecpPubKey(pub);
     }
 
@@ -125,15 +125,15 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpPubKey ecPubKeyTweakMul(SecpPubKey pubKey, BigInteger scalarMultiplier) {
-        ECPoint pubKeyBC = BC_CURVE.getCurve().createPoint(pubKey.getW().getAffineX(), pubKey.getW().getAffineY());
+        ECPoint pubKeyBC = BC_ECDOMAIN_PARAMS.getCurve().createPoint(pubKey.getW().getAffineX(), pubKey.getW().getAffineY());
         ECPoint pub = new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier).normalize();
         return BC.toSecpPubKey(pub);
     }
 
     @Override
     public SecpPubKey ecPubKeyCombine(SecpPubKey key1, SecpPubKey key2) {
-        ECPoint pubKey1BC = BC_CURVE.getCurve().createPoint(key1.getW().getAffineX(), key1.getW().getAffineY());
-        ECPoint pubKey2BC = BC_CURVE.getCurve().createPoint(key2.getW().getAffineX(), key2.getW().getAffineY());
+        ECPoint pubKey1BC = BC_ECDOMAIN_PARAMS.getCurve().createPoint(key1.getW().getAffineX(), key1.getW().getAffineY());
+        ECPoint pubKey2BC = BC_ECDOMAIN_PARAMS.getCurve().createPoint(key2.getW().getAffineX(), key2.getW().getAffineY());
         ECPoint result = pubKey1BC.add(pubKey2BC);
         return BC.toSecpPubKey(result);
     }
@@ -152,7 +152,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData) {
         try {
-            ECPoint bcPoint = BC_CURVE.getCurve().decodePoint(inputData);
+            ECPoint bcPoint = BC_ECDOMAIN_PARAMS.getCurve().decodePoint(inputData);
             return SecpResult.ok(BC.toSecpPubKey(bcPoint));
         } catch (IllegalArgumentException e) {
             return SecpResult.err(0);
@@ -165,7 +165,7 @@ public class Bouncy256k1 implements Secp256k1 {
         try {
             // Bouncy Castle expects compressed format, not X-Only
             byte[] serialized = prependByte(inputData, (byte) 0x2);
-            BC_CURVE.getCurve().decodePoint(serialized);
+            BC_ECDOMAIN_PARAMS.getCurve().decodePoint(serialized);
         } catch (IllegalArgumentException e) {
             // If `decodePoint` fails, pubkey is invalid
             return SecpResult.err(0);
@@ -183,7 +183,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey) {
         ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
-        ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privKey.getS(), BC_CURVE);
+        ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privKey.getS(), BC_ECDOMAIN_PARAMS);
         signer.init(true, bouncyPrivKey);
         BigInteger[] components = signer.generateSignature(msg_hash_data);
         return SecpResult.ok(ecdsaSignature(components));
@@ -193,7 +193,7 @@ public class Bouncy256k1 implements Secp256k1 {
     public SecpResult<EcdsaSignature> ecdsaSignLowR(byte[] messageHashData, SecpPrivKey privKey) {
         HMacDSAKCalculatorWithEntropy kCalculator = new HMacDSAKCalculatorWithEntropy(new SHA256Digest());
         ECDSASigner signer = new ECDSASigner(kCalculator);
-        ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privKey.getS(), BC_CURVE);
+        ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privKey.getS(), BC_ECDOMAIN_PARAMS);
         signer.init(true, bouncyPrivKey);
         BigInteger[] components = signer.generateSignature(messageHashData);
         // grind for low R values by adding entropy to the K calculation via RFC 6979 section 3.6.
@@ -221,7 +221,7 @@ public class Bouncy256k1 implements Secp256k1 {
     BigInteger canonicalize(BigInteger s) {
         return s.compareTo(HALF_CURVE_ORDER) <= 0
                 ? s
-                : BC_CURVE.getN().subtract(s);
+                : BC_ECDOMAIN_PARAMS.getN().subtract(s);
     }
 
     @Override
@@ -242,7 +242,7 @@ public class Bouncy256k1 implements Secp256k1 {
     public SecpResult<Boolean> ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, SecpPubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
         ECPoint pubPoint = BC.fromSecpPoint(pubKey.point());
-        ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_CURVE);
+        ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_ECDOMAIN_PARAMS);
         signer.init(false, params);
         boolean result;
         try {
