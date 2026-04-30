@@ -42,6 +42,7 @@ import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.math.ec.FixedPointCombMultiplier;
 import org.bouncycastle.math.ec.FixedPointUtil;
+import org.bouncycastle.math.ec.custom.sec.SecP256K1Curve;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -57,6 +58,7 @@ public class Bouncy256k1 implements Secp256k1 {
     // The Bouncy Castle class containing parameters of the secp256k1 curve that Bitcoin uses.
     private static final X9ECParameters BC_CURVE_PARAMS = CustomNamedCurves.getByName("secp256k1");
 
+    static final SecP256K1Curve BC_CURVE = (SecP256K1Curve) BC_CURVE_PARAMS.getCurve();
     /** The Bouncy Castle class containing parameters of the secp256k1 curve that Bitcoin uses. */
     static final ECDomainParameters BC_ECDOMAIN_PARAMS;
 
@@ -71,7 +73,7 @@ public class Bouncy256k1 implements Secp256k1 {
     static {
         // Tell Bouncy Castle to precompute data that's needed during secp256k1 calculations.
         FixedPointUtil.precompute(BC_CURVE_PARAMS.getG());
-        BC_ECDOMAIN_PARAMS = new ECDomainParameters(BC_CURVE_PARAMS.getCurve(),
+        BC_ECDOMAIN_PARAMS = new ECDomainParameters(BC_CURVE,
                 BC_CURVE_PARAMS.getG(),
                 BC_CURVE_PARAMS.getN(),
                 BC_CURVE_PARAMS.getH());
@@ -125,15 +127,15 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpPubKey ecPubKeyTweakMul(SecpPubKey pubKey, BigInteger scalarMultiplier) {
-        ECPoint pubKeyBC = BC_ECDOMAIN_PARAMS.getCurve().createPoint(pubKey.getW().getAffineX(), pubKey.getW().getAffineY());
+        ECPoint pubKeyBC = BC_CURVE.createPoint(pubKey.getW().getAffineX(), pubKey.getW().getAffineY());
         ECPoint pub = new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier).normalize();
         return BC.toSecpPubKey(pub);
     }
 
     @Override
     public SecpPubKey ecPubKeyCombine(SecpPubKey key1, SecpPubKey key2) {
-        ECPoint pubKey1BC = BC_ECDOMAIN_PARAMS.getCurve().createPoint(key1.getW().getAffineX(), key1.getW().getAffineY());
-        ECPoint pubKey2BC = BC_ECDOMAIN_PARAMS.getCurve().createPoint(key2.getW().getAffineX(), key2.getW().getAffineY());
+        ECPoint pubKey1BC = BC_CURVE.createPoint(key1.getW().getAffineX(), key1.getW().getAffineY());
+        ECPoint pubKey2BC = BC_CURVE.createPoint(key2.getW().getAffineX(), key2.getW().getAffineY());
         ECPoint result = pubKey1BC.add(pubKey2BC);
         return BC.toSecpPubKey(result);
     }
@@ -152,7 +154,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData) {
         try {
-            ECPoint bcPoint = BC_ECDOMAIN_PARAMS.getCurve().decodePoint(inputData);
+            ECPoint bcPoint = BC_CURVE.decodePoint(inputData);
             return SecpResult.ok(BC.toSecpPubKey(bcPoint));
         } catch (IllegalArgumentException e) {
             return SecpResult.err(0);

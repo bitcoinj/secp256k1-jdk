@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  *  Tests for BouncyPubKey.
  */
 public class BouncyPubKeyTest {
-    org.bouncycastle.math.ec.ECPoint BOUNCY_INFINITY = Bouncy256k1.BC_ECDOMAIN_PARAMS.getCurve().getInfinity();
+    org.bouncycastle.math.ec.ECPoint BOUNCY_INFINITY = Bouncy256k1.BC_CURVE.getInfinity();
 
     @Test
     public void convertRandomPoint() {
