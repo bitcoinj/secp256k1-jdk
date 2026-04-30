@@ -219,8 +219,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpResult<Boolean> ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, SecpPubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
-        java.security.spec.ECPoint jPoint = pubKey.getW();
-        org.bouncycastle.math.ec.ECPoint pubPoint = BC.fromECPoint(jPoint);
+        org.bouncycastle.math.ec.ECPoint pubPoint = BC.fromSecpPoint(pubKey.point());
         ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_CURVE);
         signer.init(false, params);
         boolean result;
@@ -252,7 +251,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey privKey) {
-        ECPoint point = BC.fromECPoint(pubKey.getW());
+        ECPoint point = BC.fromSecpPoint(pubKey.point());
         ECPoint ssPoint = point.multiply(privKey.getS()).normalize();
         byte[] hashed = ecdhHash(BC.toSecpPubKey(ssPoint));
         return SecpResult.ok(new EcdhSharedSecretImpl(hashed));

@@ -15,11 +15,10 @@
  */
 package org.bitcoinj.secp.bouncy;
 
+import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
-
-import java.security.spec.ECPoint;
 
 import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
 
@@ -40,9 +39,7 @@ interface BC {
                 bcPoint.normalize().getAffineYCoord().toBigInteger());
     }
 
-    static org.bouncycastle.math.ec.ECPoint fromECPoint(ECPoint point) {
-        return point == ECPoint.POINT_INFINITY
-                ? BC_CURVE.getCurve().getInfinity()
-                : BC_CURVE.getCurve().createPoint(point.getAffineX(), point.getAffineY());
+    static org.bouncycastle.math.ec.ECPoint fromSecpPoint(SecpPoint.Uncompressed point) {
+        return BC_CURVE.getCurve().createPoint(point.x().toBigInteger(), point.y().toBigInteger());
     }
 }
