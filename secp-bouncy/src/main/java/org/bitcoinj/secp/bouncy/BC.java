@@ -21,7 +21,7 @@ import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bouncycastle.math.ec.ECPoint;
 
-import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_ECDOMAIN_PARAMS;
+import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
 
 /**
  * Bouncy Castle conversion methods
@@ -41,6 +41,6 @@ interface BC {
     }
 
     static ECPoint fromSecpPoint(SecpPoint.Uncompressed point) {
-        return BC_ECDOMAIN_PARAMS.getCurve().createPoint(point.x().toBigInteger(), point.y().toBigInteger());
+        return BC_CURVE.createPoint(point.x().toBigInteger(), point.y().toBigInteger());
     }
 }

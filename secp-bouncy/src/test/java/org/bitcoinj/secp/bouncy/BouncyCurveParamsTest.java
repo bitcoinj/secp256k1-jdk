@@ -29,7 +29,7 @@ public class BouncyCurveParamsTest {
     @Test
     void curveParamCompare() {
         // "P" = "P"
-        assertEquals(Secp256k1.P, Bouncy256k1.BC_ECDOMAIN_PARAMS.getCurve().getField().getCharacteristic());
+        assertEquals(Secp256k1.P, Bouncy256k1.BC_CURVE.getField().getCharacteristic());
         // "G" = "G"
         assertEquals(Secp256k1.G, BC.toSecpPoint(Bouncy256k1.BC_ECDOMAIN_PARAMS.getG()));
         // "Order" = "N"
@@ -39,8 +39,8 @@ public class BouncyCurveParamsTest {
         // "Cofactor" = "H"
         assertEquals(Secp256k1.EC_PARAMS.getCofactor(), Bouncy256k1.BC_ECDOMAIN_PARAMS.getH().intValueExact());
         // "A" = "A"
-        assertEquals(Secp256k1.CURVE.getA(), Bouncy256k1.BC_ECDOMAIN_PARAMS.getCurve().getA().toBigInteger());
+        assertEquals(Secp256k1.CURVE.getA(), Bouncy256k1.BC_CURVE.getA().toBigInteger());
         // "B" = "B"
-        assertEquals(Secp256k1.CURVE.getB(), Bouncy256k1.BC_ECDOMAIN_PARAMS.getCurve().getB().toBigInteger());
+        assertEquals(Secp256k1.CURVE.getB(), Bouncy256k1.BC_CURVE.getB().toBigInteger());
     }
 }
