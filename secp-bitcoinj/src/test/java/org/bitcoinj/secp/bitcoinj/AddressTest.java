@@ -19,14 +19,10 @@ import org.bitcoinj.base.Address;
 import org.bitcoinj.base.BitcoinNetwork;
 import org.bitcoinj.base.Network;
 import org.bitcoinj.base.SegwitAddress;
-import org.bitcoinj.crypto.ECKey;
 import org.bitcoinj.secp.SecpKeyPair;
-import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.internal.SecpPubKeyImpl;
-import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.UInt256;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,7 +35,6 @@ import java.util.HexFormat;
 import java.util.List;
 
 import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
-import static org.bitcoinj.secp.bitcoinj.WitnessMaker.calcTweak;
 
 /**
  * Work-in-progress experiments to create Taproot addresses from private keys.
@@ -97,21 +92,12 @@ public class AddressTest {
     void createAddressTest2() throws Exception {
         Address tapRootAddress;
         try (Secp256k1 secp = Secp256k1.get()) {
+            WitnessMaker maker = new WitnessMaker(secp);
             BigInteger internalPubKey = new BigInteger("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d", 16);
-            byte[] compressed = new byte[33];
-            compressed[0] = 0x02;
-            byte[] xbytes = SecpScalarImpl.integerTo32Bytes(internalPubKey);
-            System.arraycopy(xbytes, 0, compressed, 1, 32);
-            ECKey ecKey = ECKey.fromPublicOnly(compressed);
-            SecpPubKey pubkey = secp.ecPubKeyParse(compressed).get();
             // TODO: Use `secp.xOnlyPubKeyParse(serial)` here instead of `SecpXOnlyPubKey.parse(serial)`
             // We need a Bouncy Castle Implementation first
             SecpXOnlyPubKey xOnlyKey = SecpXOnlyPubKey.parse(UInt256.integerTo32Bytes(internalPubKey)).get();
-            BigInteger tweakInt = calcTweak(xOnlyKey);
-            SecpPubKey G = new SecpPubKeyImpl(Secp256k1.G);
-            SecpPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-            SecpPubKey Q = secp.ecPubKeyCombine(pubkey, P2);
-            byte[] witnessProgram = Q.xOnly().serialize();
+            byte[] witnessProgram = maker.calcWitnessProgram(xOnlyKey);
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
         System.out.println(tapRootAddress);
