@@ -41,12 +41,15 @@ public class WitnessMaker {
     }
 
     public byte[] calcWitnessProgram(SecpPubKey pubKey) {
-        SecpXOnlyPubKey xOnlyKey = pubKey.xOnly();
-        BigInteger tweakInt = calcTweak(xOnlyKey);
+        BigInteger tweakInt = calcTweak(pubKey.xOnly());
         SecpPubKey G = new SecpPubKeyImpl(Secp256k1.G);
         SecpPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
         SecpPubKey Q = secp.ecPubKeyCombine(pubKey, P2);
         return Q.xOnly().serialize();
+    }
+
+    public byte[] calcWitnessProgram(SecpXOnlyPubKey xOnlyPubKey) {
+        return calcWitnessProgram(secp.ecPubKeyFromXOnly(xOnlyPubKey));
     }
 
     public static BigInteger calcTweak(SecpXOnlyPubKey xOnlyPubKey) {

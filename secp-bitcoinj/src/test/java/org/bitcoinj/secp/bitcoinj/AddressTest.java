@@ -89,15 +89,12 @@ public class AddressTest {
     void createAddressTestBouncyXO() throws Exception {
         Address tapRootAddress;
         try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
+            WitnessMaker maker = new WitnessMaker(secp);
             byte[] serial = HexFormat.of().parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
             // TODO: Use `secp.xOnlyPubKeyParse(serial)` here instead of `SecpXOnlyPubKey.parse(serial)`
             // We need a Bouncy Castle Implementation first
             SecpXOnlyPubKey xOnlyKey = SecpXOnlyPubKey.parse(serial).get();
-            BigInteger tweakInt = calcTweak(xOnlyKey);
-            SecpPubKey G = new SecpPubKeyImpl(Secp256k1.G);
-            SecpPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-            SecpPubKey Q = secp.ecPubKeyCombine(secp.ecPubKeyFromXOnly(xOnlyKey), P2);
-            byte[] witnessProgram = Q.xOnly().serialize();
+            byte[] witnessProgram = maker.calcWitnessProgram(xOnlyKey);
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
         Assertions.assertEquals("bc1p2wsldez5mud2yam29q22wgfh9439spgduvct83k3pm50fcxa5dps59h4z5", tapRootAddress.toString());
