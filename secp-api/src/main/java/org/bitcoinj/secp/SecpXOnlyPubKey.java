@@ -31,10 +31,16 @@ public interface SecpXOnlyPubKey {
     BigInteger getX();
 
     /**
-     * Serialize as a 32-byte, Big-endian byte array
+     * Serialize as a 32-byte, Big-endian byte array (no prefix byte)
      * @return Big-endian, 32 bytes
      */
     byte[] serialize();
+
+    /**
+     * Serialize as SECG Compressed (i.e. an even value, prefixed with a 0x02 byte).
+     * @return SECG Compressed (even) value
+     */
+    byte[] serializeCompressed();
 
     /**
      * Parses a serialized x-only pubkey and returns an instance of the default implementation

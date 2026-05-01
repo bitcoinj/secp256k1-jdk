@@ -54,6 +54,14 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
         return x.clone();
     }
 
+    @Override
+    public byte[] serializeCompressed() {
+        byte[] compressed = new byte[x.length + 1];
+        compressed[0] = 0x02;   // Even 'y'
+        System.arraycopy(x, 0, compressed, 1, x.length);
+        return compressed;
+    }
+
     /**
      * @return A hex string representing the default binary serialization format
      */
