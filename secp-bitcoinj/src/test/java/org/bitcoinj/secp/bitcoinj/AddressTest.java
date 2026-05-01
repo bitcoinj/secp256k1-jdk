@@ -36,7 +36,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 
 import java.math.BigInteger;
-import java.security.spec.ECPoint;
 import java.util.HexFormat;
 import java.util.List;
 
@@ -97,11 +96,11 @@ public class AddressTest {
             BigInteger tweakInt = calcTweak(xOnlyKey);
             SecpPubKey G = new SecpPubKeyImpl(Secp256k1.G);
             SecpPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-            SecpPubKey Q = secp.ecPubKeyCombine(new SecpPubKeyImpl(new ECPoint(xOnlyKey.getX(), BigInteger.ZERO)), P2);
+            SecpPubKey Q = secp.ecPubKeyCombine(secp.ecPubKeyFromXOnly(xOnlyKey), P2);
             byte[] witnessProgram = Q.xOnly().serialize();
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
-        Assertions.assertEquals("bc1p87m65znsydcvkaqf9ysanum8aca8j3kvadxrs6agqztm9fpxsfus698zka", tapRootAddress.toString());
+        Assertions.assertEquals("bc1p2wsldez5mud2yam29q22wgfh9439spgduvct83k3pm50fcxa5dps59h4z5", tapRootAddress.toString());
     }
 
 

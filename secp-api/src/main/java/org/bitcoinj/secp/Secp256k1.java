@@ -212,6 +212,15 @@ public interface Secp256k1 extends Closeable {
     SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData);
 
     /**
+     * Convert an x-only public key to a (uncompressed point) public key
+     * @param xOnlyPubKey x-only public key
+     * @return public key
+     */
+    default SecpPubKey ecPubKeyFromXOnly(SecpXOnlyPubKey xOnlyPubKey){
+        return ecPubKeyParse(xOnlyPubKey.serializeCompressed()).get();
+    }
+
+    /**
      * Parse a byte array as an x-only public key
      * @param inputData raw data to parse as an x-only public key
      * @return an x-only public key result or error
