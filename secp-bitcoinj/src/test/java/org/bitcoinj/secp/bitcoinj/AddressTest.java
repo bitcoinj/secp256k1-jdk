@@ -25,7 +25,6 @@ import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.internal.SecpFieldElementImpl;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.UInt256;
@@ -43,7 +42,8 @@ import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
 import static org.bitcoinj.secp.bitcoinj.WitnessMaker.calcTweak;
 
 /**
- *
+ * Work-in-progress experiments to create Taproot addresses from private keys.
+ * Needs to be rewritten using known test vectors.
  */
 public class AddressTest {
     final static Network network = BitcoinNetwork.MAINNET;
@@ -54,12 +54,6 @@ public class AddressTest {
         try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
             SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(key));
             WitnessMaker maker = new WitnessMaker(secp);
-//            SecpXOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
-//            BigInteger tweakInt = calcTweak(xOnlyKey);
-//            SecpPubKey G = new PubKeyPojo(Secp256k1.EC_PARAMS.getGenerator());
-//            SecpPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-//            SecpPubKey Q = secp.ecPubKeyCombine(keyPair.getPublic(), P2);
-//            byte[] witnessProgram = Q.getXOnly().getSerialized();
             byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
@@ -73,12 +67,6 @@ public class AddressTest {
         try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
             SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(key));
             WitnessMaker maker = new WitnessMaker(secp);
-//            SecpXOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
-//            BigInteger tweakInt = calcTweak(xOnlyKey);
-//            SecpPubKey G = new PubKeyPojo(Secp256k1.EC_PARAMS.getGenerator());
-//            SecpPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-//            SecpPubKey Q = secp.ecPubKeyCombine(keyPair.getPublic(), P2);
-//            byte[] witnessProgram = Q.getXOnly().getSerialized();
             byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
@@ -99,7 +87,6 @@ public class AddressTest {
         }
         Assertions.assertEquals("bc1p2wsldez5mud2yam29q22wgfh9439spgduvct83k3pm50fcxa5dps59h4z5", tapRootAddress.toString());
     }
-
 
     private static final List<Arguments> keyAddressArgs = List.of(
             Arguments.of(BigInteger.ONE, "bc1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5sspknck9"),
@@ -129,5 +116,4 @@ public class AddressTest {
         }
         System.out.println(tapRootAddress);
     }
-
 }
