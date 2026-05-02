@@ -53,7 +53,11 @@ import java.util.stream.StreamSupport;
  */
 public interface Secp256k1 extends Closeable {
     /**
-     * The prime {@code P}, that defines the secp256k1 field. Note that since the maximum valid value of a field
+     * The prime {@code P}, that defines the secp256k1 field.
+     * <p>
+     * {@code P = 2²⁵⁶ − 2³² − 2⁹ − 2⁸ − 2⁷ − 2⁶ − 2⁴ − 1}
+     * <p>
+     * Note that since the maximum valid value of a field
      * element is {@code P - 1}, this constant cannot be represented as a {@link SecpFieldElement}, so we use
      * {@link BigInteger} instead.
      */
@@ -68,7 +72,15 @@ public interface Secp256k1 extends Closeable {
             new BigInteger("483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8", 16)); // G.y
     /** The secp256k1 field definition {@code p} using the standard Java type */
     ECFieldFp FIELD = new ECFieldFp(P);
-    /** The secp256k1 curve definition using the standard Java type */
+    /**
+     * The curve definition for secp256k1 using the standard Java type {@link EllipticCurve}.
+     * <p>
+     * The curve equation is {@code y² = x³ + ax + b}, where: {@code a = 0}, {@code b = 7}, resulting in:
+     * <p>
+     * {@code y² = x³ + 7}
+     * <p>
+     * over the field {@link #FIELD}, which is {@code 0..}{@link #P}
+     */
     EllipticCurve CURVE = new EllipticCurve(FIELD,
             BigInteger.ZERO,                // Coefficient a
             BigInteger.valueOf(7));         // Coefficient b
