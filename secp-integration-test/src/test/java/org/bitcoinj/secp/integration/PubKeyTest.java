@@ -28,13 +28,17 @@ import java.util.HexFormat;
 import static org.bitcoinj.secp.integration.SecpTestSupport.parseHex;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
  */
 public class PubKeyTest implements SecpTestSupport {
     byte[] ONE_SERIALIZED = parseHex("0479be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8");
+    byte[] GOOD_X_ONLY = parseHex("F9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9");
+    byte[] BAD_X_ONLY = parseHex("EEFDEA4CDB677750A420FEE807EACF21EB9898AE79B9768766E4FAA04A2D4A34");
 
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Test Pubkeys for {0}")
@@ -52,5 +56,12 @@ public class PubKeyTest implements SecpTestSupport {
         SecpPoint.Uncompressed roundTripPoint = secp.ecPointUncompress(cPoint);
 
         assertEquals(uPoint, roundTripPoint);
+    }
+
+    @MethodSource("secpImplementations")
+    @ParameterizedTest(name = "Test X-Only parsing for {0}")
+    void testXOnlyParse(Secp256k1 secp) {
+        assertTrue(secp.xOnlyPubKeyParse(GOOD_X_ONLY).isOk());
+        assertFalse(secp.xOnlyPubKeyParse(BAD_X_ONLY).isOk());
     }
 }
