@@ -149,8 +149,13 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData) {
-        ECPoint bcPoint = BC_CURVE.getCurve().decodePoint(inputData);
-        return SecpResult.ok(BC.toSecpPubKey(bcPoint));
+        try {
+            ECPoint bcPoint = BC_CURVE.getCurve().decodePoint(inputData);
+            return SecpResult.ok(BC.toSecpPubKey(bcPoint));
+        } catch (IllegalArgumentException e) {
+            return SecpResult.err(0);
+        }
+
     }
 
     @Override
