@@ -35,6 +35,18 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
         return new SecpXOnlyPubKeyImpl(SecpFieldElement.of(bytes));
     }
 
+    /**
+     * Convert to SECG Compressed serialization (i.e. an even value, prefixed with a 0x02 byte).
+     * @param xOnly 32-byte x-only public key
+     * @return SECG Compressed (even) value (33-bytes)
+     */
+    public static byte[] xOnlyToSerializedCompressed(byte[] xOnly) {
+        byte[] compressed = new byte[33];
+        compressed[0] = 0x02;   // Even 'y'
+        System.arraycopy(xOnly, 0, compressed, 1, 32);
+        return compressed;
+    }
+
     @Override
     public BigInteger getX() {
         return ByteArray.toInteger(x);
@@ -56,10 +68,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
 
     @Override
     public byte[] serializeCompressed() {
-        byte[] compressed = new byte[x.length + 1];
-        compressed[0] = 0x02;   // Even 'y'
-        System.arraycopy(x, 0, compressed, 1, x.length);
-        return compressed;
+        return xOnlyToSerializedCompressed(x);
     }
 
     /**
