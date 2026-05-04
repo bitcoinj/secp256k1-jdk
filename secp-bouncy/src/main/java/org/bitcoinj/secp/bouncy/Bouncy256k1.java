@@ -224,7 +224,7 @@ public class Bouncy256k1 implements Secp256k1 {
     BigInteger canonicalize(BigInteger s) {
         return s.compareTo(HALF_CURVE_ORDER) <= 0
                 ? s
-                : BC_ECDOMAIN_PARAMS.getN().subtract(s);
+                : Secp256k1.N.subtract(s);
     }
 
     @Override
