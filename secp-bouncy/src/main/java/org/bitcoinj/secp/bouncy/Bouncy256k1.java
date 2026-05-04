@@ -261,7 +261,22 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public byte[] taggedSha256(byte[] tag, byte[] message) {
-        return new byte[0];
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] tagHash;
+
+            digest.update(tag, 0, tag.length);
+            tagHash = digest.digest();
+
+            digest.reset();
+            digest.update(tagHash, 0, 32);
+            digest.update(tagHash, 0, 32);
+            digest.update(message, 0, message.length);
+
+            return digest.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
