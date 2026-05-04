@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 /// of test vectors provided in [BIP-0340](https://github.com/bitcoin/bips/tree/master/bip-0340).
 /// Based on the provided [Python reference](https://github.com/bitcoin/bips/blob/master/bip-0340/reference.py).
 @ParameterizedClass
-@MethodSource("secpSchnorrImplementations")
+@MethodSource("secpImplementations")
 public class BIP340TestVectorTests implements SecpTestSupport {
 
     /// Represents a single test vector in test-vectors.csv. Binary values
@@ -67,13 +67,6 @@ public class BIP340TestVectorTests implements SecpTestSupport {
     /// @param secp injected Secp256k1 implementation to test
     BIP340TestVectorTests(Secp256k1 secp) {
         this.secp = secp;
-    }
-
-    // Currently, Bouncy Castle does not implement Schnorr signing,
-    // and this will be replaced by `secpImplementations` once it does.
-    static Stream<Secp256k1> secpSchnorrImplementations() {
-        return SecpTestSupport.secpImplementations()
-                .filter(Secp256k1Foreign.class::isInstance);
     }
 
     static final List<TestVector> ALL_VECTORS = parseCSV();
