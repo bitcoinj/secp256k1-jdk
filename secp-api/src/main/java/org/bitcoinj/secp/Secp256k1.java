@@ -299,6 +299,15 @@ public interface Secp256k1 extends Closeable {
     SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey);
 
     /**
+     * Create a Schnorr signature for a message.
+     * @param messageHash a hash of a message to sign
+     * @param privKey private key for signing
+     * @param auxiliaryRandom auxiliary randomness (typically from a test vector)
+     * @return the signature
+     */
+    SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom);
+
+    /**
      * Verify a Schnorr signature.
      * @param signature the signature to verify
      * @param msg_hash hash of the message
