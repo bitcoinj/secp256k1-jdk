@@ -168,7 +168,7 @@ public class Bouncy256k1 implements Secp256k1 {
         try {
             // Bouncy Castle expects compressed format, not X-Only
             byte[] serialized = prependByte(inputData, (byte) 0x2);
-            BC_ECDOMAIN_PARAMS.getCurve().decodePoint(serialized);
+            BC_CURVE.decodePoint(serialized);
         } catch (IllegalArgumentException e) {
             // If `decodePoint` fails, pubkey is invalid
             return SecpResult.err(0);
