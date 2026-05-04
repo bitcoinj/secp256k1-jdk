@@ -32,7 +32,6 @@ import org.bitcoinj.secp.internal.UInt256;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
 
 import java.math.BigInteger;
@@ -48,11 +47,11 @@ import static org.bitcoinj.secp.bitcoinj.WitnessMaker.calcTweak;
 public class AddressTest {
     final static Network network = BitcoinNetwork.MAINNET;
     @FieldSource("keyAddressArgs")
-    @ParameterizedTest(name = "key {0} -> Address {1}")
-    void createAddressTest(BigInteger key, String address) throws Exception {
+    @ParameterizedTest()
+    void createAddressTest(PrivKeyAddrVector vec) throws Exception {
         Address tapRootAddress;
         try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
-            SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(key));
+            SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(vec.privKey));
             WitnessMaker maker = new WitnessMaker(secp);
 //            SecpXOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
 //            BigInteger tweakInt = calcTweak(xOnlyKey);
@@ -63,15 +62,15 @@ public class AddressTest {
             byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
-        Assertions.assertEquals(address, tapRootAddress.toString());
+        Assertions.assertEquals(vec.address, tapRootAddress.toString());
     }
 
     @FieldSource("keyAddressArgs")
-    @ParameterizedTest(name = "key {0} -> Address {1}")
-    void createAddressTestBouncy(BigInteger key, String address) throws Exception {
+    @ParameterizedTest()
+    void createAddressTestBouncy(PrivKeyAddrVector vec) throws Exception {
         Address tapRootAddress;
         try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
-            SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(key));
+            SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(vec.privKey));
             WitnessMaker maker = new WitnessMaker(secp);
 //            SecpXOnlyPubKey xOnlyKey = keyPair.getPublic().getXOnly();
 //            BigInteger tweakInt = calcTweak(xOnlyKey);
@@ -82,7 +81,7 @@ public class AddressTest {
             byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
             tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         }
-        Assertions.assertEquals(address, tapRootAddress.toString());
+        Assertions.assertEquals(vec.address, tapRootAddress.toString());
     }
 
     @Test
@@ -100,10 +99,10 @@ public class AddressTest {
         Assertions.assertEquals("bc1p2wsldez5mud2yam29q22wgfh9439spgduvct83k3pm50fcxa5dps59h4z5", tapRootAddress.toString());
     }
 
-
-    private static final List<Arguments> keyAddressArgs = List.of(
-            Arguments.of(BigInteger.ONE, "bc1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5sspknck9"),
-            Arguments.of(BigInteger.TEN, "bc1pz6sunwdvdy6t4df4wynddj8wv7rttzl8m384h72ghnxlu2wcquks3sgk7p")
+    record PrivKeyAddrVector(BigInteger privKey, String address) {};
+    private static final List<PrivKeyAddrVector> keyAddressArgs = List.of(
+            new PrivKeyAddrVector(BigInteger.ONE, "bc1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5sspknck9"),
+            new PrivKeyAddrVector(BigInteger.TEN, "bc1pz6sunwdvdy6t4df4wynddj8wv7rttzl8m384h72ghnxlu2wcquks3sgk7p")
     );
 
     @Test
@@ -129,5 +128,4 @@ public class AddressTest {
         }
         System.out.println(tapRootAddress);
     }
-
 }
