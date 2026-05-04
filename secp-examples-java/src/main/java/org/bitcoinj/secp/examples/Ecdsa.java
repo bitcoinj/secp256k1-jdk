@@ -67,7 +67,7 @@ public class Ecdsa {
             assert(pubkey.getW().equals(pubkey2.getW()));
 
             /* Verify a signature. This will return true if it's valid and false if it's not. */
-            boolean isValidSignature = secp.ecdsaVerify(sig2, messageHash, pubkey2).get();
+            boolean isValidSignature = secp.ecdsaVerify(sig2, messageHash, pubkey2);
 
             println("Is the signature valid? " + isValidSignature);
             println("Secret Key: " + privKey.getS().toString(16));

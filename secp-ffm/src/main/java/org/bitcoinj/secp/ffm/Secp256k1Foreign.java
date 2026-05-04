@@ -370,22 +370,22 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public SecpResult<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, SecpPubKey pubKey) {
+    public boolean ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, SecpPubKey pubKey) {
         /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
          * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
          * Signing with a valid context, verified secret key
          * and the default nonce function should never fail. */
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, msg_hash_data);
         SecpResult<MemorySegment> parsedPubKey = pubKeyParse(pubKey);
+        if (parsedPubKey.errorCode() != SecpResult.OK) throw new IllegalStateException("previously validated public key is invalid");
         MemorySegment serSigSeg =  arena.allocateFrom(JAVA_BYTE, sig.serializeCompact());
         MemorySegment sigSeg = secp256k1_ecdsa_signature.allocate(arena);   // internal format
         secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sigSeg, serSigSeg);
-        if (parsedPubKey instanceof SecpResult.Err<MemorySegment> err) return SecpResult.err(err.code());
         int return_val = secp256k1_h.secp256k1_ecdsa_verify(ctx,
                 sigSeg,
                 msg_hash,
                 parsedPubKey.get());
-        return SecpResult.ok(return_val == 1);
+        return return_val == 1;
     }
 
     @Override
@@ -448,15 +448,15 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey) {
+    public boolean schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey) {
         MemorySegment sigSegment = arena.allocateFrom(JAVA_BYTE, signature.bytes());
         MemorySegment msgSegment = arena.allocateFrom(JAVA_BYTE, msg_hash);
         MemorySegment pubKeySegment = arena.allocateFrom(JAVA_BYTE, pubKey.serialize()); // 32-byte
         MemorySegment pubKeySegmentOpaque = secp256k1_xonly_pubkey.allocate(arena); // 64-byte opaque
         int r = secp256k1_h.secp256k1_xonly_pubkey_parse(ctx, pubKeySegmentOpaque, pubKeySegment);
-        if (r != 1) return SecpResult.err(r);
+        if (r != 1) throw new IllegalStateException("x-only pub key should have been previously validated");
         int return_val = secp256k1_h.secp256k1_schnorrsig_verify(ctx, sigSegment, msgSegment, msg_hash.length, pubKeySegmentOpaque);
-        return SecpResult.ok(return_val == 1);
+        return return_val == 1;
     }
 
     @Override

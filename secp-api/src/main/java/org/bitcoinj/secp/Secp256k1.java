@@ -268,9 +268,9 @@ public interface Secp256k1 extends Closeable {
      * @param sig The signature to verify.
      * @param msg_hash_data A hash of the message to verify.
      * @param pubKey The pubkey that must have signed the message
-     * @return true, false, or error
+     * @return true if successfully verified, false otherwise
      */
-    SecpResult<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, SecpPubKey pubKey);
+    boolean ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, SecpPubKey pubKey);
 
     /**
      * Generate a tagged SHA-256 hash.
@@ -303,18 +303,18 @@ public interface Secp256k1 extends Closeable {
      * @param signature the signature to verify
      * @param msg_hash hash of the message
      * @param pubKey x-only pubkey that must have signed the message
-     * @return true, false, or error
+     * @return true if successfully verified, false otherwise
      */
-    SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey);
+    boolean schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey);
 
     /**
      * Verify a Schnorr signature.
      * @param signature the signature to verify
      * @param msg_hash hash of the message
      * @param pubKey pubkey that must have signed the message
-     * @return true, false, or error
+     * @return true if successfully verified, false otherwise
      */
-    default SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpPubKey pubKey) {
+    default boolean schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpPubKey pubKey) {
         return schnorrSigVerify(signature, msg_hash, pubKey.xOnly());
     }
 

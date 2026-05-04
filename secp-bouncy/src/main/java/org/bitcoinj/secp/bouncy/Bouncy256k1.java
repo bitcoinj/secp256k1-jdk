@@ -242,7 +242,7 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SecpResult<Boolean> ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, SecpPubKey pubKey) {
+    public boolean ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, SecpPubKey pubKey) {
         ECDSASigner signer = new ECDSASigner();
         ECPoint pubPoint = BC.fromSecpPoint(pubKey.point());
         ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_ECDOMAIN_PARAMS);
@@ -256,7 +256,7 @@ public class Bouncy256k1 implements Secp256k1 {
             //log.error("Caught NPE inside bouncy castle", e);
             result = false;
         }
-        return SecpResult.ok(result);
+        return result;
     }
 
     @Override
@@ -270,8 +270,8 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey) {
-        return SecpResult.err(-1);
+    public boolean schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

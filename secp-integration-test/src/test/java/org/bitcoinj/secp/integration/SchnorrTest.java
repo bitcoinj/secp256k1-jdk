@@ -39,7 +39,7 @@ public class SchnorrTest {
             SecpXOnlyPubKey xOnly = keyPair.publicKey().xOnly();
             byte[] messageHash = secp.taggedSha256(tag, msg);
             SchnorrSignature signature = secp.schnorrSigSign32(messageHash, keyPair);
-            boolean isValid = secp.schnorrSigVerify(signature, messageHash, xOnly).get();
+            boolean isValid = secp.schnorrSigVerify(signature, messageHash, xOnly);
             assertTrue(isValid);
         }
     }

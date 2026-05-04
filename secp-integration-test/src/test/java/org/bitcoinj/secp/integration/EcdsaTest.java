@@ -41,7 +41,7 @@ public class EcdsaTest implements SecpTestSupport {
         SecpPrivKey privKey = secp.ecPrivKeyCreate();
         SecpPubKey pubKey = secp.ecPubKeyCreate(privKey);
         EcdsaSignature sig = secp.ecdsaSign(msg_hash, privKey).get();
-        boolean validSignature = secp.ecdsaVerify(sig, msg_hash, pubKey).get();
+        boolean validSignature = secp.ecdsaVerify(sig, msg_hash, pubKey);
         assertTrue(validSignature);
     }
 
@@ -72,10 +72,10 @@ public class EcdsaTest implements SecpTestSupport {
 
             assertArrayEquals(sig1.serializeCompact(), sig2.serializeCompact());
 
-            assertTrue(secp1.ecdsaVerify(sig1, msg_hash, pubKey1).get());
-            assertTrue(secp1.ecdsaVerify(sig2, msg_hash, pubKey2).get());
-            assertTrue(secp2.ecdsaVerify(sig1, msg_hash, pubKey1).get());
-            assertTrue(secp2.ecdsaVerify(sig2, msg_hash, pubKey2).get());
+            assertTrue(secp1.ecdsaVerify(sig1, msg_hash, pubKey1));
+            assertTrue(secp1.ecdsaVerify(sig2, msg_hash, pubKey2));
+            assertTrue(secp2.ecdsaVerify(sig1, msg_hash, pubKey1));
+            assertTrue(secp2.ecdsaVerify(sig2, msg_hash, pubKey2));
         }
     }
 

@@ -56,7 +56,7 @@ fun main() {
         /* Compute the tagged hash on the received message using the same tag as the signer. */
         val messageHash2 : ByteArray = secp.taggedSha256(tag, msg)
 
-        val isValidSignature : Boolean = secp.schnorrSigVerify(signature, messageHash2, xOnly2).get()
+        val isValidSignature : Boolean = secp.schnorrSigVerify(signature, messageHash2, xOnly2)
 
         println("Is the signature valid? $isValidSignature")
         println("Secret Key: ${keyPair.s.toString(16)}")

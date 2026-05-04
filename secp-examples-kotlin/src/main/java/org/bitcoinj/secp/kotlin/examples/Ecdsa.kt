@@ -66,7 +66,7 @@ fun main() {
         assert(pubkey.w == pubkey2.w)
 
         /* Verify a signature. This will return true if it's valid and false if it's not. */
-        val isValidSignature : Boolean = secp.ecdsaVerify(sig2, messageHash, pubkey2).get()
+        val isValidSignature : Boolean = secp.ecdsaVerify(sig2, messageHash, pubkey2)
 
         println("Is the signature valid? $isValidSignature")
         println("Secret Key: ${privKey.s.toString(16)}")
