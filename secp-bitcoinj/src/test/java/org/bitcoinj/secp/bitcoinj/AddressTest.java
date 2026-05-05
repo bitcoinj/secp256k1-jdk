@@ -21,6 +21,7 @@ import org.bitcoinj.base.Network;
 import org.bitcoinj.base.SegwitAddress;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPrivKey;
+import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.internal.UInt256;
@@ -64,7 +65,10 @@ public class AddressTest {
     @ParameterizedTest(name = "key {0} -> Address {1}")
     void createAddressTest(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
-        SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(key));
+        BigInteger adjustedPrivKey = secp.ecPubKeyCreate(SecpPrivKey.of(key)).y().isOdd()
+                ? Secp256k1.N.subtract(key)
+                : key;
+        SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(adjustedPrivKey));
         WitnessMaker maker = new WitnessMaker(secp);
         byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
         tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
@@ -86,7 +90,7 @@ public class AddressTest {
 
     private static final List<Arguments> keyAddressArgs = List.of(
             Arguments.of(BigInteger.ONE, "bc1pmfr3p9j00pfxjh0zmgp99y8zftmd3s5pmedqhyptwy6lm87hf5sspknck9"),
-            Arguments.of(BigInteger.TEN, "bc1pz6sunwdvdy6t4df4wynddj8wv7rttzl8m384h72ghnxlu2wcquks3sgk7p")
+            Arguments.of(BigInteger.TEN, "bc1p5mmme8n7pqk4x55sky33h3xxu0hp9tnuszt78szmhv8su25a4y3smy8tg3")
     );
 
     @Test
