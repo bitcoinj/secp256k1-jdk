@@ -96,6 +96,8 @@ jobs:
         run: gradle build secp-examples-java:nativeCompile
       - name: Run Schnorr Native Example
         run: ./secp-examples-java/build/schnorr-example
+      - name: Run integration tests with nativeTest
+        run: ./gradlew secp-integration-test:nativeTest
 
   javadoc_artifact:
     needs: build_gradle
@@ -146,7 +148,7 @@ jobs:
         run: nix build --no-link .#devShells.$(nix eval --impure --raw --expr 'builtins.currentSystem').default
       - name: Build in Nix development shell
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
-        run: gradle build run runEcdsa secp-examples-java:nativeCompile
+        run: gradle build run runEcdsa secp-examples-java:nativeCompile secp-integration-test:nativeTest
       - name: Run Schnorr Native Example
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
         run: ./secp-examples-java/build/schnorr-example
