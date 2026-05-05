@@ -6,21 +6,21 @@ image:https://github.com/bitcoinj/secp256k1-jdk/workflows/Gradle%20Build/badge.s
 image::https://img.shields.io/badge/Matrix%20Chat-Join%20secp256k1--jdk--developers%20-blue[Join the secp256k1-jdk-developers Matrix room, link=https://matrix.to/#/#secp256k1-jdk-developers:matrix.org]
 
 `secp256k1-jdk` is a Java library providing Bitcoin-related Elliptic Curve Cryptography functions using the https://www.secg.org/[SECG] curve
-https://en.bitcoin.it/wiki/Secp256k1[secp256k1]. It provides both ECDSA and Schnorr message signing functions.
+https://en.bitcoin.it/wiki/Secp256k1[secp256k1]. It provides ECDSA and Schnorr message signing, verification, and other functions.
 
-It provides a Java API that enables multiple implementations. The proof-of-concept includes an implementation that adapts https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], a high-quality, native C
-library implementing elliptic curve operations on the secp256k1 curve. We also plan to provide an implementation using the popular https://www.bouncycastle.org[Bouncy Castle] library.
+The `secp256k1-jdk` API supports multiple implementations. The project includes an implementation that adapts https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], a high-quality, native C
+library implementing elliptic curve operations on the secp256k1 curve. In addition, there is a pure-Java implementation using the popular https://www.bouncycastle.org[Bouncy Castle] library.
 
-The library supports other JDK-based languages such as Kotlin, Groovy, Scala, and Clojure (as these languages can all use Java classes directly.) In the future, we may provide documentation, examples, and language-specific extensions for one or more additional JVM languages. (Kotlin examples are in-progress.)
+The library supports other JDK-based languages such as Kotlin, Groovy, Scala, and Clojure (as these languages can all use Java classes directly.) Kotlin examples are provided. In the future, we may provide documentation, examples, and language-specific extensions for one or more additional JVM languages.
 
 WARNING:: This prototype software has had limited testing and has not been reviewed. Do not use this software to store private keys for Bitcoin or any other purpose. It is provided AS-IS for experimentation and feedback.
 
 == API
 
 The API is based on the `C-language` API of https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], but adapted
-to modern, idiomatic, functional-style Java and to use Elliptic Curve types from the Java Class Library, such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey] where appropriate.
+to modern, idiomatic, functional-style Java. and to use Elliptic Curve types from the Java Class Library, such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey] where appropriate.
 
-The API is distributed as an API-only JAR (```secp-api-_version_.jar```) and there will be multiple implementations of the API. The API JAR currently requires JDK 9 or later but we may backport it to JDK 8 in a future release depending upon feedback from the community.
+The API is distributed as an API-only JAR (```secp-api-_version_.jar```) and there are multiple implementations of the API. The API JAR currently requires JDK 9 or later but we may backport it to JDK 8 in a future release depending upon feedback from the community.
 
 For details see the https://msgilligan.github.io/javadoc/secp256k1-jdk/0.2[Javadoc].
 
@@ -45,7 +45,7 @@ The Bouncy Castle implementation is currently targeting JDK 9, but if the API is
 
 == libsecp256k1 Implementation for older JDKs
 
-There are currently _no plans_ for an implementation using earlier Java-to-C adapter technologies such as https://docs.oracle.com/en/java/javase/21/docs/specs/jni/index.html[JNI] or https://github.com/java-native-access/jna[JNA]. However, the `secp256k1-jdk` API will support a JNI implementation. We would be supportive if someone in the community endeavours to create an implementation or adapt one of the existing implementations to use the `secp256k1-jdk` API.
+There are currently _no plans_ for an implementation using earlier Java-to-C adapter technologies such as https://docs.oracle.com/en/java/javase/21/docs/specs/jni/index.html[JNI] or https://github.com/java-native-access/jna[JNA]. However, the `secp256k1-jdk` API will support a JNI implementation. We would be supportive if someone in the community endeavors to create an implementation or adapt one of the existing implementations to use the `secp256k1-jdk` API.
 
 == Relation to bitcoinj
 
@@ -132,11 +132,11 @@ There is no APT package for GraalVM, see https://www.graalvm.org/downloads/[Graa
 
 SDKMAN! provides JDK 25 in both _Temurin_ and _GraalVM Community Edition_ flavors (among others).
 
-* `sdk install java 25-tem`
+* `sdk install java 25.0.3-tem`
 
 or for GraalVM builds:
 
-* `sdk install java 25-graalce`
+* `sdk install java 25.0.2-graalce`
 
 ==== Using Homebrew
 
@@ -243,7 +243,7 @@ The extracted headers will be writen to `./build/org/bitcoinj/secp/ffm/jextract`
 
 == Reporting a vulnerability
 
-See SECURITY.adoc (TBD)
+See link:SECURITY.md[]
 
 == References
 
@@ -257,7 +257,7 @@ See SECURITY.adoc (TBD)
 * bitcoin-s fork https://bitcoin-s.org/docs/secp256k1/jni-modify
 * Sparrow/Drongo JNI: https://github.com/sparrowwallet/drongo/tree/master/src/main/java/org/bitcoin
 * Kotlin multiplatform wrapper: https://github.com/acinq/secp256k1-kmp
-* Samourai port of Sipa's Python reference implementation to Java: https://code.samourai.io/samouraidev/BIP340_Schnorr[BIP340_Schnorr]
+* Samourai port of Sipa's Python reference implementation to Java: https://github.com/SamouraiDev/BIP340_Schnorr[BIP340_Schnorr]
 
 === Other JDK implementations of Elliptic Curve Cryptography
 
@@ -267,6 +267,7 @@ See SECURITY.adoc (TBD)
 === BIPS
 
 * https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki[BIP 340]: Schnorr Signatures for secp256k1
+* https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki[BIP 341]: Taproot: SegWit version 1 spending rules
 
 === General and Elliptic Curve Cryptography
 
