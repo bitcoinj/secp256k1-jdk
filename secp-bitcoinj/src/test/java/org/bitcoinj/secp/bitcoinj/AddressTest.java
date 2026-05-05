@@ -26,60 +26,61 @@ import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.internal.UInt256;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.FieldSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigInteger;
 import java.util.HexFormat;
 import java.util.List;
-
-import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
+import java.util.stream.Stream;
 
 /**
  * Work-in-progress experiments to create Taproot addresses from private keys.
  * Needs to be rewritten using known test vectors.
  */
+@ParameterizedClass
+@MethodSource("secpImplementations")
 public class AddressTest {
+    /**
+     * Return an instance of {@link Secp256k1} for all known providers.
+     * @return stream of all providers
+     */
+    static Stream<Secp256k1> secpImplementations() {
+        return Secp256k1.all().map(Secp256k1.Provider::get);
+    }
+
     final static Network network = BitcoinNetwork.MAINNET;
+    private final Secp256k1 secp;
+
+    /// @param secp injected Secp256k1 implementation to test
+    AddressTest(Secp256k1 secp) {
+        this.secp = secp;
+    }
+
     @FieldSource("keyAddressArgs")
     @ParameterizedTest(name = "key {0} -> Address {1}")
     void createAddressTest(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
-        try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
-            SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(key));
-            WitnessMaker maker = new WitnessMaker(secp);
-            byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
-            tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
-        }
-        Assertions.assertEquals(address, tapRootAddress.toString());
-    }
-
-    @FieldSource("keyAddressArgs")
-    @ParameterizedTest(name = "key {0} -> Address {1}")
-    void createAddressTestBouncy(BigInteger key, String address) throws Exception {
-        Address tapRootAddress;
-        try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
-            SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(key));
-            WitnessMaker maker = new WitnessMaker(secp);
-            byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
-            tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
-        }
+        SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(key));
+        WitnessMaker maker = new WitnessMaker(secp);
+        byte[] witnessProgram = maker.calcWitnessProgram(keyPair.publicKey());
+        tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         Assertions.assertEquals(address, tapRootAddress.toString());
     }
 
     @Test
-    void createAddressTestBouncyXO() throws Exception {
+    void createAddressTestXO() throws Exception {
         Address tapRootAddress;
-        try (Secp256k1 secp = Secp256k1.getById(BOUNCY_CASTLE)) {
-            WitnessMaker maker = new WitnessMaker(secp);
-            byte[] serial = HexFormat.of().parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
-            // TODO: Use `secp.xOnlyPubKeyParse(serial)` here instead of `SecpXOnlyPubKey.parse(serial)`
-            // We need a Bouncy Castle Implementation first
-            SecpXOnlyPubKey xOnlyKey = SecpXOnlyPubKey.parse(serial).get();
-            byte[] witnessProgram = maker.calcWitnessProgram(xOnlyKey);
-            tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
-        }
+        WitnessMaker maker = new WitnessMaker(secp);
+        byte[] serial = HexFormat.of().parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
+        // TODO: Use `secp.xOnlyPubKeyParse(serial)` here instead of `SecpXOnlyPubKey.parse(serial)`
+        // We need a Bouncy Castle Implementation first
+        SecpXOnlyPubKey xOnlyKey = SecpXOnlyPubKey.parse(serial).get();
+        byte[] witnessProgram = maker.calcWitnessProgram(xOnlyKey);
+        tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         Assertions.assertEquals("bc1p2wsldez5mud2yam29q22wgfh9439spgduvct83k3pm50fcxa5dps59h4z5", tapRootAddress.toString());
     }
 
@@ -91,15 +92,13 @@ public class AddressTest {
     @Test
     void createAddressTest2() throws Exception {
         Address tapRootAddress;
-        try (Secp256k1 secp = Secp256k1.get()) {
-            WitnessMaker maker = new WitnessMaker(secp);
-            BigInteger internalPubKey = new BigInteger("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d", 16);
-            // TODO: Use `secp.xOnlyPubKeyParse(serial)` here instead of `SecpXOnlyPubKey.parse(serial)`
-            // We need a Bouncy Castle Implementation first
-            SecpXOnlyPubKey xOnlyKey = SecpXOnlyPubKey.parse(UInt256.integerTo32Bytes(internalPubKey)).get();
-            byte[] witnessProgram = maker.calcWitnessProgram(xOnlyKey);
-            tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
-        }
+        WitnessMaker maker = new WitnessMaker(secp);
+        BigInteger internalPubKey = new BigInteger("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d", 16);
+        // TODO: Use `secp.xOnlyPubKeyParse(serial)` here instead of `SecpXOnlyPubKey.parse(serial)`
+        // We need a Bouncy Castle Implementation first
+        SecpXOnlyPubKey xOnlyKey = SecpXOnlyPubKey.parse(UInt256.integerTo32Bytes(internalPubKey)).get();
+        byte[] witnessProgram = maker.calcWitnessProgram(xOnlyKey);
+        tapRootAddress = SegwitAddress.fromProgram(network, 1, witnessProgram);
         System.out.println(tapRootAddress);
     }
 }
