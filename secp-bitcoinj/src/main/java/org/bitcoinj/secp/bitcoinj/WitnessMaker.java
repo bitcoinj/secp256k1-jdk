@@ -15,67 +15,50 @@
  */
 package org.bitcoinj.secp.bitcoinj;
 
-import org.bitcoinj.secp.SecpPubKey;
+import org.bitcoinj.secp.SecpFieldElement;
+import org.bitcoinj.secp.SecpPoint;
+import org.bitcoinj.secp.SecpScalar;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.internal.SecpPubKeyImpl;
+import org.bitcoinj.secp.internal.SecpScalarImpl;
 
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Experimental class for making P2TR witness programs
  */
 public class WitnessMaker {
-    /**
-     * 64-byte concatenation of two 32-byte hashes of "TapTweak"
-     */
-    private static final byte[] tweakPrefix = calcTagPrefix64("TapTweak");
+    static final byte[] TAG_TAP_TWEAK = "TapTweak".getBytes(StandardCharsets.UTF_8);
+
     private final Secp256k1 secp;
 
     public WitnessMaker(Secp256k1 secp) {
         this.secp = secp;
     }
 
-    public byte[] calcWitnessProgram(SecpPubKey pubKey) {
-        BigInteger tweakInt = calcTweak(pubKey.xOnly());
-        SecpPubKey G = new SecpPubKeyImpl(Secp256k1.G);
-        SecpPubKey P2 = secp.ecPubKeyTweakMul(G, tweakInt);
-        SecpPubKey Q = secp.ecPubKeyCombine(pubKey, P2);
-        return Q.xOnly().serialize();
+    /// P = secp.ecPubKeyFromXOnly(xOnlyPubKey)
+    /// The formula from BIP-341:
+    /// Q = P + int(hashTapTweak(bytes(P))) * G
+    /// returns Q.x()
+    /// @param xOnlyPubKey The x-only pubKey
+    /// @return tweaked, pubKey as an x-only field element
+    public SecpFieldElement tweakedPubKey(SecpXOnlyPubKey xOnlyPubKey) {
+        SecpScalar tweak = hashTapTweak(xOnlyPubKey);
+        return tweakedPubKey(xOnlyPubKey, tweak);
     }
 
-    public byte[] calcWitnessProgram(SecpXOnlyPubKey xOnlyPubKey) {
-        return calcWitnessProgram(secp.ecPubKeyFromXOnly(xOnlyPubKey));
+    /// Return Q.x(), where Q = P + tweak * G
+    SecpFieldElement tweakedPubKey(SecpXOnlyPubKey xOnlyPubKey, SecpScalar tweak) {
+        SecpPoint.Uncompressed P = secp.ecPubKeyFromXOnly(xOnlyPubKey);
+        SecpPoint.Uncompressed tempPoint = secp.ecPubKeyTweakMul(Secp256k1.G, tweak.toBigInteger()).point();
+        // tweakedPubKey (aka Q)
+        SecpPoint.Uncompressed Q = secp.ecPubKeyCombine(P, tempPoint);
+        return Q.x();
     }
 
-    public static BigInteger calcTweak(SecpXOnlyPubKey xOnlyPubKey) {
-        var digest = newDigest();
-        digest.update(tweakPrefix);
-        byte[] hash = digest.digest(xOnlyPubKey.serialize());
-        return new BigInteger(1, hash);
-    }
-
-    public static byte[] calcTagPrefix64(String tag) {
-        byte[] hash = hash256(tag.getBytes(StandardCharsets.UTF_8));
-        return ByteBuffer.allocate(64)
-                .put(hash)
-                .put(hash)
-                .array();
-    }
-
-    private static byte[] hash256(byte[] message) {
-        return newDigest().digest(message);
-    }
-
-    private static MessageDigest newDigest() {
-        try {
-            return MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);  // Can't happen.
-        }
+    /// int(hashTapTweak(bytes(P)))
+    SecpScalar hashTapTweak(SecpXOnlyPubKey xOnlyPubKey) {
+        byte[] tweak = secp.taggedSha256(TAG_TAP_TWEAK, xOnlyPubKey.serialize());
+        return new SecpScalarImpl(tweak);
     }
 }
