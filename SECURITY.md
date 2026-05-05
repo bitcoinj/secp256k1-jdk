@@ -11,4 +11,4 @@ However, we do take security seriously and will accept and respond to vulnerabil
 
 ## Reporting a Vulnerability
 
-To report a vulnerability please use "Report a vulnerability" on the secp256k1-jdk [Security](https://github.com/bitcoinj/bitcoinj/security) page.
+To report a vulnerability please use "Report a vulnerability" on the secp256k1-jdk [Security](https://github.com/bitcoinj/secp256k1-jdk/security) page.
