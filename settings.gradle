@@ -1,3 +1,15 @@
+import org.gradle.util.GradleVersion
+
+// Minimum Gradle version for build
+def minGradleVersion = GradleVersion.version("9.1")
+
+if (GradleVersion.current() < minGradleVersion) {
+    throw new GradleScriptException("secp256k1-jdk build requires Gradle ${minGradleVersion.version} or later", null)
+}
+if (!JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_25)) {
+    throw new GradleScriptException("secp256k1-jdk build requires Java 25 or later", null)
+}
+
 rootProject.name = 'secp256k1-jdk'
 
 include 'secp-api'               // API interface library
