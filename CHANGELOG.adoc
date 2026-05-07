@@ -1,0 +1,32 @@
+= secp256k1-jdk Changes
+:homepage: https://github.com/bitcoinj/secp256k1
+
+A high-level view of the changes in each secp256k1-jdk binary release.
+
+== v0.2.1
+
+Released: 2026-05-07
+
+This is the first release that is "feature-complete" for both the libsecp256k1 (FFM) implementation and the Bouncy Castle implementation. It should be considered pre-alpha, but is ready for integration testing with wallet applications, etc.
+
+See the instructions in the README for accessing the binary via the GitLab Maven repository. The next release of secp25k1-jdk will be in Maven Central.
+
+WARNING: This is pre-alpha software and unaudited. Please use with extreme caution and do not use on Bitcoin MAINNET.
+
+=== New Features
+
+* Schnorr Signatures are implemented for Bouncy Castle. See https://github.com/bitcoinj/secp256k1-jdk/issues/21[Issue 21].
+* Grinding for Low-R signatures is implemented for both libsecp256k1 and Bouncy Castle. See https://github.com/bitcoinj/secp256k1-jdk/issues/136[Issue 136] and https://github.com/bitcoinj/secp256k1-jdk/issues/325[Issue 325]
+
+=== API changes and bug fixes
+
+* Secp256k1Foreign, BouncySecp256k1: serialization and canonicalization fixes -- see https://github.com/bitcoinj/secp256k1-jdk/pull/348[PR 348].
+* There have been many changes for better ECC field and point validation.
+* There have been numerous, but relatively minor API changes.
+
+=== Major Dependency Updates
+
+* `secp-bouncy`: Update to Bouncy Castle 1.84. See https://github.com/bitcoinj/secp256k1-jdk/pull/343[PR 343].
+* `secp-ffm`: libsecp256k1 FFM module now requires JDK 25 or later. See https://github.com/bitcoinj/secp256k1-jdk/issues/281[Issue 281].
+
+For the closed GitHub milestone with a detailed list of PRs and Issues see https://github.com/bitcoinj/secp256k1-jdk/milestone/4?closed=1[Milestone: Version 0.2.1]
