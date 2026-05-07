@@ -1,11 +1,13 @@
 == Main Release Process
 
-. Use Java 25, Gradle 9.1+ for official builds via Gradle devShell
+. Use Java 25, Gradle 9.3.1 for official builds via Nix devShell
 .. `nix develop`
 . Set versions
 .. `gradle.properties`
-. Update `README.adoc` and other documentation if necessary
-. Commit version bump (and changelog eventually).
+. Update `README`, `CHANGELOG` (and other documentation?)
+.. `README.adoc`
+.. `CHANGELOG.adoc`
+. Commit version bump and `CHANGELOG`.
 . Make sure project directory is a clean checkout.
 . Full build, test
 .. `gradle clean build run runEcdsa nativeCompile`
