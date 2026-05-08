@@ -22,7 +22,7 @@ to modern, idiomatic, functional-style Java. and to use Elliptic Curve types fro
 
 The API is distributed as an API-only JAR (```secp-api-_version_.jar```) and there are multiple implementations of the API. The API JAR currently requires JDK 9 or later but we may backport it to JDK 8 in a future release depending upon feedback from the community.
 
-For details see the https://msgilligan.github.io/javadoc/secp256k1-jdk/0.2[Javadoc].
+For details see the https://msgilligan.github.io/javadoc/secp256k1-jdk/0.2.1[Javadoc].
 
 NOTE:: At this point, we are especially interested in feedback on the API.
 
