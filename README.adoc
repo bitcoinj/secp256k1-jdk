@@ -250,7 +250,7 @@ See link:SECURITY.md[]
 === secp256k1 library
 
 * https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] on GitHub
-
+* https://wuille.net/posts/secp256k1-tutorial/[libsecp256k1 tutorial] by Pieter Wuille.
 
 === Other JDK wrappers of (lib)secp256k1
 
