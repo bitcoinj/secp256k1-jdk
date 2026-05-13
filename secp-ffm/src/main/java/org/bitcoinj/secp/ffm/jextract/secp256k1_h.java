@@ -115,7 +115,7 @@ public class secp256k1_h extends secp256k1_h$shared {
     /**
      * Layout for variable:
      * {@snippet lang=c :
-     * extern const secp256k1_context *secp256k1_context_static
+     * extern const secp256k1_context *const secp256k1_context_static
      * }
      */
     public static AddressLayout secp256k1_context_static$layout() {
@@ -125,7 +125,7 @@ public class secp256k1_h extends secp256k1_h$shared {
     /**
      * Segment for variable:
      * {@snippet lang=c :
-     * extern const secp256k1_context *secp256k1_context_static
+     * extern const secp256k1_context *const secp256k1_context_static
      * }
      */
     public static MemorySegment secp256k1_context_static$segment() {
@@ -135,7 +135,7 @@ public class secp256k1_h extends secp256k1_h$shared {
     /**
      * Getter for variable:
      * {@snippet lang=c :
-     * extern const secp256k1_context *secp256k1_context_static
+     * extern const secp256k1_context *const secp256k1_context_static
      * }
      */
     public static MemorySegment secp256k1_context_static() {
@@ -145,7 +145,7 @@ public class secp256k1_h extends secp256k1_h$shared {
     /**
      * Setter for variable:
      * {@snippet lang=c :
-     * extern const secp256k1_context *secp256k1_context_static
+     * extern const secp256k1_context *const secp256k1_context_static
      * }
      */
     public static void secp256k1_context_static(MemorySegment varValue) {
@@ -160,7 +160,7 @@ public class secp256k1_h extends secp256k1_h$shared {
     /**
      * Layout for variable:
      * {@snippet lang=c :
-     * extern const secp256k1_context *secp256k1_context_no_precomp
+     * extern const secp256k1_context *const secp256k1_context_no_precomp
      * }
      */
     public static AddressLayout secp256k1_context_no_precomp$layout() {
@@ -170,7 +170,7 @@ public class secp256k1_h extends secp256k1_h$shared {
     /**
      * Segment for variable:
      * {@snippet lang=c :
-     * extern const secp256k1_context *secp256k1_context_no_precomp
+     * extern const secp256k1_context *const secp256k1_context_no_precomp
      * }
      */
     public static MemorySegment secp256k1_context_no_precomp$segment() {
@@ -180,7 +180,7 @@ public class secp256k1_h extends secp256k1_h$shared {
     /**
      * Getter for variable:
      * {@snippet lang=c :
-     * extern const secp256k1_context *secp256k1_context_no_precomp
+     * extern const secp256k1_context *const secp256k1_context_no_precomp
      * }
      */
     public static MemorySegment secp256k1_context_no_precomp() {
@@ -190,7 +190,7 @@ public class secp256k1_h extends secp256k1_h$shared {
     /**
      * Setter for variable:
      * {@snippet lang=c :
-     * extern const secp256k1_context *secp256k1_context_no_precomp
+     * extern const secp256k1_context *const secp256k1_context_no_precomp
      * }
      */
     public static void secp256k1_context_no_precomp(MemorySegment varValue) {
@@ -1520,67 +1520,6 @@ public class secp256k1_h extends secp256k1_h$shared {
         }
     }
 
-    private static class secp256k1_ec_privkey_negate {
-        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
-            secp256k1_h.C_INT,
-            secp256k1_h.C_POINTER,
-            secp256k1_h.C_POINTER
-        );
-
-        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_privkey_negate");
-
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
-    }
-
-    /**
-     * Function descriptor for:
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_negate(const secp256k1_context *ctx, unsigned char *seckey)
-     * }
-     */
-    public static FunctionDescriptor secp256k1_ec_privkey_negate$descriptor() {
-        return secp256k1_ec_privkey_negate.DESC;
-    }
-
-    /**
-     * Downcall method handle for:
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_negate(const secp256k1_context *ctx, unsigned char *seckey)
-     * }
-     */
-    public static MethodHandle secp256k1_ec_privkey_negate$handle() {
-        return secp256k1_ec_privkey_negate.HANDLE;
-    }
-
-    /**
-     * Address for:
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_negate(const secp256k1_context *ctx, unsigned char *seckey)
-     * }
-     */
-    public static MemorySegment secp256k1_ec_privkey_negate$address() {
-        return secp256k1_ec_privkey_negate.ADDR;
-    }
-
-    /**
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_negate(const secp256k1_context *ctx, unsigned char *seckey)
-     * }
-     */
-    public static int secp256k1_ec_privkey_negate(MemorySegment ctx, MemorySegment seckey) {
-        var mh$ = secp256k1_ec_privkey_negate.HANDLE;
-        try {
-            if (TRACE_DOWNCALLS) {
-                traceDowncall("secp256k1_ec_privkey_negate", ctx, seckey);
-            }
-            return (int)mh$.invokeExact(ctx, seckey);
-        } catch (Error | RuntimeException ex) {
-           throw ex;
-        } catch (Throwable ex$) {
-           throw new AssertionError("should not reach here", ex$);
-        }
-    }
-
     private static class secp256k1_ec_pubkey_negate {
         public static final FunctionDescriptor DESC = FunctionDescriptor.of(
             secp256k1_h.C_INT,
@@ -1695,68 +1634,6 @@ public class secp256k1_h extends secp256k1_h$shared {
         try {
             if (TRACE_DOWNCALLS) {
                 traceDowncall("secp256k1_ec_seckey_tweak_add", ctx, seckey, tweak32);
-            }
-            return (int)mh$.invokeExact(ctx, seckey, tweak32);
-        } catch (Error | RuntimeException ex) {
-           throw ex;
-        } catch (Throwable ex$) {
-           throw new AssertionError("should not reach here", ex$);
-        }
-    }
-
-    private static class secp256k1_ec_privkey_tweak_add {
-        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
-            secp256k1_h.C_INT,
-            secp256k1_h.C_POINTER,
-            secp256k1_h.C_POINTER,
-            secp256k1_h.C_POINTER
-        );
-
-        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_privkey_tweak_add");
-
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
-    }
-
-    /**
-     * Function descriptor for:
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_tweak_add(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
-     * }
-     */
-    public static FunctionDescriptor secp256k1_ec_privkey_tweak_add$descriptor() {
-        return secp256k1_ec_privkey_tweak_add.DESC;
-    }
-
-    /**
-     * Downcall method handle for:
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_tweak_add(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
-     * }
-     */
-    public static MethodHandle secp256k1_ec_privkey_tweak_add$handle() {
-        return secp256k1_ec_privkey_tweak_add.HANDLE;
-    }
-
-    /**
-     * Address for:
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_tweak_add(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
-     * }
-     */
-    public static MemorySegment secp256k1_ec_privkey_tweak_add$address() {
-        return secp256k1_ec_privkey_tweak_add.ADDR;
-    }
-
-    /**
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_tweak_add(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
-     * }
-     */
-    public static int secp256k1_ec_privkey_tweak_add(MemorySegment ctx, MemorySegment seckey, MemorySegment tweak32) {
-        var mh$ = secp256k1_ec_privkey_tweak_add.HANDLE;
-        try {
-            if (TRACE_DOWNCALLS) {
-                traceDowncall("secp256k1_ec_privkey_tweak_add", ctx, seckey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, seckey, tweak32);
         } catch (Error | RuntimeException ex) {
@@ -1881,68 +1758,6 @@ public class secp256k1_h extends secp256k1_h$shared {
         try {
             if (TRACE_DOWNCALLS) {
                 traceDowncall("secp256k1_ec_seckey_tweak_mul", ctx, seckey, tweak32);
-            }
-            return (int)mh$.invokeExact(ctx, seckey, tweak32);
-        } catch (Error | RuntimeException ex) {
-           throw ex;
-        } catch (Throwable ex$) {
-           throw new AssertionError("should not reach here", ex$);
-        }
-    }
-
-    private static class secp256k1_ec_privkey_tweak_mul {
-        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
-            secp256k1_h.C_INT,
-            secp256k1_h.C_POINTER,
-            secp256k1_h.C_POINTER,
-            secp256k1_h.C_POINTER
-        );
-
-        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_privkey_tweak_mul");
-
-        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
-    }
-
-    /**
-     * Function descriptor for:
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_tweak_mul(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
-     * }
-     */
-    public static FunctionDescriptor secp256k1_ec_privkey_tweak_mul$descriptor() {
-        return secp256k1_ec_privkey_tweak_mul.DESC;
-    }
-
-    /**
-     * Downcall method handle for:
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_tweak_mul(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
-     * }
-     */
-    public static MethodHandle secp256k1_ec_privkey_tweak_mul$handle() {
-        return secp256k1_ec_privkey_tweak_mul.HANDLE;
-    }
-
-    /**
-     * Address for:
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_tweak_mul(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
-     * }
-     */
-    public static MemorySegment secp256k1_ec_privkey_tweak_mul$address() {
-        return secp256k1_ec_privkey_tweak_mul.ADDR;
-    }
-
-    /**
-     * {@snippet lang=c :
-     * extern int secp256k1_ec_privkey_tweak_mul(const secp256k1_context *ctx, unsigned char *seckey, const unsigned char *tweak32)
-     * }
-     */
-    public static int secp256k1_ec_privkey_tweak_mul(MemorySegment ctx, MemorySegment seckey, MemorySegment tweak32) {
-        var mh$ = secp256k1_ec_privkey_tweak_mul.HANDLE;
-        try {
-            if (TRACE_DOWNCALLS) {
-                traceDowncall("secp256k1_ec_privkey_tweak_mul", ctx, seckey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, seckey, tweak32);
         } catch (Error | RuntimeException ex) {
