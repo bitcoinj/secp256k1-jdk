@@ -138,9 +138,9 @@ public class secp256k1_schnorrsig_extraparams {
      * secp256k1_nonce_function_hardened noncefp
      * }
      */
-    public static class noncefp {
+    public final static class noncefp {
 
-        noncefp() {
+        private noncefp() {
             // Should not be called directly
         }
 
@@ -185,9 +185,11 @@ public class secp256k1_schnorrsig_extraparams {
         /**
          * Invoke the upcall stub {@code funcPtr}, with given parameters
          */
-        public static int invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1, long _x2, MemorySegment _x3, MemorySegment _x4, MemorySegment _x5, long _x6, MemorySegment _x7) {
+        public static int invoke(MemorySegment funcPtr, MemorySegment _x0, MemorySegment _x1, long _x2, MemorySegment _x3, MemorySegment _x4, MemorySegment _x5, long _x6, MemorySegment _x7) {
             try {
                 return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2, _x3, _x4, _x5, _x6, _x7);
+            } catch (Error | RuntimeException ex) {
+                throw ex;
             } catch (Throwable ex$) {
                 throw new AssertionError("should not reach here", ex$);
             }

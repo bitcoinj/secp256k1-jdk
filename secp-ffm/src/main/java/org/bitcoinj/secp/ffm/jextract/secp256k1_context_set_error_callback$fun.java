@@ -32,9 +32,9 @@ import static java.lang.foreign.MemoryLayout.PathElement.*;
  * void (*fun)(const char *, void *)
  * }
  */
-public class secp256k1_context_set_error_callback$fun {
+public final class secp256k1_context_set_error_callback$fun {
 
-    secp256k1_context_set_error_callback$fun() {
+    private secp256k1_context_set_error_callback$fun() {
         // Should not be called directly
     }
 
@@ -72,9 +72,11 @@ public class secp256k1_context_set_error_callback$fun {
     /**
      * Invoke the upcall stub {@code funcPtr}, with given parameters
      */
-    public static void invoke(MemorySegment funcPtr,MemorySegment _x0, MemorySegment _x1) {
+    public static void invoke(MemorySegment funcPtr, MemorySegment _x0, MemorySegment _x1) {
         try {
              DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+        } catch (Error | RuntimeException ex) {
+            throw ex;
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }

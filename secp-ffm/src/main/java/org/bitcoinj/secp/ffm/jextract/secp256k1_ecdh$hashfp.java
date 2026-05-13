@@ -29,12 +29,12 @@ import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
  * {@snippet lang=c :
- * void (*fun)(const char *, void *)
+ * secp256k1_ecdh_hash_function hashfp
  * }
  */
-public final class secp256k1_context_set_illegal_callback$fun {
+public final class secp256k1_ecdh$hashfp {
 
-    private secp256k1_context_set_illegal_callback$fun() {
+    private secp256k1_ecdh$hashfp() {
         // Should not be called directly
     }
 
@@ -42,10 +42,13 @@ public final class secp256k1_context_set_illegal_callback$fun {
      * The function pointer signature, expressed as a functional interface
      */
     public interface Function {
-        void apply(MemorySegment _x0, MemorySegment _x1);
+        int apply(MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, MemorySegment _x3);
     }
 
-    private static final FunctionDescriptor $DESC = FunctionDescriptor.ofVoid(
+    private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
+        secp256k1_h.C_INT,
+        secp256k1_h.C_POINTER,
+        secp256k1_h.C_POINTER,
         secp256k1_h.C_POINTER,
         secp256k1_h.C_POINTER
     );
@@ -57,13 +60,13 @@ public final class secp256k1_context_set_illegal_callback$fun {
         return $DESC;
     }
 
-    private static final MethodHandle UP$MH = secp256k1_h.upcallHandle(secp256k1_context_set_illegal_callback$fun.Function.class, "apply", $DESC);
+    private static final MethodHandle UP$MH = secp256k1_h.upcallHandle(secp256k1_ecdh$hashfp.Function.class, "apply", $DESC);
 
     /**
      * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
      * The lifetime of the returned segment is managed by {@code arena}
      */
-    public static MemorySegment allocate(secp256k1_context_set_illegal_callback$fun.Function fi, Arena arena) {
+    public static MemorySegment allocate(secp256k1_ecdh$hashfp.Function fi, Arena arena) {
         return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
     }
 
@@ -72,9 +75,9 @@ public final class secp256k1_context_set_illegal_callback$fun {
     /**
      * Invoke the upcall stub {@code funcPtr}, with given parameters
      */
-    public static void invoke(MemorySegment funcPtr, MemorySegment _x0, MemorySegment _x1) {
+    public static int invoke(MemorySegment funcPtr, MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, MemorySegment _x3) {
         try {
-             DOWN$MH.invokeExact(funcPtr, _x0, _x1);
+            return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2, _x3);
         } catch (Error | RuntimeException ex) {
             throw ex;
         } catch (Throwable ex$) {

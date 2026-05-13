@@ -27,47 +27,13 @@ import java.util.stream.*;
 import static java.lang.foreign.ValueLayout.*;
 import static java.lang.foreign.MemoryLayout.PathElement.*;
 
-public class secp256k1_h {
+public class secp256k1_h extends secp256k1_h$shared {
 
     secp256k1_h() {
         // Should not be called directly
     }
 
     static final Arena LIBRARY_ARENA = Arena.ofAuto();
-    static final boolean TRACE_DOWNCALLS = Boolean.getBoolean("jextract.trace.downcalls");
-
-    static void traceDowncall(String name, Object... args) {
-         String traceArgs = Arrays.stream(args)
-                       .map(Object::toString)
-                       .collect(Collectors.joining(", "));
-         System.out.printf("%s(%s)\n", name, traceArgs);
-    }
-
-    static MemorySegment findOrThrow(String symbol) {
-        return SYMBOL_LOOKUP.findOrThrow(symbol);
-    }
-
-    static MethodHandle upcallHandle(Class<?> fi, String name, FunctionDescriptor fdesc) {
-        try {
-            return MethodHandles.lookup().findVirtual(fi, name, fdesc.toMethodType());
-        } catch (ReflectiveOperationException ex) {
-            throw new AssertionError(ex);
-        }
-    }
-
-    static MemoryLayout align(MemoryLayout layout, long align) {
-        return switch (layout) {
-            case PaddingLayout p -> p;
-            case ValueLayout v -> v.withByteAlignment(align);
-            case GroupLayout g -> {
-                MemoryLayout[] alignedMembers = g.memberLayouts().stream()
-                        .map(m -> align(m, align)).toArray(MemoryLayout[]::new);
-                yield g instanceof StructLayout ?
-                        MemoryLayout.structLayout(alignedMembers) : MemoryLayout.unionLayout(alignedMembers);
-            }
-            case SequenceLayout s -> MemoryLayout.sequenceLayout(s.elementCount(), align(s.elementLayout(), align));
-        };
-    }
 
 
     static {
@@ -77,16 +43,6 @@ public class secp256k1_h {
     static final SymbolLookup SYMBOL_LOOKUP = SymbolLookup.loaderLookup()
             .or(Linker.nativeLinker().defaultLookup());
 
-    public static final ValueLayout.OfBoolean C_BOOL = (ValueLayout.OfBoolean) Linker.nativeLinker().canonicalLayouts().get("bool");
-    public static final ValueLayout.OfByte C_CHAR =(ValueLayout.OfByte)Linker.nativeLinker().canonicalLayouts().get("char");
-    public static final ValueLayout.OfShort C_SHORT = (ValueLayout.OfShort) Linker.nativeLinker().canonicalLayouts().get("short");
-    public static final ValueLayout.OfInt C_INT = (ValueLayout.OfInt) Linker.nativeLinker().canonicalLayouts().get("int");
-    public static final ValueLayout.OfLong C_LONG_LONG = (ValueLayout.OfLong) Linker.nativeLinker().canonicalLayouts().get("long long");
-    public static final ValueLayout.OfFloat C_FLOAT = (ValueLayout.OfFloat) Linker.nativeLinker().canonicalLayouts().get("float");
-    public static final ValueLayout.OfDouble C_DOUBLE = (ValueLayout.OfDouble) Linker.nativeLinker().canonicalLayouts().get("double");
-    public static final AddressLayout C_POINTER = ((AddressLayout) Linker.nativeLinker().canonicalLayouts().get("void*"))
-            .withTargetLayout(MemoryLayout.sequenceLayout(java.lang.Long.MAX_VALUE, C_CHAR));
-    public static final ValueLayout.OfLong C_LONG = (ValueLayout.OfLong) Linker.nativeLinker().canonicalLayouts().get("long");
     private static final int SECP256K1_TAG_PUBKEY_EVEN = (int)2L;
     /**
      * {@snippet lang=c :
@@ -146,14 +102,14 @@ public class secp256k1_h {
     public static final OfLong size_t = secp256k1_h.C_LONG;
     /**
      * {@snippet lang=c :
-     * typedef int wchar_t
+     * typedef unsigned int wchar_t
      * }
      */
     public static final OfInt wchar_t = secp256k1_h.C_INT;
 
     private static class secp256k1_context_static$constants {
         public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
-        public static final MemorySegment SEGMENT = secp256k1_h.findOrThrow("secp256k1_context_static").reinterpret(LAYOUT.byteSize());
+        public static final MemorySegment SEGMENT = SYMBOL_LOOKUP.findOrThrow("secp256k1_context_static").reinterpret(LAYOUT.byteSize());
     }
 
     /**
@@ -198,7 +154,7 @@ public class secp256k1_h {
 
     private static class secp256k1_context_no_precomp$constants {
         public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
-        public static final MemorySegment SEGMENT = secp256k1_h.findOrThrow("secp256k1_context_no_precomp").reinterpret(LAYOUT.byteSize());
+        public static final MemorySegment SEGMENT = SYMBOL_LOOKUP.findOrThrow("secp256k1_context_no_precomp").reinterpret(LAYOUT.byteSize());
     }
 
     /**
@@ -244,7 +200,7 @@ public class secp256k1_h {
     private static class secp256k1_selftest {
         public static final FunctionDescriptor DESC = FunctionDescriptor.ofVoid(    );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_selftest");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_selftest");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -291,6 +247,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_selftest");
             }
             mh$.invokeExact();
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -302,7 +260,7 @@ public class secp256k1_h {
             secp256k1_h.C_INT
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_create");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_context_create");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -349,6 +307,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_context_create", flags);
             }
             return (MemorySegment)mh$.invokeExact(flags);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -360,7 +320,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_clone");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_context_clone");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -407,6 +367,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_context_clone", ctx);
             }
             return (MemorySegment)mh$.invokeExact(ctx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -417,7 +379,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_destroy");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_context_destroy");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -464,6 +426,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_context_destroy", ctx);
             }
             mh$.invokeExact(ctx);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -476,7 +440,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_set_illegal_callback");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_context_set_illegal_callback");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -523,6 +487,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_context_set_illegal_callback", ctx, fun, data);
             }
             mh$.invokeExact(ctx, fun, data);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -535,7 +501,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_set_error_callback");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_context_set_error_callback");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -582,6 +548,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_context_set_error_callback", ctx, fun, data);
             }
             mh$.invokeExact(ctx, fun, data);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -596,7 +564,7 @@ public class secp256k1_h {
             secp256k1_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_parse");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_pubkey_parse");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -643,6 +611,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_pubkey_parse", ctx, pubkey, input, inputlen);
             }
             return (int)mh$.invokeExact(ctx, pubkey, input, inputlen);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -658,7 +628,7 @@ public class secp256k1_h {
             secp256k1_h.C_INT
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_serialize");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_pubkey_serialize");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -705,6 +675,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_pubkey_serialize", ctx, output, outputlen, pubkey, flags);
             }
             return (int)mh$.invokeExact(ctx, output, outputlen, pubkey, flags);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -718,7 +690,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_cmp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_pubkey_cmp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -765,6 +737,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_pubkey_cmp", ctx, pubkey1, pubkey2);
             }
             return (int)mh$.invokeExact(ctx, pubkey1, pubkey2);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -778,7 +752,7 @@ public class secp256k1_h {
             secp256k1_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_sort");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_pubkey_sort");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -825,6 +799,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_pubkey_sort", ctx, pubkeys, n_pubkeys);
             }
             return (int)mh$.invokeExact(ctx, pubkeys, n_pubkeys);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -838,7 +814,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_parse_compact");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdsa_signature_parse_compact");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -885,6 +861,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ecdsa_signature_parse_compact", ctx, sig, input64);
             }
             return (int)mh$.invokeExact(ctx, sig, input64);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -899,7 +877,7 @@ public class secp256k1_h {
             secp256k1_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_parse_der");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdsa_signature_parse_der");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -946,6 +924,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ecdsa_signature_parse_der", ctx, sig, input, inputlen);
             }
             return (int)mh$.invokeExact(ctx, sig, input, inputlen);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -960,7 +940,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_serialize_der");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdsa_signature_serialize_der");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1007,6 +987,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ecdsa_signature_serialize_der", ctx, output, outputlen, sig);
             }
             return (int)mh$.invokeExact(ctx, output, outputlen, sig);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1020,7 +1002,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_serialize_compact");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdsa_signature_serialize_compact");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1067,6 +1049,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ecdsa_signature_serialize_compact", ctx, output64, sig);
             }
             return (int)mh$.invokeExact(ctx, output64, sig);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1081,7 +1065,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_verify");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdsa_verify");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1128,6 +1112,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ecdsa_verify", ctx, sig, msghash32, pubkey);
             }
             return (int)mh$.invokeExact(ctx, sig, msghash32, pubkey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1141,7 +1127,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_signature_normalize");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdsa_signature_normalize");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1188,6 +1174,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ecdsa_signature_normalize", ctx, sigout, sigin);
             }
             return (int)mh$.invokeExact(ctx, sigout, sigin);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1195,7 +1183,7 @@ public class secp256k1_h {
 
     private static class secp256k1_nonce_function_rfc6979$constants {
         public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
-        public static final MemorySegment SEGMENT = secp256k1_h.findOrThrow("secp256k1_nonce_function_rfc6979").reinterpret(LAYOUT.byteSize());
+        public static final MemorySegment SEGMENT = SYMBOL_LOOKUP.findOrThrow("secp256k1_nonce_function_rfc6979").reinterpret(LAYOUT.byteSize());
     }
 
     /**
@@ -1240,7 +1228,7 @@ public class secp256k1_h {
 
     private static class secp256k1_nonce_function_default$constants {
         public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
-        public static final MemorySegment SEGMENT = secp256k1_h.findOrThrow("secp256k1_nonce_function_default").reinterpret(LAYOUT.byteSize());
+        public static final MemorySegment SEGMENT = SYMBOL_LOOKUP.findOrThrow("secp256k1_nonce_function_default").reinterpret(LAYOUT.byteSize());
     }
 
     /**
@@ -1294,7 +1282,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdsa_sign");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdsa_sign");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1341,6 +1329,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ecdsa_sign", ctx, sig, msghash32, seckey, noncefp, ndata);
             }
             return (int)mh$.invokeExact(ctx, sig, msghash32, seckey, noncefp, ndata);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1353,7 +1343,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_seckey_verify");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_seckey_verify");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1400,6 +1390,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_seckey_verify", ctx, seckey);
             }
             return (int)mh$.invokeExact(ctx, seckey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1413,7 +1405,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_create");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_pubkey_create");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1460,6 +1452,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_pubkey_create", ctx, pubkey, seckey);
             }
             return (int)mh$.invokeExact(ctx, pubkey, seckey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1472,7 +1466,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_seckey_negate");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_seckey_negate");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1519,6 +1513,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_seckey_negate", ctx, seckey);
             }
             return (int)mh$.invokeExact(ctx, seckey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1531,7 +1527,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_privkey_negate");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_privkey_negate");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1578,6 +1574,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_privkey_negate", ctx, seckey);
             }
             return (int)mh$.invokeExact(ctx, seckey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1590,7 +1588,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_negate");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_pubkey_negate");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1637,6 +1635,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_pubkey_negate", ctx, pubkey);
             }
             return (int)mh$.invokeExact(ctx, pubkey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1650,7 +1650,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_seckey_tweak_add");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_seckey_tweak_add");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1697,6 +1697,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_seckey_tweak_add", ctx, seckey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, seckey, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1710,7 +1712,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_privkey_tweak_add");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_privkey_tweak_add");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1757,6 +1759,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_privkey_tweak_add", ctx, seckey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, seckey, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1770,7 +1774,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_tweak_add");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_pubkey_tweak_add");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1817,6 +1821,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_pubkey_tweak_add", ctx, pubkey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, pubkey, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1830,7 +1836,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_seckey_tweak_mul");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_seckey_tweak_mul");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1877,6 +1883,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_seckey_tweak_mul", ctx, seckey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, seckey, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1890,7 +1898,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_privkey_tweak_mul");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_privkey_tweak_mul");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1937,6 +1945,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_privkey_tweak_mul", ctx, seckey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, seckey, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -1950,7 +1960,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_tweak_mul");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_pubkey_tweak_mul");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -1997,6 +2007,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_pubkey_tweak_mul", ctx, pubkey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, pubkey, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2009,7 +2021,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_context_randomize");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_context_randomize");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2056,6 +2068,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_context_randomize", ctx, seed32);
             }
             return (int)mh$.invokeExact(ctx, seed32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2070,7 +2084,7 @@ public class secp256k1_h {
             secp256k1_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ec_pubkey_combine");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ec_pubkey_combine");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2117,6 +2131,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ec_pubkey_combine", ctx, out, ins, n);
             }
             return (int)mh$.invokeExact(ctx, out, ins, n);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2133,7 +2149,7 @@ public class secp256k1_h {
             secp256k1_h.C_LONG
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_tagged_sha256");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_tagged_sha256");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2180,6 +2196,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_tagged_sha256", ctx, hash32, tag, taglen, msg, msglen);
             }
             return (int)mh$.invokeExact(ctx, hash32, tag, taglen, msg, msglen);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2193,7 +2211,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_parse");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_xonly_pubkey_parse");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2240,6 +2258,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_xonly_pubkey_parse", ctx, pubkey, input32);
             }
             return (int)mh$.invokeExact(ctx, pubkey, input32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2253,7 +2273,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_serialize");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_xonly_pubkey_serialize");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2300,6 +2320,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_xonly_pubkey_serialize", ctx, output32, pubkey);
             }
             return (int)mh$.invokeExact(ctx, output32, pubkey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2313,7 +2335,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_cmp");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_xonly_pubkey_cmp");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2360,6 +2382,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_xonly_pubkey_cmp", ctx, pk1, pk2);
             }
             return (int)mh$.invokeExact(ctx, pk1, pk2);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2374,7 +2398,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_from_pubkey");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_xonly_pubkey_from_pubkey");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2421,6 +2445,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_xonly_pubkey_from_pubkey", ctx, xonly_pubkey, pk_parity, pubkey);
             }
             return (int)mh$.invokeExact(ctx, xonly_pubkey, pk_parity, pubkey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2435,7 +2461,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_tweak_add");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_xonly_pubkey_tweak_add");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2482,6 +2508,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_xonly_pubkey_tweak_add", ctx, output_pubkey, internal_pubkey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, output_pubkey, internal_pubkey, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2497,7 +2525,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_xonly_pubkey_tweak_add_check");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_xonly_pubkey_tweak_add_check");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2544,6 +2572,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_xonly_pubkey_tweak_add_check", ctx, tweaked_pubkey32, tweaked_pk_parity, internal_pubkey, tweak32);
             }
             return (int)mh$.invokeExact(ctx, tweaked_pubkey32, tweaked_pk_parity, internal_pubkey, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2557,7 +2587,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_create");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_keypair_create");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2604,6 +2634,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_keypair_create", ctx, keypair, seckey);
             }
             return (int)mh$.invokeExact(ctx, keypair, seckey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2617,7 +2649,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_sec");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_keypair_sec");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2664,6 +2696,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_keypair_sec", ctx, seckey, keypair);
             }
             return (int)mh$.invokeExact(ctx, seckey, keypair);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2677,7 +2711,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_pub");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_keypair_pub");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2724,6 +2758,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_keypair_pub", ctx, pubkey, keypair);
             }
             return (int)mh$.invokeExact(ctx, pubkey, keypair);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2738,7 +2774,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_xonly_pub");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_keypair_xonly_pub");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2785,6 +2821,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_keypair_xonly_pub", ctx, pubkey, pk_parity, keypair);
             }
             return (int)mh$.invokeExact(ctx, pubkey, pk_parity, keypair);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2798,7 +2836,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_keypair_xonly_tweak_add");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_keypair_xonly_tweak_add");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2845,6 +2883,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_keypair_xonly_tweak_add", ctx, keypair, tweak32);
             }
             return (int)mh$.invokeExact(ctx, keypair, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2852,7 +2892,7 @@ public class secp256k1_h {
 
     private static class secp256k1_nonce_function_bip340$constants {
         public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
-        public static final MemorySegment SEGMENT = secp256k1_h.findOrThrow("secp256k1_nonce_function_bip340").reinterpret(LAYOUT.byteSize());
+        public static final MemorySegment SEGMENT = SYMBOL_LOOKUP.findOrThrow("secp256k1_nonce_function_bip340").reinterpret(LAYOUT.byteSize());
     }
 
     /**
@@ -2905,7 +2945,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_schnorrsig_sign32");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_schnorrsig_sign32");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -2952,6 +2992,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_schnorrsig_sign32", ctx, sig64, msg32, keypair, aux_rand32);
             }
             return (int)mh$.invokeExact(ctx, sig64, msg32, keypair, aux_rand32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -2967,7 +3009,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_schnorrsig_sign");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_schnorrsig_sign");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3014,6 +3056,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_schnorrsig_sign", ctx, sig64, msg32, keypair, aux_rand32);
             }
             return (int)mh$.invokeExact(ctx, sig64, msg32, keypair, aux_rand32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3030,7 +3074,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_schnorrsig_sign_custom");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_schnorrsig_sign_custom");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3077,6 +3121,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_schnorrsig_sign_custom", ctx, sig64, msg, msglen, keypair, extraparams);
             }
             return (int)mh$.invokeExact(ctx, sig64, msg, msglen, keypair, extraparams);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3092,7 +3138,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_schnorrsig_verify");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_schnorrsig_verify");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3139,6 +3185,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_schnorrsig_verify", ctx, sig64, msg, msglen, pubkey);
             }
             return (int)mh$.invokeExact(ctx, sig64, msg, msglen, pubkey);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }
@@ -3146,7 +3194,7 @@ public class secp256k1_h {
 
     private static class secp256k1_ecdh_hash_function_sha256$constants {
         public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
-        public static final MemorySegment SEGMENT = secp256k1_h.findOrThrow("secp256k1_ecdh_hash_function_sha256").reinterpret(LAYOUT.byteSize());
+        public static final MemorySegment SEGMENT = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdh_hash_function_sha256").reinterpret(LAYOUT.byteSize());
     }
 
     /**
@@ -3191,7 +3239,7 @@ public class secp256k1_h {
 
     private static class secp256k1_ecdh_hash_function_default$constants {
         public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
-        public static final MemorySegment SEGMENT = secp256k1_h.findOrThrow("secp256k1_ecdh_hash_function_default").reinterpret(LAYOUT.byteSize());
+        public static final MemorySegment SEGMENT = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdh_hash_function_default").reinterpret(LAYOUT.byteSize());
     }
 
     /**
@@ -3245,7 +3293,7 @@ public class secp256k1_h {
             secp256k1_h.C_POINTER
         );
 
-        public static final MemorySegment ADDR = secp256k1_h.findOrThrow("secp256k1_ecdh");
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ecdh");
 
         public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
     }
@@ -3292,6 +3340,8 @@ public class secp256k1_h {
                 traceDowncall("secp256k1_ecdh", ctx, output, pubkey, seckey, hashfp, data);
             }
             return (int)mh$.invokeExact(ctx, output, pubkey, seckey, hashfp, data);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
         } catch (Throwable ex$) {
            throw new AssertionError("should not reach here", ex$);
         }

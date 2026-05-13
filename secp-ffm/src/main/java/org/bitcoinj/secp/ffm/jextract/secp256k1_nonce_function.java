@@ -32,9 +32,9 @@ import static java.lang.foreign.MemoryLayout.PathElement.*;
  * typedef int (*secp256k1_nonce_function)(unsigned char *, const unsigned char *, const unsigned char *, const unsigned char *, void *, unsigned int)
  * }
  */
-public class secp256k1_nonce_function {
+public final class secp256k1_nonce_function {
 
-    secp256k1_nonce_function() {
+    private secp256k1_nonce_function() {
         // Should not be called directly
     }
 
@@ -77,9 +77,11 @@ public class secp256k1_nonce_function {
     /**
      * Invoke the upcall stub {@code funcPtr}, with given parameters
      */
-    public static int invoke(MemorySegment funcPtr,MemorySegment nonce32, MemorySegment msg32, MemorySegment key32, MemorySegment algo16, MemorySegment data, int attempt) {
+    public static int invoke(MemorySegment funcPtr, MemorySegment nonce32, MemorySegment msg32, MemorySegment key32, MemorySegment algo16, MemorySegment data, int attempt) {
         try {
             return (int) DOWN$MH.invokeExact(funcPtr, nonce32, msg32, key32, algo16, data, attempt);
+        } catch (Error | RuntimeException ex) {
+            throw ex;
         } catch (Throwable ex$) {
             throw new AssertionError("should not reach here", ex$);
         }
