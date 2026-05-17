@@ -8,7 +8,7 @@
 
   outputs = inputs @ { nixpkgs, nixpkgs-unstable, ... }:
     let
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
       forEachSystem = f: builtins.listToAttrs (map (system: {
         name = system;
         value = f system;
