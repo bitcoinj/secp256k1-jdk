@@ -120,7 +120,7 @@ public class secp256k1_schnorrsig_extraparams {
      * }
      */
     public static byte magic(MemorySegment struct, long index0) {
-        return (byte)magic$ELEM_HANDLE.get(struct, 0L, index0);
+        return (byte)magic$ELEM_HANDLE.get(struct, magic$OFFSET, index0);
     }
 
     /**
@@ -130,7 +130,7 @@ public class secp256k1_schnorrsig_extraparams {
      * }
      */
     public static void magic(MemorySegment struct, long index0, byte fieldValue) {
-        magic$ELEM_HANDLE.set(struct, 0L, index0, fieldValue);
+        magic$ELEM_HANDLE.set(struct, magic$OFFSET, index0, fieldValue);
     }
 
     /**
