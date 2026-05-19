@@ -102,7 +102,7 @@ public class secp256k1_h extends secp256k1_h$shared {
     public static final OfLong size_t = secp256k1_h.C_LONG;
     /**
      * {@snippet lang=c :
-     * typedef unsigned int wchar_t
+     * typedef int wchar_t
      * }
      */
     public static final OfInt wchar_t = secp256k1_h.C_INT;
