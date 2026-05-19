@@ -115,7 +115,7 @@ public class secp256k1_keypair {
      * }
      */
     public static byte data(MemorySegment struct, long index0) {
-        return (byte)data$ELEM_HANDLE.get(struct, 0L, index0);
+        return (byte)data$ELEM_HANDLE.get(struct, data$OFFSET, index0);
     }
 
     /**
@@ -125,7 +125,7 @@ public class secp256k1_keypair {
      * }
      */
     public static void data(MemorySegment struct, long index0, byte fieldValue) {
-        data$ELEM_HANDLE.set(struct, 0L, index0, fieldValue);
+        data$ELEM_HANDLE.set(struct, data$OFFSET, index0, fieldValue);
     }
 
     /**
