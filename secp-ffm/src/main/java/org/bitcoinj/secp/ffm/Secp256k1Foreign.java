@@ -364,9 +364,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public SecpResult<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature) {
+        // Use secp256k1_ecdsa_signature_parse_compact to validate the bytes,
+        // but pass serialized signature (in big-endian format) to the EcdsaSignatureImpl constructor.
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sig, arena.allocateFrom(JAVA_BYTE, serialized_signature));
-        return SecpResult.checked(return_val, () -> EcdsaSignature.of(sig.toArray(JAVA_BYTE)));
+        return SecpResult.checked(return_val, () -> EcdsaSignature.of(serialized_signature));
     }
 
     @Override
