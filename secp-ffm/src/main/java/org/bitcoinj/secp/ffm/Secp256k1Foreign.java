@@ -28,6 +28,7 @@ import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.ffm.segments.LowRGrindingNonce;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
+import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
@@ -320,7 +321,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, NULL, NULL);
         privKeySeg.fill((byte) 0x00);
         secp256k1_h.secp256k1_ecdsa_signature_serialize_compact(ctx, serSigSeg, sig);
-        return SecpResult.checked(return_val, () -> EcdsaSignature.of(serSigSeg.toArray(JAVA_BYTE)));
+        return SecpResult.checked(return_val, () -> new EcdsaSignatureImpl(serSigSeg.toArray(JAVA_BYTE)));
     }
 
     /**
@@ -349,7 +350,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             nonce.increment();                      // Increment the counter field in the nonce
         } while (return_val == OK && !hasLowR(serSigSeg)); // Retry until we get an error or low-R
         privKeySeg.fill((byte) 0x00);
-        return SecpResult.checked(return_val, () -> EcdsaSignature.of(serSigSeg.toArray(JAVA_BYTE)));
+        return SecpResult.checked(return_val, () -> new EcdsaSignatureImpl(serSigSeg.toArray(JAVA_BYTE)));
     }
 
     private static boolean hasLowR(MemorySegment serSigSeg) {
@@ -368,7 +369,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         // but pass serialized signature (in big-endian format) to the EcdsaSignatureImpl constructor.
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sig, arena.allocateFrom(JAVA_BYTE, serialized_signature));
-        return SecpResult.checked(return_val, () -> EcdsaSignature.of(serialized_signature));
+        return SecpResult.checked(return_val, () -> new EcdsaSignatureImpl(serialized_signature));
     }
 
     @Override
