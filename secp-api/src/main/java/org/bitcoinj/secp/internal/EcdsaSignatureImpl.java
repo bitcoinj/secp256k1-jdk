@@ -37,6 +37,10 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
         this.s = new SecpScalarImpl(s.serialize());
     }
 
+    /**
+     * Construct from a 64-byte, big-endian compact serialized signature
+     * @param signature Signature in compact serialized format.
+     */
     public EcdsaSignatureImpl(byte[] signature) {
         if (signature.length != 64) {
             throw new IllegalArgumentException("Sig Not 64 bytes");
