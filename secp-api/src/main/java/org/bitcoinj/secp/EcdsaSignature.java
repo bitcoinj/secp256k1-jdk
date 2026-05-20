@@ -51,7 +51,9 @@ public interface EcdsaSignature {
      * Create an ECDSA signature from serialized bytes
      * @param bytes bytes
      * @return signature
+     * @deprecated use {@link Secp256k1#ecdsaSignatureParseCompact(byte[])}
      */
+    @Deprecated(forRemoval = true)
     static EcdsaSignature of(byte[] bytes) {
         return new EcdsaSignatureImpl(bytes);
     }
@@ -62,6 +64,7 @@ public interface EcdsaSignature {
      * @param s S
      * @return signature
      */
+    @Deprecated(forRemoval = true)
     static EcdsaSignature of(SecpScalar r, SecpScalar s) {
         return new EcdsaSignatureImpl(r, s);
     }
