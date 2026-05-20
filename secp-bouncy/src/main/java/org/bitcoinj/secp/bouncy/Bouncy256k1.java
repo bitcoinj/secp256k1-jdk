@@ -26,6 +26,7 @@ import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
+import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
@@ -232,7 +233,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     // Convert and canonicalize signature
     private EcdsaSignature ecdsaSignature(BigInteger[] components) {
-        return EcdsaSignature.of(
+        return new EcdsaSignatureImpl(
                 new SecpScalarImpl(components[0]),
                 new SecpScalarImpl(canonicalize(components[1]))
         );
@@ -252,7 +253,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpResult<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature) {
         try {
-            return SecpResult.ok(EcdsaSignature.of(serialized_signature));
+            return SecpResult.ok(new EcdsaSignatureImpl(serialized_signature));
         } catch (IllegalArgumentException iae) {
             return SecpResult.err(0);
         }
