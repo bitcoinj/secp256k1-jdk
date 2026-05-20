@@ -55,7 +55,13 @@ public interface SecpTestSupport {
         return Secp256k1.all().map(Secp256k1.Provider::get);
     }
 
+    HexFormat format = HexFormat.of().withUpperCase();
+
     static byte[] parseHex(String hex) {
-        return HexFormat.of().parseHex(hex);
+        return format.parseHex(hex);
+    }
+
+    static String formatHex(byte[] bytes) {
+        return format.formatHex(bytes);
     }
 }
