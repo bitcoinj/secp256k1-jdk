@@ -48,9 +48,9 @@ public class Ecdsa {
 
             /* === Signing === */
 
-            /* Generate an ECDSA signature using the RFC-6979 safe default nonce.
-             * Signing with a valid context, verified secret key and the default nonce function should never fail. */
-            EcdsaSignature sig = secp.ecdsaSign(messageHash, privKey).get();
+            /* Generate an ECDSA signature using Bitcoin-standard low-r nonce grinding.
+             * Signing with a valid context and verified secret key should never fail. */
+            EcdsaSignature sig = secp.ecdsaSignLowR(messageHash, privKey).get();
 
             /* Serialize the signature in a compact form. Should always succeed according to
              the documentation in secp256k1.h. */
