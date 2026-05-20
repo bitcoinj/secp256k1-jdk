@@ -39,7 +39,7 @@ WARNING:: This is a preliminary implementation provided for experimentation and 
 
 == Bouncy Castle Implementation
 
-An incomplete https://www.bouncycastle.org[Bouncy Castle]-based submodule is included. Bouncy Castle is a well-regarded cryptography library that includes support for the secp256k1 curve and is currently used by https://bitcoinj.org[bitcoinj] and other Java-based Bitcoin implementations. We expect this implementation to be completed and made available as a pure-Java implementation for those who are unable to use the FFM-based libsecp256k1 implementation.
+A https://www.bouncycastle.org[Bouncy Castle]-based submodule is included. Bouncy Castle is a well-regarded cryptography library that includes support for the secp256k1 curve and is currently used by https://bitcoinj.org[bitcoinj] and other Java-based Bitcoin implementations. We expect this implementation to be completed and made available as a pure-Java implementation for those who are unable to use the FFM-based libsecp256k1 implementation.
 
 The Bouncy Castle implementation is currently targeting JDK 9, but if the API is backported to JDK 8, so will the Bouncy Castle implementation.
 
