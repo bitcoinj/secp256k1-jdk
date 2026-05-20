@@ -26,6 +26,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.bitcoinj.secp.integration.SecpTestSupport.hash;
+import static org.bitcoinj.secp.integration.SecpTestSupport.parseHex;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -101,5 +102,13 @@ public class EcdsaTest implements SecpTestSupport {
             assertTrue(secp2.ecdsaVerify(sig1, msg_hash, pubKey1).get());
             assertTrue(secp2.ecdsaVerify(sig2, msg_hash, pubKey2).get());
         }
+    }
+
+    @MethodSource("secpImplementations")
+    @ParameterizedTest(name = "Test parseCompact for {0}")
+    void testParseCompact(Secp256k1 secp) {
+        byte[] sigBytes = parseHex("252EC55A0CB7CD96F3BA47D7B3E16876C75F00CCF85B5F0CA5C51A8058BA9E7640F5D8DF25ADED2A4EA8DD7B2CA4CD3D8A3187D6FEF24A9C7111B9F9B4E0CFAE");
+        EcdsaSignature signature = secp.ecdsaSignatureParseCompact(sigBytes).get();
+        assertArrayEquals(sigBytes, signature.serializeCompact());
     }
 }
