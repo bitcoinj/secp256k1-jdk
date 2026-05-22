@@ -3,13 +3,26 @@
 
 A high-level view of the changes in each secp256k1-jdk binary release.
 
+== v0.2.2
+
+Released: 2026-05-22
+
+See the instructions in the README for accessing the binary via the GitLab Maven repository. A future release of secp25k1-jdk will be in Maven Central.
+
+=== Bug fixes
+
+* `Secp256k1Foreign`: fix endianness in `ecdsaSignatureParseCompact()` -- see https://github.com/bitcoinj/secp256k1-jdk/pull/399[PR #399].
+
+
+WARNING: This is pre-alpha software and unaudited. Please use with extreme caution and do not use on Bitcoin MAINNET.
+
 == v0.2.1
 
 Released: 2026-05-07
 
 This is the first release that is "feature-complete" for both the libsecp256k1 (FFM) implementation and the Bouncy Castle implementation. It should be considered pre-alpha, but is ready for integration testing with wallet applications, etc.
 
-See the instructions in the README for accessing the binary via the GitLab Maven repository. The next release of secp25k1-jdk will be in Maven Central.
+See the instructions in the README for accessing the binary via the GitLab Maven repository. A future release of secp25k1-jdk will be in Maven Central.
 
 WARNING: This is pre-alpha software and unaudited. Please use with extreme caution and do not use on Bitcoin MAINNET.
 
