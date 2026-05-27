@@ -15,8 +15,6 @@
  */
 package org.bitcoinj.secp.internal;
 
-import java.util.Comparator;
-
 /**
  *
  */

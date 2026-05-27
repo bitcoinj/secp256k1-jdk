@@ -18,8 +18,6 @@ package org.bitcoinj.secp.bouncy;
 import org.bitcoinj.secp.SecpPoint;
 import org.junit.jupiter.api.Test;
 
-import java.security.spec.ECPoint;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;

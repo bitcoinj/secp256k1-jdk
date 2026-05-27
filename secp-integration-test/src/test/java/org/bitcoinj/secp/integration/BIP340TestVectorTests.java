@@ -22,7 +22,6 @@ import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpResult;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
-import org.bitcoinj.secp.ffm.Secp256k1Foreign;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -37,7 +36,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HexFormat;
 import java.util.List;
-import java.util.stream.Stream;
 
 /// Tests public key generation from a private key and Schnorr signing and verification
 /// from a [CSV](https://github.com/bitcoin/bips/blob/master/bip-0340/test-vectors.csv)

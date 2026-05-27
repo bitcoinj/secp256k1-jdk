@@ -15,7 +15,6 @@
  */
 package org.bitcoinj.secp.bouncy;
 
-import org.bitcoinj.secp.Secp256k1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
