@@ -25,7 +25,6 @@ import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpScalar;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.Secp256k1;
-import org.bitcoinj.secp.internal.UInt256;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedClass;
