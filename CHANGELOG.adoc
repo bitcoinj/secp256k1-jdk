@@ -3,6 +3,30 @@
 
 A high-level view of the changes in each secp256k1-jdk binary release.
 
+== v0.2.3
+
+Released: 2026-05-29
+
+See the instructions in the README for accessing the binary via the GitLab Maven repository. A future release of secp25k1-jdk will be in Maven Central.
+
+=== API Changes
+
+* `EcdsaSignature`: deprecate `of()` static factory methods -- https://github.com/bitcoinj/secp256k1-jdk/pull/404[PR #404]
+
+=== Dependency Updates
+
+* `flake.nix`: update to Nixpkgs `release-25.05` -- https://github.com/bitcoinj/secp256k1-jdk/pull/411[PR #411]
+
+* `flake.nix`: remove use of `nixpkgs-unstable` (The latest libsecp256k1 is now on `release-26.05`) -- https://github.com/bitcoinj/secp256k1-jdk/pull/417[PR #417]
+
+
+=== Testing Improvements
+
+* Upgrade to JUnit 6.1.0 -- https://github.com/bitcoinj/secp256k1-jdk/pull/402[PR #402]
+
+
+WARNING: This is pre-alpha software and unaudited. Please use with extreme caution and do not use on Bitcoin MAINNET.
+
 == v0.2.2
 
 Released: 2026-05-22

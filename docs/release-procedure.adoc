@@ -1,6 +1,6 @@
 == Main Release Process
 
-. Use Java 25, Gradle 9.3.1 for official builds via Nix devShell
+. Use Java 25, Gradle 9.4.1 for official builds via Nix devShell
 .. `nix develop`
 . Set versions
 .. `gradle.properties`
