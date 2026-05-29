@@ -3,10 +3,9 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/release-26.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   };
 
-  outputs = inputs @ { nixpkgs, nixpkgs-unstable, ... }:
+  outputs = inputs @ { nixpkgs, ... }:
     let
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
       forEachSystem = f: builtins.listToAttrs (map (system: {
@@ -18,9 +17,6 @@
         let
         inherit (pkgs) stdenv;
         pkgs = import nixpkgs {
-          inherit system;
-        };
-        pkgs-unstable = import nixpkgs-unstable {
           inherit system;
         };
         jdk = pkgs.jdk25;
