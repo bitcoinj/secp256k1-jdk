@@ -47,6 +47,8 @@ import java.lang.foreign.SegmentAllocator;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
@@ -467,6 +469,20 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment output = arena.allocate(32);
         int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL, NULL);
         return SecpResult.checked(success, () -> new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)));
+    }
+
+    public List<SecpPubKey> ecPubkeySort (List<SecpPubKey> pubKeys) {
+        int n = pubKeys.size();
+        MemorySegment pubKeyPtrs = arena.allocate(C_POINTER, n);
+        for (int i = 0; i < n; i++) {
+            pubKeyPtrs.setAtIndex(C_POINTER, i, pubKeyParse(pubKeys.get(i)).get());
+        }
+        secp256k1_h.secp256k1_ec_pubkey_sort(ctx, pubKeyPtrs, n);
+        List<SecpPubKey> result = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            result.add(toSecpPubKey(pubKeyPtrs.getAtIndex(C_POINTER, i)));
+        }
+        return List.copyOf(result);
     }
 
     @Override
