@@ -15,7 +15,7 @@ See the instructions in the README for accessing the binary via the GitLab Maven
 
 === Dependency Updates
 
-* `flake.nix`: update to Nixpkgs `release-25.05` -- https://github.com/bitcoinj/secp256k1-jdk/pull/411[PR #411]
+* `flake.nix`: update to Nixpkgs `release-26.05` -- https://github.com/bitcoinj/secp256k1-jdk/pull/411[PR #411]
 
 * `flake.nix`: remove use of `nixpkgs-unstable` (The latest libsecp256k1 is now on `release-26.05`) -- https://github.com/bitcoinj/secp256k1-jdk/pull/417[PR #417]
 
