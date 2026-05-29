@@ -11,6 +11,7 @@ nix-devshell:
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
   script:
     - nix develop .#minimum -c gradle build run runEcdsa
+    - nix develop .#minimum -c mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
   cache:
     key: "${CI_COMMIT_REF_SLUG}"
     paths:
@@ -26,6 +27,7 @@ trixie-devshell:
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
   script:
     - nix develop .#minimum -c gradle build run runEcdsa
+    - nix develop .#minimum -c mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
 
 # Build on Forky using a Nix devshell.
 forky-devshell:
@@ -36,6 +38,7 @@ forky-devshell:
     - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
   script:
     - nix develop .#minimum -c gradle build run runEcdsa
+    - nix develop .#minimum -c mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
 
 # Build on Trixie using Debian's OpenJDK 25 and libsecp256k1 with Gradle installed via the Wrapper.
 trixie-gradlew:
@@ -55,6 +58,34 @@ forky-gradlew:
     - apt-get -y install openjdk-25-jdk-headless libsecp256k1-6 libsecp256k1-dev
   script:
     - ./gradlew build run runEcdsa
+
+# Build on Trixie using Debian's OpenJDK 25, Maven and libsecp256k1.
+trixie-maven:
+  image: debian:trixie-slim
+  before_script:
+    - apt-get update
+    - apt-get -y install openjdk-25-jdk-headless maven libsecp256k1-2 libsecp256k1-dev
+  script:
+    - export REVISION=$(mvn -q help:evaluate -Dexpression=revision -DforceStdout)
+    - export CI_REVISION=$(echo "$REVISION" | sed 's/-SNAPSHOT$/-ci/')
+    - echo "CI_REVISION=$CI_REVISION"
+    - export LIBSECP_DIR=$(dirname $(dpkg -L libsecp256k1-2 | grep -E '/libsecp256k1\.so\.[0-9]+$'))
+    - echo "LIBSECP_DIR=$LIBSECP_DIR"
+    - mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
+    - mvn -Drevision="$CI_REVISION" deploy
+    - sha256sum target/repo/org/bitcoinj/secp/secp-*/*/*.jar target/repo/org/bitcoinj/secp/secp-*/*/*.pom
+
+
+# Build on Forky using Debian's OpenJDK 25, Maven and libsecp256k1.
+forky-maven:
+  image: debian:forky-slim
+  before_script:
+    - apt-get update
+    - apt-get -y install openjdk-25-jdk-headless maven libsecp256k1-6 libsecp256k1-dev
+  script:
+    - export LIBSECP_DIR=$(dirname $(dpkg -L libsecp256k1-6 | grep -E '/libsecp256k1\.so\.[0-9]+$'))
+    - echo "LIBSECP_DIR=$LIBSECP_DIR"
+    - mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
 
 stages:
   - test

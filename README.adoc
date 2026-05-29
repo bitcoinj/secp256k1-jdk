@@ -114,6 +114,8 @@ dependencies {
 
 The build requires JDK 25. Gradle 9.1.0 or later is required and is provided by the included Gradle Wrapper and the Nix devShell. You must also install the native `secp256k1` library.
 
+The new Maven build requires Maven 3.9.0 or later.
+
 === Installing OpenJDK 25 or GraalVM JDK 25
 
 The `nativeCompile` Gradle task uses `$GRAALVM_HOME` to find the `native-image` binary. The Nix devShell sets this up automatically. If you install GraalVM using one of the other mechanisms, you should verify that `GRAALVM_HOME` is set correctly.
@@ -180,11 +182,20 @@ This will be provided in a future release, see https://github.com/bitcoinj/secp2
 
 . `./gradlew build`
 
-==== Running the Schnorr Example with Gradle Wrapper
+=== Building with Maven
+
+. `mvn verify`
+
+==== Running the Schnorr Example
 
 * `./gradlew secp-examples-java:run`
 
+* mvn verify -Prun-schnorr
+* mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
+
 ==== Build a Start Script and use it to run the Schnorr Example
+
+TODO: How to do this with Maven?
 
 Build the script:
 
@@ -212,10 +223,19 @@ To build using GraalVM `native-image`:
 . Make sure `GRAALVM_HOME` points to the Graal JDK 25 installation
 . `./gradlew secp-examples-java:nativeCompile`
 
+or
+
+. `mvn verify -Pnative-schnorr`
+. `mvn verify -Pnative-ecdsa`
+
 Run the native image binary:
 
 . `./secp-examples-java/build/schnorr-example`
 . Don't blink!
+
+or
+
+. `./secp-examples-java/target/schnorr-example`
 
 === Building with Nix
 
@@ -225,6 +245,10 @@ To start a development shell with all build prerequisites installed and run the 
 
 . `nix develop`
 . `gradle build`
+
+or
+
+. `mvn package`
 
 The other targets described in the "Building with the Gradle Wrapper" section work in the Nix devShell, but you should use `gradle` rather than `./gradlew`, of course.
 

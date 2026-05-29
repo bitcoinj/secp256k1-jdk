@@ -50,6 +50,9 @@
                       graalvm
                     ];
                 })
+                (maven.override {          # Maven (Nix package) runs using an internally-linked JDK
+                    jdk_headless = jdk;             # Run Maven with this JDK
+                })
             ];
           shellHook = sharedShellHook;
         };
@@ -60,6 +63,9 @@
                 graalvm                    # This JDK will be in PATH
                 (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
                     java = graalvm;        # Run Gradle with this JDK
+                })
+                (maven.override {          # Maven (Nix package) runs using an internally-linked JDK
+                    jdk_headless = graalvm;         # Run Maven with this JDK
                 })
             ];
           shellHook = sharedShellHook;

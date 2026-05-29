@@ -1,0 +1,46 @@
+[project]
+name = "secp256k1-jdk"
+description = "Java library providing Bitcoin-related Elliptic Curve Cryptography on curve secp256k1"
+longDescription = "Java library providing Bitcoin-related Elliptic Curve Cryptography on curve secp256k1"
+authors = ["bitcoinj developers"]
+license = "Apache-2.0"
+inceptionYear = "2024"
+
+[project.links]
+homepage = "https://github.com/bitcoinj/secp256k1-jdk"
+
+[project.languages.java]
+groupId = "org.bitcoinj.secp"
+version = "25"
+
+[release.github]
+owner = "bitcoinj"
+name = "secp256k1-jdk"
+# Disable actual GitHub release creation; we only want Maven Central
+skipTag = true
+skipRelease = true
+
+[signing]
+active = "ALWAYS"
+
+[signing.pgp]
+armored = true
+mode = "COMMAND"
+
+[signing.pgp.command]
+executable = "gpg"
+defaultKeyring = true
+
+[deploy.maven.mavenCentral.sonatype]
+active = "NEVER"
+url = "https://central.sonatype.com/api/v1/publisher"
+applyMavenCentralRules = true
+stagingRepositories = ["target/repo-signed"]
+
+[deploy.maven.gitlab.secp256k1-jdk]
+active = "ALWAYS"
+projectIdentifier = 55956336
+url = "https://gitlab.com/api/v4/projects/55956336/packages/maven"
+applyMavenCentralRules = true
+snapshotSupported = false
+stagingRepositories = ["target/repo-signed"]

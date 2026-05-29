@@ -1,0 +1,159 @@
+name: Build (Maven)
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build_maven:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-15]
+        distribution: ['temurin']
+      fail-fast: false
+    name: ${{ matrix.os }} JDK 25 (via Maven)
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: ${{ matrix.distribution }}
+          java-version: 25
+          cache: 'maven'
+      - name: Install secp256k1 with APT
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt install -y libsecp256k1-dev
+          echo "LIBSECP_DIR=/usr/lib/$(uname -m)-linux-gnu" >> $GITHUB_ENV
+      - name: Install secp256k1 with Homebrew
+        if: runner.os == 'macOS'
+        run: |
+          brew install secp256k1
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
+          echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
+      - name: Build with Maven
+        run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
+      - name: Compute CI revision
+        run: |
+          REVISION=$(mvn -q help:evaluate -Dexpression=revision -DforceStdout)
+          CI_REVISION="${REVISION%-SNAPSHOT}-ci"
+          echo "CI_REVISION=$CI_REVISION" >> "$GITHUB_ENV"
+      - name: Maven Deploy
+        run: mvn -Drevision="$CI_REVISION" deploy
+      - name: Print Sha256Sums (Linux)
+        if: runner.os == 'Linux'
+        run: sha256sum target/repo/org/bitcoinj/secp/secp-*/*/*.jar target/repo/org/bitcoinj/secp/secp-*/*/*.pom
+      - name: Print Sha256Sums (macOS)
+        if: runner.os == 'macOS'
+        run: shasum -a 256 target/repo/org/bitcoinj/secp/secp-*/*/*.jar target/repo/org/bitcoinj/secp/secp-*/*/*.pom
+
+  build_graalvm_maven:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-15]
+        java: [ '25' ]
+        distribution: [ 'graalvm-community' ]
+      fail-fast: false
+    name: ${{ matrix.os }} ${{ matrix.java }} (via setup-graalvm with Maven)
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          distribution: ${{ matrix.distribution }}
+          java-version: ${{ matrix.java }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install secp256k1 with APT
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt install -y libsecp256k1-dev
+          echo "LD_LIBRARY_PATH=/usr/lib/$(uname -m)-linux-gnu" >> $GITHUB_ENV
+          echo "LIBSECP_DIR=/usr/lib/$(uname -m)-linux-gnu" >> $GITHUB_ENV
+      - name: Install secp256k1 with Homebrew
+        if: runner.os == 'macOS'
+        run: |
+          brew install secp256k1
+          echo "DYLD_LIBRARY_PATH=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
+          echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
+      - name: Build (JIT) with Maven
+        run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
+      - name: Build Native Image with Maven
+        run: mvn verify -Pnative-schnorr -pl secp-examples-java -am verify
+      - name: Run Schnorr Native Example
+        run: ./secp-examples-java/target/schnorr-example
+
+  javadoc_artifact_maven:
+    needs: build_maven
+    runs-on: ubuntu-24.04
+    name: Publish Aggregated Javadoc artifact (Maven)
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 25
+          cache: 'maven'
+      - name: Install secp256k1 with APT
+        run: |
+          sudo apt install -y libsecp256k1-dev
+          echo "LIBSECP_DIR=/usr/lib/$(uname -m)-linux-gnu" >> $GITHUB_ENV
+      - name: Build Aggregate Javadoc with Maven
+        run: mvn javadoc:aggregate
+      - name: Upload Javadoc as artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: secp256k1-jdk-javadoc-maven
+          path: target/reports/apidocs/
+
+  build_nix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-15]
+      fail-fast: false
+    name: ${{ matrix.os }} Nix
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v6
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      # Pre-build the devShell to allow multiple devShell steps and to have a clear point of failure
+      # should the shell fail to build
+      - name: Pre-build devShell
+        run: nix build --no-link .#devShells.$(nix eval --impure --raw --expr 'builtins.currentSystem').default
+      - name: Build in Nix development shell
+        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
+        run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
+      - name: Build Schnorr Native Example
+        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
+        run: mvn verify -Pnative-schnorr
+      - name: Run Schnorr Native Example
+        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
+        run: ./secp-examples-java/target/schnorr-example
+      - name: Compute CI revision
+        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
+        run: |
+          REVISION=$(mvn -q help:evaluate -Dexpression=revision -DforceStdout)
+          CI_REVISION="${REVISION%-SNAPSHOT}-ci"
+          echo "CI_REVISION=$CI_REVISION" >> "$GITHUB_ENV"
+      - name: Maven Deploy
+        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
+        run: mvn -Drevision="$CI_REVISION" deploy
+      - name: Print Sha256Sums (Linux)
+        if: runner.os == 'Linux'
+        run: sha256sum target/repo/org/bitcoinj/secp/secp-*/*/*.jar target/repo/org/bitcoinj/secp/secp-*/*/*.pom
+      - name: Print Sha256Sums (macOS)
+        if: runner.os == 'macOS'
+        run: shasum -a 256 target/repo/org/bitcoinj/secp/secp-*/*/*.jar target/repo/org/bitcoinj/secp/secp-*/*/*.pom
+
+  build_all_green_maven:
+    runs-on: ubuntu-24.04
+    needs: [build_maven, build_graalvm_maven, javadoc_artifact_maven]
+    steps:
+      - run: echo "All Maven upstream jobs passed"
