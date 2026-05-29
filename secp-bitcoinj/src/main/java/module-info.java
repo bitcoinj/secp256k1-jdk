@@ -22,4 +22,8 @@ module org.bitcoinj.secp.bitcoinj {
     requires org.jspecify;
     requires org.bitcoinj.core;
     requires org.bouncycastle.provider;
+
+    // Explicitly declare these so they're put on the module-path for tests
+    requires org.bitcoinj.secp.bouncy;
+    requires org.bitcoinj.secp.ffm;
 }
