@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.beryx.jlink'    version '3.1.4-rc'
 }
 
 ext.moduleName = 'org.bitcoinj.secp.examples'
@@ -34,6 +35,13 @@ run {
 configurations {
     nativeToolImplementation.extendsFrom implementation
     nativeToolRuntimeOnly.extendsFrom runtimeOnly
+}
+
+jlink {
+    options = ['--add-modules', 'org.bitcoinj.secp.ffm']
+    launcher {
+        name = application.applicationName
+    }
 }
 
 tasks.register('runEcdsa', JavaExec) {
