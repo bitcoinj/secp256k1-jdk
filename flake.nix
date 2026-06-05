@@ -38,8 +38,7 @@
           buildInputs = with pkgs ; [ secp256k1 zlib ];
           packages = with pkgs ; [
                 jdk                        # This JDK will be in PATH
-                # current jextract in nixpkgs is broken, see: https://github.com/NixOS/nixpkgs/issues/354591
-                # jextract                 # jextract (Nix package) contains a jlinked executable and bundles its own JDK
+                jextract                   # jextract (Nix package) contains a jlinked executable and bundles its own JDK
                 # Add `jreleaser` for pushing releases to GitLab/Maven Central or for doing "dry run" release testing.
                 (jreleaser-cli.override {
                      jre = jdk;            # Use the same JDK as we are using elsewhere
