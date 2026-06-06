@@ -1,0 +1,21 @@
+[project]
+name = "secp256k1-jdk"
+
+[project.languages.java]
+groupId = "org.bitcoinj.secp"
+version = "9"      # Minimum Java version for use of secp256k1-jdk
+
+[release.github]
+owner = "bitcoinj"
+name = "secp256k1-jdk"
+enabled = false
+
+# Validate with Maven Central Rules and Deploy to our GitLab Maven Repo
+[deploy.maven.gitlab.secp256k1-jdk]
+active = "ALWAYS"
+projectIdentifier = 55956336
+url = "https://gitlab.com/api/v4/projects/55956336/packages/maven"
+applyMavenCentralRules = true
+sign = false
+snapshotSupported = false
+stagingRepositories = ["target/repo-signed"]

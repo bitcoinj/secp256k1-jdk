@@ -1,21 +1,23 @@
-== Main Release Process
+== Maven + JReleaser Release Process
 
 . Use Java 25, Gradle 9.4.1 for official builds via Nix devShell
 .. `nix develop`
 . Set versions
-.. `gradle.properties`
+.. `project/properties/revision` in root `pom.xml`
 . Update `README`, `CHANGELOG` (and other documentation?)
 .. `README.adoc`
 .. `CHANGELOG.adoc`
 . Commit version bump and `CHANGELOG`.
 . Make sure project directory is a clean checkout.
 . Full build, test
-.. `gradle clean build run runEcdsa nativeCompile`
+.. `mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin`
+.. `mvn verify -Pnative-schnorr`
+.. `./scripts/build-release.sh`
 . Tag: `git tag -a v0.x.y -m "Release v0.x.y"`
 . Push: `git push --tags origin <release-branch>`
 . Publish to Maven Repo (currently on GitLab):
-.. `gradle publish`
+.. `./scripts/maven-publish-release.sh`
 . Publish Javadoc
-.. Download the `secp256k1-jdk-javadoc` artifact from the GHA Gradle build
+.. Download the `secp256k1-jdk-javadoc` artifact from the GHA Maven build
 .. Publish to https://msgilligan.github.io/javadoc/secp256k1-jdk/0.x.y/ (for now)
 . Add Release on GitHub
