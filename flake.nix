@@ -43,11 +43,8 @@
                 (jreleaser-cli.override {
                      jre = jdk;            # Use the same JDK as we are using elsewhere
                 })
-                (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
-                    java = jdk;            # Run Gradle with this JDK
-                    javaToolchains = [     # Make these JDKs available via the Gradle javaToolchains feature
-                      graalvm
-                    ];
+                (maven.override {          # Maven (Nix package) runs using an internally-linked JDK
+                    jdk_headless = jdk;             # Run Maven with this JDK
                 })
             ];
           shellHook = sharedShellHook;
@@ -57,8 +54,8 @@
           buildInputs = with pkgs ; [ secp256k1 zlib ];
           packages = with pkgs ; [
                 graalvm                    # This JDK will be in PATH
-                (gradle_9.override {       # Gradle (Nix package) runs using an internally-linked JDK
-                    java = graalvm;        # Run Gradle with this JDK
+                (maven.override {          # Maven (Nix package) runs using an internally-linked JDK
+                    jdk_headless = graalvm;         # Run Maven with this JDK
                 })
             ];
           shellHook = sharedShellHook;
