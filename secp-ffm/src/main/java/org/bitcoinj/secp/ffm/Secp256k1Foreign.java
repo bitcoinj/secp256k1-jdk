@@ -89,6 +89,10 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         }
     }
 
+    public MemorySegment arrayToSeg(byte[] a) {
+        return arena.allocateFrom(JAVA_BYTE, a);
+    }
+
     public record KeyAggCache(SecpPubKey aggKey, MemorySegment cache) {}
 
     public record MusigNonce(MusigPubNonce pubNonce, MemorySegment secNonce) { }
@@ -529,51 +533,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             result.add(toSecpPubKey(pubKeyPtrs.getAtIndex(C_POINTER, i)));
         }
         return List.copyOf(result);
-    }
-
-    public MemorySegment secNonceFromBip327(byte[] bip327) {
-        checkArg(bip327.length == 97, "BIP-327 secnonce must be 97 bytes (k1||k2||pk)");
-
-        // 33-byte compressed pubkey -> 64-byte internal X||Y (same form stored in the secnonce)
-        MemorySegment pkSeg = secp256k1_pubkey.allocate(arena);
-        MemorySegment in = arena.allocate(33);
-        MemorySegment.copy(bip327, 64, in, JAVA_BYTE, 0, 33);
-        if (secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pkSeg, in, 33) != 1)
-            throw new IllegalStateException("bad secnonce pubkey");
-
-        // Assemble secp256k1_musig_secnonce: magic | k1 | k2 | ge-bytes(pk)
-        MemorySegment secNonceSeg = secp256k1_musig_secnonce.allocate(arena);
-        byte[] magic = { (byte)0x22, (byte)0x0e, (byte)0xdc, (byte)0xf1 };
-        MemorySegment.copy(magic,   0, secNonceSeg, JAVA_BYTE, 0, 4);
-        MemorySegment.copy(bip327,  0, secNonceSeg, JAVA_BYTE, 4, 64);  // k1 || k2 contiguous
-        MemorySegment.copy(pkSeg,   0, secNonceSeg, 68, 64);            // internal pubkey bytes
-        return secNonceSeg;
-    }
-
-    public KeyAggCache createCache(byte[] aggpk) {  // aggpk = 32-byte x-only from the vector
-        if (aggpk.length != 32) throw new IllegalArgumentException("aggpk must be 32 bytes");
-
-        // Lift x-only -> full point by parsing a compressed pubkey (even-Y; parity is
-        // irrelevant since nonce_gen only hashes the x-coordinate).
-        byte[] compressed = new byte[33];
-        compressed[0] = 0x02;
-        System.arraycopy(aggpk, 0, compressed, 1, 32);
-
-        MemorySegment pkSeg = secp256k1_pubkey.allocate(arena);          // 64-byte internal X||Y
-        MemorySegment in = arena.allocate(33);
-        MemorySegment.copy(compressed, 0, in, JAVA_BYTE, 0, 33);
-        if (secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pkSeg, in, 33) != 1)
-            throw new IllegalStateException("bad aggpk");
-
-        MemorySegment seg = secp256k1_musig_keyagg_cache.allocate(arena); // zero-filled
-        byte[] magic = { (byte)0xf4, (byte)0xad, (byte)0xbb, (byte)0xdf };
-        MemorySegment.copy(magic, 0, seg, JAVA_BYTE, 0, 4);
-        MemorySegment.copy(pkSeg, 0, seg, 4, 64);                         // pk into offset 4
-
-        MemorySegment aggKeySeg = secp256k1_pubkey.allocate(arena);
-        secp256k1_h.secp256k1_musig_pubkey_get(ctx, aggKeySeg, seg);
-
-        return new KeyAggCache(toSecpPubKey(aggKeySeg), seg);
     }
 
     public KeyAggCache musigPubkeyAgg (List<SecpPubKey> pubKeys) {

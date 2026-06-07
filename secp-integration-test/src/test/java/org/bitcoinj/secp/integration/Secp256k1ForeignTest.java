@@ -19,14 +19,14 @@ import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpResult;
+import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
-import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.foreign.MemorySegment;
-import java.lang.foreign.ValueLayout;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.stream.Stream;
@@ -130,9 +130,13 @@ public class Secp256k1ForeignTest {
             byte[] expectedSecnonce = HexFormat.of().parseHex("B114E502BEAA4E301DD08A50264172C84E41650E6CB726B410C0694D59EFFB6495B5CAF28D045B973D63E3C99A44B807BDE375FD6CB39E46DC4A511708D0E9D2024D4B6CD1361032CA9BD2AEB9D900AA4D45D9EAD80AC9423374C451A7254D0766");
             byte[] expectedPubnonce = HexFormat.of().parseHex("02F7BE7089E8376EB355272368766B17E88E7DB72047D05E56AA881EA52B3B35DF02C29C8046FDD0DED4C7E55869137200FBDBFE2EB654267B6D7013602CAED3115A");
 
-            Secp256k1Foreign.KeyAggCache keyAggCacheSeg = secp.createCache(aggpk);
+            MemorySegment keyAggCacheSeg = secp.arrayToSeg(createCache(aggpk));
 
-            Secp256k1Foreign.MusigNonce nonce = secp.musigNonceGen(rand, sk, pk, msg, keyAggCacheSeg, extraIn);
+            SecpPubKey key = secp.ecPubKeyFromXOnly(secp.xOnlyPubKeyParse(aggpk).get());
+
+            Secp256k1Foreign.KeyAggCache keyAggCache = new Secp256k1Foreign.KeyAggCache(key, keyAggCacheSeg);
+
+            Secp256k1Foreign.MusigNonce nonce = secp.musigNonceGen(rand, sk, pk, msg, keyAggCache, extraIn);
             Assertions.assertArrayEquals(expectedPubnonce, nonce.pubNonce().serialized());
         }
     }
@@ -173,9 +177,10 @@ public class Secp256k1ForeignTest {
                     HexFormat.of().parseHex("028465FCF0BBDBCF443AABCCE533D42B4B5A10966AC09A49655E8C42DAAB8FCD61037496A3CC86926D452CAFCFD55D25972CA1675D549310DE296BFF42F72EEEA8C9")
             );
             byte[] msg32 = HexFormat.of().parseHex("F95466D086770E689964664219266FE5ED215C92AE20BAB5C9D79ADDDDF3C0CF");
-            MemorySegment secNonce = secp.secNonceFromBip327(
+            MemorySegment secNonce = secp.arrayToSeg(secNonceFromBip327(
                     HexFormat.of().parseHex("508B81A611F100A6B2B6B29656590898AF488BCF2E1F55CF22E5CFB84421FE61FA27FD49B1D50085B481285E1CA205D55C82CC1B31FF5CD54A489829355901F703935F972DA013F80AE011890FA89B67A27B7BE6CCB24D3274D18B2D4067F261A9")
-            );
+            ));
+
             Secp256k1Foreign.PartialSig expected = secp.parsePartialSig(
                     HexFormat.of().parseHex("012ABBCB52B3016AC03AD82395A1A415C48B93DEF78718E62A7A90052FE224FB")
             );
@@ -191,7 +196,6 @@ public class Secp256k1ForeignTest {
     @Test
     void partialSigVerify() {
         try (var secp = new Secp256k1Foreign()) {
-            SecpPrivKey sk = SecpPrivKey.of(HexFormat.of().parseHex("7FB9E0E687ADA1EEBF7ECFE2F21E73EBDB51A7D450948DFE8D76D7F2D1007671"));
             List<SecpPubKey> pubKeyList = Stream.of(
                     "03935F972DA013F80AE011890FA89B67A27B7BE6CCB24D3274D18B2D4067F261A9",
                     "02F9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9",
@@ -206,9 +210,6 @@ public class Secp256k1ForeignTest {
                     HexFormat.of().parseHex("028465FCF0BBDBCF443AABCCE533D42B4B5A10966AC09A49655E8C42DAAB8FCD61037496A3CC86926D452CAFCFD55D25972CA1675D549310DE296BFF42F72EEEA8C9")
             );
             byte[] msg32 = HexFormat.of().parseHex("F95466D086770E689964664219266FE5ED215C92AE20BAB5C9D79ADDDDF3C0CF");
-            MemorySegment secNonce = secp.secNonceFromBip327(
-                    HexFormat.of().parseHex("508B81A611F100A6B2B6B29656590898AF488BCF2E1F55CF22E5CFB84421FE61FA27FD49B1D50085B481285E1CA205D55C82CC1B31FF5CD54A489829355901F703935F972DA013F80AE011890FA89B67A27B7BE6CCB24D3274D18B2D4067F261A9")
-            );
             Secp256k1Foreign.PartialSig partialSig = secp.parsePartialSig(
                     HexFormat.of().parseHex("012ABBCB52B3016AC03AD82395A1A415C48B93DEF78718E62A7A90052FE224FB")
             );
@@ -250,5 +251,57 @@ public class Secp256k1ForeignTest {
             Assertions.assertArrayEquals(expected, sig.bytes());
         }
     }
+
+    public byte[] secNonceFromBip327(byte[] bip327) {
+        try(var secp = new Secp256k1Foreign()) {
+            // 33-byte compressed pubkey -> 64-byte internal X||Y (same form stored in the secnonce)
+            byte[] magic = {(byte) 0x22, (byte) 0x0e, (byte) 0xdc, (byte) 0xf1};
+
+            byte[] pkArray = Arrays.copyOfRange(bip327, 64, 97);
+            SecpPubKey key = secp.ecPubKeyParse(pkArray).get();
+            byte[] keyX = key.x().serialize();
+            byte[] keyY = key.y().serialize();
+
+            byte[] keyUncompressed = new byte[64];
+            for (int i = 0; i < 32; i++) {
+                keyUncompressed[i] = keyX[31 - i];
+                keyUncompressed[32 + i] = keyY[31 - i];
+            }
+            byte[] secNonceArray = new byte[132];
+            System.arraycopy(magic, 0, secNonceArray, 0, 4);
+            System.arraycopy(bip327, 0, secNonceArray, 4, 64);
+            System.arraycopy(keyUncompressed, 0, secNonceArray, 68, 64);
+
+            return secNonceArray;
+        }
+    }
+
+    public byte[] createCache(byte[] aggpk) {
+        try(var secp  = new Secp256k1Foreign()) {
+            // aggpk = 32-byte x-only from the vector
+            if (aggpk.length != 32) throw new IllegalArgumentException("aggpk must be 32 bytes");
+
+            SecpXOnlyPubKey keyXOnly = secp.xOnlyPubKeyParse(aggpk).get();
+            SecpPubKey key = secp.ecPubKeyFromXOnly(keyXOnly);
+            byte[] keyX = key.x().serialize();
+            byte[] keyY = key.y().serialize();
+
+            byte[] keyUncompressed = new byte[64];
+            for (int i = 0; i < 32; i++) {
+                keyUncompressed[i] = keyX[31 - i];
+                keyUncompressed[32 + i] = keyY[31 - i];
+            }
+
+            byte[] magic = {(byte) 0xf4, (byte) 0xad, (byte) 0xbb, (byte) 0xdf};
+
+            byte[] cache = new byte[68];
+
+            System.arraycopy(magic, 0, cache, 0, 4);
+            System.arraycopy(keyUncompressed, 0, cache, 4, 64);
+
+            return cache;
+        }
+    }
+
 
 }
