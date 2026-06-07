@@ -23,7 +23,9 @@ import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
+import java.io.File;
 import java.lang.foreign.MemorySegment;
 import java.util.Arrays;
 import java.util.HexFormat;
@@ -32,29 +34,24 @@ import java.util.stream.Stream;
 
 
 public class BIP327TestVectorTests implements SecpTestSupport {
-    
+
+    ObjectMapper mapper = new ObjectMapper();
+    record KeySortTestVector(List<String> pubkeys, List<String> sorted_pubkeys) {}
+
     @Test
     void sortKeysTest() {
+        KeySortTestVector keySortTestVector = mapper.readValue(new File(
+                BIP327TestVectorTests.class.getResource("/key_sort_vectors.json").getFile()
+        ), KeySortTestVector.class);
         try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
-            List<SecpPubKey> input = Stream.of(
-                            "02DD308AFEC5777E13121FA72B9CC1B7CC0139715309B086C960E18FD969774EB8",
-                            "02F9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9",
-                            "03DFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659",
-                            "023590A94E768F8E1815C2F24B4D80A8E3149316C3518CE7B7AD338368D038CA66",
-                            "02DD308AFEC5777E13121FA72B9CC1B7CC0139715309B086C960E18FD969774EFF",
-                            "02DD308AFEC5777E13121FA72B9CC1B7CC0139715309B086C960E18FD969774EB8"
-                    ).map(HexFormat.of()::parseHex)
+            List<SecpPubKey> input = keySortTestVector.pubkeys()
+                    .stream()
+                    .map(HexFormat.of()::parseHex)
                     .map(secp::ecPubKeyParse)
                     .map(SecpResult::get)
                     .toList();
-            List<SecpPubKey> sorted = Stream.of(
-                            "023590A94E768F8E1815C2F24B4D80A8E3149316C3518CE7B7AD338368D038CA66",
-                            "02DD308AFEC5777E13121FA72B9CC1B7CC0139715309B086C960E18FD969774EB8",
-                            "02DD308AFEC5777E13121FA72B9CC1B7CC0139715309B086C960E18FD969774EB8",
-                            "02DD308AFEC5777E13121FA72B9CC1B7CC0139715309B086C960E18FD969774EFF",
-                            "02F9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9",
-                            "03DFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659"
-                    ).map(HexFormat.of()::parseHex)
+            List<SecpPubKey> sorted = keySortTestVector.sorted_pubkeys().stream()
+                    .map(HexFormat.of()::parseHex)
                     .map(secp::ecPubKeyParse)
                     .map(SecpResult::get)
                     .toList();
