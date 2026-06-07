@@ -73,6 +73,7 @@ WARNING:: This is an experimental pre-release and should be used only for testin
 
 To your `pom.xml`:
 
+[source,xml]
 ----
 <repositories>
   <repository>
@@ -94,6 +95,7 @@ maven {
 
 For example to depend on the API only, add the following to your `pom.xml`:
 
+[source,xml]
 ----
 <dependency>
   <groupId>org.bitcoinj.secp</groupId>
