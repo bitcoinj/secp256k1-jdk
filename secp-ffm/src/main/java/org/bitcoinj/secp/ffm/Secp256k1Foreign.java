@@ -521,7 +521,13 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return SecpResult.checked(success, () -> new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)));
     }
 
-    public List<SecpPubKey> ecPubkeySort (List<SecpPubKey> pubKeys) {
+    /// Sort public keys using lexicographic (of compressed serialization) order.
+    /// Provides a standard order for Musig methods, as the order of public keys
+    /// will affect the output.
+    ///
+    /// @param pubKeys The public keys to be sorted
+    /// @return The public keys in lexicographic order
+    public List<SecpPubKey> ecPubKeySort(List<SecpPubKey> pubKeys) {
         int n = pubKeys.size();
         MemorySegment pubKeyPtrs = arena.allocate(C_POINTER, n);
         for (int i = 0; i < n; i++) {
@@ -535,7 +541,12 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return List.copyOf(result);
     }
 
-    public KeyAggCache musigPubkeyAgg (List<SecpPubKey> pubKeys) {
+    /// Computes an aggregate public key and uses it to initialize a KeyAggCache.
+    ///
+    /// @param pubKeys The public keys to be aggregated. The order of the keys matter:
+    /// see [ecPubKeySort][Secp256k1Foreign#ecPubKeySort(java.util.List)].
+    /// @return A [KeyAggCache][KeyAggCache] from the given public keys.
+    public KeyAggCache musigPubKeyAgg(List<SecpPubKey> pubKeys) {
         int n = pubKeys.size();
         MemorySegment pubKeyPtrs = arena.allocate(C_POINTER, n);
         for (int i = 0; i < n; i++) {

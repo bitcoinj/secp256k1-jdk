@@ -82,7 +82,7 @@ public class Secp256k1ForeignTest {
                     .map(SecpResult::get)
                     .toList();
 
-            List<SecpPubKey> result = secp.ecPubkeySort(input);
+            List<SecpPubKey> result = secp.ecPubKeySort(input);
 
             for (int i = 0; i < sorted.size(); i++) {
                 Assertions.assertArrayEquals(sorted.get(i).serialize(), result.get(i).serialize());
@@ -107,7 +107,7 @@ public class Secp256k1ForeignTest {
                     .toList();
             byte[] expected = HexFormat.of().parseHex("90539EEDE565F5D054F32CC0C220126889ED1E5D193BAF15AEF344FE59D4610C");
 
-            Secp256k1Foreign.KeyAggCache result = secp.musigPubkeyAgg(input);
+            Secp256k1Foreign.KeyAggCache result = secp.musigPubKeyAgg(input);
 
             Assertions.assertArrayEquals(expected, result.aggKey().xOnly().serialize());
         }
@@ -185,7 +185,7 @@ public class Secp256k1ForeignTest {
                     HexFormat.of().parseHex("012ABBCB52B3016AC03AD82395A1A415C48B93DEF78718E62A7A90052FE224FB")
             );
 
-            Secp256k1Foreign.KeyAggCache cache = secp.musigPubkeyAgg(pubKeyList);
+            Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(pubKeyList);
             MemorySegment session = secp.musigNonceProcess(aggNonce, msg32, cache);
             Secp256k1Foreign.PartialSig sig = secp.musigPartialSign(secNonce, secp.ecKeyPairCreate(sk), cache, session);
 
@@ -214,7 +214,7 @@ public class Secp256k1ForeignTest {
                     HexFormat.of().parseHex("012ABBCB52B3016AC03AD82395A1A415C48B93DEF78718E62A7A90052FE224FB")
             );
 
-            Secp256k1Foreign.KeyAggCache cache = secp.musigPubkeyAgg(pubKeyList);
+            Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(pubKeyList);
             MemorySegment session = secp.musigNonceProcess(aggNonce, msg32, cache);
 
             boolean good = secp.musigPartialSigVerify(partialSig, pubNonceList.getFirst(), pubKeyList.getFirst(), cache, session);
@@ -244,7 +244,7 @@ public class Secp256k1ForeignTest {
 
             byte[] expected = HexFormat.of().parseHex("041DA22223CE65C92C9A0D6C2CAC828AAF1EEE56304FEC371DDF91EBB2B9EF0912F1038025857FEDEB3FF696F8B99FA4BB2C5812F6095A2E0004EC99CE18DE1E");
 
-            Secp256k1Foreign.KeyAggCache cache = secp.musigPubkeyAgg(pubKeyList);
+            Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(pubKeyList);
             MemorySegment session = secp.musigNonceProcess(aggNonce, msg32, cache);
             SchnorrSignature sig = secp.musigPartialSigAgg(session, partialSigList);
 
