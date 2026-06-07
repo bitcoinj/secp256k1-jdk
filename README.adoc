@@ -1,4 +1,5 @@
 = secp256k1-jdk
+:secp-jdk-version: 0.2.3
 
 image:https://github.com/bitcoinj/secp256k1-jdk/workflows/Gradle%20Build/badge.svg[GitHub Build Status,link=https://github.com/bitcoinj/secp256k1-jdk/actions] image:https://gitlab.com/bitcoinj/secp256k1-jdk/badges/master/pipeline.svg[GitLab Build Status,link=https://gitlab.com/bitcoinj/secp256k1-jdk/-/pipelines]
 
@@ -20,15 +21,15 @@ WARNING:: This prototype software has had limited testing and has not been revie
 The API is based on the `C-language` API of https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], but adapted
 to modern, idiomatic, functional-style Java. and to use Elliptic Curve types from the Java Class Library, such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey] where appropriate.
 
-The API is distributed as an API-only JAR (```secp-api-_version_.jar```) and there are multiple implementations of the API. `secp-api` requires JDK 9 or later.
+The API is distributed as an API-only JAR (```secp-api-{secp-jdk-version}.jar```) and there are multiple implementations of the API. `secp-api` requires JDK 9 or later.
 
-For details see the https://msgilligan.github.io/javadoc/secp256k1-jdk/0.2.3[Javadoc].
+For details see the https://msgilligan.github.io/javadoc/secp256k1-jdk/{secp-jdk-version}[Javadoc].
 
 NOTE:: At this point, we are especially interested in feedback on the API.
 
 == libsecp256k1 FFM ("Panama") Implementation (JDK 25+)
 
-The provided implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp-ffm-_version_.jar```) that requires JDK 25 or later.
+The provided implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp-ffm-{secp-jdk-version}.jar```) that requires JDK 25 or later.
 
 Panama was released as part of https://openjdk.org/projects/jdk/22/[OpenJDK 22]. We anticipate `secp-ffm` will be
 the recommended/preferred `secp-api` implementation for use in projects using modern JVMs.
@@ -95,20 +96,21 @@ maven {
 
 For example to depend on the API only, add the following to your `pom.xml`:
 
-[source,xml]
+[source,xml,subs="+attributes"]
 ----
 <dependency>
   <groupId>org.bitcoinj.secp</groupId>
   <artifactId>secp-api</artifactId>
-  <version>0.2.3</version>
+  <version>{secp-jdk-version}</version>
 </dependency>
 ----
 
 Or for Gradle, use:
 
+[subs="+attributes"]
 ----
 dependencies {
-    implementation "org.bitcoinj.secp:secp-api:0.2.3"
+    implementation "org.bitcoinj.secp:secp-api:{secp-jdk-version}"
 }
 ----
 
