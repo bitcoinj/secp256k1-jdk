@@ -12,5 +12,6 @@ OPTIONS=${1:-""}
 export REVISION=$(mvn -q help:evaluate -Dexpression=revision -DforceStdout)
 export CI_REVISION=$(echo "$REVISION" | sed 's/-SNAPSHOT$/-ci/')
 
+export JRELEASER_OUTPUT_DIRECTORY="target"
 export JRELEASER_PROJECT_VERSION="$CI_REVISION"
 jreleaser-cli deploy $OPTIONS
