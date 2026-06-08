@@ -3,7 +3,7 @@
 . Use Java 25, Gradle 9.4.1 for official builds via Nix devShell
 .. `nix develop`
 . Set versions
-.. `project/properties/revision` in root `pom.xml`
+.. `/project/properties/revision` in root `pom.xml`
 . Update `README`, `CHANGELOG` (and other documentation?)
 .. `README.adoc`
 .. `CHANGELOG.adoc`

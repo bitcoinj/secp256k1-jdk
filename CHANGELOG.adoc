@@ -3,6 +3,23 @@
 
 A high-level view of the changes in each secp256k1-jdk binary release.
 
+== v0.3
+
+Released: 2026-06-07
+
+See the instructions in the README for accessing the binary via the GitLab Maven repository. A future release of secp25k1-jdk will be in Maven Central.
+
+== Build and Test Improvements
+
+* Convert build from Gradle to Maven -- https://github.com/bitcoinj/secp256k1-jdk/pull/424[PR #424]
+* Add `jreleaser.toml` configuration, use `jreleaser` to publish to GitLab Maven Repo -- https://github.com/bitcoinj/secp256k1-jdk/pull/424[PR #424]
+* Add `jextract` to Nix `default` devshell -- https://github.com/bitcoinj/secp256k1-jdk/pull/425[PR #425]
+
+=== Dependency Updates
+
+* `flake.nix`: update to Nixpkgs `nixos-26.05` -- https://github.com/bitcoinj/secp256k1-jdk/pull/420[PR #420]
+* Update to Kotlin 2.4.0
+
 == v0.2.3
 
 Released: 2026-05-29
