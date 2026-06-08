@@ -225,6 +225,10 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
                     <version>${flatten-maven-plugin.version}</version>
+                    <configuration>
+                        <flattenedPomFilename>flattened-pom.xml</flattenedPomFilename>
+                        <outputDirectory>${project.build.directory}</outputDirectory>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
