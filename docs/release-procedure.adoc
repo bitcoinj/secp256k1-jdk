@@ -15,6 +15,7 @@
 .. `./scripts/build-release.sh`
 . Tag: `git tag -a v0.x.y -m "Release v0.x.y"`
 . Push: `git push --tags origin <release-branch>`
+. Set a GitLab token with Maven publishing permission: `export JRELEASER_GITLAB_TOKEN=xxx`
 . Publish to Maven Repo (currently on GitLab):
 .. `./scripts/maven-publish-release.sh`
 . Publish Javadoc
