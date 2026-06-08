@@ -23,45 +23,63 @@ import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.foreign.MemorySegment;
 import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 
 public class BIP327TestVectorTests implements SecpTestSupport {
 
-    ObjectMapper mapper = new ObjectMapper();
-    record KeySortTestVector(List<String> pubkeys, List<String> sorted_pubkeys) {}
+    static <T> ValueDeserializer<T> hexDeser(Function<byte[], T> conv) {
+        return new ValueDeserializer<>() {
+            @Override public T deserialize(JsonParser p, DeserializationContext ctxt) {
+                return conv.apply(HexFormat.of().parseHex(p.getString()));
+            }
+        };
+    }
+
+    static final Secp256k1Foreign secp = new Secp256k1Foreign();
+
+    static ObjectMapper mapper = JsonMapper.builder()
+            .addModule(new SimpleModule()
+                .addDeserializer(byte[].class,     hexDeser(b -> b))
+                .addDeserializer(SecpPrivKey.class, hexDeser(SecpPrivKey::of))
+                .addDeserializer(SecpPubKey.class,  hexDeser(b -> secp.ecPubKeyParse(b).get()))
+            ).build();
+
+    public record KeySortTestVector(List<String> pubkeys, List<String> sorted_pubkeys) { }
+    public record NonceGenTestCase(byte[] rand_, SecpPrivKey sk, SecpPubKey pk, byte[] aggpk, byte[] msg, byte[] extra_in, byte[] expected_secnonce, byte[] expected_pubnonce) {}
+    record NonceGenTestCases(List<NonceGenTestCase> test_cases) {}
 
     @Test
     void sortKeysTest() {
-        KeySortTestVector keySortTestVector = mapper.readValue(new File(
-                BIP327TestVectorTests.class.getResource("/key_sort_vectors.json").getFile()
-        ), KeySortTestVector.class);
-        try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
-            List<SecpPubKey> input = keySortTestVector.pubkeys()
-                    .stream()
-                    .map(HexFormat.of()::parseHex)
-                    .map(secp::ecPubKeyParse)
-                    .map(SecpResult::get)
-                    .toList();
-            List<SecpPubKey> sorted = keySortTestVector.sorted_pubkeys().stream()
-                    .map(HexFormat.of()::parseHex)
-                    .map(secp::ecPubKeyParse)
-                    .map(SecpResult::get)
-                    .toList();
+        KeySortTestVector vec = parseJson("/key_sort_vectors.json", KeySortTestVector.class);
+        List<SecpPubKey> pubKeys = parsePubKeys(vec.pubkeys);
+        List<SecpPubKey> sortedPubKeys = parsePubKeys(vec.sorted_pubkeys);
 
-            List<SecpPubKey> result = secp.ecPubKeySort(input);
+        List<SecpPubKey> result = secp.ecPubKeySort(pubKeys);
 
-            for (int i = 0; i < sorted.size(); i++) {
-                Assertions.assertArrayEquals(sorted.get(i).serialize(), result.get(i).serialize());
-            }
+        Assertions.assertEquals(sortedPubKeys.size(), result.size());
+
+        for (int i = 0; i < sortedPubKeys.size(); i++) {
+            Assertions.assertArrayEquals(sortedPubKeys.get(i).serialize(), result.get(i).serialize());
         }
+
     }
 
     @Test
@@ -87,31 +105,17 @@ public class BIP327TestVectorTests implements SecpTestSupport {
         }
     }
 
-    @Test
-    void pubNonceGen() {
+    @ParameterizedTest
+    @MethodSource("nonceGenVectors")
+    void pubNonceGen(NonceGenTestCase vec) {
         try (var secp = new Secp256k1Foreign()) {
-            byte[] rand = HexFormat.of().parseHex("0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F0F");
-            SecpPrivKey sk = SecpPrivKey.of(
-                    HexFormat.of().parseHex("0202020202020202020202020202020202020202020202020202020202020202"));
-            SecpPubKey pk = secp.ecPubKeyParse(
-                            HexFormat.of()
-                                    .parseHex("024D4B6CD1361032CA9BD2AEB9D900AA4D45D9EAD80AC9423374C451A7254D0766"))
-                    .get();
-            byte[] aggpk = HexFormat.of().parseHex("0707070707070707070707070707070707070707070707070707070707070707");
-            byte[] msg = HexFormat.of().parseHex("0101010101010101010101010101010101010101010101010101010101010101");
-            byte[] extraIn = HexFormat.of().parseHex("0808080808080808080808080808080808080808080808080808080808080808");
-
-            byte[] expectedSecnonce = HexFormat.of().parseHex("B114E502BEAA4E301DD08A50264172C84E41650E6CB726B410C0694D59EFFB6495B5CAF28D045B973D63E3C99A44B807BDE375FD6CB39E46DC4A511708D0E9D2024D4B6CD1361032CA9BD2AEB9D900AA4D45D9EAD80AC9423374C451A7254D0766");
-            byte[] expectedPubnonce = HexFormat.of().parseHex("02F7BE7089E8376EB355272368766B17E88E7DB72047D05E56AA881EA52B3B35DF02C29C8046FDD0DED4C7E55869137200FBDBFE2EB654267B6D7013602CAED3115A");
-
-            MemorySegment keyAggCacheSeg = secp.arrayToSeg(createCache(aggpk));
-
-            SecpPubKey key = secp.ecPubKeyFromXOnly(secp.xOnlyPubKeyParse(aggpk).get());
-
+            MemorySegment keyAggCacheSeg = secp.arrayToSeg(createCache(vec.aggpk()));
+            SecpPubKey key = secp.ecPubKeyFromXOnly(secp.xOnlyPubKeyParse(vec.aggpk).get());
             Secp256k1Foreign.KeyAggCache keyAggCache = new Secp256k1Foreign.KeyAggCache(key, keyAggCacheSeg);
 
-            Secp256k1Foreign.MusigNonce nonce = secp.musigNonceGen(rand, sk, pk, msg, keyAggCache, extraIn);
-            Assertions.assertArrayEquals(expectedPubnonce, nonce.pubNonce().serialized());
+            Secp256k1Foreign.MusigNonce nonce = secp.musigNonceGen(vec.rand_(), vec.sk(), vec.pk(), vec.msg(), keyAggCache, vec.extra_in());
+
+            Assertions.assertArrayEquals(vec.expected_pubnonce(), nonce.pubNonce().serialized());
         }
     }
 
@@ -170,11 +174,11 @@ public class BIP327TestVectorTests implements SecpTestSupport {
     @Test
     void partialSigVerify() {
         try (var secp = new Secp256k1Foreign()) {
-            List<SecpPubKey> pubKeyList = Stream.of(
+            List<SecpPubKey> pubKeyList = parsePubKeys(List.of(
                     "03935F972DA013F80AE011890FA89B67A27B7BE6CCB24D3274D18B2D4067F261A9",
                     "02F9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9",
                     "02DFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA661"
-            ).map(HexFormat.of()::parseHex).map(secp::ecPubKeyParse).map(SecpResult::get).toList();
+            ));
             List<Secp256k1Foreign.MusigPubNonce> pubNonceList = Stream.of(
                     "0337C87821AFD50A8644D820A8F3E02E499C931865C2360FB43D0A0D20DAFE07EA0287BF891D2A6DEAEBADC909352AA9405D1428C15F4B75F04DAE642A95C2548480",
                     "0279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F817980279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798",
@@ -275,6 +279,33 @@ public class BIP327TestVectorTests implements SecpTestSupport {
 
             return cache;
         }
+    }
+
+    public static List<NonceGenTestCase> nonceGenVectors() throws IOException {
+        return parseJson("/nonce_gen_vectors.json", NonceGenTestCases.class)
+                .test_cases()
+                .stream()
+                .filter(test -> test.msg() != null && test.msg().length == 32) // msg must be 32 bytes
+                .toList();
+    }
+
+    public static <T> T parseJson(String path, Class<T> type) {
+        try (InputStream in = BIP327TestVectorTests.class.getResourceAsStream(path)) {
+            return mapper.readValue(in, type);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public static <T> T parseHex(String hexString, Function<byte[], T> parser) {
+        return parser.apply(HexFormat.of().parseHex(hexString));
+    }
+
+    public static List<SecpPubKey> parsePubKeys(List<String> pubKeyStrings) {
+        return pubKeyStrings.stream()
+                .map(hex -> parseHex(hex, secp::ecPubKeyParse))
+                .map(SecpResult::get)
+                .toList();
     }
 
 }
