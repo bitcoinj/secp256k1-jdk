@@ -36,7 +36,7 @@ jobs:
       - name: Compute CI revision
         run: |
           REVISION=$(mvn -q help:evaluate -Dexpression=revision -DforceStdout)
-          CI_REVISION="${REVISION%-SNAPSHOT}-ci"
+          CI_REVISION=$(echo "$REVISION" | sed 's/-SNAPSHOT$/-ci/')
           echo "CI_REVISION=$CI_REVISION" >> "$GITHUB_ENV"
       - name: Maven Deploy
         run: mvn -Drevision="$CI_REVISION" deploy
@@ -140,7 +140,7 @@ jobs:
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
         run: |
           REVISION=$(mvn -q help:evaluate -Dexpression=revision -DforceStdout)
-          CI_REVISION="${REVISION%-SNAPSHOT}-ci"
+          CI_REVISION=$(echo "$REVISION" | sed 's/-SNAPSHOT$/-ci/')
           echo "CI_REVISION=$CI_REVISION" >> "$GITHUB_ENV"
       - name: Maven Deploy
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
