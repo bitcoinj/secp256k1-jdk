@@ -53,7 +53,7 @@
     </scm>
 
     <properties>
-        <revision>0.3</revision>
+        <revision>0.3.1-SNAPSHOT</revision>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <maven.version.minimum>3.9.0</maven.version.minimum>
