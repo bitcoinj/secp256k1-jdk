@@ -18,7 +18,6 @@ package org.bitcoinj.secp.integration;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpPubKey;
-import org.bitcoinj.secp.SecpResult;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
 import org.junit.jupiter.api.Assertions;
@@ -41,8 +40,6 @@ import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Stream;
-
 
 public class BIP327TestVectorTests implements SecpTestSupport {
 
@@ -54,7 +51,6 @@ public class BIP327TestVectorTests implements SecpTestSupport {
                     .addDeserializer(SecpPrivKey.class, hexDeser(SecpPrivKey::of))
                     .addDeserializer(SecpPubKey.class,  hexDeser(b -> secp.ecPubKeyParse(b).get()))
                     .addDeserializer(Secp256k1Foreign.MusigPubNonce.class, hexDeser(secp::parsePubNonce))
-                    .addDeserializer(Secp256k1Foreign.PartialSig.class, hexDeser(secp::parsePartialSig))
                     .addDeserializer(Secp256k1Foreign.MusigAggNonce.class, hexDeser(secp::parseAggNonce))
             ).build();
 
