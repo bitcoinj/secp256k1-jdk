@@ -24,18 +24,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import tools.jackson.core.JsonParser;
-import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.foreign.MemorySegment;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.List;
@@ -45,27 +41,20 @@ public class BIP327TestVectorTests implements SecpTestSupport {
 
     static final Secp256k1Foreign secp = new Secp256k1Foreign();
 
-    static ObjectMapper mapper = JsonMapper.builder()
-            .addModule(new SimpleModule()
-                    .addDeserializer(byte[].class,     hexDeser(b -> b))
-                    .addDeserializer(SecpPrivKey.class, hexDeser(SecpPrivKey::of))
-                    .addDeserializer(SecpPubKey.class,  hexDeser(b -> secp.ecPubKeyParse(b).get()))
-                    .addDeserializer(Secp256k1Foreign.MusigPubNonce.class, hexDeser(secp::parsePubNonce))
-                    .addDeserializer(Secp256k1Foreign.MusigAggNonce.class, hexDeser(secp::parseAggNonce))
-            ).build();
+    static final ObjectMapper mapper = JsonMapper.builder().build();
 
     @Test
     void sortKeysTest() {
-        KeySortTestVector vec = parseJson("/key_sort_vectors.json", KeySortTestVector.class);
+        JsonNode root = readTree("/key_sort_vectors.json");
+        List<SecpPubKey> pubkeys = mapHex(root.get("pubkeys"), b -> secp.ecPubKeyParse(b).get());
+        List<SecpPubKey> expected = mapHex(root.get("sorted_pubkeys"), b -> secp.ecPubKeyParse(b).get());
 
-        List<SecpPubKey> result = secp.ecPubKeySort(vec.pubkeys);
+        List<SecpPubKey> result = secp.ecPubKeySort(pubkeys);
 
-        Assertions.assertEquals(vec.sorted_pubkeys().size(), result.size());
-
-        for (int i = 0; i < vec.sorted_pubkeys().size(); i++) {
-            Assertions.assertArrayEquals(vec.sorted_pubkeys().get(i).serialize(), result.get(i).serialize());
+        Assertions.assertEquals(expected.size(), result.size());
+        for (int i = 0; i < expected.size(); i++) {
+            Assertions.assertArrayEquals(expected.get(i).serialize(), result.get(i).serialize());
         }
-
     }
 
     @ParameterizedTest
@@ -133,110 +122,110 @@ public class BIP327TestVectorTests implements SecpTestSupport {
         Assertions.assertArrayEquals(vec.expected(), sig.bytes());
     }
 
-     static List<NonceGenTestVector> nonceGenVectors() {
-        return parseJson("/nonce_gen_vectors.json", NonceGenTestData.class)
-                .test_cases()
-                .stream()
-                .filter(test -> test.msg() != null && test.msg().length == 32) // msg must be 32 bytes
+    static List<KeyAggTestVector> keyAggTestVectors() {
+        JsonNode root = readTree("/key_agg_vectors.json");
+        JsonNode pubkeys = root.get("pubkeys");
+        return root.get("valid_test_cases").valueStream()
+                .map(c -> new KeyAggTestVector(
+                        pick(pubkeys, c.get("key_indices"), b -> secp.ecPubKeyParse(b).get()),
+                        hex(c.get("expected"))))
                 .toList();
     }
 
-     static List<KeyAggTestVector> keyAggTestVectors() {
-        KeyAggTestData data = parseJson("/key_agg_vectors.json", KeyAggTestData.class);
-        List<KeyAggTestVector> vecs  = new ArrayList<>();
-        for (var c : data.valid_test_cases()) {
-            List<SecpPubKey> pubkeys = sublistFromIndexListAndParse(data.pubkeys(), c.key_indices(), b -> secp.ecPubKeyParse(b).get());
-            vecs.add(new KeyAggTestVector(pubkeys, c.expected()));
-        }
-        return vecs;
+    static List<NonceGenTestVector> nonceGenVectors() {
+        return readTree("/nonce_gen_vectors.json").get("test_cases").valueStream()
+                .filter(c -> !c.get("msg").isNull() && hex(c.get("msg")).length == 32) // msg must be 32 bytes
+                .map(c -> new NonceGenTestVector(
+                        hex(c.get("rand_")),
+                        SecpPrivKey.of(hex(c.get("sk"))),
+                        secp.ecPubKeyParse(hex(c.get("pk"))).get(),
+                        hex(c.get("aggpk")),
+                        hex(c.get("msg")),
+                        hex(c.get("extra_in")),
+                        hex(c.get("expected_pubnonce"))))
+                .toList();
     }
 
-     static List<NonceAggTestVector> nonceAggTestVectors() {
-        NonceAggTestData data = parseJson(("/nonce_agg_vectors.json"), NonceAggTestData.class);
-        List<NonceAggTestVector> vecs  = new ArrayList<>();
-        for (var c : data.valid_test_cases()) {
-            List<Secp256k1Foreign.MusigPubNonce> pnonces = sublistFromIndexListAndParse(data.pnonces(), c.pnonce_indices(), secp::parsePubNonce);
-            vecs.add(new NonceAggTestVector(pnonces, c.expected()));
-        }
-        return vecs;
+    static List<NonceAggTestVector> nonceAggTestVectors() {
+        JsonNode root = readTree("/nonce_agg_vectors.json");
+        JsonNode pnonces = root.get("pnonces");
+        return root.get("valid_test_cases").valueStream()
+                .map(c -> new NonceAggTestVector(
+                        pick(pnonces, c.get("pnonce_indices"), secp::parsePubNonce),
+                        hex(c.get("expected"))))
+                .toList();
     }
 
-     static List<PartialSignTestVector> partialSignTestVectors() {
-        PartialSignVerifyTestData data = parseJson("/sign_verify_vectors.json", PartialSignVerifyTestData.class);
-        List<PartialSignTestVector> vecs  = new ArrayList<>();
-        data.secnonces.set(0, secNonceFromBip327(data.secnonces.getFirst()));
-        for (var c : data.valid_test_cases()) {
-            byte[] msg = data.msgs().get(c.msg_index());
-            if (msg != null && msg.length == 32) {
-                List<SecpPubKey> pubkeys = sublistFromIndexListAndParse(data.pubkeys(), c.key_indices(), b -> secp.ecPubKeyParse(b).get());
-                List<Secp256k1Foreign.MusigPubNonce> pnonces = sublistFromIndexListAndParse(data.pnonces(), c.nonce_indices, secp::parsePubNonce);
-                MemorySegment secnonce = secp.arrayToSeg(data.secnonces().getFirst());
-                vecs.add(new PartialSignTestVector(data.sk(), data.aggnonces().get(c.aggnonce_index()), pubkeys, secnonce, pnonces, data.msgs().get(c.msg_index()), c.expected()));
-            }
-        }
-        return vecs;
+    static List<PartialSignTestVector> partialSignTestVectors() {
+        JsonNode root = readTree("/sign_verify_vectors.json");
+        SecpPrivKey sk = SecpPrivKey.of(hex(root.get("sk")));
+        JsonNode pubkeys = root.get("pubkeys");
+        JsonNode pnonces = root.get("pnonces");
+        JsonNode aggnonces = root.get("aggnonces");
+        JsonNode msgs = root.get("msgs");
+        // secnonces[0] is given in BIP327 form (33-byte pubkey suffix); convert once to the internal layout.
+        byte[] secnonceBytes = secNonceFromBip327(hex(root.get("secnonces").get(0)));
+
+        return root.get("valid_test_cases").valueStream()
+                .filter(c -> hex(msgs.get(c.get("msg_index").asInt())).length == 32)
+                .map(c -> new PartialSignTestVector(
+                        sk,
+                        secp.parseAggNonce(hex(aggnonces.get(c.get("aggnonce_index").asInt()))),
+                        pick(pubkeys, c.get("key_indices"), b -> secp.ecPubKeyParse(b).get()),
+                        secp.arrayToSeg(secnonceBytes), // fresh segment per case: libsecp zeroes the secnonce after signing
+                        pick(pnonces, c.get("nonce_indices"), secp::parsePubNonce),
+                        hex(msgs.get(c.get("msg_index").asInt())),
+                        hex(c.get("expected"))))
+                .toList();
     }
 
-     static List<PartialSigVerifyTestVector> partialSigVerifyTestVectors() {
-        PartialSignVerifyTestData data = parseJson("/sign_verify_vectors.json", PartialSignVerifyTestData.class);
-        List<PartialSigVerifyTestVector> vecs  = new ArrayList<>();
-        for (var c : data.valid_test_cases()) {
-            byte[] msg = data.msgs().get(c.msg_index());
-            if (msg != null && msg.length == 32) {
-                List<SecpPubKey> pubkeys = sublistFromIndexListAndParse(data.pubkeys(), c.key_indices(), b -> secp.ecPubKeyParse(b).get());
-                List<Secp256k1Foreign.MusigPubNonce> pnonces = sublistFromIndexListAndParse(data.pnonces(), c.nonce_indices, secp::parsePubNonce);
-                vecs.add(new PartialSigVerifyTestVector(pubkeys, pnonces, pubkeys.get(c.signer_index()), pnonces.get(c.signer_index()), data.aggnonces.get(c.aggnonce_index()), msg, secp.parsePartialSig(c.expected())));
-            }
-        }
-        return vecs;
+    static List<PartialSigVerifyTestVector> partialSigVerifyTestVectors() {
+        JsonNode root = readTree("/sign_verify_vectors.json");
+        JsonNode pubkeys = root.get("pubkeys");
+        JsonNode pnonces = root.get("pnonces");
+        JsonNode aggnonces = root.get("aggnonces");
+        JsonNode msgs = root.get("msgs");
+
+        return root.get("valid_test_cases").valueStream()
+                .filter(c -> hex(msgs.get(c.get("msg_index").asInt())).length == 32)
+                .map(c -> {
+                    List<SecpPubKey> keys = pick(pubkeys, c.get("key_indices"), b -> secp.ecPubKeyParse(b).get());
+                    List<Secp256k1Foreign.MusigPubNonce> pns = pick(pnonces, c.get("nonce_indices"), secp::parsePubNonce);
+                    int signer = c.get("signer_index").asInt();
+                    return new PartialSigVerifyTestVector(keys, pns, keys.get(signer), pns.get(signer),
+                            secp.parseAggNonce(hex(aggnonces.get(c.get("aggnonce_index").asInt()))),
+                            hex(msgs.get(c.get("msg_index").asInt())),
+                            secp.parsePartialSig(hex(c.get("expected"))));
+                })
+                .toList();
     }
 
     static List<SigAggTestVector> sigAggTestVectors() {
-        SigAggTestData data = parseJson("/sig_agg_vectors.json",  SigAggTestData.class);
-        List<SigAggTestVector> vecs  = new ArrayList<>();
-        for (var c : data.valid_test_cases()) {
-            if (c.tweak_indices().isEmpty()) { // not supporting tweaks
-                List<SecpPubKey> pubkeys = sublistFromIndexList(data.pubkeys(), c.key_indices());
-                List<Secp256k1Foreign.MusigPubNonce> pnonces = sublistFromIndexList(data.pnonces(), c.nonce_indices());
-                List<Secp256k1Foreign.PartialSig> psigs = sublistFromIndexListAndParse(data.psigs(), c.psig_indices(), secp::parsePartialSig);
+        JsonNode root = readTree("/sig_agg_vectors.json");
+        JsonNode pubkeys = root.get("pubkeys");
+        JsonNode pnonces = root.get("pnonces");
+        JsonNode psigs = root.get("psigs");
+        byte[] msg = hex(root.get("msg"));
 
-                vecs.add(new SigAggTestVector(pubkeys, pnonces, psigs, c.aggnonce(), data.msg(), c.expected()));
-            }
-        }
-        return vecs;
+        return root.get("valid_test_cases").valueStream()
+                .filter(c -> c.get("tweak_indices").isEmpty()) // not supporting tweaks
+                .map(c -> new SigAggTestVector(
+                        pick(pubkeys, c.get("key_indices"), b -> secp.ecPubKeyParse(b).get()),
+                        pick(pnonces, c.get("nonce_indices"), secp::parsePubNonce),
+                        pick(psigs, c.get("psig_indices"), secp::parsePartialSig),
+                        secp.parseAggNonce(hex(c.get("aggnonce"))),
+                        msg,
+                        hex(c.get("expected"))))
+                .toList();
     }
 
-    // Record for keySort test
-    record KeySortTestVector(List<SecpPubKey> pubkeys, List<SecpPubKey> sorted_pubkeys) {}
-
-    // Records for keyAgg test
+    // One record per parameterized test, holding the inputs that test consumes.
     record KeyAggTestVector(List<SecpPubKey> pubkeys, byte[] expected) {}
-    record KeyAggCase(List<Integer> key_indices, byte[] expected) {}
-    record KeyAggTestData(List<byte[]> pubkeys, List<KeyAggCase> valid_test_cases) {}
-
-    // Records for pubNonceGen test
-    record NonceGenTestVector(byte[] rand_, SecpPrivKey sk, SecpPubKey pk, byte[] aggpk, byte[] msg, byte[] extra_in, byte[] expected_secnonce, byte[] expected_pubnonce) {}
-    record NonceGenTestData(List<NonceGenTestVector> test_cases) {}
-
-    // Records for nonceAgg test
+    record NonceGenTestVector(byte[] rand_, SecpPrivKey sk, SecpPubKey pk, byte[] aggpk, byte[] msg, byte[] extra_in, byte[] expected_pubnonce) {}
     record NonceAggTestVector(List<Secp256k1Foreign.MusigPubNonce> pnonces, byte[] expected) {}
-    record NonceAggCase(List<Integer> pnonce_indices, byte[] expected) {}
-    record NonceAggTestData(List<byte[]> pnonces, List<NonceAggCase> valid_test_cases) {}
-
-    // Record for partialSign test
     record PartialSignTestVector(SecpPrivKey sk, Secp256k1Foreign.MusigAggNonce aggnonce, List<SecpPubKey> pubkeys, MemorySegment secnonce, List<Secp256k1Foreign.MusigPubNonce> pnonces, byte[] msg, byte[] expected) {}
-
-    // Record for partialSigVerify test
     record PartialSigVerifyTestVector(List<SecpPubKey> pubkeys, List<Secp256k1Foreign.MusigPubNonce> pnonces, SecpPubKey signer_pubkey, Secp256k1Foreign.MusigPubNonce signer_pnonce, Secp256k1Foreign.MusigAggNonce aggnonce, byte[] msg, Secp256k1Foreign.PartialSig psig) {}
-
-    // Records for both partialSign and partialSigVerify tests (they pull from the same json)
-    record PartialSignVerifyCase(List<Integer> key_indices, List<Integer> nonce_indices, int aggnonce_index, int msg_index, int signer_index, byte[] expected) {}
-    record PartialSignVerifyTestData(SecpPrivKey sk, List<byte[]> pubkeys, List<byte[]> secnonces, List<byte[]> pnonces, List<Secp256k1Foreign.MusigAggNonce> aggnonces, List<byte[]> msgs, List<PartialSignVerifyCase> valid_test_cases) {}
-
-    // Records for sigAgg test
     record SigAggTestVector(List<SecpPubKey> pubkeys, List<Secp256k1Foreign.MusigPubNonce> pnonces, List<Secp256k1Foreign.PartialSig> psigs, Secp256k1Foreign.MusigAggNonce aggnonce, byte[] msg, byte[] expected) {}
-    record SigAggTestCase(Secp256k1Foreign.MusigAggNonce aggnonce, List<Integer> nonce_indices, List<Integer> key_indices, List<Integer> psig_indices, List<Integer> tweak_indices, byte[] expected) {}
-    record SigAggTestData(List<SecpPubKey> pubkeys, List<Secp256k1Foreign.MusigPubNonce> pnonces, List<byte[]> psigs, byte[] msg, List<SigAggTestCase> valid_test_cases) {}
 
     static byte[] secNonceFromBip327(byte[] bip327) {
         try (var secp = new Secp256k1Foreign()) {
@@ -289,35 +278,25 @@ public class BIP327TestVectorTests implements SecpTestSupport {
         }
     }
 
-    static <T> T parseJson(String path, Class<T> type) {
+    static JsonNode readTree(String path) {
         try (InputStream in = BIP327TestVectorTests.class.getResourceAsStream(path)) {
-            return mapper.readValue(in, type);
+            return mapper.readTree(in);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-    static <T> ValueDeserializer<T> hexDeser(Function<byte[], T> conv) {
-        return new ValueDeserializer<>() {
-            @Override public T deserialize(JsonParser p, DeserializationContext ctxt) {
-                return conv.apply(HexFormat.of().parseHex(p.getString()));
-            }
-        };
+    static byte[] hex(JsonNode node) {
+        return HexFormat.of().parseHex(node.asString());
     }
 
-    static <T> List<T> sublistFromIndexList(List<T> list, List<Integer> indices) {
-        List<T> sublist = new ArrayList<>();
-        for (int i : indices) {
-            sublist.add(list.get(i));
-        }
-        return sublist;
+    /** Parse every hex string in an array node. */
+    static <T> List<T> mapHex(JsonNode array, Function<byte[], T> parser) {
+        return array.valueStream().map(n -> parser.apply(hex(n))).toList();
     }
 
-    static <T, E> List<T> sublistFromIndexListAndParse(List<E> list, List<Integer> indices, Function<E, T> parser) {
-        List<T> sublist = new ArrayList<>();
-        for (int i : indices) {
-            sublist.add(parser.apply(list.get(i)));
-        }
-        return sublist;
+    /** Parse the elements of {@code array} selected by the {@code indices} array node. */
+    static <T> List<T> pick(JsonNode array, JsonNode indices, Function<byte[], T> parser) {
+        return indices.valueStream().map(i -> parser.apply(hex(array.get(i.asInt())))).toList();
     }
 }
