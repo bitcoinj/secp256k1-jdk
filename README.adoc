@@ -66,31 +66,9 @@ The SECG secp256K1 curve was removed from Java in the JDK 16 release (see https:
 
 == Experimental Pre-Release binaries
 
-Binary packages are available on https://gitlab.com/groups/bitcoinj/-/packages[GitLab.com]. You can download JARs or use the provided Maven coordinates to link to them directly from your `pom.xml` or `build.gradle`.
+Binary packages are available on https://central.sonatype.com[Maven Central]. You can download JARs or use the provided Maven coordinates to link to them directly from your `pom.xml` or `build.gradle`.
 
-WARNING:: This is an experimental pre-release and should be used only for testing and evaluation only.
-
-=== Add the GitLab Maven Package Repository
-
-To your `pom.xml`:
-
-[source,xml]
-----
-<repositories>
-  <repository>
-    <id>secpjdk-repo</id>
-    <url>https://gitlab.com/api/v4/projects/55956336/packages/maven</url>
-  </repository>
-</repositories>
-----
-
-Or to your `build.gradle`:
-
-----
-maven {
-    url 'https://gitlab.com/api/v4/projects/55956336/packages/maven'
-}
-----
+WARNING:: This is an experimental pre-release and should be used for testing and evaluation only.
 
 === Add Your Module Dependencies
 
