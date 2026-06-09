@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.foreign.MemorySegment;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.List;
@@ -45,193 +46,204 @@ import java.util.stream.Stream;
 
 public class BIP327TestVectorTests implements SecpTestSupport {
 
-    static <T> ValueDeserializer<T> hexDeser(Function<byte[], T> conv) {
-        return new ValueDeserializer<>() {
-            @Override public T deserialize(JsonParser p, DeserializationContext ctxt) {
-                return conv.apply(HexFormat.of().parseHex(p.getString()));
-            }
-        };
-    }
-
     static final Secp256k1Foreign secp = new Secp256k1Foreign();
 
     static ObjectMapper mapper = JsonMapper.builder()
             .addModule(new SimpleModule()
-                .addDeserializer(byte[].class,     hexDeser(b -> b))
-                .addDeserializer(SecpPrivKey.class, hexDeser(SecpPrivKey::of))
-                .addDeserializer(SecpPubKey.class,  hexDeser(b -> secp.ecPubKeyParse(b).get()))
+                    .addDeserializer(byte[].class,     hexDeser(b -> b))
+                    .addDeserializer(SecpPrivKey.class, hexDeser(SecpPrivKey::of))
+                    .addDeserializer(SecpPubKey.class,  hexDeser(b -> secp.ecPubKeyParse(b).get()))
+                    .addDeserializer(Secp256k1Foreign.MusigPubNonce.class, hexDeser(secp::parsePubNonce))
+                    .addDeserializer(Secp256k1Foreign.PartialSig.class, hexDeser(secp::parsePartialSig))
+                    .addDeserializer(Secp256k1Foreign.MusigAggNonce.class, hexDeser(secp::parseAggNonce))
             ).build();
-
-    public record KeySortTestVector(List<String> pubkeys, List<String> sorted_pubkeys) { }
-    public record NonceGenTestCase(byte[] rand_, SecpPrivKey sk, SecpPubKey pk, byte[] aggpk, byte[] msg, byte[] extra_in, byte[] expected_secnonce, byte[] expected_pubnonce) {}
-    record NonceGenTestCases(List<NonceGenTestCase> test_cases) {}
 
     @Test
     void sortKeysTest() {
         KeySortTestVector vec = parseJson("/key_sort_vectors.json", KeySortTestVector.class);
-        List<SecpPubKey> pubKeys = parsePubKeys(vec.pubkeys);
-        List<SecpPubKey> sortedPubKeys = parsePubKeys(vec.sorted_pubkeys);
 
-        List<SecpPubKey> result = secp.ecPubKeySort(pubKeys);
+        List<SecpPubKey> result = secp.ecPubKeySort(vec.pubkeys);
 
-        Assertions.assertEquals(sortedPubKeys.size(), result.size());
+        Assertions.assertEquals(vec.sorted_pubkeys().size(), result.size());
 
-        for (int i = 0; i < sortedPubKeys.size(); i++) {
-            Assertions.assertArrayEquals(sortedPubKeys.get(i).serialize(), result.get(i).serialize());
+        for (int i = 0; i < vec.sorted_pubkeys().size(); i++) {
+            Assertions.assertArrayEquals(vec.sorted_pubkeys().get(i).serialize(), result.get(i).serialize());
         }
 
     }
 
-    @Test
-    void keyAgg() {
+    @ParameterizedTest
+    @MethodSource("keyAggTestVectors")
+    void keyAgg(KeyAggTestVector vec) {
         try (var secp = new Secp256k1Foreign()) {
-            List<SecpPubKey> input = Stream.of(
-                            "02F9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9",
-                            "03DFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA659",
-                            "023590A94E768F8E1815C2F24B4D80A8E3149316C3518CE7B7AD338368D038CA66"//,
-//                            "020000000000000000000000000000000000000000000000000000000000000005",
-//                            "02FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC30",
-//                            "04F9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9",
-//                            "03935F972DA013F80AE011890FA89B67A27B7BE6CCB24D3274D18B2D4067F261A9"
-                    ).map(HexFormat.of()::parseHex)
-                    .map(secp::ecPubKeyParse)
-                    .map(SecpResult::get)
-                    .toList();
-            byte[] expected = HexFormat.of().parseHex("90539EEDE565F5D054F32CC0C220126889ED1E5D193BAF15AEF344FE59D4610C");
+            Secp256k1Foreign.KeyAggCache result = secp.musigPubKeyAgg(vec.pubkeys());
 
-            Secp256k1Foreign.KeyAggCache result = secp.musigPubKeyAgg(input);
-
-            Assertions.assertArrayEquals(expected, result.aggKey().xOnly().serialize());
+            Assertions.assertArrayEquals(vec.expected(), result.aggKey().xOnly().serialize());
         }
     }
 
     @ParameterizedTest
     @MethodSource("nonceGenVectors")
-    void pubNonceGen(NonceGenTestCase vec) {
-        try (var secp = new Secp256k1Foreign()) {
-            MemorySegment keyAggCacheSeg = secp.arrayToSeg(createCache(vec.aggpk()));
-            SecpPubKey key = secp.ecPubKeyFromXOnly(secp.xOnlyPubKeyParse(vec.aggpk).get());
-            Secp256k1Foreign.KeyAggCache keyAggCache = new Secp256k1Foreign.KeyAggCache(key, keyAggCacheSeg);
+    void pubNonceGen(NonceGenTestVector vec) {
+        MemorySegment keyAggCacheSeg = secp.arrayToSeg(createCache(vec.aggpk()));
+        SecpPubKey key = secp.ecPubKeyFromXOnly(secp.xOnlyPubKeyParse(vec.aggpk).get());
+        Secp256k1Foreign.KeyAggCache keyAggCache = new Secp256k1Foreign.KeyAggCache(key, keyAggCacheSeg);
 
-            Secp256k1Foreign.MusigNonce nonce = secp.musigNonceGen(vec.rand_(), vec.sk(), vec.pk(), vec.msg(), keyAggCache, vec.extra_in());
+        Secp256k1Foreign.MusigNonce nonce = secp.musigNonceGen(vec.rand_(), vec.sk(), vec.pk(), vec.msg(), keyAggCache, vec.extra_in());
 
-            Assertions.assertArrayEquals(vec.expected_pubnonce(), nonce.pubNonce().serialized());
-        }
+        Assertions.assertArrayEquals(vec.expected_pubnonce(), nonce.pubNonce().serialized());
     }
 
-    @Test
-    void nonceAgg() {
-        try (var secp = new Secp256k1Foreign()) {
-            List<Secp256k1Foreign.MusigPubNonce> in = Stream.of(
-                    "020151C80F435648DF67A22B749CD798CE54E0321D034B92B709B567D60A42E66603BA47FBC1834437B3212E89A84D8425E7BF12E0245D98262268EBDCB385D50641",
-                    "03FF406FFD8ADB9CD29877E4985014F66A59F6CD01C0E88CAA8E5F3166B1F676A60248C264CDD57D3C24D79990B0F865674EB62A0F9018277A95011B41BFC193B833"
-            ).map(HexFormat.of()::parseHex).map(secp::parsePubNonce).toList();
+    @ParameterizedTest
+    @MethodSource("nonceAggTestVectors")
+    void nonceAgg(NonceAggTestVector vec) {
+        Secp256k1Foreign.MusigAggNonce result = secp.musigNonceAgg(vec.pnonces());
 
-            byte[] expected = HexFormat.of().parseHex(
-                    "035FE1873B4F2967F52FEA4A06AD5A8ECCBE9D0FD73068012C894E2E87CCB5804B024725377345BDE0E9C33AF3C43C0A29A9249F2F2956FA8CFEB55C8573D0262DC8"
-            );
-
-            Secp256k1Foreign.MusigAggNonce result = secp.musigNonceAgg(in);
-
-            Assertions.assertArrayEquals(expected, result.serialized());
-        }
+        Assertions.assertArrayEquals(vec.expected(), result.serialized());
     }
 
-    @Test
-    void partialSign() {
-        try (var secp = new Secp256k1Foreign()) {
-            SecpPrivKey sk = SecpPrivKey.of(HexFormat.of().parseHex("7FB9E0E687ADA1EEBF7ECFE2F21E73EBDB51A7D450948DFE8D76D7F2D1007671"));
-            List<SecpPubKey> pubKeyList = Stream.of(
-                    "03935F972DA013F80AE011890FA89B67A27B7BE6CCB24D3274D18B2D4067F261A9",
-                    "02F9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9",
-                    "02DFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA661"
-            ).map(HexFormat.of()::parseHex).map(secp::ecPubKeyParse).map(SecpResult::get).toList();
-            List<Secp256k1Foreign.MusigPubNonce> pubNonceList = Stream.of(
-                    "0337C87821AFD50A8644D820A8F3E02E499C931865C2360FB43D0A0D20DAFE07EA0287BF891D2A6DEAEBADC909352AA9405D1428C15F4B75F04DAE642A95C2548480",
-                    "0279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F817980279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798",
-                    "032DE2662628C90B03F5E720284EB52FF7D71F4284F627B68A853D78C78E1FFE9303E4C5524E83FFE1493B9077CF1CA6BEB2090C93D930321071AD40B2F44E599046"
-            ).map(HexFormat.of()::parseHex).map(secp::parsePubNonce).toList();
-            Secp256k1Foreign.MusigAggNonce aggNonce = secp.parseAggNonce(
-                    HexFormat.of().parseHex("028465FCF0BBDBCF443AABCCE533D42B4B5A10966AC09A49655E8C42DAAB8FCD61037496A3CC86926D452CAFCFD55D25972CA1675D549310DE296BFF42F72EEEA8C9")
-            );
-            byte[] msg32 = HexFormat.of().parseHex("F95466D086770E689964664219266FE5ED215C92AE20BAB5C9D79ADDDDF3C0CF");
-            MemorySegment secNonce = secp.arrayToSeg(secNonceFromBip327(
-                    HexFormat.of().parseHex("508B81A611F100A6B2B6B29656590898AF488BCF2E1F55CF22E5CFB84421FE61FA27FD49B1D50085B481285E1CA205D55C82CC1B31FF5CD54A489829355901F703935F972DA013F80AE011890FA89B67A27B7BE6CCB24D3274D18B2D4067F261A9")
-            ));
+    @ParameterizedTest
+    @MethodSource("partialSignTestVectors")
+    void partialSign(PartialSignTestVector vec) {
 
-            Secp256k1Foreign.PartialSig expected = secp.parsePartialSig(
-                    HexFormat.of().parseHex("012ABBCB52B3016AC03AD82395A1A415C48B93DEF78718E62A7A90052FE224FB")
-            );
+        Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(vec.pubkeys());
+        MemorySegment session = secp.musigNonceProcess(vec.aggnonce(), vec.msg(), cache);
 
-            Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(pubKeyList);
-            MemorySegment session = secp.musigNonceProcess(aggNonce, msg32, cache);
-            Secp256k1Foreign.PartialSig sig = secp.musigPartialSign(secNonce, secp.ecKeyPairCreate(sk), cache, session);
+        Secp256k1Foreign.PartialSig sig = secp.musigPartialSign(vec.secnonce(), secp.ecKeyPairCreate(vec.sk()), cache, session);
 
-            Assertions.assertArrayEquals(expected.serialized(), sig.serialized());
-        }
+        Assertions.assertArrayEquals(vec.expected(), sig.serialized());
     }
 
-    @Test
-    void partialSigVerify() {
-        try (var secp = new Secp256k1Foreign()) {
-            List<SecpPubKey> pubKeyList = parsePubKeys(List.of(
-                    "03935F972DA013F80AE011890FA89B67A27B7BE6CCB24D3274D18B2D4067F261A9",
-                    "02F9308A019258C31049344F85F89D5229B531C845836F99B08601F113BCE036F9",
-                    "02DFF1D77F2A671C5F36183726DB2341BE58FEAE1DA2DECED843240F7B502BA661"
-            ));
-            List<Secp256k1Foreign.MusigPubNonce> pubNonceList = Stream.of(
-                    "0337C87821AFD50A8644D820A8F3E02E499C931865C2360FB43D0A0D20DAFE07EA0287BF891D2A6DEAEBADC909352AA9405D1428C15F4B75F04DAE642A95C2548480",
-                    "0279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F817980279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798",
-                    "032DE2662628C90B03F5E720284EB52FF7D71F4284F627B68A853D78C78E1FFE9303E4C5524E83FFE1493B9077CF1CA6BEB2090C93D930321071AD40B2F44E599046"
-            ).map(HexFormat.of()::parseHex).map(secp::parsePubNonce).toList();
-            Secp256k1Foreign.MusigAggNonce aggNonce = secp.parseAggNonce(
-                    HexFormat.of().parseHex("028465FCF0BBDBCF443AABCCE533D42B4B5A10966AC09A49655E8C42DAAB8FCD61037496A3CC86926D452CAFCFD55D25972CA1675D549310DE296BFF42F72EEEA8C9")
-            );
-            byte[] msg32 = HexFormat.of().parseHex("F95466D086770E689964664219266FE5ED215C92AE20BAB5C9D79ADDDDF3C0CF");
-            Secp256k1Foreign.PartialSig partialSig = secp.parsePartialSig(
-                    HexFormat.of().parseHex("012ABBCB52B3016AC03AD82395A1A415C48B93DEF78718E62A7A90052FE224FB")
-            );
+    @ParameterizedTest
+    @MethodSource("partialSigVerifyTestVectors")
+    void partialSigVerify(PartialSigVerifyTestVector vec) {
 
-            Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(pubKeyList);
-            MemorySegment session = secp.musigNonceProcess(aggNonce, msg32, cache);
+        Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(vec.pubkeys());
+        MemorySegment session = secp.musigNonceProcess(vec.aggnonce(), vec.msg, cache);
 
-            boolean good = secp.musigPartialSigVerify(partialSig, pubNonceList.getFirst(), pubKeyList.getFirst(), cache, session);
-            Assertions.assertTrue(good);
-        }
+        boolean result = secp.musigPartialSigVerify(vec.psig(), vec.signer_pnonce(), vec.signer_pubkey(), cache, session);
+
+        Assertions.assertTrue(result);
     }
 
-    @Test
-    void sigAgg() {
-        try (var secp = new Secp256k1Foreign()) {
-            List<Secp256k1Foreign.MusigPubNonce> pubNonceList = Stream.of(
-                    "036E5EE6E28824029FEA3E8A9DDD2C8483F5AF98F7177C3AF3CB6F47CAF8D94AE902DBA67E4A1F3680826172DA15AFB1A8CA85C7C5CC88900905C8DC8C328511B53E",
-                    "03E4F798DA48A76EEC1C9CC5AB7A880FFBA201A5F064E627EC9CB0031D1D58FC5103E06180315C5A522B7EC7C08B69DCD721C313C940819296D0A7AB8E8795AC1F00"
-            ).map(HexFormat.of()::parseHex).map(secp::parsePubNonce).toList();
-            List<SecpPubKey> pubKeyList = Stream.of(
-                    "03935F972DA013F80AE011890FA89B67A27B7BE6CCB24D3274D18B2D4067F261A9",
-                    "02D2DC6F5DF7C56ACF38C7FA0AE7A759AE30E19B37359DFDE015872324C7EF6E05"
-            ).map(HexFormat.of()::parseHex).map(secp::ecPubKeyParse).map(SecpResult::get).toList();
-            List<Secp256k1Foreign.PartialSig> partialSigList = Stream.of(
-                    "B15D2CD3C3D22B04DAE438CE653F6B4ECF042F42CFDED7C41B64AAF9B4AF53FB",
-                    "6193D6AC61B354E9105BBDC8937A3454A6D705B6D57322A5A472A02CE99FCB64"
-            ).map(HexFormat.of()::parseHex).map(secp::parsePartialSig).toList();
-            byte[] msg32 = HexFormat.of().parseHex("599C67EA410D005B9DA90817CF03ED3B1C868E4DA4EDF00A5880B0082C237869");
-            Secp256k1Foreign.MusigAggNonce aggNonce = secp.parseAggNonce(
-                    HexFormat.of().parseHex("0341432722C5CD0268D829C702CF0D1CBCE57033EED201FD335191385227C3210C03D377F2D258B64AADC0E16F26462323D701D286046A2EA93365656AFD9875982B")
-            );
+    @ParameterizedTest
+    @MethodSource("sigAggTestVectors")
+    void sigAgg(SigAggTestVector vec) {
+        Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(vec.pubkeys());
+        MemorySegment session = secp.musigNonceProcess(vec.aggnonce(), vec.msg(), cache);
 
-            byte[] expected = HexFormat.of().parseHex("041DA22223CE65C92C9A0D6C2CAC828AAF1EEE56304FEC371DDF91EBB2B9EF0912F1038025857FEDEB3FF696F8B99FA4BB2C5812F6095A2E0004EC99CE18DE1E");
+        SchnorrSignature sig = secp.musigPartialSigAgg(session, vec.psigs());
 
-            Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(pubKeyList);
-            MemorySegment session = secp.musigNonceProcess(aggNonce, msg32, cache);
-            SchnorrSignature sig = secp.musigPartialSigAgg(session, partialSigList);
-
-            Assertions.assertArrayEquals(expected, sig.bytes());
-        }
+        Assertions.assertArrayEquals(vec.expected(), sig.bytes());
     }
 
-    public byte[] secNonceFromBip327(byte[] bip327) {
-        try(var secp = new Secp256k1Foreign()) {
+     static List<NonceGenTestVector> nonceGenVectors() {
+        return parseJson("/nonce_gen_vectors.json", NonceGenTestData.class)
+                .test_cases()
+                .stream()
+                .filter(test -> test.msg() != null && test.msg().length == 32) // msg must be 32 bytes
+                .toList();
+    }
+
+     static List<KeyAggTestVector> keyAggTestVectors() {
+        KeyAggTestData data = parseJson("/key_agg_vectors.json", KeyAggTestData.class);
+        List<KeyAggTestVector> vecs  = new ArrayList<>();
+        for (var c : data.valid_test_cases()) {
+            List<SecpPubKey> pubkeys = sublistFromIndexListAndParse(data.pubkeys(), c.key_indices(), b -> secp.ecPubKeyParse(b).get());
+            vecs.add(new KeyAggTestVector(pubkeys, c.expected()));
+        }
+        return vecs;
+    }
+
+     static List<NonceAggTestVector> nonceAggTestVectors() {
+        NonceAggTestData data = parseJson(("/nonce_agg_vectors.json"), NonceAggTestData.class);
+        List<NonceAggTestVector> vecs  = new ArrayList<>();
+        for (var c : data.valid_test_cases()) {
+            List<Secp256k1Foreign.MusigPubNonce> pnonces = sublistFromIndexListAndParse(data.pnonces(), c.pnonce_indices(), secp::parsePubNonce);
+            vecs.add(new NonceAggTestVector(pnonces, c.expected()));
+        }
+        return vecs;
+    }
+
+     static List<PartialSignTestVector> partialSignTestVectors() {
+        PartialSignVerifyTestData data = parseJson("/sign_verify_vectors.json", PartialSignVerifyTestData.class);
+        List<PartialSignTestVector> vecs  = new ArrayList<>();
+        data.secnonces.set(0, secNonceFromBip327(data.secnonces.getFirst()));
+        for (var c : data.valid_test_cases()) {
+            byte[] msg = data.msgs().get(c.msg_index());
+            if (msg != null && msg.length == 32) {
+                List<SecpPubKey> pubkeys = sublistFromIndexListAndParse(data.pubkeys(), c.key_indices(), b -> secp.ecPubKeyParse(b).get());
+                List<Secp256k1Foreign.MusigPubNonce> pnonces = sublistFromIndexListAndParse(data.pnonces(), c.nonce_indices, secp::parsePubNonce);
+                MemorySegment secnonce = secp.arrayToSeg(data.secnonces().getFirst());
+                vecs.add(new PartialSignTestVector(data.sk(), data.aggnonces().get(c.aggnonce_index()), pubkeys, secnonce, pnonces, data.msgs().get(c.msg_index()), c.expected()));
+            }
+        }
+        return vecs;
+    }
+
+     static List<PartialSigVerifyTestVector> partialSigVerifyTestVectors() {
+        PartialSignVerifyTestData data = parseJson("/sign_verify_vectors.json", PartialSignVerifyTestData.class);
+        List<PartialSigVerifyTestVector> vecs  = new ArrayList<>();
+        for (var c : data.valid_test_cases()) {
+            byte[] msg = data.msgs().get(c.msg_index());
+            if (msg != null && msg.length == 32) {
+                List<SecpPubKey> pubkeys = sublistFromIndexListAndParse(data.pubkeys(), c.key_indices(), b -> secp.ecPubKeyParse(b).get());
+                List<Secp256k1Foreign.MusigPubNonce> pnonces = sublistFromIndexListAndParse(data.pnonces(), c.nonce_indices, secp::parsePubNonce);
+                vecs.add(new PartialSigVerifyTestVector(pubkeys, pnonces, pubkeys.get(c.signer_index()), pnonces.get(c.signer_index()), data.aggnonces.get(c.aggnonce_index()), msg, secp.parsePartialSig(c.expected())));
+            }
+        }
+        return vecs;
+    }
+
+    static List<SigAggTestVector> sigAggTestVectors() {
+        SigAggTestData data = parseJson("/sig_agg_vectors.json",  SigAggTestData.class);
+        List<SigAggTestVector> vecs  = new ArrayList<>();
+        for (var c : data.valid_test_cases()) {
+            if (c.tweak_indices().isEmpty()) { // not supporting tweaks
+                List<SecpPubKey> pubkeys = sublistFromIndexList(data.pubkeys(), c.key_indices());
+                List<Secp256k1Foreign.MusigPubNonce> pnonces = sublistFromIndexList(data.pnonces(), c.nonce_indices());
+                List<Secp256k1Foreign.PartialSig> psigs = sublistFromIndexListAndParse(data.psigs(), c.psig_indices(), secp::parsePartialSig);
+
+                vecs.add(new SigAggTestVector(pubkeys, pnonces, psigs, c.aggnonce(), data.msg(), c.expected()));
+            }
+        }
+        return vecs;
+    }
+
+    // Record for keySort test
+    record KeySortTestVector(List<SecpPubKey> pubkeys, List<SecpPubKey> sorted_pubkeys) {}
+
+    // Records for keyAgg test
+    record KeyAggTestVector(List<SecpPubKey> pubkeys, byte[] expected) {}
+    record KeyAggCase(List<Integer> key_indices, byte[] expected) {}
+    record KeyAggTestData(List<byte[]> pubkeys, List<KeyAggCase> valid_test_cases) {}
+
+    // Records for pubNonceGen test
+    record NonceGenTestVector(byte[] rand_, SecpPrivKey sk, SecpPubKey pk, byte[] aggpk, byte[] msg, byte[] extra_in, byte[] expected_secnonce, byte[] expected_pubnonce) {}
+    record NonceGenTestData(List<NonceGenTestVector> test_cases) {}
+
+    // Records for nonceAgg test
+    record NonceAggTestVector(List<Secp256k1Foreign.MusigPubNonce> pnonces, byte[] expected) {}
+    record NonceAggCase(List<Integer> pnonce_indices, byte[] expected) {}
+    record NonceAggTestData(List<byte[]> pnonces, List<NonceAggCase> valid_test_cases) {}
+
+    // Record for partialSign test
+    record PartialSignTestVector(SecpPrivKey sk, Secp256k1Foreign.MusigAggNonce aggnonce, List<SecpPubKey> pubkeys, MemorySegment secnonce, List<Secp256k1Foreign.MusigPubNonce> pnonces, byte[] msg, byte[] expected) {}
+
+    // Record for partialSigVerify test
+    record PartialSigVerifyTestVector(List<SecpPubKey> pubkeys, List<Secp256k1Foreign.MusigPubNonce> pnonces, SecpPubKey signer_pubkey, Secp256k1Foreign.MusigPubNonce signer_pnonce, Secp256k1Foreign.MusigAggNonce aggnonce, byte[] msg, Secp256k1Foreign.PartialSig psig) {}
+
+    // Records for both partialSign and partialSigVerify tests (they pull from the same json)
+    record PartialSignVerifyCase(List<Integer> key_indices, List<Integer> nonce_indices, int aggnonce_index, int msg_index, int signer_index, byte[] expected) {}
+    record PartialSignVerifyTestData(SecpPrivKey sk, List<byte[]> pubkeys, List<byte[]> secnonces, List<byte[]> pnonces, List<Secp256k1Foreign.MusigAggNonce> aggnonces, List<byte[]> msgs, List<PartialSignVerifyCase> valid_test_cases) {}
+
+    // Records for sigAgg test
+    record SigAggTestVector(List<SecpPubKey> pubkeys, List<Secp256k1Foreign.MusigPubNonce> pnonces, List<Secp256k1Foreign.PartialSig> psigs, Secp256k1Foreign.MusigAggNonce aggnonce, byte[] msg, byte[] expected) {}
+    record SigAggTestCase(Secp256k1Foreign.MusigAggNonce aggnonce, List<Integer> nonce_indices, List<Integer> key_indices, List<Integer> psig_indices, List<Integer> tweak_indices, byte[] expected) {}
+    record SigAggTestData(List<SecpPubKey> pubkeys, List<Secp256k1Foreign.MusigPubNonce> pnonces, List<byte[]> psigs, byte[] msg, List<SigAggTestCase> valid_test_cases) {}
+
+    static byte[] secNonceFromBip327(byte[] bip327) {
+        try (var secp = new Secp256k1Foreign()) {
             // 33-byte compressed pubkey -> 64-byte internal X||Y (same form stored in the secnonce)
             byte[] magic = {(byte) 0x22, (byte) 0x0e, (byte) 0xdc, (byte) 0xf1};
 
@@ -254,8 +266,8 @@ public class BIP327TestVectorTests implements SecpTestSupport {
         }
     }
 
-    public byte[] createCache(byte[] aggpk) {
-        try(var secp  = new Secp256k1Foreign()) {
+    byte[] createCache(byte[] aggpk) {
+        try (var secp  = new Secp256k1Foreign()) {
             // aggpk = 32-byte x-only from the vector
             if (aggpk.length != 32) throw new IllegalArgumentException("aggpk must be 32 bytes");
 
@@ -281,15 +293,7 @@ public class BIP327TestVectorTests implements SecpTestSupport {
         }
     }
 
-    public static List<NonceGenTestCase> nonceGenVectors() throws IOException {
-        return parseJson("/nonce_gen_vectors.json", NonceGenTestCases.class)
-                .test_cases()
-                .stream()
-                .filter(test -> test.msg() != null && test.msg().length == 32) // msg must be 32 bytes
-                .toList();
-    }
-
-    public static <T> T parseJson(String path, Class<T> type) {
+    static <T> T parseJson(String path, Class<T> type) {
         try (InputStream in = BIP327TestVectorTests.class.getResourceAsStream(path)) {
             return mapper.readValue(in, type);
         } catch (IOException e) {
@@ -297,15 +301,27 @@ public class BIP327TestVectorTests implements SecpTestSupport {
         }
     }
 
-    public static <T> T parseHex(String hexString, Function<byte[], T> parser) {
-        return parser.apply(HexFormat.of().parseHex(hexString));
+    static <T> ValueDeserializer<T> hexDeser(Function<byte[], T> conv) {
+        return new ValueDeserializer<>() {
+            @Override public T deserialize(JsonParser p, DeserializationContext ctxt) {
+                return conv.apply(HexFormat.of().parseHex(p.getString()));
+            }
+        };
     }
 
-    public static List<SecpPubKey> parsePubKeys(List<String> pubKeyStrings) {
-        return pubKeyStrings.stream()
-                .map(hex -> parseHex(hex, secp::ecPubKeyParse))
-                .map(SecpResult::get)
-                .toList();
+    static <T> List<T> sublistFromIndexList(List<T> list, List<Integer> indices) {
+        List<T> sublist = new ArrayList<>();
+        for (int i : indices) {
+            sublist.add(list.get(i));
+        }
+        return sublist;
     }
 
+    static <T, E> List<T> sublistFromIndexListAndParse(List<E> list, List<Integer> indices, Function<E, T> parser) {
+        List<T> sublist = new ArrayList<>();
+        for (int i : indices) {
+            sublist.add(parser.apply(list.get(i)));
+        }
+        return sublist;
+    }
 }
