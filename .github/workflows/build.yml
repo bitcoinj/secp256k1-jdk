@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-15]
+        os: [ubuntu-26.04, ubuntu-26.04-arm, macOS-15]
         distribution: ['temurin']
       fail-fast: false
     name: ${{ matrix.os }} JDK 25 (via Maven)
@@ -51,7 +51,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-24.04, ubuntu-24.04-arm, macOS-15]
+        os: [ubuntu-26.04, ubuntu-26.04-arm, macOS-15]
         java: [ '25' ]
         distribution: [ 'graalvm-community' ]
       fail-fast: false
@@ -86,7 +86,7 @@ jobs:
 
   javadoc_artifact_maven:
     needs: build_maven
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     name: Publish Aggregated Javadoc artifact (Maven)
     steps:
       - name: Git checkout
@@ -153,7 +153,7 @@ jobs:
         run: shasum -a 256 target/repo/org/bitcoinj/secp/secp-*/*/*.jar target/repo/org/bitcoinj/secp/secp-*/*/*.pom
 
   build_all_green_maven:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [build_maven, build_graalvm_maven, javadoc_artifact_maven]
     steps:
       - run: echo "All Maven upstream jobs passed"
