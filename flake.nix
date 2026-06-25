@@ -7,11 +7,7 @@
 
   outputs = inputs @ { nixpkgs, ... }:
     let
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
-      forEachSystem = f: builtins.listToAttrs (map (system: {
-        name = system;
-        value = f system;
-      }) systems);
+      forEachSystem = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
     in {
       devShells = forEachSystem(system:
         let
