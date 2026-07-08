@@ -70,7 +70,7 @@ public interface SecpPrivKey extends ECPrivateKey {
      * @return private key
      */
     static SecpPrivKey of(byte[] bytes) {
-        return new SecpPrivKeyImpl(bytes);
+        return new SecpPrivKeyImpl(bytes.clone());
     }
 
     /**
