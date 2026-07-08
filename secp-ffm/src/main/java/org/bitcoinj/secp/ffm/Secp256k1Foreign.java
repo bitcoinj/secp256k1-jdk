@@ -420,6 +420,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
      */
     public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
         checkArg(messageHash.length == 32, "Message must be 32-byte (hash)");
+        checkArg(auxiliaryRandom.length == 32, "auxiliaryRandom must be 32-byte)");
         MemorySegment auxiliary_rand = arena.allocateFrom(JAVA_BYTE, auxiliaryRandom);
         return schnorrSigSign32(messageHash, privKey, auxiliary_rand);
     }
