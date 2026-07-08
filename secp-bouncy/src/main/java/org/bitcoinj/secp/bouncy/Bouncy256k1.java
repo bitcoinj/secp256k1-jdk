@@ -202,6 +202,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey) {
+        checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
         ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
         ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privKey.getS(), BC_ECDOMAIN_PARAMS);
         signer.init(true, bouncyPrivKey);
@@ -211,6 +212,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpResult<EcdsaSignature> ecdsaSignLowR(byte[] messageHashData, SecpPrivKey privKey) {
+        checkArg(messageHashData.length == 32, "Message must be 32-byte (hash)");
         HMacDSAKCalculatorWithEntropy kCalculator = new HMacDSAKCalculatorWithEntropy(new SHA256Digest());
         ECDSASigner signer = new ECDSASigner(kCalculator);
         ECPrivateKeyParameters bouncyPrivKey = new ECPrivateKeyParameters(privKey.getS(), BC_ECDOMAIN_PARAMS);
@@ -260,6 +262,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpResult<Boolean> ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, SecpPubKey pubKey) {
+        checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
         ECDSASigner signer = new ECDSASigner();
         ECPoint pubPoint = BC.fromSecpPoint(pubKey.point());
         ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_ECDOMAIN_PARAMS);
