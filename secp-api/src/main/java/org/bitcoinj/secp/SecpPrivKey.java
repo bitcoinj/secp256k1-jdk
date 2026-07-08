@@ -22,7 +22,6 @@ import java.math.BigInteger;
 import java.security.interfaces.ECPrivateKey;
 import java.security.spec.ECParameterSpec;
 
-// TODO: Override/prevent serialization
 /**
  * A P256k1 private key.
  */
