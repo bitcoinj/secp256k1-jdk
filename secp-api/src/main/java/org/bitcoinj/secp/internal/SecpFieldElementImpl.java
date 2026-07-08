@@ -35,6 +35,12 @@ public class SecpFieldElementImpl implements SecpFieldElement {
         value = SecpFieldElementImpl.integerTo32Bytes(i);
     }
 
+    /**
+     * Caller is responsible for defensively copying {@code byte[]}. This is to avoid
+     * a redundant copy. Exclusive ownership must be passed to this instance.
+     *
+     * @param bytes (will not be defensively copied)
+     */
     public SecpFieldElementImpl(byte[] bytes) {
         value = SecpFieldElementImpl.checkInRange(bytes);
     }
