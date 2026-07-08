@@ -19,6 +19,8 @@ import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 
 import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.util.Arrays;
 
 /**
  * Simple implementation using {code @byte[]} as internal storage.
@@ -69,6 +71,16 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
     @Override
     public byte[] serializeCompressed() {
         return xOnlyToSerializedCompressed(x);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof SecpXOnlyPubKeyImpl && MessageDigest.isEqual(x, ((SecpXOnlyPubKeyImpl) o).x);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(x);
     }
 
     /**
