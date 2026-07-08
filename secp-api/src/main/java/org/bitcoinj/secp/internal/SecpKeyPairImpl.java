@@ -54,6 +54,11 @@ public class SecpKeyPairImpl implements SecpKeyPair {
     }
 
     @Override
+    public boolean isDestroyed() {
+        return privKey.isDestroyed();
+    }
+
+    @Override
     public String toString() {
         return getClass().getSimpleName() + "{" + " publicKey = " + publicKey() + " }";
     }
