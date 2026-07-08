@@ -16,10 +16,12 @@
 package org.bitcoinj.secp.integration;
 
 import org.bitcoinj.secp.SchnorrSignature;
+import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
+import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -122,6 +124,21 @@ public class BIP327TestVectorTests implements SecpTestSupport {
         Assertions.assertArrayEquals(vec.expected(), sig.bytes());
     }
 
+    @ParameterizedTest
+    @MethodSource("tweakTestVectors")
+    void tweak(TweakTestVector vec) {
+        Secp256k1Foreign.KeyAggCache cache = secp.musigPubKeyAgg(vec.pubkeys);
+        for (int i = 0; i < vec.tweaks.size(); i++) {
+            cache = vec.is_xonly.get(i) ? secp.musigPubkeyXonlyTweakAdd(cache, vec.tweaks.get(i)) :
+                    secp.musigPubkeyEcTweakAdd(cache, vec.tweaks.get(i));
+        }
+
+        MemorySegment session = secp.musigNonceProcess(vec.aggnonce, vec.msg, cache);
+        Secp256k1Foreign.PartialSig psig = secp.musigPartialSign(vec.secnonce, vec.sk, cache, session);
+
+        Assertions.assertArrayEquals(vec.expected, psig.serialized());
+    }
+
     static List<KeyAggTestVector> keyAggTestVectors() {
         JsonNode root = readTree("/key_agg_vectors.json");
         JsonNode pubkeys = root.get("pubkeys");
@@ -219,6 +236,33 @@ public class BIP327TestVectorTests implements SecpTestSupport {
                 .toList();
     }
 
+    static List<TweakTestVector> tweakTestVectors() {
+        JsonNode root = readTree("/tweak_vectors.json");
+        SecpPrivKey privKey = SecpPrivKey.of(hex(root.get("sk")));
+        SecpKeyPair sk = new SecpKeyPairImpl(privKey, secp.ecPubKeyCreate(privKey));
+        JsonNode pubkeys = root.get("pubkeys");
+        byte[] secnonce = secNonceFromBip327(hex(root.get("secnonce")));
+        JsonNode pnonces = root.get("pnonces");
+        Secp256k1Foreign.MusigAggNonce aggnonce = secp.parseAggNonce(hex(root.get("aggnonce")));
+        JsonNode tweaks = root.get("tweaks");
+        byte[] msg = hex(root.get("msg"));
+
+        return root.get("valid_test_cases").valueStream()
+                .map(c -> new TweakTestVector(
+                        sk,
+                        pick(pubkeys, c.get("key_indices"), b -> secp.ecPubKeyParse(b).get()),
+                        secp.arrayToSeg(secnonce),
+                        pick(pnonces, c.get("nonce_indices"), secp::parsePubNonce),
+                        aggnonce,
+                        pick(tweaks, c.get("tweak_indices"), b -> b),
+                        c.get("is_xonly").valueStream().map(JsonNode::asBoolean).toList(),
+                        c.get("signer_index").asInt(),
+                        msg,
+                        hex(c.get("expected"))
+                )).toList();
+    }
+
+
     // One record per parameterized test, holding the inputs that test consumes.
     record KeyAggTestVector(List<SecpPubKey> pubkeys, byte[] expected) {}
     record NonceGenTestVector(byte[] rand_, SecpPrivKey sk, SecpPubKey pk, byte[] aggpk, byte[] msg, byte[] extra_in, byte[] expected_pubnonce) {}
@@ -226,6 +270,7 @@ public class BIP327TestVectorTests implements SecpTestSupport {
     record PartialSignTestVector(SecpPrivKey sk, Secp256k1Foreign.MusigAggNonce aggnonce, List<SecpPubKey> pubkeys, MemorySegment secnonce, List<Secp256k1Foreign.MusigPubNonce> pnonces, byte[] msg, byte[] expected) {}
     record PartialSigVerifyTestVector(List<SecpPubKey> pubkeys, List<Secp256k1Foreign.MusigPubNonce> pnonces, SecpPubKey signer_pubkey, Secp256k1Foreign.MusigPubNonce signer_pnonce, Secp256k1Foreign.MusigAggNonce aggnonce, byte[] msg, Secp256k1Foreign.PartialSig psig) {}
     record SigAggTestVector(List<SecpPubKey> pubkeys, List<Secp256k1Foreign.MusigPubNonce> pnonces, List<Secp256k1Foreign.PartialSig> psigs, Secp256k1Foreign.MusigAggNonce aggnonce, byte[] msg, byte[] expected) {}
+    record TweakTestVector(SecpKeyPair sk, List<SecpPubKey> pubkeys, MemorySegment secnonce, List<Secp256k1Foreign.MusigPubNonce> pnonces, Secp256k1Foreign.MusigAggNonce aggnonce, List<byte[]> tweaks, List<Boolean> is_xonly, int signer_index, byte[] msg, byte[] expected) {}
 
     static byte[] secNonceFromBip327(byte[] bip327) {
         try (var secp = new Secp256k1Foreign()) {

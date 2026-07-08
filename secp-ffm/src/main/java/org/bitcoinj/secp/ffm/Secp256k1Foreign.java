@@ -542,6 +542,14 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return List.copyOf(result);
     }
 
+    private KeyAggCache cacheFromMemorySeg(MemorySegment keyAggCacheSeg) {
+        MemorySegment aggKeySeg = secp256k1_pubkey.allocate(arena);
+        int returnVal = secp256k1_h.secp256k1_musig_pubkey_get(ctx, aggKeySeg, keyAggCacheSeg);
+        assert(returnVal == 1);
+
+        return new KeyAggCache(toSecpPubKey(aggKeySeg), keyAggCacheSeg);
+    }
+
     /// Computes an aggregate public key and uses it to initialize a KeyAggCache.
     ///
     /// @param pubKeys The public keys to be aggregated. The order of the keys matter:
@@ -559,12 +567,34 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         int returnVal1 = secp256k1_musig_pubkey_agg(ctx, MemorySegment.NULL, keyAggCacheSeg, pubKeyPtrs, n);
         assert(returnVal1 == 1);
 
-        MemorySegment aggKeySeg = secp256k1_pubkey.allocate(arena);
-        int returnVal2 = secp256k1_h.secp256k1_musig_pubkey_get(ctx, aggKeySeg, keyAggCacheSeg);
-        assert(returnVal2 == 1);
+        return cacheFromMemorySeg(keyAggCacheSeg);
 
-        return new KeyAggCache(toSecpPubKey(aggKeySeg), keyAggCacheSeg);
+    }
 
+    public KeyAggCache musigPubkeyXonlyTweakAdd(KeyAggCache cache, byte[] tweak) {
+        checkArg(tweak.length == 32, "tweak must be 32 bytes");
+
+        MemorySegment tweakSeg = arena.allocateFrom(JAVA_BYTE, tweak);
+        MemorySegment cacheSegClone = arena.allocate(cache.cache.byteSize());
+        MemorySegment.copy(cache.cache, 0, cacheSegClone, 0, cache.cache.byteSize());
+
+        int returnVal = secp256k1_h.secp256k1_musig_pubkey_xonly_tweak_add(ctx, NULL, cacheSegClone, tweakSeg);
+        assert(returnVal == 1);
+
+        return cacheFromMemorySeg(cacheSegClone);
+    }
+
+    public KeyAggCache musigPubkeyEcTweakAdd(KeyAggCache cache, byte[] tweak) {
+        checkArg(tweak.length == 32, "tweak must be 32 bytes");
+
+        MemorySegment tweakSeg = arena.allocateFrom(JAVA_BYTE, tweak);
+        MemorySegment cacheSegClone = arena.allocate(cache.cache.byteSize());
+        MemorySegment.copy(cache.cache, 0, cacheSegClone, 0, cache.cache.byteSize());
+
+        int returnVal = secp256k1_h.secp256k1_musig_pubkey_ec_tweak_add(ctx, NULL, cacheSegClone, tweakSeg);
+        assert(returnVal == 1);
+
+        return cacheFromMemorySeg(cacheSegClone);
     }
 
     public MusigNonce musigNonceGen(byte[] sessionSecRand, SecpPrivKey privKey, SecpPubKey pubKey, byte[] msg32, KeyAggCache cache, byte[] exInput) {
