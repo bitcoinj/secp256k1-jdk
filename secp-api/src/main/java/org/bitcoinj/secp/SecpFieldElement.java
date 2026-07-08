@@ -58,7 +58,7 @@ public interface SecpFieldElement {
      * @return field element
      */
     static SecpFieldElement of(byte[] bytes) {
-        return new SecpFieldElementImpl(bytes);
+        return new SecpFieldElementImpl(bytes.clone());
     }
 
     // TODO: Constant-time implementation?
