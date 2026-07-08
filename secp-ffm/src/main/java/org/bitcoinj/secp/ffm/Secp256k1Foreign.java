@@ -310,6 +310,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey) {
+        checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
         /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
          * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
          * Signing with a valid context, verified secret key
@@ -332,6 +333,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
      */
     @Override
     public SecpResult<EcdsaSignature> ecdsaSignLowR(byte[] msg_hash_data, SecpPrivKey privKey) {
+        checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
         MemorySegment msg_hash = arena.allocateFrom(JAVA_BYTE, msg_hash_data);
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);  // internal signature format
@@ -374,6 +376,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public SecpResult<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, SecpPubKey pubKey) {
+        checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
         /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
          * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
          * Signing with a valid context, verified secret key

@@ -229,7 +229,7 @@ public interface Secp256k1 extends Closeable {
 
     /**
      * Sign a message hash using the ECDSA algorithm
-     * @param msg_hash_data hash of message to sign
+     * @param msg_hash_data 32-byte hash of message to sign
      * @param privKey private key
      * @return the signature
      */
@@ -239,7 +239,7 @@ public interface Secp256k1 extends Closeable {
      * Sign a message hash using the ECDSA algorithm and Low-R signature griding
      * <p>
      * This uses the same nonce-incrementing algorithm as Bitcoin Core to ensure a low-R signature.
-     * @param messageHashData hash of message to sign
+     * @param messageHashData 32-byte hash of message to sign
      * @param privKey private key
      * @return the signature
      */
@@ -266,7 +266,7 @@ public interface Secp256k1 extends Closeable {
     /**
      * Verify an ECDSA signature.
      * @param sig The signature to verify.
-     * @param msg_hash_data A hash of the message to verify.
+     * @param msg_hash_data A 32-byte hash of the message to verify.
      * @param pubKey The pubkey that must have signed the message
      * @return true, false, or error
      */
