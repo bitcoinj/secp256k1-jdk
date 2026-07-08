@@ -18,6 +18,10 @@ package org.bitcoinj.secp.internal;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.jspecify.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.util.Arrays;
 
@@ -72,5 +76,13 @@ public class SecpPrivKeyImpl implements SecpPrivKey {
 
     private void throwKeyDestroyed() {
         throw new IllegalStateException("Private Key has been destroyed");
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        throw new NotSerializableException("Serialization of private keys is prohibited.");
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        throw new NotSerializableException("Deserialization of private keys is prohibited.");
     }
 }

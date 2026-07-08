@@ -16,9 +16,13 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.SecpScalar;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
 
+import java.io.ByteArrayOutputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -81,5 +85,17 @@ public class SecpPrivKeyImplTest {
         assertThrows(IllegalArgumentException.class,
                 () -> SecpScalarImpl.checkInRange(bytes)
         );
+    }
+
+    @Test
+    void privateKeySerializationThrows() {
+        assertThrows(NotSerializableException.class, () -> {
+            var priv = new SecpPrivKeyImpl(BigInteger.ONE);
+
+            var baos = new ByteArrayOutputStream();
+            try (var oos = new ObjectOutputStream(baos)) {
+                oos.writeObject(priv);
+            }
+        });
     }
 }
