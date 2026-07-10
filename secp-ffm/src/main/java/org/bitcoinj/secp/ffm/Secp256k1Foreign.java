@@ -47,6 +47,7 @@ import java.lang.foreign.SegmentAllocator;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.SecpResult.OK;
@@ -59,6 +60,7 @@ import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_xonly_pubkey_
  * Implementation of {@link Secp256k1} using the {@code secp256k1} C-language library and the Java Foreign Function &amp; Memory API.
  */
 public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
+    private final AtomicBoolean closed = new AtomicBoolean(false);
     private final Arena arena;
     private final MemorySegment ctx;
     /* package */ static final Arena globalArena = Arena.ofAuto();
@@ -118,8 +120,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     @Override
     public void close() {
         // TODO: Zero out any buffers that contain any secrets (keys or randomizations)
-        secp256k1_h.secp256k1_context_destroy(ctx);
-        arena.close();
+        // Use AtomicBoolean to implement idempotent close as recommended for AutoClosable
+        if (closed.compareAndSet(false, true)) {
+            secp256k1_h.secp256k1_context_destroy(ctx);
+            arena.close();
+        }
     }
 
     int contextRandomize(byte[] randomBytes) {
