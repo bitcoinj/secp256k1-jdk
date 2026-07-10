@@ -97,10 +97,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         this(secp256k1_h.SECP256K1_CONTEXT_NONE(), true); // Randomize automatically by default
     }
 
-    public Secp256k1Foreign(int flags) {
-        this(flags, true); // Randomize automatically by default
-    }
-    
     public Secp256k1Foreign(int flags, boolean randomize) {
         arena = Arena.ofShared();
         /* Before we can call actual API functions, we need to create a "context". */
@@ -125,10 +121,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             secp256k1_h.secp256k1_context_destroy(ctx);
             arena.close();
         }
-    }
-
-    int contextRandomize(byte[] randomBytes) {
-        return 1;
     }
 
     @Override
@@ -260,11 +252,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return pubKey.serialize(compressed);
     }
 
-//    @Override
-//    public SecpPoint.Uncompressed ecPointUncompress(SecpPoint.Compressed compressedPoint) {
-//        return compressedPoint.uncompress();
-//    }
-    
     /* package */ static MemorySegment pubKeySerializeSegment(MemorySegment pubKeySegment, int flags) {
         int byteSize = switch(flags) {
             case 2 -> 65;           // SECP256K1_EC_UNCOMPRESSED())
