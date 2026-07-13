@@ -24,7 +24,6 @@ module org.bitcoinj.secp.ffm {
     requires org.jspecify;
 
     exports org.bitcoinj.secp.ffm;
-    exports org.bitcoinj.secp.ffm.jextract;
 
     provides Secp256k1.Provider with org.bitcoinj.secp.ffm.ForeignProvider;
 }
