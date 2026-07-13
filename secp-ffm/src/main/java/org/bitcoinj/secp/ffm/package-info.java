@@ -24,8 +24,7 @@
 /// and safely access foreign memory." **FFM** is a "concise, readable, and pure-Java API" that replaces the earlier
 /// [Java Native Interface](https://docs.oracle.com/en/java/javase/21/docs/specs/jni/index.html) (**JNI**.)
 ///
-/// **FFM** was introduced with Java 22 and [org.bitcoinj.secp.ffm] (currently) requires JDK 23 or later -- the 1.0
-/// release of [org.bitcoinj.secp.ffm] will require JDK 25 LTS or later. [org.bitcoinj.secp.ffm] is the
+/// **FFM** was introduced with Java 22 and [org.bitcoinj.secp.ffm] requires JDK 25 or later. [org.bitcoinj.secp.ffm] is the
 /// recommended implementation of [org.bitcoinj.secp] for applications running on recent JDK versions and platforms supported
 /// by **libsecp256k1**.
 package org.bitcoinj.secp.ffm;
