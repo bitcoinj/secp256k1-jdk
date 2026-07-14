@@ -24,5 +24,7 @@ module org.bitcoinj.secp.bouncy {
     requires org.bouncycastle.provider;
     requires org.jspecify;
 
+    exports org.bitcoinj.secp.bouncy;
+
     provides Secp256k1.Provider with org.bitcoinj.secp.bouncy.BouncyProvider;
 }
