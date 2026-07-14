@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.EcdhSharedSecret;
+import org.bitcoinj.secp.MusigAggNonce;
 import org.bitcoinj.secp.MusigPartialSignature;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
@@ -37,6 +38,7 @@ import org.bitcoinj.secp.ffm.jextract.secp256k1_musig_session;
 import org.bitcoinj.secp.ffm.segments.LowRGrindingNonce;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
+import org.bitcoinj.secp.internal.MusigAggNonceImpl;
 import org.bitcoinj.secp.internal.MusigPartialSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
@@ -110,17 +112,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return new MusigPubNonce(pn, serialized);
     }
 
-    public record MusigAggNonce(MemorySegment aggNonce, byte[] serialized) {}
-
-    public MusigAggNonce parseAggNonce(byte[] serialized) {
-        // Check ACTUAL expected length
-        checkArg(serialized.length == 66, "serialized MusigNonce must be 66 bytes");
-        MemorySegment serialSeg = arena.allocateFrom(JAVA_BYTE, serialized);
-        MemorySegment aggNonceSeg = secp256k1_musig_aggnonce.allocate(arena);
-        secp256k1_h.secp256k1_musig_aggnonce_parse(ctx, aggNonceSeg, serialSeg);
-
-        return new MusigAggNonce(aggNonceSeg, serialized);
-    }
 
     /**
      * TBD: Static verify method that doesn't require a class instance.
@@ -628,7 +619,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         int returnVal2 = secp256k1_h.secp256k1_musig_aggnonce_serialize(ctx, aggNonceSerialized, aggNonce);
         assert(returnVal2 == 1);
 
-        return new MusigAggNonce(aggNonce, aggNonceSerialized.toArray(JAVA_BYTE));
+        return new MusigAggNonceImpl(aggNonceSerialized.toArray(JAVA_BYTE));
     }
 
     public MemorySegment musigNonceProcess(MusigAggNonce aggNonce, byte[] msg32, KeyAggCache cache) {
@@ -636,7 +627,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment msgSeg = arena.allocateFrom(JAVA_BYTE, msg32);
         MemorySegment session = secp256k1_musig_session.allocate(arena);
 
-        int returnVal = secp256k1_h.secp256k1_musig_nonce_process(ctx, session, aggNonce.aggNonce(), msgSeg, cache.cache());
+        int returnVal = secp256k1_h.secp256k1_musig_nonce_process(ctx, session, parseAggNonce(aggNonce), msgSeg, cache.cache());
         assert(returnVal == 1);
 
         return session;
@@ -650,6 +641,19 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
         return  partialSigSeg;
     }
+
+    private MemorySegment parseAggNonce(MusigAggNonce aggNonce) {
+        MemorySegment serialSeg = arena.allocateFrom(JAVA_BYTE, aggNonce.serialize());
+        MemorySegment aggNonceSeg = secp256k1_musig_aggnonce.allocate(arena);
+
+        int returnVal = secp256k1_h.secp256k1_musig_aggnonce_parse(ctx, aggNonceSeg, serialSeg);
+
+        assert(returnVal == 1);
+
+        return aggNonceSeg;
+    }
+
+
 
     public MusigPartialSignature musigPartialSign(MemorySegment secNonce, SecpKeyPair keyPair, KeyAggCache cache, MemorySegment session) {
         MemorySegment partialSigSeg = secp256k1_musig_partial_sig.allocate(arena);
