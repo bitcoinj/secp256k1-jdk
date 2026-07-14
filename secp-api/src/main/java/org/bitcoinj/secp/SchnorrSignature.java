@@ -45,7 +45,8 @@ public interface SchnorrSignature {
      * @param bytes bytes
      * @return signature
      */
+    @Deprecated(forRemoval = true)
     static SchnorrSignature of(byte[] bytes) {
-        return new SchnorrSignatureImpl(bytes);
+        return SchnorrSignatureImpl.of(bytes);
     }
 }
