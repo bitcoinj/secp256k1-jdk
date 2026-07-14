@@ -20,24 +20,34 @@ import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedClass;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /// Schnorr Signature Test
-public class SchnorrTest {
+@ParameterizedClass
+@MethodSource("secpImplementations")
+public class SchnorrTest implements SecpTestSupport {
     final String msg = "Hello, world!";
     final String tag = "my_fancy_protocol";
 
-    /// Test to make sure the FFM implementation can Schnorr-sign and verify its own message.
+    private final Secp256k1 secp;
+
+    /// @param secp injected Secp256k1 implementation to test
+    SchnorrTest(Secp256k1 secp) {
+        this.secp = secp;
+    }
+
+     /// Test to make sure the FFM implementation can Schnorr-sign and verify its own message.
     @Test
     void testSchnorr() {
-        try (Secp256k1 secp = Secp256k1.getById(Secp256k1.ProviderId.LIBSECP256K1_FFM)) {
-            SecpKeyPair keyPair = secp.ecKeyPairCreate();
-            SecpXOnlyPubKey xOnly = keyPair.publicKey().xOnly();
-            byte[] messageHash = secp.taggedSha256(tag, msg);
-            SchnorrSignature signature = secp.schnorrSigSign32(messageHash, keyPair);
-            boolean isValid = secp.schnorrSigVerify(signature, messageHash, xOnly).get();
-            assertTrue(isValid);
-        }
+        SecpKeyPair keyPair = secp.ecKeyPairCreate();
+        SecpXOnlyPubKey xOnly = keyPair.publicKey().xOnly();
+        byte[] messageHash = secp.taggedSha256(tag, msg);
+        SchnorrSignature signature = secp.schnorrSigSign32(messageHash, keyPair);
+        boolean isValid = secp.schnorrSigVerify(signature, messageHash, xOnly).get();
+        assertTrue(isValid);
     }
 }
