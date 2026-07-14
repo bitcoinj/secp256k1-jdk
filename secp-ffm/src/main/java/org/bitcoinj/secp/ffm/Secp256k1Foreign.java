@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.EcdhSharedSecret;
+import org.bitcoinj.secp.MusigPartialSignature;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPoint;
@@ -36,6 +37,7 @@ import org.bitcoinj.secp.ffm.jextract.secp256k1_musig_session;
 import org.bitcoinj.secp.ffm.segments.LowRGrindingNonce;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
+import org.bitcoinj.secp.internal.MusigPartialSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
@@ -118,17 +120,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         secp256k1_h.secp256k1_musig_aggnonce_parse(ctx, aggNonceSeg, serialSeg);
 
         return new MusigAggNonce(aggNonceSeg, serialized);
-    }
-
-    public record PartialSig(SecpScalar scalar, MemorySegment segment, byte[] serialized) {}
-
-    public PartialSig parsePartialSig(byte[] serialized) {
-        checkArg(serialized.length == 32, "serialized PartialSig must be 32 bytes");
-        SecpScalar scalar = new SecpScalarImpl(serialized);
-        MemorySegment serialSeg = arena.allocateFrom(JAVA_BYTE, serialized);
-        MemorySegment segment = arena.allocate(36);
-        secp256k1_h.secp256k1_musig_partial_sig_parse(ctx, segment, serialSeg);
-        return new PartialSig(scalar, segment, serialized);
     }
 
     /**
@@ -651,7 +642,16 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return session;
     }
 
-    public PartialSig musigPartialSign(MemorySegment secNonce, SecpKeyPair keyPair, KeyAggCache cache, MemorySegment session) {
+    private MemorySegment parsePartialSig(MusigPartialSignature sig) {
+        MemorySegment serialized = arena.allocateFrom(JAVA_BYTE, sig.s().serialize());
+        MemorySegment partialSigSeg =  secp256k1_musig_partial_sig.allocate(arena);
+        int returnVal = secp256k1_h.secp256k1_musig_partial_sig_parse(ctx, partialSigSeg, serialized);
+        assert(returnVal == 1);
+
+        return  partialSigSeg;
+    }
+
+    public MusigPartialSignature musigPartialSign(MemorySegment secNonce, SecpKeyPair keyPair, KeyAggCache cache, MemorySegment session) {
         MemorySegment partialSigSeg = secp256k1_musig_partial_sig.allocate(arena);
         MemorySegment keyPairSeg = privKeyToSegment(keyPair.privateKey());
 
@@ -662,24 +662,25 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         int returnVal2 = secp256k1_h.secp256k1_musig_partial_sig_serialize(ctx, partialSigSerializedSeg, partialSigSeg);
         assert(returnVal2 == 1);
 
-        byte[] partialSigSerialized = partialSigSerializedSeg.toArray(JAVA_BYTE);
-        SecpScalar partialSigScalar = new SecpScalarImpl(partialSigSerialized);
-        return new PartialSig(partialSigScalar, partialSigSeg, partialSigSerialized);
+        return new MusigPartialSignatureImpl(partialSigSerializedSeg.toArray(JAVA_BYTE));
     }
 
-    public boolean musigPartialSigVerify(PartialSig partialSig, MusigPubNonce nonce, SecpPubKey pubKey, KeyAggCache cache, MemorySegment session) {
+    public boolean musigPartialSigVerify(MusigPartialSignature partialSig, MusigPubNonce nonce, SecpPubKey pubKey, KeyAggCache cache, MemorySegment session) {
         MemorySegment pubKeySeg = pubKeyParse(pubKey).get();
-        int returnVal = secp256k1_h.secp256k1_musig_partial_sig_verify(ctx, partialSig.segment(), nonce.pubNonce(), pubKeySeg,  cache.cache(), session);
+        MemorySegment psigSeg = parsePartialSig(partialSig);
+        int returnVal = secp256k1_h.secp256k1_musig_partial_sig_verify(ctx, psigSeg, nonce.pubNonce(), pubKeySeg,  cache.cache(), session);
         return returnVal == 1;
     }
 
-    public SchnorrSignature musigPartialSigAgg(MemorySegment session, List<PartialSig> partialSigs) {
+    public SchnorrSignature musigPartialSigAgg(MemorySegment session, List<MusigPartialSignature> partialSigs) {
+        List<MemorySegment> pSigSegList = partialSigs.stream().map(this::parsePartialSig).toList();
+
         MemorySegment sig = arena.allocate(64);
 
-        int n = partialSigs.size();
+        int n = pSigSegList.size();
         MemorySegment partialSigPtrs = arena.allocate(C_POINTER, n);
         for (int i = 0; i < n; i++) {
-            partialSigPtrs.setAtIndex(C_POINTER, i, partialSigs.get(i).segment());
+            partialSigPtrs.setAtIndex(C_POINTER, i, pSigSegList.get(i));
         }
 
         int returnVal = secp256k1_h.secp256k1_musig_partial_sig_agg(ctx, sig, session, partialSigPtrs, n);
