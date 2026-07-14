@@ -22,16 +22,13 @@ import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Schnorr Signature Test
- */
+
+/// Schnorr Signature Test
 public class SchnorrTest {
     final String msg = "Hello, world!";
     final String tag = "my_fancy_protocol";
 
-    /**
-     * Test to make sure the FFM implementation can Schnorr-sign and verify its own message.
-     */
+    /// Test to make sure the FFM implementation can Schnorr-sign and verify its own message.
     @Test
     void testSchnorr() {
         try (Secp256k1 secp = Secp256k1.getById(Secp256k1.ProviderId.LIBSECP256K1_FFM)) {
