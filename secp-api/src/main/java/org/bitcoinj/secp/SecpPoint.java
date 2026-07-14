@@ -41,6 +41,7 @@ public interface SecpPoint {
      * @param y y component
      * @return point
      */
+    @Deprecated(forRemoval = true)
     static SecpPointUncompressed of(SecpFieldElement x, SecpFieldElement y) {
         return new SecpPointUncompressed(x, y);
     }
@@ -50,6 +51,7 @@ public interface SecpPoint {
      * @param point Java point
      * @return SecpPoint point
      */
+    @Deprecated(forRemoval = true)
     static SecpPoint of(ECPoint point) {
         return  point == ECPoint.POINT_INFINITY
                     ? SecpPoint.POINT_INFINITY

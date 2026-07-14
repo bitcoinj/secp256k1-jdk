@@ -36,6 +36,15 @@ public class SchnorrSignatureImpl implements SchnorrSignature, ByteArray {
         this.s = new SecpScalarImpl(Arrays.copyOfRange(signature, 32, 64));
     }
 
+    /**
+     * Create an ECDSA signature from serialized bytes
+     * @param bytes bytes
+     * @return signature
+     */
+    public static SchnorrSignature of(byte[] bytes) {
+        return new SchnorrSignatureImpl(bytes);
+    }
+
     @Override
     public SecpFieldElement r() {
         return r;

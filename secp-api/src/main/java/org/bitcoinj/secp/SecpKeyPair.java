@@ -39,6 +39,7 @@ public interface SecpKeyPair extends SecpPrivKey {
      * @param pubKey matching public key
      * @return key pair
      */
+    @Deprecated(forRemoval = true)
     static SecpKeyPair of(SecpPrivKey privKey, SecpPubKey pubKey) {
         return new SecpKeyPairImpl(privKey, pubKey);
     }

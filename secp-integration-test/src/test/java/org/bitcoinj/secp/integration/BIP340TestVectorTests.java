@@ -17,7 +17,6 @@ package org.bitcoinj.secp.integration;
 
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
-import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpResult;
@@ -27,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
 import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
@@ -91,7 +91,7 @@ public class BIP340TestVectorTests implements SecpTestSupport {
     @FieldSource("SIGNVERIFY_VECTORS")
     void schnorrSigVerify(TestVector vec) {
         var pubKey = secp.xOnlyPubKeyParse(vec.pubKey).get();
-        var signature = SchnorrSignature.of(vec.signature);
+        var signature = SchnorrSignatureImpl.of(vec.signature);
 
         boolean actualResult = secp.schnorrSigVerify(signature, vec.message, pubKey).get();
 
@@ -131,7 +131,7 @@ public class BIP340TestVectorTests implements SecpTestSupport {
     @ParameterizedTest
     @FieldSource("INVALIDSIGNATURE_VECTORS")
     void schnorrSigFromInvalidBytes(TestVector vec) {
-        assertThrows(IllegalArgumentException.class, () -> SchnorrSignature.of(vec.signature));
+        assertThrows(IllegalArgumentException.class, () -> SchnorrSignatureImpl.of(vec.signature));
     }
 
     static final List<TestVector> SIGN32_VECTORS = ALL_VECTORS.stream()
