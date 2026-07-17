@@ -64,7 +64,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Dependency versions -->
-        <junit.version>6.0.3</junit.version>
+        <junit.version>6.1.2</junit.version>
         <jspecify.version>1.0.0</jspecify.version>
         <bouncycastle.version>1.85</bouncycastle.version>
         <graalvm.version>25.0.3</graalvm.version>
