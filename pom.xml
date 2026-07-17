@@ -66,7 +66,7 @@
         <!-- Dependency versions -->
         <junit.version>6.0.3</junit.version>
         <jspecify.version>1.0.0</jspecify.version>
-        <bouncycastle.version>1.85</bouncycastle.version>
+        <bouncycastle.version>1.86-beta</bouncycastle.version>  <!-- beta, in local-maven-repo -->
         <graalvm.version>25.0.3</graalvm.version>
         <bitcoinj.version>0.17.1</bitcoinj.version>
         <kotlin.version>2.3.20</kotlin.version>
@@ -101,6 +101,13 @@
         <module>secp-examples-java</module>
         <module>secp-examples-kotlin</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>project-local-repo</id>
+            <url>file://${maven.multiModuleProjectDirectory}/local-maven-repo</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
