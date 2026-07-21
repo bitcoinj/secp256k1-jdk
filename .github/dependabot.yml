@@ -8,6 +8,11 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    ignore:
+      # Stay on the current MAJOR.MINOR release train for GraalVM SDK
+      - dependency-name: "org.graalvm.sdk*"
+        update-types: [ "version-update:semver-minor", "version-update:semver-major" ]
+
   - package-ecosystem: "nix"
     directory: "/" # Location of package manifests
     schedule:
