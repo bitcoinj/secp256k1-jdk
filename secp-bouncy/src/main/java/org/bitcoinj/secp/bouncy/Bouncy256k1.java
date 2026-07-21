@@ -29,10 +29,8 @@ import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
-import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
-import org.bitcoinj.secp.internal.UInt256;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -42,12 +40,15 @@ import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.crypto.signers.BIP340Signer;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.math.ec.FixedPointCombMultiplier;
 import org.bouncycastle.math.ec.FixedPointUtil;
 import org.bouncycastle.math.ec.custom.sec.SecP256K1Curve;
+import org.bouncycastle.util.Arrays;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -192,14 +193,6 @@ public class Bouncy256k1 implements Secp256k1 {
                 .array();
     }
 
-    private byte[] concatByteArrays(byte[]... arrays) {
-        int totalLength = 0;
-        for (byte[] array : arrays) totalLength += array.length;
-        ByteBuffer buf = ByteBuffer.allocate(totalLength);
-        for (byte[] array : arrays) buf.put(array);
-        return buf.array();
-    }
-
     @Override
     public SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey) {
         checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
@@ -318,56 +311,14 @@ public class Bouncy256k1 implements Secp256k1 {
      */
     @Override
     public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
-        // d' = int(sk) = privKey
-        BigInteger privKeyS = privKey.getS();
-        // P = d' * G
-        SecpPubKey pubKey = ecPubKeyCreate(privKey);
-        byte[] pubKeyBytes = SecpScalarImpl.integerTo32Bytes(pubKey.xOnly().getX());
+        ECPrivateKeyParameters priv = new ECPrivateKeyParameters(privKey.getS(), BC_ECDOMAIN_PARAMS);
 
-        // d = d' if has_even_y(P), otherwise d = n - d'
-        BigInteger adjustedPrivKey = pubKey.point().y().isOdd() ?
-                Secp256k1.N.subtract(privKeyS) :
-                privKeyS;
-        // t = xor(d, hash_{BIP0340/aux}(a))
-        byte[] maskedPrivKey = UInt256.integerTo32Bytes(adjustedPrivKey.xor(
-                new BigInteger(1, taggedSha256(TAG_AUX, auxiliaryRandom))
-        ));
+        BIP340Signer signer = new BIP340Signer();
 
-        // rand = hash_{BIP0340/nonce}(t || bytes(P) || m)
-        byte[] rand = taggedSha256(TAG_NONCE, concatByteArrays(maskedPrivKey, pubKeyBytes, msg_hash));
+        signer.init(true, new ParametersWithRandom(priv, new FixedBytesRandom(auxiliaryRandom)));
+        signer.update(msg_hash, 0, msg_hash.length);
 
-        // k' = int(rand) mod n
-        BigInteger privNonce = new BigInteger(1, rand).mod(Secp256k1.N);
-
-        // R = k' * G
-        SecpPubKey pubNonce = ecPubKeyCreate(new SecpPrivKeyImpl(privNonce));
-        byte[] pubNonceBytes = SecpScalarImpl.integerTo32Bytes(pubNonce.xOnly().getX());
-
-        // k = k' if has_even_y(R), otherwise let k = n - k'
-        BigInteger adjustedPrivNonce = pubNonce.point().y().isOdd() ?
-                Secp256k1.N.subtract(privNonce) :
-                privNonce;
-
-        // e = int(hash_{BIP0340/challenge}(bytes(R) || bytes(P) || m)) mod n
-        byte[] challengeInput = concatByteArrays(pubNonceBytes, pubKeyBytes, msg_hash);
-        BigInteger challengeScalar = new BigInteger(1,
-                taggedSha256(TAG_CHALLENGE, challengeInput)).mod(Secp256k1.N
-        );
-
-        // sig = bytes(R) || bytes((k + ed) mod n).
-        byte[] sigBytes = concatByteArrays(
-                pubNonceBytes, SecpScalarImpl.integerTo32Bytes(
-                        adjustedPrivNonce.add(challengeScalar.multiply(adjustedPrivKey)).mod(Secp256k1.N)
-                )
-        );
-
-        SchnorrSignature sig = new SchnorrSignatureImpl(sigBytes);
-
-        if (privNonce.equals(BigInteger.ZERO) || !schnorrSigVerify(sig, msg_hash, pubKey.xOnly()).get()) {
-            throw new IllegalStateException();
-        }
-
-        return sig;
+        return new SchnorrSignatureImpl(signer.generateSignature());
     }
 
     /**
@@ -377,35 +328,39 @@ public class Bouncy256k1 implements Secp256k1 {
      */
     @Override
     public SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey) {
-        BigInteger pubKeyX = pubKey.getX();
-        BigInteger r = signature.r().toBigInteger();
-        BigInteger s = signature.s().toBigInteger();
+        ECPublicKeyParameters pub = new ECPublicKeyParameters(BC_CURVE.decodePoint(pubKey.serializeCompressed()), BC_ECDOMAIN_PARAMS);
 
-        byte[] rBytes = UInt256.integerTo32Bytes(r);
-        byte[] pubKeyBytes = UInt256.integerTo32Bytes(pubKeyX);
+        BIP340Signer verifier = new BIP340Signer();
+        verifier.init(false, pub);
+        verifier.update(msg_hash, 0, msg_hash.length);
 
-        // P = lift_x(int(pk))
-        SecpPubKey pubKeyPoint = ecPubKeyFromXOnly(pubKey);
+        return SecpResult.ok(verifier.verifySignature(signature.bytes()));
+    }
 
-        // e = int(hash_{BIP0340/challenge}(bytes(r) || bytes(P) || m)) mod n
-        byte[] challengeInput = concatByteArrays(rBytes, pubKeyBytes, msg_hash);
-        BigInteger e = new BigInteger(1,
-                taggedSha256(TAG_CHALLENGE, challengeInput)).mod(Secp256k1.N);
+    /**
+     * Emits a fixed byte buffer once for the next {@code nextBytes} call — used to replay {@code aux_rand} from the
+     * BIP-340 vectors. Vectors only sign once per row, so the single-shot behaviour is sufficient.
+     */
+    private static final class FixedBytesRandom
+            extends SecureRandom
+    {
+        private static final long serialVersionUID = 1L;
+        private final byte[] bytes;
 
-        SecpPubKey eP = ecPubKeyTweakMul(pubKeyPoint, e.negate());
-        SecpPubKey sG = ecPubKeyTweakMul(G, s);
-        SecpPubKey R;
-
-        try {
-            // R = s⋅G - e⋅P
-            R = ecPubKeyCombine(sG, eP);
-        } catch (IllegalArgumentException ex) {
-            // Fail if is_infinite(R).
-            return SecpResult.ok(false);
+        FixedBytesRandom(byte[] bytes)
+        {
+            this.bytes = Arrays.clone(bytes);
         }
 
-        // Fail if not has_even_y(R) or x(R) ≠ r, otherwise return success
-        return SecpResult.ok(R.xOnly().getX().equals(r) && !R.point().y().isOdd());
+        public void nextBytes(byte[] out)
+        {
+            if (out.length != bytes.length)
+            {
+                throw new IllegalStateException("FixedBytesRandom asked for " + out.length
+                        + " bytes, held " + bytes.length);
+            }
+            System.arraycopy(bytes, 0, out, 0, out.length);
+        }
     }
 
     @Override
