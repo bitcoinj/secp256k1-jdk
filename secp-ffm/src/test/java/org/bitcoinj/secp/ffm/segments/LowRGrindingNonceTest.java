@@ -18,6 +18,8 @@ package org.bitcoinj.secp.ffm.segments;
 import org.junit.jupiter.api.Test;
 
 import java.lang.foreign.Arena;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.util.HexFormat;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -26,16 +28,19 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
  * Basic test of {@link LowRGrindingNonce}
  */
 public class LowRGrindingNonceTest {
-    static final byte[] nonce0 = new byte[32];
-    static final byte[] nonce1 = HexFormat.of().parseHex("01" + "00".repeat(31));
+    static final byte[] exp_nonce0 = new byte[32];
+    static final byte[] exp_nonce1 = HexFormat.of().parseHex("01" + "00".repeat(31));
 
     @Test
     void basicTest() {
         try (var arena = Arena.ofShared()) {
-            var nonce = LowRGrindingNonce.zero(arena);
-            assertArrayEquals(nonce0, nonce.bytes(), "");
-            nonce.increment();
-            assertArrayEquals(nonce1, nonce.bytes(), "");
+            MemorySegment nonce = LowRGrindingNonce.allocate(arena);
+            LowRGrindingNonce.setCounter(nonce, 0);
+            byte[] nonce0 = nonce.toArray(ValueLayout.JAVA_BYTE);
+            assertArrayEquals(exp_nonce0, nonce0, "");
+            LowRGrindingNonce.setCounter(nonce, 1);
+            byte[] nonce1 = nonce.toArray(ValueLayout.JAVA_BYTE);
+            assertArrayEquals(exp_nonce1, nonce1, "");
         }
     }
 }

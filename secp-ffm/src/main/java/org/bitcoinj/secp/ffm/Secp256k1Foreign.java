@@ -325,18 +325,22 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment privKeySeg = arena.allocateFrom(JAVA_BYTE, privKey.getEncoded());
         MemorySegment sig = secp256k1_ecdsa_signature.allocate(arena);  // internal signature format
         MemorySegment serSigSeg = secp256k1_ecdsa_signature.allocate(arena);  // serialized signature format
-        LowRGrindingNonce nonce = LowRGrindingNonce.zero(arena);
+        MemorySegment nonce = null;
         int count = 0;
         int return_val;
         do {
             // Sign the message, producing a signature in `sig`
-            if (count++ == 0) {
+            if (count == 0) {
                 return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, NULL, NULL);
             } else {
-                return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, NULL, nonce.segment());
+                if (nonce == null) {
+                    nonce = LowRGrindingNonce.allocate(arena);
+                }
+                LowRGrindingNonce.setCounter(nonce, count);
+                return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, NULL, nonce);
             }
+            count++;
             secp256k1_h.secp256k1_ecdsa_signature_serialize_compact(ctx, serSigSeg, sig);
-            nonce.increment();                      // Increment the counter field in the nonce
         } while (return_val == OK && !hasLowR(serSigSeg)); // Retry until we get an error or low-R
         privKeySeg.fill((byte) 0x00);
         return SecpResult.checked(return_val, () -> new EcdsaSignatureImpl(serSigSeg.toArray(JAVA_BYTE)));
