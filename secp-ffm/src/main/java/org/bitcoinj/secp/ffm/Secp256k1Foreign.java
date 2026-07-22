@@ -61,7 +61,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final Arena arena;
     private final MemorySegment ctx;
-    /* package */ static final Arena globalArena = Arena.ofAuto();
     /* package */ static final MemorySegment secp256k1StaticContext = secp256k1_h.secp256k1_context_static();
     private static final MemorySegment NULL = MemorySegment.ofAddress(0L);
     private static final SecureRandom secureRandom;
@@ -256,8 +255,8 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             case 258 -> 33;         // SECP256K1_EC_COMPRESSED())
             default -> throw new IllegalArgumentException();
         };
-        MemorySegment serialized_pubkey = globalArena.allocate(byteSize);
-        MemorySegment lenSegment = globalArena.allocate(secp256k1_h.size_t);
+        MemorySegment serialized_pubkey = arena.allocate(byteSize);
+        MemorySegment lenSegment = arena.allocate(secp256k1_h.size_t);
         lenSegment.set(secp256k1_h.size_t, 0, serialized_pubkey.byteSize());
         int return_val = secp256k1_h.secp256k1_ec_pubkey_serialize(secp256k1StaticContext,
                 serialized_pubkey,
@@ -432,11 +431,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     /// @param keyPairSegment a segment containing a key pair
     /// @return key pair
     private SecpKeyPair toKeyPair(MemorySegment keyPairSegment) {
-        MemorySegment pubKeySegment = secp256k1_pubkey.allocate(Secp256k1Foreign.globalArena);
+        MemorySegment pubKeySegment = secp256k1_pubkey.allocate(arena);
         int return_val = secp256k1_h.secp256k1_keypair_pub(ctx, pubKeySegment, keyPairSegment);
         assert(return_val == 1);
         SecpPubKey pubKey = toSecpPubKey(pubKeySegment);
-        MemorySegment privKeySegment = Secp256k1Foreign.globalArena.allocate(32);
+        MemorySegment privKeySegment = arena.allocate(32);
         int return_val2 = secp256k1_h.secp256k1_keypair_sec(ctx, privKeySegment, keyPairSegment);
         assert(return_val2 == 1);
         SecpPrivKey privKey = SecpPrivKey.of(privKeySegment.toArray(JAVA_BYTE));
