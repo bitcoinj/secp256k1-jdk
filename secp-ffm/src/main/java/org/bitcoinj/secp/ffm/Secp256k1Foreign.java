@@ -252,7 +252,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return pubKey.serialize(compressed);
     }
 
-    /* package */ static MemorySegment pubKeySerializeSegment(MemorySegment pubKeySegment, int flags) {
+    /// Create a serialized pubKey from an internal format pubKey
+    /// @param pubKeySegment pubKey in internal format
+    /// @param flags flags for serialization
+    /// @return serialized pubKey
+    static MemorySegment pubKeySerializeSegment(MemorySegment pubKeySegment, int flags) {
         int byteSize = switch(flags) {
             case 2 -> 65;           // SECP256K1_EC_UNCOMPRESSED())
             case 258 -> 33;         // SECP256K1_EC_COMPRESSED())
@@ -434,6 +438,9 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return keyPairSeg;
     }
 
+    /// Construct a [SecpKeyPair]
+    /// @param keyPairSegment a segment containing a key pair
+    /// @return key pair
     private SecpKeyPair toKeyPair(MemorySegment keyPairSegment) {
         MemorySegment pubKeySegment = secp256k1_pubkey.allocate(Secp256k1Foreign.globalArena);
         int return_val = secp256k1_h.secp256k1_keypair_pub(ctx, pubKeySegment, keyPairSegment);
