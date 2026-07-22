@@ -152,7 +152,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     /// Convert a pubKey [MemorySegment] to a [SecpPubKeyImpl]
-    static private SecpPubKeyImpl toSecpPubKey(MemorySegment pubKeySegment) {
+    private SecpPubKeyImpl toSecpPubKey(MemorySegment pubKeySegment) {
         MemorySegment serialized_pubkey = pubKeySerializeSegment(pubKeySegment, SECP256K1_EC_UNCOMPRESSED());
         return new SecpPubKeyImpl(serializedPubKeyToPoint(serialized_pubkey));
     }
@@ -250,7 +250,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     /// @param pubKeySegment pubKey in internal format
     /// @param flags flags for serialization
     /// @return serialized pubKey
-    static MemorySegment pubKeySerializeSegment(MemorySegment pubKeySegment, int flags) {
+    MemorySegment pubKeySerializeSegment(MemorySegment pubKeySegment, int flags) {
         int byteSize = switch(flags) {
             case 2 -> 65;           // SECP256K1_EC_UNCOMPRESSED())
             case 258 -> 33;         // SECP256K1_EC_COMPRESSED())
