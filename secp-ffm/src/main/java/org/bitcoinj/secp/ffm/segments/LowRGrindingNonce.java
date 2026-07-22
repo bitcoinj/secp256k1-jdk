@@ -32,7 +32,6 @@ public class LowRGrindingNonce {
             COUNT_LAYOUT.withName("counter"),     // 4 bytes
             MemoryLayout.sequenceLayout(28, ValueLayout.JAVA_BYTE).withName("remaining")   // 28 bytes
     );
-    static private final long COUNT_OFFSET = LAYOUT.byteOffset(MemoryLayout.PathElement.groupElement("counter"));
 
     private final MemorySegment segment;
     private int counter;
@@ -47,7 +46,7 @@ public class LowRGrindingNonce {
     }
 
     public void increment() {
-        segment.set(COUNT_LAYOUT, COUNT_OFFSET, ++counter);
+        segment.set(COUNT_LAYOUT, 0, ++counter);
     }
 
     public MemorySegment segment() {
