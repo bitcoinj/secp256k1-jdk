@@ -15,13 +15,21 @@
  */
 package org.bitcoinj.secp.integration;
 
+import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpPubKey;
+import org.bitcoinj.secp.SecpResult;
+import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.foreign.MemorySegment;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.HexFormat;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  *
@@ -47,5 +55,4 @@ public class Secp256k1ForeignTest {
             Assertions.assertEquals(added.getW(), multiplied.getW());
         }
     }
-
 }

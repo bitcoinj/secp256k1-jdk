@@ -86,6 +86,10 @@
             <artifactId>opencsv</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

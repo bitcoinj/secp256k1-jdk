@@ -16,19 +16,32 @@
 package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.EcdhSharedSecret;
+import org.bitcoinj.secp.MusigAggNonce;
+import org.bitcoinj.secp.MusigPartialSignature;
+import org.bitcoinj.secp.MusigPubNonce;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.SecpResult;
+import org.bitcoinj.secp.SecpScalar;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
+import org.bitcoinj.secp.ffm.jextract.secp256k1_musig_aggnonce;
+import org.bitcoinj.secp.ffm.jextract.secp256k1_musig_keyagg_cache;
+import org.bitcoinj.secp.ffm.jextract.secp256k1_musig_partial_sig;
+import org.bitcoinj.secp.ffm.jextract.secp256k1_musig_pubnonce;
+import org.bitcoinj.secp.ffm.jextract.secp256k1_musig_secnonce;
+import org.bitcoinj.secp.ffm.jextract.secp256k1_musig_session;
 import org.bitcoinj.secp.ffm.segments.LowRGrindingNonce;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
+import org.bitcoinj.secp.internal.MusigAggNonceImpl;
+import org.bitcoinj.secp.internal.MusigPartialSignatureImpl;
+import org.bitcoinj.secp.internal.MusigPubNonceImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
@@ -47,12 +60,15 @@ import java.lang.foreign.SegmentAllocator;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.SecpResult.OK;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
+import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_musig_pubkey_agg;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_xonly_pubkey_serialize;
 
@@ -78,6 +94,46 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             throw new RuntimeException("No strong SecureRandom available", e);
         }
     }
+
+    public MemorySegment arrayToSeg(byte[] a) {
+        return arena.allocateFrom(JAVA_BYTE, a);
+    }
+
+    public record KeyAggCache(SecpPubKey aggKey, MemorySegment cache) {}
+
+    public record MusigNonce(MusigPubNonce pubNonce, MemorySegment secNonce) { }
+
+    public MemorySegment parsePubNonce(MusigPubNonce pubNonce) {
+        MemorySegment serializedSeg = arena.allocateFrom(JAVA_BYTE, pubNonce.serialize());
+        MemorySegment pubNonceSeg = secp256k1_musig_pubnonce.allocate(arena);
+
+        int returnVal = secp256k1_h.secp256k1_musig_pubnonce_parse(ctx, pubNonceSeg, serializedSeg);
+        assert (returnVal == 1);
+
+        return pubNonceSeg;
+    }
+
+    private MemorySegment parsePartialSig(MusigPartialSignature sig) {
+        MemorySegment serialized = arena.allocateFrom(JAVA_BYTE, sig.s().serialize());
+        MemorySegment partialSigSeg =  secp256k1_musig_partial_sig.allocate(arena);
+        int returnVal = secp256k1_h.secp256k1_musig_partial_sig_parse(ctx, partialSigSeg, serialized);
+        assert(returnVal == 1);
+
+        return  partialSigSeg;
+    }
+
+    private MemorySegment parseAggNonce(MusigAggNonce aggNonce) {
+        MemorySegment serialSeg = arena.allocateFrom(JAVA_BYTE, aggNonce.serialize());
+        MemorySegment aggNonceSeg = secp256k1_musig_aggnonce.allocate(arena);
+
+        int returnVal = secp256k1_h.secp256k1_musig_aggnonce_parse(ctx, aggNonceSeg, serialSeg);
+
+        assert(returnVal == 1);
+
+        return aggNonceSeg;
+    }
+
+
 
     /**
      * TBD: Static verify method that doesn't require a class instance.
@@ -467,6 +523,175 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment output = arena.allocate(32);
         int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL, NULL);
         return SecpResult.checked(success, () -> new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)));
+    }
+
+    /// Sort public keys using lexicographic (of compressed serialization) order.
+    /// Provides a standard order for Musig methods, as the order of public keys
+    /// will affect the output.
+    ///
+    /// @param pubKeys The public keys to be sorted
+    /// @return The public keys in lexicographic order
+    public List<SecpPubKey> ecPubKeySort(List<SecpPubKey> pubKeys) {
+        int n = pubKeys.size();
+        MemorySegment pubKeyPtrs = arena.allocate(C_POINTER, n);
+        for (int i = 0; i < n; i++) {
+            pubKeyPtrs.setAtIndex(C_POINTER, i, pubKeyParse(pubKeys.get(i)).get());
+        }
+        int returnVal = secp256k1_h.secp256k1_ec_pubkey_sort(ctx, pubKeyPtrs, n);
+        assert(returnVal == 1);
+        List<SecpPubKey> result = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            result.add(toSecpPubKey(pubKeyPtrs.getAtIndex(C_POINTER, i)));
+        }
+        return List.copyOf(result);
+    }
+
+    private KeyAggCache cacheFromMemorySeg(MemorySegment keyAggCacheSeg) {
+        MemorySegment aggKeySeg = secp256k1_pubkey.allocate(arena);
+        int returnVal = secp256k1_h.secp256k1_musig_pubkey_get(ctx, aggKeySeg, keyAggCacheSeg);
+        assert(returnVal == 1);
+
+        return new KeyAggCache(toSecpPubKey(aggKeySeg), keyAggCacheSeg);
+    }
+
+    /// Computes an aggregate public key and uses it to initialize a KeyAggCache.
+    ///
+    /// @param pubKeys The public keys to be aggregated. The order of the keys matter:
+    /// see [ecPubKeySort][Secp256k1Foreign#ecPubKeySort(java.util.List)].
+    /// @return A [KeyAggCache][KeyAggCache] from the given public keys.
+    public KeyAggCache musigPubKeyAgg(List<SecpPubKey> pubKeys) {
+        int n = pubKeys.size();
+        MemorySegment pubKeyPtrs = arena.allocate(C_POINTER, n);
+        for (int i = 0; i < n; i++) {
+            pubKeyPtrs.setAtIndex(C_POINTER, i, pubKeyParse(pubKeys.get(i)).get());
+        }
+
+        MemorySegment keyAggCacheSeg = secp256k1_musig_keyagg_cache.allocate(arena);
+
+        int returnVal1 = secp256k1_musig_pubkey_agg(ctx, MemorySegment.NULL, keyAggCacheSeg, pubKeyPtrs, n);
+        assert(returnVal1 == 1);
+
+        return cacheFromMemorySeg(keyAggCacheSeg);
+
+    }
+
+    public KeyAggCache musigPubkeyXonlyTweakAdd(KeyAggCache cache, byte[] tweak) {
+        checkArg(tweak.length == 32, "tweak must be 32 bytes");
+
+        MemorySegment tweakSeg = arena.allocateFrom(JAVA_BYTE, tweak);
+        MemorySegment cacheSegClone = arena.allocate(cache.cache.byteSize());
+        MemorySegment.copy(cache.cache, 0, cacheSegClone, 0, cache.cache.byteSize());
+
+        int returnVal = secp256k1_h.secp256k1_musig_pubkey_xonly_tweak_add(ctx, NULL, cacheSegClone, tweakSeg);
+        assert(returnVal == 1);
+
+        return cacheFromMemorySeg(cacheSegClone);
+    }
+
+    public KeyAggCache musigPubkeyEcTweakAdd(KeyAggCache cache, byte[] tweak) {
+        checkArg(tweak.length == 32, "tweak must be 32 bytes");
+
+        MemorySegment tweakSeg = arena.allocateFrom(JAVA_BYTE, tweak);
+        MemorySegment cacheSegClone = arena.allocate(cache.cache.byteSize());
+        MemorySegment.copy(cache.cache, 0, cacheSegClone, 0, cache.cache.byteSize());
+
+        int returnVal = secp256k1_h.secp256k1_musig_pubkey_ec_tweak_add(ctx, NULL, cacheSegClone, tweakSeg);
+        assert(returnVal == 1);
+
+        return cacheFromMemorySeg(cacheSegClone);
+    }
+
+    public MusigNonce musigNonceGen(byte[] sessionSecRand, SecpPrivKey privKey, SecpPubKey pubKey, byte[] msg32, KeyAggCache cache, byte[] exInput) {
+        checkArg(msg32.length == 32 || msg32.length == 0, "msg32 must be 32 bytes or empty");
+
+        MemorySegment secNonceSeg = secp256k1_musig_secnonce.allocate(arena);
+        MemorySegment pubNonceSeg = secp256k1_musig_pubnonce.allocate(arena);
+        MemorySegment sessionSecRandSeg = arena.allocateFrom(JAVA_BYTE, sessionSecRand);
+        MemorySegment privKeySeg = privKeyToSegment(privKey);
+        MemorySegment pubKeySeg = pubKeyParse(pubKey).get();
+        MemorySegment msgSeg = msg32.length == 32 ? arena.allocateFrom(JAVA_BYTE, msg32) : NULL;
+        MemorySegment aggPubKeySeg = cache.cache;
+        MemorySegment exInputSeg = arena.allocateFrom(JAVA_BYTE, exInput);
+
+        int returnVal1 = secp256k1_h.secp256k1_musig_nonce_gen(ctx, secNonceSeg, pubNonceSeg, sessionSecRandSeg, privKeySeg, pubKeySeg, msgSeg, aggPubKeySeg, exInputSeg);
+        assert(returnVal1 == 1);
+
+        MemorySegment pubNonceCompressedSeg = arena.allocate(66);
+        int returnVal2 = secp256k1_h.secp256k1_musig_pubnonce_serialize(ctx, pubNonceCompressedSeg, pubNonceSeg);
+        assert(returnVal2 == 1);
+
+        MusigPubNonce pubNonce = new MusigPubNonceImpl(pubNonceCompressedSeg.toArray(JAVA_BYTE));
+
+        return new MusigNonce(pubNonce, secNonceSeg);
+    }
+
+    public MusigAggNonce musigNonceAgg(List<MusigPubNonce> nonces) {
+        List<MemorySegment> nonceSegList = nonces.stream().map(this::parsePubNonce).toList();
+        int n = nonceSegList.size();
+        MemorySegment noncePtrs = arena.allocate(C_POINTER, n);
+        for (int i = 0; i < n; i++) {
+            noncePtrs.setAtIndex(C_POINTER, i, nonceSegList.get(i));
+        }
+
+        MemorySegment aggNonce = secp256k1_musig_aggnonce.allocate(arena);
+        MemorySegment aggNonceSerialized = arena.allocate(JAVA_BYTE, 66);
+
+        int returnVal1 = secp256k1_h.secp256k1_musig_nonce_agg(ctx, aggNonce, noncePtrs, n);
+        assert(returnVal1 == 1);
+
+        int returnVal2 = secp256k1_h.secp256k1_musig_aggnonce_serialize(ctx, aggNonceSerialized, aggNonce);
+        assert(returnVal2 == 1);
+
+        return new MusigAggNonceImpl(aggNonceSerialized.toArray(JAVA_BYTE));
+    }
+
+    public MemorySegment musigNonceProcess(MusigAggNonce aggNonce, byte[] msg32, KeyAggCache cache) {
+        checkArg(msg32.length == 32, "msg32 must be 32 bytes or empty");
+        MemorySegment msgSeg = arena.allocateFrom(JAVA_BYTE, msg32);
+        MemorySegment session = secp256k1_musig_session.allocate(arena);
+
+        int returnVal = secp256k1_h.secp256k1_musig_nonce_process(ctx, session, parseAggNonce(aggNonce), msgSeg, cache.cache());
+        assert(returnVal == 1);
+
+        return session;
+    }
+
+    public MusigPartialSignature musigPartialSign(MemorySegment secNonce, SecpKeyPair keyPair, KeyAggCache cache, MemorySegment session) {
+        MemorySegment partialSigSeg = secp256k1_musig_partial_sig.allocate(arena);
+        MemorySegment keyPairSeg = privKeyToSegment(keyPair.privateKey());
+
+        int returnVal1 = secp256k1_h.secp256k1_musig_partial_sign(ctx, partialSigSeg, secNonce, keyPairSeg, cache.cache(), session);
+        assert(returnVal1 == 1);
+
+        MemorySegment partialSigSerializedSeg = arena.allocate(32);
+        int returnVal2 = secp256k1_h.secp256k1_musig_partial_sig_serialize(ctx, partialSigSerializedSeg, partialSigSeg);
+        assert(returnVal2 == 1);
+
+        return new MusigPartialSignatureImpl(partialSigSerializedSeg.toArray(JAVA_BYTE));
+    }
+
+    public boolean musigPartialSigVerify(MusigPartialSignature partialSig, MusigPubNonce nonce, SecpPubKey pubKey, KeyAggCache cache, MemorySegment session) {
+        MemorySegment pubKeySeg = pubKeyParse(pubKey).get();
+        MemorySegment psigSeg = parsePartialSig(partialSig);
+        int returnVal = secp256k1_h.secp256k1_musig_partial_sig_verify(ctx, psigSeg, parsePubNonce(nonce), pubKeySeg,  cache.cache(), session);
+        return returnVal == 1;
+    }
+
+    public SchnorrSignature musigPartialSigAgg(MemorySegment session, List<MusigPartialSignature> partialSigs) {
+        List<MemorySegment> pSigSegList = partialSigs.stream().map(this::parsePartialSig).toList();
+
+        MemorySegment sig = arena.allocate(64);
+
+        int n = pSigSegList.size();
+        MemorySegment partialSigPtrs = arena.allocate(C_POINTER, n);
+        for (int i = 0; i < n; i++) {
+            partialSigPtrs.setAtIndex(C_POINTER, i, pSigSegList.get(i));
+        }
+
+        int returnVal = secp256k1_h.secp256k1_musig_partial_sig_agg(ctx, sig, session, partialSigPtrs, n);
+        assert(returnVal == 1);
+
+        return new SchnorrSignatureImpl(sig.toArray(JAVA_BYTE));
     }
 
     @Override

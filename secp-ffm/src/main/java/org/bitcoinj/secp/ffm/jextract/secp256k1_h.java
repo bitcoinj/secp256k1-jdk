@@ -3161,6 +3161,1254 @@ public class secp256k1_h extends secp256k1_h$shared {
            throw new AssertionError("should not reach here", ex$);
         }
     }
+    /**
+     * {@snippet lang=c :
+     * typedef long int64_t
+     * }
+     */
+    public static final OfLong int64_t = secp256k1_h.C_LONG;
+    /**
+     * {@snippet lang=c :
+     * typedef unsigned long uint64_t
+     * }
+     */
+    public static final OfLong uint64_t = secp256k1_h.C_LONG;
+    /**
+     * {@snippet lang=c :
+     * typedef int64_t int_least64_t
+     * }
+     */
+    public static final OfLong int_least64_t = secp256k1_h.C_LONG;
+    /**
+     * {@snippet lang=c :
+     * typedef uint64_t uint_least64_t
+     * }
+     */
+    public static final OfLong uint_least64_t = secp256k1_h.C_LONG;
+    /**
+     * {@snippet lang=c :
+     * typedef int64_t int_fast64_t
+     * }
+     */
+    public static final OfLong int_fast64_t = secp256k1_h.C_LONG;
+    /**
+     * {@snippet lang=c :
+     * typedef uint64_t uint_fast64_t
+     * }
+     */
+    public static final OfLong uint_fast64_t = secp256k1_h.C_LONG;
+    /**
+     * {@snippet lang=c :
+     * typedef int int32_t
+     * }
+     */
+    public static final OfInt int32_t = secp256k1_h.C_INT;
+    /**
+     * {@snippet lang=c :
+     * typedef unsigned int uint32_t
+     * }
+     */
+    public static final OfInt uint32_t = secp256k1_h.C_INT;
+    /**
+     * {@snippet lang=c :
+     * typedef int32_t int_least32_t
+     * }
+     */
+    public static final OfInt int_least32_t = secp256k1_h.C_INT;
+    /**
+     * {@snippet lang=c :
+     * typedef uint32_t uint_least32_t
+     * }
+     */
+    public static final OfInt uint_least32_t = secp256k1_h.C_INT;
+    /**
+     * {@snippet lang=c :
+     * typedef int32_t int_fast32_t
+     * }
+     */
+    public static final OfInt int_fast32_t = secp256k1_h.C_INT;
+    /**
+     * {@snippet lang=c :
+     * typedef uint32_t uint_fast32_t
+     * }
+     */
+    public static final OfInt uint_fast32_t = secp256k1_h.C_INT;
+    /**
+     * {@snippet lang=c :
+     * typedef short int16_t
+     * }
+     */
+    public static final OfShort int16_t = secp256k1_h.C_SHORT;
+    /**
+     * {@snippet lang=c :
+     * typedef unsigned short uint16_t
+     * }
+     */
+    public static final OfShort uint16_t = secp256k1_h.C_SHORT;
+    /**
+     * {@snippet lang=c :
+     * typedef int16_t int_least16_t
+     * }
+     */
+    public static final OfShort int_least16_t = secp256k1_h.C_SHORT;
+    /**
+     * {@snippet lang=c :
+     * typedef uint16_t uint_least16_t
+     * }
+     */
+    public static final OfShort uint_least16_t = secp256k1_h.C_SHORT;
+    /**
+     * {@snippet lang=c :
+     * typedef int16_t int_fast16_t
+     * }
+     */
+    public static final OfShort int_fast16_t = secp256k1_h.C_SHORT;
+    /**
+     * {@snippet lang=c :
+     * typedef uint16_t uint_fast16_t
+     * }
+     */
+    public static final OfShort uint_fast16_t = secp256k1_h.C_SHORT;
+    /**
+     * {@snippet lang=c :
+     * typedef signed char int8_t
+     * }
+     */
+    public static final OfByte int8_t = secp256k1_h.C_CHAR;
+    /**
+     * {@snippet lang=c :
+     * typedef unsigned char uint8_t
+     * }
+     */
+    public static final OfByte uint8_t = secp256k1_h.C_CHAR;
+    /**
+     * {@snippet lang=c :
+     * typedef int8_t int_least8_t
+     * }
+     */
+    public static final OfByte int_least8_t = secp256k1_h.C_CHAR;
+    /**
+     * {@snippet lang=c :
+     * typedef uint8_t uint_least8_t
+     * }
+     */
+    public static final OfByte uint_least8_t = secp256k1_h.C_CHAR;
+    /**
+     * {@snippet lang=c :
+     * typedef int8_t int_fast8_t
+     * }
+     */
+    public static final OfByte int_fast8_t = secp256k1_h.C_CHAR;
+    /**
+     * {@snippet lang=c :
+     * typedef uint8_t uint_fast8_t
+     * }
+     */
+    public static final OfByte uint_fast8_t = secp256k1_h.C_CHAR;
+    /**
+     * {@snippet lang=c :
+     * typedef long intptr_t
+     * }
+     */
+    public static final OfLong intptr_t = secp256k1_h.C_LONG;
+    /**
+     * {@snippet lang=c :
+     * typedef unsigned long uintptr_t
+     * }
+     */
+    public static final OfLong uintptr_t = secp256k1_h.C_LONG;
+    /**
+     * {@snippet lang=c :
+     * typedef long intmax_t
+     * }
+     */
+    public static final OfLong intmax_t = secp256k1_h.C_LONG;
+    /**
+     * {@snippet lang=c :
+     * typedef unsigned long uintmax_t
+     * }
+     */
+    public static final OfLong uintmax_t = secp256k1_h.C_LONG;
+
+    private static class secp256k1_musig_pubnonce_parse {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_pubnonce_parse");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubnonce_parse(const secp256k1_context *ctx, secp256k1_musig_pubnonce *nonce, const unsigned char *in66)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_pubnonce_parse$descriptor() {
+        return secp256k1_musig_pubnonce_parse.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubnonce_parse(const secp256k1_context *ctx, secp256k1_musig_pubnonce *nonce, const unsigned char *in66)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_pubnonce_parse$handle() {
+        return secp256k1_musig_pubnonce_parse.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubnonce_parse(const secp256k1_context *ctx, secp256k1_musig_pubnonce *nonce, const unsigned char *in66)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_pubnonce_parse$address() {
+        return secp256k1_musig_pubnonce_parse.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubnonce_parse(const secp256k1_context *ctx, secp256k1_musig_pubnonce *nonce, const unsigned char *in66)
+     * }
+     */
+    public static int secp256k1_musig_pubnonce_parse(MemorySegment ctx, MemorySegment nonce, MemorySegment in66) {
+        var mh$ = secp256k1_musig_pubnonce_parse.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_pubnonce_parse", ctx, nonce, in66);
+            }
+            return (int)mh$.invokeExact(ctx, nonce, in66);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_pubnonce_serialize {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_pubnonce_serialize");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubnonce_serialize(const secp256k1_context *ctx, unsigned char *out66, const secp256k1_musig_pubnonce *nonce)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_pubnonce_serialize$descriptor() {
+        return secp256k1_musig_pubnonce_serialize.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubnonce_serialize(const secp256k1_context *ctx, unsigned char *out66, const secp256k1_musig_pubnonce *nonce)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_pubnonce_serialize$handle() {
+        return secp256k1_musig_pubnonce_serialize.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubnonce_serialize(const secp256k1_context *ctx, unsigned char *out66, const secp256k1_musig_pubnonce *nonce)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_pubnonce_serialize$address() {
+        return secp256k1_musig_pubnonce_serialize.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubnonce_serialize(const secp256k1_context *ctx, unsigned char *out66, const secp256k1_musig_pubnonce *nonce)
+     * }
+     */
+    public static int secp256k1_musig_pubnonce_serialize(MemorySegment ctx, MemorySegment out66, MemorySegment nonce) {
+        var mh$ = secp256k1_musig_pubnonce_serialize.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_pubnonce_serialize", ctx, out66, nonce);
+            }
+            return (int)mh$.invokeExact(ctx, out66, nonce);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_aggnonce_parse {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_aggnonce_parse");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_aggnonce_parse(const secp256k1_context *ctx, secp256k1_musig_aggnonce *nonce, const unsigned char *in66)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_aggnonce_parse$descriptor() {
+        return secp256k1_musig_aggnonce_parse.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_aggnonce_parse(const secp256k1_context *ctx, secp256k1_musig_aggnonce *nonce, const unsigned char *in66)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_aggnonce_parse$handle() {
+        return secp256k1_musig_aggnonce_parse.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_aggnonce_parse(const secp256k1_context *ctx, secp256k1_musig_aggnonce *nonce, const unsigned char *in66)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_aggnonce_parse$address() {
+        return secp256k1_musig_aggnonce_parse.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_aggnonce_parse(const secp256k1_context *ctx, secp256k1_musig_aggnonce *nonce, const unsigned char *in66)
+     * }
+     */
+    public static int secp256k1_musig_aggnonce_parse(MemorySegment ctx, MemorySegment nonce, MemorySegment in66) {
+        var mh$ = secp256k1_musig_aggnonce_parse.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_aggnonce_parse", ctx, nonce, in66);
+            }
+            return (int)mh$.invokeExact(ctx, nonce, in66);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_aggnonce_serialize {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_aggnonce_serialize");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_aggnonce_serialize(const secp256k1_context *ctx, unsigned char *out66, const secp256k1_musig_aggnonce *nonce)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_aggnonce_serialize$descriptor() {
+        return secp256k1_musig_aggnonce_serialize.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_aggnonce_serialize(const secp256k1_context *ctx, unsigned char *out66, const secp256k1_musig_aggnonce *nonce)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_aggnonce_serialize$handle() {
+        return secp256k1_musig_aggnonce_serialize.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_aggnonce_serialize(const secp256k1_context *ctx, unsigned char *out66, const secp256k1_musig_aggnonce *nonce)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_aggnonce_serialize$address() {
+        return secp256k1_musig_aggnonce_serialize.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_aggnonce_serialize(const secp256k1_context *ctx, unsigned char *out66, const secp256k1_musig_aggnonce *nonce)
+     * }
+     */
+    public static int secp256k1_musig_aggnonce_serialize(MemorySegment ctx, MemorySegment out66, MemorySegment nonce) {
+        var mh$ = secp256k1_musig_aggnonce_serialize.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_aggnonce_serialize", ctx, out66, nonce);
+            }
+            return (int)mh$.invokeExact(ctx, out66, nonce);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_partial_sig_parse {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_partial_sig_parse");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_parse(const secp256k1_context *ctx, secp256k1_musig_partial_sig *sig, const unsigned char *in32)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_partial_sig_parse$descriptor() {
+        return secp256k1_musig_partial_sig_parse.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_parse(const secp256k1_context *ctx, secp256k1_musig_partial_sig *sig, const unsigned char *in32)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_partial_sig_parse$handle() {
+        return secp256k1_musig_partial_sig_parse.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_parse(const secp256k1_context *ctx, secp256k1_musig_partial_sig *sig, const unsigned char *in32)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_partial_sig_parse$address() {
+        return secp256k1_musig_partial_sig_parse.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_parse(const secp256k1_context *ctx, secp256k1_musig_partial_sig *sig, const unsigned char *in32)
+     * }
+     */
+    public static int secp256k1_musig_partial_sig_parse(MemorySegment ctx, MemorySegment sig, MemorySegment in32) {
+        var mh$ = secp256k1_musig_partial_sig_parse.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_partial_sig_parse", ctx, sig, in32);
+            }
+            return (int)mh$.invokeExact(ctx, sig, in32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_partial_sig_serialize {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_partial_sig_serialize");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_serialize(const secp256k1_context *ctx, unsigned char *out32, const secp256k1_musig_partial_sig *sig)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_partial_sig_serialize$descriptor() {
+        return secp256k1_musig_partial_sig_serialize.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_serialize(const secp256k1_context *ctx, unsigned char *out32, const secp256k1_musig_partial_sig *sig)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_partial_sig_serialize$handle() {
+        return secp256k1_musig_partial_sig_serialize.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_serialize(const secp256k1_context *ctx, unsigned char *out32, const secp256k1_musig_partial_sig *sig)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_partial_sig_serialize$address() {
+        return secp256k1_musig_partial_sig_serialize.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_serialize(const secp256k1_context *ctx, unsigned char *out32, const secp256k1_musig_partial_sig *sig)
+     * }
+     */
+    public static int secp256k1_musig_partial_sig_serialize(MemorySegment ctx, MemorySegment out32, MemorySegment sig) {
+        var mh$ = secp256k1_musig_partial_sig_serialize.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_partial_sig_serialize", ctx, out32, sig);
+            }
+            return (int)mh$.invokeExact(ctx, out32, sig);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_pubkey_agg {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_pubkey_agg");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_agg(const secp256k1_context *ctx, secp256k1_xonly_pubkey *agg_pk, secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_pubkey *const *pubkeys, size_t n_pubkeys)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_pubkey_agg$descriptor() {
+        return secp256k1_musig_pubkey_agg.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_agg(const secp256k1_context *ctx, secp256k1_xonly_pubkey *agg_pk, secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_pubkey *const *pubkeys, size_t n_pubkeys)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_pubkey_agg$handle() {
+        return secp256k1_musig_pubkey_agg.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_agg(const secp256k1_context *ctx, secp256k1_xonly_pubkey *agg_pk, secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_pubkey *const *pubkeys, size_t n_pubkeys)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_pubkey_agg$address() {
+        return secp256k1_musig_pubkey_agg.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_agg(const secp256k1_context *ctx, secp256k1_xonly_pubkey *agg_pk, secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_pubkey *const *pubkeys, size_t n_pubkeys)
+     * }
+     */
+    public static int secp256k1_musig_pubkey_agg(MemorySegment ctx, MemorySegment agg_pk, MemorySegment keyagg_cache, MemorySegment pubkeys, long n_pubkeys) {
+        var mh$ = secp256k1_musig_pubkey_agg.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_pubkey_agg", ctx, agg_pk, keyagg_cache, pubkeys, n_pubkeys);
+            }
+            return (int)mh$.invokeExact(ctx, agg_pk, keyagg_cache, pubkeys, n_pubkeys);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_pubkey_get {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_pubkey_get");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_get(const secp256k1_context *ctx, secp256k1_pubkey *agg_pk, const secp256k1_musig_keyagg_cache *keyagg_cache)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_pubkey_get$descriptor() {
+        return secp256k1_musig_pubkey_get.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_get(const secp256k1_context *ctx, secp256k1_pubkey *agg_pk, const secp256k1_musig_keyagg_cache *keyagg_cache)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_pubkey_get$handle() {
+        return secp256k1_musig_pubkey_get.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_get(const secp256k1_context *ctx, secp256k1_pubkey *agg_pk, const secp256k1_musig_keyagg_cache *keyagg_cache)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_pubkey_get$address() {
+        return secp256k1_musig_pubkey_get.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_get(const secp256k1_context *ctx, secp256k1_pubkey *agg_pk, const secp256k1_musig_keyagg_cache *keyagg_cache)
+     * }
+     */
+    public static int secp256k1_musig_pubkey_get(MemorySegment ctx, MemorySegment agg_pk, MemorySegment keyagg_cache) {
+        var mh$ = secp256k1_musig_pubkey_get.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_pubkey_get", ctx, agg_pk, keyagg_cache);
+            }
+            return (int)mh$.invokeExact(ctx, agg_pk, keyagg_cache);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_pubkey_ec_tweak_add {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_pubkey_ec_tweak_add");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_ec_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *tweak32)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_pubkey_ec_tweak_add$descriptor() {
+        return secp256k1_musig_pubkey_ec_tweak_add.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_ec_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *tweak32)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_pubkey_ec_tweak_add$handle() {
+        return secp256k1_musig_pubkey_ec_tweak_add.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_ec_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_pubkey_ec_tweak_add$address() {
+        return secp256k1_musig_pubkey_ec_tweak_add.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_ec_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *tweak32)
+     * }
+     */
+    public static int secp256k1_musig_pubkey_ec_tweak_add(MemorySegment ctx, MemorySegment output_pubkey, MemorySegment keyagg_cache, MemorySegment tweak32) {
+        var mh$ = secp256k1_musig_pubkey_ec_tweak_add.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_pubkey_ec_tweak_add", ctx, output_pubkey, keyagg_cache, tweak32);
+            }
+            return (int)mh$.invokeExact(ctx, output_pubkey, keyagg_cache, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_pubkey_xonly_tweak_add {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_pubkey_xonly_tweak_add");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_xonly_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *tweak32)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_pubkey_xonly_tweak_add$descriptor() {
+        return secp256k1_musig_pubkey_xonly_tweak_add.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_xonly_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *tweak32)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_pubkey_xonly_tweak_add$handle() {
+        return secp256k1_musig_pubkey_xonly_tweak_add.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_xonly_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *tweak32)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_pubkey_xonly_tweak_add$address() {
+        return secp256k1_musig_pubkey_xonly_tweak_add.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_pubkey_xonly_tweak_add(const secp256k1_context *ctx, secp256k1_pubkey *output_pubkey, secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *tweak32)
+     * }
+     */
+    public static int secp256k1_musig_pubkey_xonly_tweak_add(MemorySegment ctx, MemorySegment output_pubkey, MemorySegment keyagg_cache, MemorySegment tweak32) {
+        var mh$ = secp256k1_musig_pubkey_xonly_tweak_add.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_pubkey_xonly_tweak_add", ctx, output_pubkey, keyagg_cache, tweak32);
+            }
+            return (int)mh$.invokeExact(ctx, output_pubkey, keyagg_cache, tweak32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_nonce_gen {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_nonce_gen");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_gen(const secp256k1_context *ctx, secp256k1_musig_secnonce *secnonce, secp256k1_musig_pubnonce *pubnonce, unsigned char *session_secrand32, const unsigned char *seckey, const secp256k1_pubkey *pubkey, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *extra_input32)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_nonce_gen$descriptor() {
+        return secp256k1_musig_nonce_gen.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_gen(const secp256k1_context *ctx, secp256k1_musig_secnonce *secnonce, secp256k1_musig_pubnonce *pubnonce, unsigned char *session_secrand32, const unsigned char *seckey, const secp256k1_pubkey *pubkey, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *extra_input32)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_nonce_gen$handle() {
+        return secp256k1_musig_nonce_gen.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_gen(const secp256k1_context *ctx, secp256k1_musig_secnonce *secnonce, secp256k1_musig_pubnonce *pubnonce, unsigned char *session_secrand32, const unsigned char *seckey, const secp256k1_pubkey *pubkey, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *extra_input32)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_nonce_gen$address() {
+        return secp256k1_musig_nonce_gen.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_gen(const secp256k1_context *ctx, secp256k1_musig_secnonce *secnonce, secp256k1_musig_pubnonce *pubnonce, unsigned char *session_secrand32, const unsigned char *seckey, const secp256k1_pubkey *pubkey, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *extra_input32)
+     * }
+     */
+    public static int secp256k1_musig_nonce_gen(MemorySegment ctx, MemorySegment secnonce, MemorySegment pubnonce, MemorySegment session_secrand32, MemorySegment seckey, MemorySegment pubkey, MemorySegment msg32, MemorySegment keyagg_cache, MemorySegment extra_input32) {
+        var mh$ = secp256k1_musig_nonce_gen.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_nonce_gen", ctx, secnonce, pubnonce, session_secrand32, seckey, pubkey, msg32, keyagg_cache, extra_input32);
+            }
+            return (int)mh$.invokeExact(ctx, secnonce, pubnonce, session_secrand32, seckey, pubkey, msg32, keyagg_cache, extra_input32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_nonce_gen_counter {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_LONG,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_nonce_gen_counter");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_gen_counter(const secp256k1_context *ctx, secp256k1_musig_secnonce *secnonce, secp256k1_musig_pubnonce *pubnonce, uint64_t nonrepeating_cnt, const secp256k1_keypair *keypair, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *extra_input32)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_nonce_gen_counter$descriptor() {
+        return secp256k1_musig_nonce_gen_counter.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_gen_counter(const secp256k1_context *ctx, secp256k1_musig_secnonce *secnonce, secp256k1_musig_pubnonce *pubnonce, uint64_t nonrepeating_cnt, const secp256k1_keypair *keypair, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *extra_input32)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_nonce_gen_counter$handle() {
+        return secp256k1_musig_nonce_gen_counter.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_gen_counter(const secp256k1_context *ctx, secp256k1_musig_secnonce *secnonce, secp256k1_musig_pubnonce *pubnonce, uint64_t nonrepeating_cnt, const secp256k1_keypair *keypair, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *extra_input32)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_nonce_gen_counter$address() {
+        return secp256k1_musig_nonce_gen_counter.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_gen_counter(const secp256k1_context *ctx, secp256k1_musig_secnonce *secnonce, secp256k1_musig_pubnonce *pubnonce, uint64_t nonrepeating_cnt, const secp256k1_keypair *keypair, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache, const unsigned char *extra_input32)
+     * }
+     */
+    public static int secp256k1_musig_nonce_gen_counter(MemorySegment ctx, MemorySegment secnonce, MemorySegment pubnonce, long nonrepeating_cnt, MemorySegment keypair, MemorySegment msg32, MemorySegment keyagg_cache, MemorySegment extra_input32) {
+        var mh$ = secp256k1_musig_nonce_gen_counter.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_nonce_gen_counter", ctx, secnonce, pubnonce, nonrepeating_cnt, keypair, msg32, keyagg_cache, extra_input32);
+            }
+            return (int)mh$.invokeExact(ctx, secnonce, pubnonce, nonrepeating_cnt, keypair, msg32, keyagg_cache, extra_input32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_nonce_agg {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_nonce_agg");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_agg(const secp256k1_context *ctx, secp256k1_musig_aggnonce *aggnonce, const secp256k1_musig_pubnonce *const *pubnonces, size_t n_pubnonces)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_nonce_agg$descriptor() {
+        return secp256k1_musig_nonce_agg.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_agg(const secp256k1_context *ctx, secp256k1_musig_aggnonce *aggnonce, const secp256k1_musig_pubnonce *const *pubnonces, size_t n_pubnonces)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_nonce_agg$handle() {
+        return secp256k1_musig_nonce_agg.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_agg(const secp256k1_context *ctx, secp256k1_musig_aggnonce *aggnonce, const secp256k1_musig_pubnonce *const *pubnonces, size_t n_pubnonces)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_nonce_agg$address() {
+        return secp256k1_musig_nonce_agg.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_agg(const secp256k1_context *ctx, secp256k1_musig_aggnonce *aggnonce, const secp256k1_musig_pubnonce *const *pubnonces, size_t n_pubnonces)
+     * }
+     */
+    public static int secp256k1_musig_nonce_agg(MemorySegment ctx, MemorySegment aggnonce, MemorySegment pubnonces, long n_pubnonces) {
+        var mh$ = secp256k1_musig_nonce_agg.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_nonce_agg", ctx, aggnonce, pubnonces, n_pubnonces);
+            }
+            return (int)mh$.invokeExact(ctx, aggnonce, pubnonces, n_pubnonces);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_nonce_process {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_nonce_process");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_process(const secp256k1_context *ctx, secp256k1_musig_session *session, const secp256k1_musig_aggnonce *aggnonce, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_nonce_process$descriptor() {
+        return secp256k1_musig_nonce_process.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_process(const secp256k1_context *ctx, secp256k1_musig_session *session, const secp256k1_musig_aggnonce *aggnonce, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_nonce_process$handle() {
+        return secp256k1_musig_nonce_process.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_process(const secp256k1_context *ctx, secp256k1_musig_session *session, const secp256k1_musig_aggnonce *aggnonce, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_nonce_process$address() {
+        return secp256k1_musig_nonce_process.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_nonce_process(const secp256k1_context *ctx, secp256k1_musig_session *session, const secp256k1_musig_aggnonce *aggnonce, const unsigned char *msg32, const secp256k1_musig_keyagg_cache *keyagg_cache)
+     * }
+     */
+    public static int secp256k1_musig_nonce_process(MemorySegment ctx, MemorySegment session, MemorySegment aggnonce, MemorySegment msg32, MemorySegment keyagg_cache) {
+        var mh$ = secp256k1_musig_nonce_process.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_nonce_process", ctx, session, aggnonce, msg32, keyagg_cache);
+            }
+            return (int)mh$.invokeExact(ctx, session, aggnonce, msg32, keyagg_cache);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_partial_sign {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_partial_sign");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sign(const secp256k1_context *ctx, secp256k1_musig_partial_sig *partial_sig, secp256k1_musig_secnonce *secnonce, const secp256k1_keypair *keypair, const secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_musig_session *session)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_partial_sign$descriptor() {
+        return secp256k1_musig_partial_sign.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sign(const secp256k1_context *ctx, secp256k1_musig_partial_sig *partial_sig, secp256k1_musig_secnonce *secnonce, const secp256k1_keypair *keypair, const secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_musig_session *session)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_partial_sign$handle() {
+        return secp256k1_musig_partial_sign.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sign(const secp256k1_context *ctx, secp256k1_musig_partial_sig *partial_sig, secp256k1_musig_secnonce *secnonce, const secp256k1_keypair *keypair, const secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_musig_session *session)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_partial_sign$address() {
+        return secp256k1_musig_partial_sign.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sign(const secp256k1_context *ctx, secp256k1_musig_partial_sig *partial_sig, secp256k1_musig_secnonce *secnonce, const secp256k1_keypair *keypair, const secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_musig_session *session)
+     * }
+     */
+    public static int secp256k1_musig_partial_sign(MemorySegment ctx, MemorySegment partial_sig, MemorySegment secnonce, MemorySegment keypair, MemorySegment keyagg_cache, MemorySegment session) {
+        var mh$ = secp256k1_musig_partial_sign.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_partial_sign", ctx, partial_sig, secnonce, keypair, keyagg_cache, session);
+            }
+            return (int)mh$.invokeExact(ctx, partial_sig, secnonce, keypair, keyagg_cache, session);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_partial_sig_verify {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_partial_sig_verify");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_verify(const secp256k1_context *ctx, const secp256k1_musig_partial_sig *partial_sig, const secp256k1_musig_pubnonce *pubnonce, const secp256k1_pubkey *pubkey, const secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_musig_session *session)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_partial_sig_verify$descriptor() {
+        return secp256k1_musig_partial_sig_verify.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_verify(const secp256k1_context *ctx, const secp256k1_musig_partial_sig *partial_sig, const secp256k1_musig_pubnonce *pubnonce, const secp256k1_pubkey *pubkey, const secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_musig_session *session)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_partial_sig_verify$handle() {
+        return secp256k1_musig_partial_sig_verify.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_verify(const secp256k1_context *ctx, const secp256k1_musig_partial_sig *partial_sig, const secp256k1_musig_pubnonce *pubnonce, const secp256k1_pubkey *pubkey, const secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_musig_session *session)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_partial_sig_verify$address() {
+        return secp256k1_musig_partial_sig_verify.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_verify(const secp256k1_context *ctx, const secp256k1_musig_partial_sig *partial_sig, const secp256k1_musig_pubnonce *pubnonce, const secp256k1_pubkey *pubkey, const secp256k1_musig_keyagg_cache *keyagg_cache, const secp256k1_musig_session *session)
+     * }
+     */
+    public static int secp256k1_musig_partial_sig_verify(MemorySegment ctx, MemorySegment partial_sig, MemorySegment pubnonce, MemorySegment pubkey, MemorySegment keyagg_cache, MemorySegment session) {
+        var mh$ = secp256k1_musig_partial_sig_verify.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_partial_sig_verify", ctx, partial_sig, pubnonce, pubkey, keyagg_cache, session);
+            }
+            return (int)mh$.invokeExact(ctx, partial_sig, pubnonce, pubkey, keyagg_cache, session);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_musig_partial_sig_agg {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_LONG
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_musig_partial_sig_agg");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_agg(const secp256k1_context *ctx, unsigned char *sig64, const secp256k1_musig_session *session, const secp256k1_musig_partial_sig *const *partial_sigs, size_t n_sigs)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_musig_partial_sig_agg$descriptor() {
+        return secp256k1_musig_partial_sig_agg.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_agg(const secp256k1_context *ctx, unsigned char *sig64, const secp256k1_musig_session *session, const secp256k1_musig_partial_sig *const *partial_sigs, size_t n_sigs)
+     * }
+     */
+    public static MethodHandle secp256k1_musig_partial_sig_agg$handle() {
+        return secp256k1_musig_partial_sig_agg.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_agg(const secp256k1_context *ctx, unsigned char *sig64, const secp256k1_musig_session *session, const secp256k1_musig_partial_sig *const *partial_sigs, size_t n_sigs)
+     * }
+     */
+    public static MemorySegment secp256k1_musig_partial_sig_agg$address() {
+        return secp256k1_musig_partial_sig_agg.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_musig_partial_sig_agg(const secp256k1_context *ctx, unsigned char *sig64, const secp256k1_musig_session *session, const secp256k1_musig_partial_sig *const *partial_sigs, size_t n_sigs)
+     * }
+     */
+    public static int secp256k1_musig_partial_sig_agg(MemorySegment ctx, MemorySegment sig64, MemorySegment session, MemorySegment partial_sigs, long n_sigs) {
+        var mh$ = secp256k1_musig_partial_sig_agg.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_musig_partial_sig_agg", ctx, sig64, session, partial_sigs, n_sigs);
+            }
+            return (int)mh$.invokeExact(ctx, sig64, session, partial_sigs, n_sigs);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
     private static final MemorySegment NULL = MemorySegment.ofAddress(0L);
     /**
      * {@snippet lang=c :
@@ -3286,6 +4534,573 @@ public class secp256k1_h extends secp256k1_h$shared {
      */
     public static int SECP256K1_EC_UNCOMPRESSED() {
         return SECP256K1_EC_UNCOMPRESSED;
+    }
+    private static final long INT64_MAX = 9223372036854775807L;
+    /**
+     * {@snippet lang=c :
+     * #define INT64_MAX 9223372036854775807
+     * }
+     */
+    public static long INT64_MAX() {
+        return INT64_MAX;
+    }
+    private static final long INT64_MIN = -9223372036854775808L;
+    /**
+     * {@snippet lang=c :
+     * #define INT64_MIN -9223372036854775808
+     * }
+     */
+    public static long INT64_MIN() {
+        return INT64_MIN;
+    }
+    private static final long UINT64_MAX = -1L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT64_MAX -1
+     * }
+     */
+    public static long UINT64_MAX() {
+        return UINT64_MAX;
+    }
+    private static final long __INT_LEAST64_MIN = -9223372036854775808L;
+    /**
+     * {@snippet lang=c :
+     * #define __INT_LEAST64_MIN -9223372036854775808
+     * }
+     */
+    public static long __INT_LEAST64_MIN() {
+        return __INT_LEAST64_MIN;
+    }
+    private static final long __INT_LEAST64_MAX = 9223372036854775807L;
+    /**
+     * {@snippet lang=c :
+     * #define __INT_LEAST64_MAX 9223372036854775807
+     * }
+     */
+    public static long __INT_LEAST64_MAX() {
+        return __INT_LEAST64_MAX;
+    }
+    private static final long __UINT_LEAST64_MAX = -1L;
+    /**
+     * {@snippet lang=c :
+     * #define __UINT_LEAST64_MAX -1
+     * }
+     */
+    public static long __UINT_LEAST64_MAX() {
+        return __UINT_LEAST64_MAX;
+    }
+    private static final int __INT_LEAST32_MIN = (int)-2147483648L;
+    /**
+     * {@snippet lang=c :
+     * #define __INT_LEAST32_MIN -2147483648
+     * }
+     */
+    public static int __INT_LEAST32_MIN() {
+        return __INT_LEAST32_MIN;
+    }
+    private static final int __INT_LEAST32_MAX = (int)2147483647L;
+    /**
+     * {@snippet lang=c :
+     * #define __INT_LEAST32_MAX 2147483647
+     * }
+     */
+    public static int __INT_LEAST32_MAX() {
+        return __INT_LEAST32_MAX;
+    }
+    private static final int __UINT_LEAST32_MAX = (int)4294967295L;
+    /**
+     * {@snippet lang=c :
+     * #define __UINT_LEAST32_MAX 4294967295
+     * }
+     */
+    public static int __UINT_LEAST32_MAX() {
+        return __UINT_LEAST32_MAX;
+    }
+    private static final int __INT_LEAST16_MIN = (int)-32768L;
+    /**
+     * {@snippet lang=c :
+     * #define __INT_LEAST16_MIN -32768
+     * }
+     */
+    public static int __INT_LEAST16_MIN() {
+        return __INT_LEAST16_MIN;
+    }
+    private static final int __INT_LEAST16_MAX = (int)32767L;
+    /**
+     * {@snippet lang=c :
+     * #define __INT_LEAST16_MAX 32767
+     * }
+     */
+    public static int __INT_LEAST16_MAX() {
+        return __INT_LEAST16_MAX;
+    }
+    private static final int __UINT_LEAST16_MAX = (int)65535L;
+    /**
+     * {@snippet lang=c :
+     * #define __UINT_LEAST16_MAX 65535
+     * }
+     */
+    public static int __UINT_LEAST16_MAX() {
+        return __UINT_LEAST16_MAX;
+    }
+    private static final int __INT_LEAST8_MIN = (int)-128L;
+    /**
+     * {@snippet lang=c :
+     * #define __INT_LEAST8_MIN -128
+     * }
+     */
+    public static int __INT_LEAST8_MIN() {
+        return __INT_LEAST8_MIN;
+    }
+    private static final int __INT_LEAST8_MAX = (int)127L;
+    /**
+     * {@snippet lang=c :
+     * #define __INT_LEAST8_MAX 127
+     * }
+     */
+    public static int __INT_LEAST8_MAX() {
+        return __INT_LEAST8_MAX;
+    }
+    private static final int __UINT_LEAST8_MAX = (int)255L;
+    /**
+     * {@snippet lang=c :
+     * #define __UINT_LEAST8_MAX 255
+     * }
+     */
+    public static int __UINT_LEAST8_MAX() {
+        return __UINT_LEAST8_MAX;
+    }
+    private static final long INT_LEAST64_MIN = -9223372036854775808L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_LEAST64_MIN -9223372036854775808
+     * }
+     */
+    public static long INT_LEAST64_MIN() {
+        return INT_LEAST64_MIN;
+    }
+    private static final long INT_LEAST64_MAX = 9223372036854775807L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_LEAST64_MAX 9223372036854775807
+     * }
+     */
+    public static long INT_LEAST64_MAX() {
+        return INT_LEAST64_MAX;
+    }
+    private static final long UINT_LEAST64_MAX = -1L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT_LEAST64_MAX -1
+     * }
+     */
+    public static long UINT_LEAST64_MAX() {
+        return UINT_LEAST64_MAX;
+    }
+    private static final long INT_FAST64_MIN = -9223372036854775808L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_FAST64_MIN -9223372036854775808
+     * }
+     */
+    public static long INT_FAST64_MIN() {
+        return INT_FAST64_MIN;
+    }
+    private static final long INT_FAST64_MAX = 9223372036854775807L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_FAST64_MAX 9223372036854775807
+     * }
+     */
+    public static long INT_FAST64_MAX() {
+        return INT_FAST64_MAX;
+    }
+    private static final long UINT_FAST64_MAX = -1L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT_FAST64_MAX -1
+     * }
+     */
+    public static long UINT_FAST64_MAX() {
+        return UINT_FAST64_MAX;
+    }
+    private static final int INT32_MAX = (int)2147483647L;
+    /**
+     * {@snippet lang=c :
+     * #define INT32_MAX 2147483647
+     * }
+     */
+    public static int INT32_MAX() {
+        return INT32_MAX;
+    }
+    private static final int INT32_MIN = (int)-2147483648L;
+    /**
+     * {@snippet lang=c :
+     * #define INT32_MIN -2147483648
+     * }
+     */
+    public static int INT32_MIN() {
+        return INT32_MIN;
+    }
+    private static final int UINT32_MAX = (int)4294967295L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT32_MAX 4294967295
+     * }
+     */
+    public static int UINT32_MAX() {
+        return UINT32_MAX;
+    }
+    private static final int INT_LEAST32_MIN = (int)-2147483648L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_LEAST32_MIN -2147483648
+     * }
+     */
+    public static int INT_LEAST32_MIN() {
+        return INT_LEAST32_MIN;
+    }
+    private static final int INT_LEAST32_MAX = (int)2147483647L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_LEAST32_MAX 2147483647
+     * }
+     */
+    public static int INT_LEAST32_MAX() {
+        return INT_LEAST32_MAX;
+    }
+    private static final int UINT_LEAST32_MAX = (int)4294967295L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT_LEAST32_MAX 4294967295
+     * }
+     */
+    public static int UINT_LEAST32_MAX() {
+        return UINT_LEAST32_MAX;
+    }
+    private static final int INT_FAST32_MIN = (int)-2147483648L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_FAST32_MIN -2147483648
+     * }
+     */
+    public static int INT_FAST32_MIN() {
+        return INT_FAST32_MIN;
+    }
+    private static final int INT_FAST32_MAX = (int)2147483647L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_FAST32_MAX 2147483647
+     * }
+     */
+    public static int INT_FAST32_MAX() {
+        return INT_FAST32_MAX;
+    }
+    private static final int UINT_FAST32_MAX = (int)4294967295L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT_FAST32_MAX 4294967295
+     * }
+     */
+    public static int UINT_FAST32_MAX() {
+        return UINT_FAST32_MAX;
+    }
+    private static final int INT16_MAX = (int)32767L;
+    /**
+     * {@snippet lang=c :
+     * #define INT16_MAX 32767
+     * }
+     */
+    public static int INT16_MAX() {
+        return INT16_MAX;
+    }
+    private static final int INT16_MIN = (int)-32768L;
+    /**
+     * {@snippet lang=c :
+     * #define INT16_MIN -32768
+     * }
+     */
+    public static int INT16_MIN() {
+        return INT16_MIN;
+    }
+    private static final int UINT16_MAX = (int)65535L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT16_MAX 65535
+     * }
+     */
+    public static int UINT16_MAX() {
+        return UINT16_MAX;
+    }
+    private static final int INT_LEAST16_MIN = (int)-32768L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_LEAST16_MIN -32768
+     * }
+     */
+    public static int INT_LEAST16_MIN() {
+        return INT_LEAST16_MIN;
+    }
+    private static final int INT_LEAST16_MAX = (int)32767L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_LEAST16_MAX 32767
+     * }
+     */
+    public static int INT_LEAST16_MAX() {
+        return INT_LEAST16_MAX;
+    }
+    private static final int UINT_LEAST16_MAX = (int)65535L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT_LEAST16_MAX 65535
+     * }
+     */
+    public static int UINT_LEAST16_MAX() {
+        return UINT_LEAST16_MAX;
+    }
+    private static final int INT_FAST16_MIN = (int)-32768L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_FAST16_MIN -32768
+     * }
+     */
+    public static int INT_FAST16_MIN() {
+        return INT_FAST16_MIN;
+    }
+    private static final int INT_FAST16_MAX = (int)32767L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_FAST16_MAX 32767
+     * }
+     */
+    public static int INT_FAST16_MAX() {
+        return INT_FAST16_MAX;
+    }
+    private static final int UINT_FAST16_MAX = (int)65535L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT_FAST16_MAX 65535
+     * }
+     */
+    public static int UINT_FAST16_MAX() {
+        return UINT_FAST16_MAX;
+    }
+    private static final int INT8_MAX = (int)127L;
+    /**
+     * {@snippet lang=c :
+     * #define INT8_MAX 127
+     * }
+     */
+    public static int INT8_MAX() {
+        return INT8_MAX;
+    }
+    private static final int INT8_MIN = (int)-128L;
+    /**
+     * {@snippet lang=c :
+     * #define INT8_MIN -128
+     * }
+     */
+    public static int INT8_MIN() {
+        return INT8_MIN;
+    }
+    private static final int UINT8_MAX = (int)255L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT8_MAX 255
+     * }
+     */
+    public static int UINT8_MAX() {
+        return UINT8_MAX;
+    }
+    private static final int INT_LEAST8_MIN = (int)-128L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_LEAST8_MIN -128
+     * }
+     */
+    public static int INT_LEAST8_MIN() {
+        return INT_LEAST8_MIN;
+    }
+    private static final int INT_LEAST8_MAX = (int)127L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_LEAST8_MAX 127
+     * }
+     */
+    public static int INT_LEAST8_MAX() {
+        return INT_LEAST8_MAX;
+    }
+    private static final int UINT_LEAST8_MAX = (int)255L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT_LEAST8_MAX 255
+     * }
+     */
+    public static int UINT_LEAST8_MAX() {
+        return UINT_LEAST8_MAX;
+    }
+    private static final int INT_FAST8_MIN = (int)-128L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_FAST8_MIN -128
+     * }
+     */
+    public static int INT_FAST8_MIN() {
+        return INT_FAST8_MIN;
+    }
+    private static final int INT_FAST8_MAX = (int)127L;
+    /**
+     * {@snippet lang=c :
+     * #define INT_FAST8_MAX 127
+     * }
+     */
+    public static int INT_FAST8_MAX() {
+        return INT_FAST8_MAX;
+    }
+    private static final int UINT_FAST8_MAX = (int)255L;
+    /**
+     * {@snippet lang=c :
+     * #define UINT_FAST8_MAX 255
+     * }
+     */
+    public static int UINT_FAST8_MAX() {
+        return UINT_FAST8_MAX;
+    }
+    private static final long INTPTR_MIN = -9223372036854775808L;
+    /**
+     * {@snippet lang=c :
+     * #define INTPTR_MIN -9223372036854775808
+     * }
+     */
+    public static long INTPTR_MIN() {
+        return INTPTR_MIN;
+    }
+    private static final long INTPTR_MAX = 9223372036854775807L;
+    /**
+     * {@snippet lang=c :
+     * #define INTPTR_MAX 9223372036854775807
+     * }
+     */
+    public static long INTPTR_MAX() {
+        return INTPTR_MAX;
+    }
+    private static final long UINTPTR_MAX = -1L;
+    /**
+     * {@snippet lang=c :
+     * #define UINTPTR_MAX -1
+     * }
+     */
+    public static long UINTPTR_MAX() {
+        return UINTPTR_MAX;
+    }
+    private static final long PTRDIFF_MIN = -9223372036854775808L;
+    /**
+     * {@snippet lang=c :
+     * #define PTRDIFF_MIN -9223372036854775808
+     * }
+     */
+    public static long PTRDIFF_MIN() {
+        return PTRDIFF_MIN;
+    }
+    private static final long PTRDIFF_MAX = 9223372036854775807L;
+    /**
+     * {@snippet lang=c :
+     * #define PTRDIFF_MAX 9223372036854775807
+     * }
+     */
+    public static long PTRDIFF_MAX() {
+        return PTRDIFF_MAX;
+    }
+    private static final long SIZE_MAX = -1L;
+    /**
+     * {@snippet lang=c :
+     * #define SIZE_MAX -1
+     * }
+     */
+    public static long SIZE_MAX() {
+        return SIZE_MAX;
+    }
+    private static final long INTMAX_MIN = -9223372036854775808L;
+    /**
+     * {@snippet lang=c :
+     * #define INTMAX_MIN -9223372036854775808
+     * }
+     */
+    public static long INTMAX_MIN() {
+        return INTMAX_MIN;
+    }
+    private static final long INTMAX_MAX = 9223372036854775807L;
+    /**
+     * {@snippet lang=c :
+     * #define INTMAX_MAX 9223372036854775807
+     * }
+     */
+    public static long INTMAX_MAX() {
+        return INTMAX_MAX;
+    }
+    private static final long UINTMAX_MAX = -1L;
+    /**
+     * {@snippet lang=c :
+     * #define UINTMAX_MAX -1
+     * }
+     */
+    public static long UINTMAX_MAX() {
+        return UINTMAX_MAX;
+    }
+    private static final int SIG_ATOMIC_MIN = (int)-2147483648L;
+    /**
+     * {@snippet lang=c :
+     * #define SIG_ATOMIC_MIN -2147483648
+     * }
+     */
+    public static int SIG_ATOMIC_MIN() {
+        return SIG_ATOMIC_MIN;
+    }
+    private static final int SIG_ATOMIC_MAX = (int)2147483647L;
+    /**
+     * {@snippet lang=c :
+     * #define SIG_ATOMIC_MAX 2147483647
+     * }
+     */
+    public static int SIG_ATOMIC_MAX() {
+        return SIG_ATOMIC_MAX;
+    }
+    private static final int WINT_MIN = (int)0L;
+    /**
+     * {@snippet lang=c :
+     * #define WINT_MIN 0
+     * }
+     */
+    public static int WINT_MIN() {
+        return WINT_MIN;
+    }
+    private static final int WINT_MAX = (int)4294967295L;
+    /**
+     * {@snippet lang=c :
+     * #define WINT_MAX 4294967295
+     * }
+     */
+    public static int WINT_MAX() {
+        return WINT_MAX;
+    }
+    private static final int WCHAR_MAX = (int)2147483647L;
+    /**
+     * {@snippet lang=c :
+     * #define WCHAR_MAX 2147483647
+     * }
+     */
+    public static int WCHAR_MAX() {
+        return WCHAR_MAX;
+    }
+    private static final int WCHAR_MIN = (int)-2147483648L;
+    /**
+     * {@snippet lang=c :
+     * #define WCHAR_MIN -2147483648
+     * }
+     */
+    public static int WCHAR_MIN() {
+        return WCHAR_MIN;
     }
 }
 

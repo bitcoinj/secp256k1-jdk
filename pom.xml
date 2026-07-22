@@ -141,6 +141,12 @@
                 <version>${opencsv.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>3.0.3</version>
+                <scope>test</scope>
+            </dependency>
 
             <!-- Other dependencies -->
             <dependency>
