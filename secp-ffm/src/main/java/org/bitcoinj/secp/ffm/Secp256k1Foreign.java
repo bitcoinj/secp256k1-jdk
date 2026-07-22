@@ -56,9 +56,7 @@ import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESS
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_xonly_pubkey_serialize;
 
-/**
- * Implementation of {@link Secp256k1} using the {@code secp256k1} C-language library and the Java Foreign Function &amp; Memory API.
- */
+/// Implementation of [Secp256k1] using the `secp256k1` C-language library and the Java Foreign Function & Memory API.
 public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final Arena arena;
@@ -79,9 +77,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         }
     }
 
-    /**
-     * TBD: Static verify method that doesn't require a class instance.
-     */
+    /// TBD: Static verify method that doesn't require a class instance.
     public static boolean ecdsaVerify(MemorySegment sig, MemorySegment msg_hash, MemorySegment pubkey) {
         //MemorySegment msg_hash = arena.allocateArray(JAVA_BYTE, msg_hash_data);
     /* Bonus example: if all we need is signature verification (and no key
@@ -235,13 +231,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
 
-    /**
-     * Since {@code PubKeyData} is serializable without using the native lib, this method
-     * serialized without a native call.
-     * @param pubKey
-     * @param flags
-     * @return
-     */
+    /// Since `PubKeyData` is serializable without using the native lib, this method
+    /// serialized without a native call.
+    /// @param pubKey
+    /// @param flags
+    /// @return
     @Override
     public byte[] ecPubKeySerialize(SecpPubKey pubKey, int flags) {
         boolean compressed = switch(flags) {
@@ -321,12 +315,10 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return SecpResult.checked(return_val, () -> new EcdsaSignatureImpl(serSigSeg.toArray(JAVA_BYTE)));
     }
 
-    /**
-     * ECDSA signing with Low-R grinding. Will potentially sign multiple times until a low-R signature is generated.
-     * @param msg_hash_data hashed message data
-     * @param privKey private key
-     * @return A result, which on success contains a valid signature with a low R value.
-     */
+    /// ECDSA signing with Low-R grinding. Will potentially sign multiple times until a low-R signature is generated.
+    /// @param msg_hash_data hashed message data
+    /// @param privKey private key
+    /// @return A result, which on success contains a valid signature with a low R value.
     @Override
     public SecpResult<EcdsaSignature> ecdsaSignLowR(byte[] msg_hash_data, SecpPrivKey privKey) {
         checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
@@ -407,13 +399,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return schnorrSigSign32(messageHash, privKey, auxiliary_rand);
     }
 
-    /**
-     * schnorrSigSign32 using provided randomness. This is not part of the API and is intended for testing.
-     * @param messageHash message hash
-     * @param privKey private key
-     * @param auxiliaryRandom auxiliary randomness (typically from a test vector)
-     * @return the signature
-     */
+    /// schnorrSigSign32 using provided randomness. This is not part of the API and is intended for testing.
+    /// @param messageHash message hash
+    /// @param privKey private key
+    /// @param auxiliaryRandom auxiliary randomness (typically from a test vector)
+    /// @return the signature
     public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
         checkArg(messageHash.length == 32, "Message must be 32-byte (hash)");
         checkArg(auxiliaryRandom.length == 32, "auxiliaryRandom must be 32-byte)");
@@ -481,12 +471,9 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return "Secp256k1/" + ProviderId.LIBSECP256K1_FFM;
     }
 
-    /**
-     *
-     * @param allocator allocator to create segment with
-     * @param size size in bytes of random data
-     * @return A newly-allocated memory segment full of random data
-     */
+    /// @param allocator allocator to create segment with
+    /// @param size size in bytes of random data
+    /// @return A newly-allocated memory segment full of random data
     private static MemorySegment fill_random(SegmentAllocator allocator, int size) {
         byte[] data = new byte[size];
         secureRandom.nextBytes(data);
