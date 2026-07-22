@@ -342,9 +342,12 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return SecpResult.checked(return_val, () -> new EcdsaSignatureImpl(serSigSeg.toArray(JAVA_BYTE)));
     }
 
-    private static boolean hasLowR(MemorySegment serSigSeg) {
-        byte highByte = serSigSeg.toArray(JAVA_BYTE)[0];
-        return highByte >= 0;
+    /// Check whether a signature has a low-R value. Since the serialized format is big-endian,
+    /// we simply get the first {@code byte} and check its sign.
+    /// @param serializedSignatureSegment a serialized, compact low-R signature in a memory segment
+    /// @return true if a valid, low-R signature
+    private static boolean hasLowR(MemorySegment serializedSignatureSegment) {
+        return serializedSignatureSegment.get(JAVA_BYTE, 0) >= 0;
     }
 
     @Override
