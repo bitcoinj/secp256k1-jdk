@@ -69,7 +69,7 @@
         <bouncycastle.version>1.85</bouncycastle.version>
         <graalvm.version>25.0.3</graalvm.version>
         <bitcoinj.version>0.17.1</bitcoinj.version>
-        <kotlin.version>2.3.20</kotlin.version>
+        <kotlin.version>2.4.10</kotlin.version>
         <opencsv.version>5.12.0</opencsv.version>
 
         <!-- Plugin versions -->
