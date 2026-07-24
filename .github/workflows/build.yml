@@ -132,7 +132,7 @@ jobs:
         run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
       - name: Build Schnorr Native Example
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
-        run: mvn verify -Pnative-schnorr
+        run: mvn verify -Pnative-schnorr -pl secp-examples-java -am
       - name: Run Schnorr Native Example
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
         run: ./secp-examples-java/target/schnorr-example
