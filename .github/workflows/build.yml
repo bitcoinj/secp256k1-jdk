@@ -80,7 +80,7 @@ jobs:
       - name: Build (JIT) with Maven
         run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
       - name: Build Native Image with Maven
-        run: mvn verify -Pnative-schnorr -pl secp-examples-java -am verify
+        run: mvn verify -Pnative-schnorr -pl secp-examples-java -am
       - name: Run Schnorr Native Example
         run: ./secp-examples-java/target/schnorr-example
 
