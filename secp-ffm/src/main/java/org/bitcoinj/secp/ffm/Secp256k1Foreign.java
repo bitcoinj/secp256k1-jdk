@@ -61,7 +61,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final Arena arena;
     private final MemorySegment ctx;
-    /* package */ static final MemorySegment secp256k1StaticContext = secp256k1_h.secp256k1_context_static();
+    static final MemorySegment secp256k1StaticContext = secp256k1_h.secp256k1_context_static();
     private static final MemorySegment NULL = MemorySegment.ofAddress(0L);
     private static final SecureRandom secureRandom;
     static {
@@ -142,7 +142,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return toSecpPubKey(pubKey);
     }
 
-    /* package */ MemorySegment ecPubKeyCreate(MemorySegment privkeySegment) {
+    MemorySegment ecPubKeyCreate(MemorySegment privkeySegment) {
         /* Public key creation using a valid context with a verified private key should never fail */
         MemorySegment pubkey = secp256k1_pubkey.allocate(arena);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_create(ctx, pubkey, privkeySegment);
