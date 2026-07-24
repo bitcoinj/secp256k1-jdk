@@ -79,10 +79,14 @@ jobs:
           echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
       - name: Build (JIT) with Maven
         run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
-      - name: Build Native Image with Maven
-        run: mvn verify -Pnative-schnorr -pl secp-examples-java -am
-      - name: Run Schnorr Native Example
-        run: ./secp-examples-java/target/schnorr-example
+      - name: Build Native Images with Maven
+        run: |
+          mvn verify -Pnative-schnorr -pl secp-examples-java -am
+          mvn verify -Pnative-ecdsa -pl secp-examples-java -am
+      - name: Run Native Examples
+        run: |
+          ./secp-examples-java/target/schnorr-example
+          ./secp-examples-java/target/ecdsa-example
 
   javadoc_artifact_maven:
     needs: build_maven
@@ -130,12 +134,16 @@ jobs:
       - name: Build in Nix development shell
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
         run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
-      - name: Build Schnorr Native Example
+      - name: Build Native Examples (Schnorr and Ecdsa)
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
-        run: mvn verify -Pnative-schnorr -pl secp-examples-java -am
-      - name: Run Schnorr Native Example
+        run: |
+          mvn verify -Pnative-schnorr -pl secp-examples-java -am
+          mvn verify -Pnative-ecdsa -pl secp-examples-java -am
+      - name: Run Native Examples
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
-        run: ./secp-examples-java/target/schnorr-example
+        run: |
+          ./secp-examples-java/target/schnorr-example
+          ./secp-examples-java/target/ecdsa-example
       - name: Compute CI revision
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
         run: |
