@@ -88,7 +88,7 @@
         <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
         <maven-native-plugin.version>1.1.5</maven-native-plugin.version>
         <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
-        <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
+        <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
     </properties>
 
     <modules>
