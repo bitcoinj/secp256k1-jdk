@@ -113,7 +113,7 @@ public class Bouncy256k1 implements Secp256k1 {
         generator.init(keygenParams);
         AsymmetricCipherKeyPair keypair = generator.generateKeyPair();
         ECPrivateKeyParameters privParams = (ECPrivateKeyParameters) keypair.getPrivate();
-        return SecpPrivKey.of(privParams.getD());
+        return new SecpPrivKeyBigInteger(privParams.getD());
     }
 
     @Override
