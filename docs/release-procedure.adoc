@@ -1,6 +1,6 @@
 == Maven + JReleaser Release Process
 
-. Use Java 25, Gradle 9.4.1 for official builds via Nix devShell
+. Use Java 25, Maven 3.9.12 for official builds via Nix devShell
 .. `nix develop`
 . Set versions
 .. `/project/properties/revision` in root `pom.xml`
@@ -12,6 +12,7 @@
 . Full build, test
 .. `mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin`
 .. `mvn verify -Pnative-schnorr`
+.. `mvn verify -Pnative-ecdsa`
 .. `./scripts/build-release.sh`
 . Tag: `git tag -a v0.x.y -m "Release v0.x.y"`
 . Push: `git push --tags origin <release-branch>`
