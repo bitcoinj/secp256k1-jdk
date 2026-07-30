@@ -3,6 +3,65 @@
 
 A high-level view of the changes in each secp256k1-jdk binary release.
 
+== v0.3.1
+
+See the instructions in the README for accessing the binary via the GitLab Maven repository. A future release of secp25k1-jdk will be in Maven Central.
+
+=== API Changes
+
+* `SecpXOnlyPubKeyImpl`: implement `equals()` and `hashCode()` -- https://github.com/bitcoinj/secp256k1-jdk/pull/438[PR #438]
+* `SecpKeyPair`, `SecpPoint`: deprecate unused, unvalidated constructors -- https://github.com/bitcoinj/secp256k1-jdk/pull/448[PR #448]
+* `secp-ffm`: drop export of internal `o.b.s.ffm.jextract` package -- https://github.com/bitcoinj/secp256k1-jdk/pull/446[PR #446]
+* `o.b.s.ffm` package-info: reflect JDK 25+ requirement -- https://github.com/bitcoinj/secp256k1-jdk/pull/447[PR #447]
+
+=== Validation and Hardening
+
+* `SecpPrivKey`, `SecpFieldElement`: add defensive copy of `byte[]` in `of()` -- https://github.com/bitcoinj/secp256k1-jdk/pull/437[PR #437], https://github.com/bitcoinj/secp256k1-jdk/pull/439[PR #439]
+* `Secp256k1Foreign`, `Secp256k1Bouncy`: validate ECDSA message hashes are 32 bytes -- https://github.com/bitcoinj/secp256k1-jdk/pull/440[PR #440]
+* `Secp256k1Foreign`: validate `auxiliaryRandom` is 32 bytes -- https://github.com/bitcoinj/secp256k1-jdk/pull/442[PR #442]
+* `SecpPrivKeyImpl`: prevent serialization by throwing `NotSerializableException` -- https://github.com/bitcoinj/secp256k1-jdk/pull/441[PR #441]
+
+=== Bug fixes
+
+* `SecpKeyPairImpl`: fix `isDestroyed()` to query the underlying private key rather than always returning `false` -- https://github.com/bitcoinj/secp256k1-jdk/pull/443[PR #443]
+* `Secp256k1Foreign`: make `close()` idempotent -- https://github.com/bitcoinj/secp256k1-jdk/pull/445[PR #445]
+* `ForeignRegistrationFeature`: add missing downcall registration, fixing a native-image runtime failure in the `ecdsa-example` -- https://github.com/bitcoinj/secp256k1-jdk/pull/478[PR #478]
+
+=== Bouncy Castle Implementation
+
+* Use Bouncy Castle's `BIP340Signer` for Schnorr Signatures -- https://github.com/bitcoinj/secp256k1-jdk/pull/467[PR #467]
+
+=== Schnorr / libsecp256k1 (FFM) Implementation
+
+* `Secp256k1Foreign`: optimize `signLowR` -- https://github.com/bitcoinj/secp256k1-jdk/pull/468[PR #468]
+* `Secp256k1Foreign`: use `Arena.ofConfined()` for all allocation, remove static `globalArena` -- https://github.com/bitcoinj/secp256k1-jdk/pull/479[PR #479], https://github.com/bitcoinj/secp256k1-jdk/pull/469[PR #469]
+
+=== Testing Improvements
+
+* `SchnorrTest`: parameterize to test with both FFM and Bouncy Castle -- https://github.com/bitcoinj/secp256k1-jdk/pull/449[PR #449]
+* `SecpPrivKeyTest`: add integration test of construct, destroy -- https://github.com/bitcoinj/secp256k1-jdk/pull/483[PR #483]
+
+=== Build and Test Improvements
+
+* GHA `build.yml`: add native build/run for the `ecdsa-example`, remove duplicate verify lifecycle phase, fix `CI_REVISION` using `sed` -- https://github.com/bitcoinj/secp256k1-jdk/pull/478[PR #478], https://github.com/bitcoinj/secp256k1-jdk/pull/477[PR #477], https://github.com/bitcoinj/secp256k1-jdk/pull/429[PR #429]
+* `flake.nix`: simplify `forEachSystem` with `nixpkgs.lib.genAttrs` -- https://github.com/bitcoinj/secp256k1-jdk/pull/435[PR #435]
+* `maven-publish-release.sh`: add `--dry-run` option, set `JRELEASER_OUTPUT_DIRECTORY`; output flattened pom to `target` -- https://github.com/bitcoinj/secp256k1-jdk/pull/431[PR #431], https://github.com/bitcoinj/secp256k1-jdk/pull/430[PR #430]
+* `dependabot.yml`: switch package-ecosystem to "maven", raise concurrent pull request limit to 10, only update `org.graalvm.sdk` on patch versions -- https://github.com/bitcoinj/secp256k1-jdk/pull/455[PR #455], https://github.com/bitcoinj/secp256k1-jdk/pull/475[PR #475], https://github.com/bitcoinj/secp256k1-jdk/pull/463[PR #463]
+
+=== Dependency Updates
+
+* `flake.nix`: update Nixpkgs from `6b31628` to `8623c4c` (multiple dependabot updates) -- https://github.com/bitcoinj/secp256k1-jdk/pull/432[PR #432], https://github.com/bitcoinj/secp256k1-jdk/pull/436[PR #436], https://github.com/bitcoinj/secp256k1-jdk/pull/444[PR #444], https://github.com/bitcoinj/secp256k1-jdk/pull/451[PR #451], https://github.com/bitcoinj/secp256k1-jdk/pull/465[PR #465], https://github.com/bitcoinj/secp256k1-jdk/pull/481[PR #481]
+* `secp-bouncy`: update Bouncy Castle to 1.85 -- https://github.com/bitcoinj/secp256k1-jdk/pull/456[PR #456]
+* Update Kotlin to 2.4.10 (`kotlin-maven-plugin`, `kotlin-stdlib`) -- https://github.com/bitcoinj/secp256k1-jdk/pull/458[PR #458], https://github.com/bitcoinj/secp256k1-jdk/pull/473[PR #473]
+* Update JUnit to 6.1.2 -- https://github.com/bitcoinj/secp256k1-jdk/pull/461[PR #461]
+* Update GraalVM `nativeimage` to 25.0.4, `native-build-tools` to 1.1.5 -- https://github.com/bitcoinj/secp256k1-jdk/pull/472[PR #472], https://github.com/bitcoinj/secp256k1-jdk/pull/459[PR #459]
+* Update `maven-surefire-plugin` and `maven-surefire-report-plugin` to 3.5.6 -- https://github.com/bitcoinj/secp256k1-jdk/pull/464[PR #464], https://github.com/bitcoinj/secp256k1-jdk/pull/462[PR #462]
+* Update `maven-jar-plugin` to 3.5.1 -- https://github.com/bitcoinj/secp256k1-jdk/pull/470[PR #470]
+* Update `license-maven-plugin` to 5.1.1 -- https://github.com/bitcoinj/secp256k1-jdk/pull/471[PR #471]
+* Update `flatten-maven-plugin` to 1.8.0 -- https://github.com/bitcoinj/secp256k1-jdk/pull/480[PR #480]
+
+WARNING: This is pre-alpha software and unaudited. Please use with extreme caution and do not use on Bitcoin MAINNET.
+
 == v0.3
 
 Released: 2026-06-07
