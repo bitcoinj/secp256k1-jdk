@@ -10,6 +10,8 @@
 . Commit version bump and `CHANGELOG`.
 . Make sure project directory is a clean checkout.
 . Full build, test
+.. `nix develop`
+.. `mvn clean`
 .. `mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin`
 .. `mvn verify -Pnative-schnorr`
 .. `mvn verify -Pnative-ecdsa`
@@ -23,3 +25,8 @@
 .. Download the `secp256k1-jdk-javadoc` artifact from the GHA Maven build
 .. Publish to https://msgilligan.github.io/javadoc/secp256k1-jdk/0.x.y/ (for now)
 . Add Release on GitHub
+
+
+== After Release
+
+. Set `/project/properties/revision` in root `pom.xml` to the `-SNAPSHOT`  of the next release.

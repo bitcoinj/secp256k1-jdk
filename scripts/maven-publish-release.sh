@@ -1,5 +1,5 @@
 #!/bin/sh
-# Validate and publish release artifacts to our GitLab Maven artifact rpo
+# Validate and publish release artifacts to our GitLab Maven artifact repo
 # This should be run from the project root directory and inside the `nix develop` shell
 # JRELEASER_GITLAB_TOKEN should be set before running
 if [[ $1 != "--dry-run" && $1 != "" ]]; then
