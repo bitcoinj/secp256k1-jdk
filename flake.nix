@@ -43,6 +43,7 @@
                     jdk_headless = jdk;             # Run Maven with this JDK
                 })
             ];
+          SECP256K1_INCLUDE_DIR = "${pkgs.lib.getDev pkgs.secp256k1}/include";
           shellHook = sharedShellHook;
         };
         # define minimum devshell, with the minimum necessary to do a CI build

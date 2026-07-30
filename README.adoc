@@ -19,7 +19,7 @@ WARNING:: This prototype software has had limited testing and has not been revie
 == API
 
 The API is based on the `C-language` API of https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1], but adapted
-to modern, idiomatic, functional-style Java. and to use Elliptic Curve types from the Java Class Library, such as https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/security/interfaces/ECPublicKey.html[ECPublicKey] where appropriate.
+to modern, idiomatic, functional-style Java. It also can convert to and from Elliptic Curve types in the Java Class Library, such as https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/security/spec/ECPoint.html[ECPoint] where appropriate.
 
 The API is distributed as an API-only JAR (```secp-api-{secp-jdk-version}.jar```) and there are multiple implementations of the API. `secp-api` requires JDK 9 or later.
 
@@ -31,8 +31,7 @@ NOTE:: At this point, we are especially interested in feedback on the API.
 
 The provided implementation uses the https://github.com/bitcoin-core/secp256k1[bitcoin-core/secp256k1] C-language library via https://openjdk.org/jeps/454[JEP-454: Foreign Function & Memory API] (known as **Panama**.) It is provided in a separate JAR (```secp-ffm-{secp-jdk-version}.jar```) that requires JDK 25 or later.
 
-Panama was released as part of https://openjdk.org/projects/jdk/22/[OpenJDK 22]. We anticipate `secp-ffm` will be
-the recommended/preferred `secp-api` implementation for use in projects using modern JVMs.
+We recommend `secp-ffm` as the preferred `secp-api` implementation for use in projects using modern JVMs.
 
 The minimum required JDK for the `secp-ffm` module is JDK 25 (the first LTS release with FFM included.)
 
@@ -40,13 +39,13 @@ WARNING:: This is a preliminary implementation provided for experimentation and 
 
 == Bouncy Castle Implementation
 
-A https://www.bouncycastle.org[Bouncy Castle]-based submodule is included. Bouncy Castle is a well-regarded cryptography library that includes support for the secp256k1 curve and is currently used by https://bitcoinj.org[bitcoinj] and other Java-based Bitcoin implementations. We expect this implementation to be completed and made available as a pure-Java implementation for those who are unable to use the FFM-based libsecp256k1 implementation.
+A https://www.bouncycastle.org[Bouncy Castle]-based submodule is included. Bouncy Castle is a well-regarded cryptography library that includes support for the secp256k1 curve and is currently used by https://bitcoinj.org[bitcoinj] and other Java-based Bitcoin implementations. The `secp-bouncy` module provides a pure-Java implementation for those who are unable to use the FFM-based libsecp256k1 implementation.
 
 The Bouncy Castle implementation works with JDK 9 or later.
 
 == libsecp256k1 Implementation for older JDKs
 
-There are currently _no plans_ for an implementation using earlier Java-to-C adapter technologies such as https://docs.oracle.com/en/java/javase/21/docs/specs/jni/index.html[JNI] or https://github.com/java-native-access/jna[JNA]. However, the `secp256k1-jdk` API will support a JNI implementation. We would be supportive if someone in the community endeavors to create an implementation or adapt one of the existing implementations to use the `secp256k1-jdk` API.
+There are currently _no plans_ for an implementation using earlier Java-to-C adapter technologies such as https://docs.oracle.com/en/java/javase/21/docs/specs/jni/index.html[JNI] or https://github.com/java-native-access/jna[JNA]. However, the `secp256k1-jdk` API can support a JNI implementation. We would be supportive if someone in the community endeavors to create an implementation or adapt one of the existing implementations to use the `secp256k1-jdk` API.
 
 == Relation to bitcoinj
 
@@ -156,25 +155,31 @@ or for GraalVM builds:
 
 ==== Using the Nix devShell
 
-The Nix devshell sets up everything correctly, so simply run `nix develop` and you can build and run.
+The Nix devshell sets up everything correctly, so simply run `nix develop` and you'll be ready to build and run. It sets up `LD_LIBRARY_PATH` on Linux and `DYLD_LIBRARY_PATH` on macOS. It also sets `LIBSECP_DIR` which is what the Maven `pom.xml` file references.
 
 ==== Using APT
 
 * `apt-get -y install libsecp256k1-dev`
 
-This will correctly set up `LD_LIBRARY_PATH` and you can build and run.
+This will correctly set up `LD_LIBRARY_PATH`, but you'll need to set the following for `pom.xml`:
+
+[source,shell]
+----
+export LIBSECP_DIR="$LD_LIBRARY_PATH"
+----
 
 ==== Using Homebrew
 
 . `brew install secp256k1`
 . `export DYLD_LIBRARY_PATH="$(brew --prefix secp256k1)/lib:$DYLD_LIBRARY_PATH"`
-. `export JAVA_TOOL_OPTIONS="-Djava.library.path=$(brew --prefix secp256k1)/lib"`
+. `export LIBSECP_DIR="$LD_LIBRARY_PATH"`
 
-Step 2 sets up `DYLD_LIBRARY_PATH` correctly, but `DYLD_LIBRARY_PATH` https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/RuntimeProtections/RuntimeProtections.html[is cleared] by macOS https://support.apple.com/en-us/102149[System Integrity Protection] before running protected executables (notably the shell binaries typically used to start Gradle) so step 3 sets `JAVA_TOOL_OPTIONS` which Gradle and processes spawned by Gradle will pick up the correct library path.
+
+Step 2 sets up `DYLD_LIBRARY_PATH` correctly, but `DYLD_LIBRARY_PATH` https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/RuntimeProtections/RuntimeProtections.html[is cleared] by macOS https://support.apple.com/en-us/102149[System Integrity Protection] before running protected executables (notably the shell scripts used to start Maven) so step 3 sets `LIBSECP_DIR` which our Maven `pom.xml` references to pick up the correct library path.
 
 ==== Other mechanisms
 
-Other mechanisms should work as long as you set up `LD_LIBRARY_PATH` and/or `DYLD_LIBRARY_PATH` properly and are mindful of System Integrity Protection on macOS.
+Other mechanisms should work as long as you set up `LIBSECP_DIR` and `LD_LIBRARY_PATH` and/or `DYLD_LIBRARY_PATH` properly and are mindful of System Integrity Protection on macOS.
 
 ==== Bundling libsecp256k1 in a JAR at runtime
 
@@ -199,32 +204,32 @@ To build using GraalVM `native-image`:
 . Make sure you have GraalVM 25 or later installed
 . Make sure `GRAALVM_HOME` points to the Graal JDK 25 installation
 . `mvn verify -Pnative-schnorr`
+. `mvn verify -Pnative-ecdsa`
 
 Run the native image binary:
 
 . `./secp-examples-java/target/schnorr-example`
+. `./secp-examples-java/target/ecdsa-example`
 
-=== Building with Nix
-
-NOTE:: We currently only support setting up a development shell with Nix. In the future we hope to support a full Nix build.
+=== Building with the Nix Devshell
 
 To start a development shell with all build prerequisites installed and run the Gradle build:
 
 . `nix develop`
-. `mvn package`
+. `mvn verify`
 
-The other commands described in the "Building with Maven" section work in the Nix devShell.
+The other commands described in the "Building with Maven" section also work in the Nix devShell.
+
+`secp256k1-jdk` is available in Nixpkgs, see: https://search.nixos.org/packages?channel=unstable&query=secp256k1-jdk#show=secp256k1-jdk[nixpkgs#secp256k1-jdk]
 
 === Extracting Headers with Nix
-
-This is currently unsupported.
 
 To extract the libsecp256k1 headers into Java classes via `jextract` using the `extract-header.sh` script:
 
 . `nix develop`
 . `./extract-headers.sh`
 
-The extracted headers will be writen to `./build/org/bitcoinj/secp/ffm/jextract`. You can compare the generated headers with the checked-in headers with:
+The extracted headers will be writen to `./target/org/bitcoinj/secp/ffm/jextract`. You can compare the generated headers with the checked-in headers with:
 
 . `diff -r secp-ffm/src/main/java/org/bitcoinj/secp/ffm/jextract build/org/bitcoinj/secp/ffm/jextract`
 
