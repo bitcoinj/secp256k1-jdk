@@ -54,6 +54,7 @@ import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.SecpResult.OK;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
+import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_ellswift_xdh_hash_function_bip324;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_xonly_pubkey_serialize;
 
@@ -544,6 +545,68 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL, NULL);
             privKeySeg.fill((byte) 0x00);
             return SecpResult.checked(success, () -> new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)));
+        }
+    }
+
+    public byte[] ellswiftEncode(SecpPubKey pubKey, byte[] auxiliaryRandom) {
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment pubKeySeg = ta.allocateFrom(JAVA_BYTE, pubKey.getEncoded());
+            MemorySegment auxiliaryRandomSeg = ta.allocateFrom(JAVA_BYTE, auxiliaryRandom);
+
+            MemorySegment ellSwiftPubKey = ta.allocate(64);
+
+            int ret = secp256k1_h.secp256k1_ellswift_encode(ctx, ellSwiftPubKey, pubKeySeg, auxiliaryRandomSeg);
+
+            assert(ret == 1);
+
+            return ellSwiftPubKey.toArray(JAVA_BYTE);
+        }
+    }
+
+    public SecpPubKey ellswiftDecode(byte[] encodedPubKey) {
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment encodedPubKeySeg = ta.allocateFrom(JAVA_BYTE, encodedPubKey);
+
+            MemorySegment decodedPubKeySeg = secp256k1_pubkey.allocate(ta);
+
+            int ret = secp256k1_h.secp256k1_ellswift_decode(ctx, decodedPubKeySeg, encodedPubKeySeg);
+
+            assert(ret == 1);
+
+            return toSecpPubKey(ta, decodedPubKeySeg);
+        }
+    }
+
+    public byte[] ellswiftCreate(SecpPrivKey privKey, byte[] auxiliaryRandom) {
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+            MemorySegment auxiliaryRandomSeg = ta.allocateFrom(JAVA_BYTE, auxiliaryRandom);
+
+            MemorySegment ellswiftPubKey = ta.allocate(64);
+
+            int ret = secp256k1_h.secp256k1_ellswift_create(ctx, ellswiftPubKey, privKeySeg, auxiliaryRandomSeg);
+
+            privKeySeg.fill((byte) 0x00);
+
+            assert(ret == 1);
+
+            return ellswiftPubKey.toArray(JAVA_BYTE);
+        }
+    }
+
+    public byte[] ellswiftXDH(byte[] encodedPubKey1, byte[] encodedPubKey2, SecpPrivKey privKey, int party) {
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment encodedPubKeySeg1 = ta.allocateFrom(JAVA_BYTE, encodedPubKey1);
+            MemorySegment encodedPubKeySeg2 = ta.allocateFrom(JAVA_BYTE, encodedPubKey2);
+            MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+
+            MemorySegment sharedSecret = ta.allocate(32);
+
+            int ret = secp256k1_h.secp256k1_ellswift_xdh(ctx, sharedSecret, encodedPubKeySeg1, encodedPubKeySeg2, privKeySeg, party, secp256k1_ellswift_xdh_hash_function_bip324(), MemorySegment.NULL);
+
+            assert(ret == 1);
+
+            return sharedSecret.toArray(JAVA_BYTE);
         }
     }
 
