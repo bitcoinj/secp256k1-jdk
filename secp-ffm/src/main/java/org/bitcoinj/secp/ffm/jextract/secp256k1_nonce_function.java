@@ -62,13 +62,13 @@ public final class secp256k1_nonce_function {
         return $DESC;
     }
 
-    private static final MethodHandle UP$MH = secp256k1_h.upcallHandle(secp256k1_nonce_function.Function.class, "apply", $DESC);
+    private static final MethodHandle UP$MH = secp256k1_h.upcallHandle(Function.class, "apply", $DESC);
 
     /**
      * Allocates a new upcall stub, whose implementation is defined by {@code fi}.
      * The lifetime of the returned segment is managed by {@code arena}
      */
-    public static MemorySegment allocate(secp256k1_nonce_function.Function fi, Arena arena) {
+    public static MemorySegment allocate(Function fi, Arena arena) {
         return Linker.nativeLinker().upcallStub(UP$MH.bindTo(fi), $DESC, arena);
     }
 
