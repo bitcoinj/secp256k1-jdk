@@ -12,4 +12,5 @@ jextract --target-package org.bitcoinj.secp.ffm.jextract \
         -lsecp256k1 \
         --header-class-name secp256k1_h \
         $SECP256K1_INCLUDE_DIR/secp256k1_schnorrsig.h \
-        $SECP256K1_INCLUDE_DIR/secp256k1_ecdh.h
+        $SECP256K1_INCLUDE_DIR/secp256k1_ecdh.h \
+        $SECP256K1_INCLUDE_DIR/secp256k1_ellswift.h
