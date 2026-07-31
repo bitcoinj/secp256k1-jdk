@@ -33,16 +33,16 @@ public class secp256k1_h$shared {
         // Should not be called directly
     }
 
-    public static final ValueLayout.OfBoolean C_BOOL = (ValueLayout.OfBoolean) Linker.nativeLinker().canonicalLayouts().get("bool");
-    public static final ValueLayout.OfByte C_CHAR =(ValueLayout.OfByte)Linker.nativeLinker().canonicalLayouts().get("char");
-    public static final ValueLayout.OfShort C_SHORT = (ValueLayout.OfShort) Linker.nativeLinker().canonicalLayouts().get("short");
-    public static final ValueLayout.OfInt C_INT = (ValueLayout.OfInt) Linker.nativeLinker().canonicalLayouts().get("int");
-    public static final ValueLayout.OfLong C_LONG_LONG = (ValueLayout.OfLong) Linker.nativeLinker().canonicalLayouts().get("long long");
-    public static final ValueLayout.OfFloat C_FLOAT = (ValueLayout.OfFloat) Linker.nativeLinker().canonicalLayouts().get("float");
-    public static final ValueLayout.OfDouble C_DOUBLE = (ValueLayout.OfDouble) Linker.nativeLinker().canonicalLayouts().get("double");
+    public static final OfBoolean C_BOOL = (OfBoolean) Linker.nativeLinker().canonicalLayouts().get("bool");
+    public static final OfByte C_CHAR =(OfByte)Linker.nativeLinker().canonicalLayouts().get("char");
+    public static final OfShort C_SHORT = (OfShort) Linker.nativeLinker().canonicalLayouts().get("short");
+    public static final OfInt C_INT = (OfInt) Linker.nativeLinker().canonicalLayouts().get("int");
+    public static final OfLong C_LONG_LONG = (OfLong) Linker.nativeLinker().canonicalLayouts().get("long long");
+    public static final OfFloat C_FLOAT = (OfFloat) Linker.nativeLinker().canonicalLayouts().get("float");
+    public static final OfDouble C_DOUBLE = (OfDouble) Linker.nativeLinker().canonicalLayouts().get("double");
     public static final AddressLayout C_POINTER = ((AddressLayout) Linker.nativeLinker().canonicalLayouts().get("void*"))
-            .withTargetLayout(MemoryLayout.sequenceLayout(java.lang.Long.MAX_VALUE, C_CHAR));
-    public static final ValueLayout.OfLong C_LONG = (ValueLayout.OfLong) Linker.nativeLinker().canonicalLayouts().get("long");
+            .withTargetLayout(MemoryLayout.sequenceLayout(Long.MAX_VALUE, C_CHAR));
+    public static final OfLong C_LONG = (OfLong) Linker.nativeLinker().canonicalLayouts().get("long");
 
     static final boolean TRACE_DOWNCALLS = Boolean.getBoolean("jextract.trace.downcalls");
 
