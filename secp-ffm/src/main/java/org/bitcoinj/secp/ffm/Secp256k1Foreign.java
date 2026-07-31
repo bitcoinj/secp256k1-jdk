@@ -55,6 +55,7 @@ import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.SecpResult.OK;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
+import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_ellswift_xdh_hash_function_bip324;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_xonly_pubkey_serialize;
 
@@ -555,6 +556,75 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL, NULL);
             privKeySeg.fill((byte) 0x00);
             return SecpResult.checked(success, () -> new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)));
+        }
+    }
+
+    @Override
+    public byte[] ellswiftEncode(SecpPubKey pubKey) {
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment pubKeySeg = pubKeyParse(ta, pubKey).get();
+            MemorySegment auxiliaryRandom = fill_random(ta, 32);
+
+            MemorySegment ellSwiftPubKey = ta.allocate(64);
+
+            int ret = secp256k1_h.secp256k1_ellswift_encode(ctx, ellSwiftPubKey, pubKeySeg, auxiliaryRandom);
+            assert(ret == 1);
+
+            return ellSwiftPubKey.toArray(JAVA_BYTE);
+        }
+    }
+
+    @Override
+    public SecpPubKey ellswiftDecode(byte[] encodedPubKey) {
+        checkArg(encodedPubKey.length == 64, "The byte array length must be 64 bytes");
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment encodedPubKeySeg = ta.allocateFrom(JAVA_BYTE, encodedPubKey);
+
+            MemorySegment decodedPubKeySeg = secp256k1_pubkey.allocate(ta);
+
+            int ret = secp256k1_h.secp256k1_ellswift_decode(ctx, decodedPubKeySeg, encodedPubKeySeg);
+            assert(ret == 1);
+
+            return toSecpPubKey(ta, decodedPubKeySeg);
+        }
+    }
+
+    @Override
+    public byte[] ellswiftCreate(SecpPrivKey privKey) {
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+            MemorySegment auxiliaryRandomSeg = fill_random(ta, 32);
+
+            MemorySegment ellswiftPubKey = ta.allocate(64);
+
+            int ret = secp256k1_h.secp256k1_ellswift_create(ctx, ellswiftPubKey, privKeySeg, auxiliaryRandomSeg);
+
+            privKeySeg.fill((byte) 0x00);
+            assert(ret == 1);
+
+            return ellswiftPubKey.toArray(JAVA_BYTE);
+        }
+    }
+
+    @Override
+    public byte[] ellswiftXDH(byte[] encodedPubKeyA, byte[] encodedPubKeyB, SecpPrivKey privKey, boolean isPartyA) {
+        checkArg(encodedPubKeyA.length == 64 && encodedPubKeyB.length == 64, "The byte array length must be 64 bytes");
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment encodedPubKeySegA = ta.allocateFrom(JAVA_BYTE, encodedPubKeyA);
+            MemorySegment encodedPubKeySegB = ta.allocateFrom(JAVA_BYTE, encodedPubKeyB);
+            MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+
+            MemorySegment sharedSecret = ta.allocate(32);
+
+            int ret = secp256k1_h.secp256k1_ellswift_xdh(ctx, sharedSecret, encodedPubKeySegA, encodedPubKeySegB, privKeySeg, isPartyA ? 0 : 1 , secp256k1_ellswift_xdh_hash_function_bip324(), MemorySegment.NULL);
+
+            privKeySeg.fill((byte) 0x00);
+            assert(ret == 1);
+
+            byte[] shareSecretArray = sharedSecret.toArray(JAVA_BYTE);
+            sharedSecret.fill((byte) 0x00);
+
+            return shareSecretArray;
         }
     }
 
