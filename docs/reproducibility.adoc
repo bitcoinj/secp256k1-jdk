@@ -1,0 +1,29 @@
+= secp256k1-jdk: Notes on Reproducibility and Bootstrappability.
+
+== Current Reproducibility status
+
+As of August 2, 2026 (`v0.3.1`), the Maven build should produce identical hashes for binary, source, and Javadoc JARs using multiple toolchains:
+
+. Nix
+.. Nix Devshell: `[ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ]`
+.. Nixpkgs package: https://search.nixos.org/packages?channel=unstable&query=secp256k1-jdk#show=secp256k1-jdk[secp256k1-jdk]
+. https://github.com/bitcoinj/secp256k1-jdk/actions[GitHub Actions] runners: `[ubuntu-24.04, ubuntu-24.04-arm, macOS-15]`
+. Debian Trixie APT packages (see the `trixie-maven` build on our https://gitlab.com/bitcoinj/secp256k1-jdk/-/pipelines[GitLab CI])
+
+The same hashes are produced whether building on macOS, x86_64 Linux, or aarch64 Linux.
+
+An experimental Guix Shell build (see `guix-shell.sh`) produced matching hashes for most JARs. There are differences in the Javadoc JARs and in the `secp-graalvm` binary JAR. This is likely caused by Guix having an older version of Maven (currently 3.9.0.)
+
+It would be nice to have some documentation and scripts to make verification easier (or automatic.)
+
+== Bootstrappability
+
+Currently, none of the build toolchains are bootstrapped from source.
+
+On Nixpkgs, Maven is still of binary provenance, though there is work-in-progress on a from-source Maven build. OpenJDK from Nixpkgs is source provenance, but it is built using the Temurin binary distribution. We are also pulling binary JARs (for both dependencies and Maven plugins) from Maven Central. We are working towards having source provenance Nixpkgs builds of our two runtime JAR dependencies: JSpecify and Bouncy Castle.
+
+The Guix Shell toolchain is partly bootstrapped (exception is the Maven plugin JARs which are downloaded from Maven Central.) Our direct Java dependencies (e.g. JSpecify, Bouncy Castle) are also pulled from Maven Central.
+
+== Creating a composable, functional pipeline of Maven builds
+
+TBD.
