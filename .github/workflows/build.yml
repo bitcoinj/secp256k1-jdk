@@ -79,6 +79,8 @@ jobs:
           echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
       - name: Build (JIT) with Maven
         run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
+      - name: Run Native Integration Tests
+        run: mvn test -Pnative-test -pl secp-integration-test -am
       - name: Build Native Images with Maven
         run: |
           mvn verify -Pnative-schnorr -pl secp-examples-java -am
@@ -134,6 +136,9 @@ jobs:
       - name: Build in Nix development shell
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
         run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
+      - name: Run Native Integration Tests
+        shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
+        run: mvn test -Pnative-test -pl secp-integration-test -am
       - name: Build Native Examples (Schnorr and Ecdsa)
         shell: 'nix develop -c bash -e {0}'    # Use the Pre-built devShell
         run: |
