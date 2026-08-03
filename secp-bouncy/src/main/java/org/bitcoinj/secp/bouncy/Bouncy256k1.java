@@ -310,8 +310,13 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey) {
         checkArg(msg_hash.length == 32, "Message must be 32-byte (hash)");
-        byte[] auxiliaryRandom = fillRandom(32);
-        return schnorrSigSign32(msg_hash, privKey, auxiliaryRandom);
+        byte[] auxiliaryRandom = new byte[32];
+        try {
+            fillRandom(auxiliaryRandom);
+            return schnorrSigSign32(msg_hash, privKey, auxiliaryRandom);
+        } finally {
+            Arrays.fill(auxiliaryRandom, (byte) 0);
+        }
     }
 
     /**
@@ -409,13 +414,9 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     /**
-     *
-     * @param size size in bytes of random data
-     * @return A newly-allocated memory segment full of random data
+     * @param data an array to fill with random data
      */
-    private byte[] fillRandom(int size) {
-        byte[] data = new byte[size];
+    private void fillRandom(byte[] data) {
         secureRandom.nextBytes(data);
-        return data;
     }
 }
