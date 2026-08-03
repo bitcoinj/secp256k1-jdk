@@ -75,7 +75,7 @@ public class Bouncy256k1 implements Secp256k1 {
      */
     static final BigInteger HALF_CURVE_ORDER;
 
-    private static final SecureRandom secureRandom;
+    private final SecureRandom secureRandom;
 
     private static final byte[] TAG_AUX = "BIP0340/aux".getBytes(StandardCharsets.UTF_8);
     private static final byte[] TAG_NONCE = "BIP0340/nonce".getBytes(StandardCharsets.UTF_8);
@@ -89,7 +89,23 @@ public class Bouncy256k1 implements Secp256k1 {
                 BC_CURVE_PARAMS.getN(),
                 BC_CURVE_PARAMS.getH());
         HALF_CURVE_ORDER = BC_CURVE_PARAMS.getN().shiftRight(1);
+    }
+
+    /**
+     * Default constructor.
+     */
+    public Bouncy256k1() {
         // TODO: Verify using cryptographic random number generator properly
+        // We initialize a new `SecureRandom` per instance for the following reasons:
+        // 1. Per-instance allocation avoids the static being contained in GraalVM
+        //    native-image instances (GraalVM may special-case this) or being cloned when the
+        //    containing process is cloned (may occur with containers, etc.)
+        // 2. On certain JDK/OS configurations it's possible `SecureRandom.getInstanceStrong()`
+        //    can cause a delay. It's better to not incur this during static initialization.
+        // 3. Some implementations of `SecureRandom` may have locking contention
+        //    that could show up in a multi-threaded environment.
+        // 4. Per-instance allocation allows for override for testing or custom
+        //    configurations, though this will require adding new constructors.
         try {
             secureRandom = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
@@ -98,12 +114,6 @@ public class Bouncy256k1 implements Secp256k1 {
             // at least one strong SecureRandom implementation."
             throw new RuntimeException("No strong SecureRandom available", e);
         }
-    }
-
-    /**
-     * Default constructor.
-     */
-    public Bouncy256k1() {
     }
 
     @Override
@@ -403,7 +413,7 @@ public class Bouncy256k1 implements Secp256k1 {
      * @param size size in bytes of random data
      * @return A newly-allocated memory segment full of random data
      */
-    private static byte[] fillRandom(int size) {
+    private byte[] fillRandom(int size) {
         byte[] data = new byte[size];
         secureRandom.nextBytes(data);
         return data;
