@@ -47,6 +47,7 @@ import java.lang.foreign.SegmentAllocator;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
@@ -556,8 +557,12 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     /// @return A newly-allocated memory segment full of random data
     private MemorySegment fill_random(SegmentAllocator allocator, int size) {
         byte[] data = new byte[size];
-        secureRandom.nextBytes(data);
-        return allocator.allocateFrom(JAVA_BYTE, data);
+        try {
+            secureRandom.nextBytes(data);
+            return allocator.allocateFrom(JAVA_BYTE, data);
+        } finally {
+            Arrays.fill(data, (byte) 0);
+        }
     }
 
     private static void checkArg(boolean condition, String string) {
