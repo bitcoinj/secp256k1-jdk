@@ -77,18 +77,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private final MemorySegment ctx;
     static final MemorySegment secp256k1StaticContext = secp256k1_h.secp256k1_context_static();
     private static final MemorySegment NULL = MemorySegment.ofAddress(0L);
-    private static final SecureRandom secureRandom;
-    static {
-        // TODO: Verify using cryptographic random number generator properly
-        try {
-            secureRandom = SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
-            // This should never happen. The Javadoc for getInstanceStrong() says
-            // "Every implementation of the Java platform is required to support
-            // at least one strong SecureRandom implementation."
-            throw new RuntimeException("No strong SecureRandom available", e);
-        }
-    }
+    private final SecureRandom secureRandom;
 
     /// TBD: Static verify method that doesn't require a class instance.
     public static boolean ecdsaVerify(MemorySegment sig, MemorySegment msg_hash, MemorySegment pubkey) {
@@ -106,6 +95,26 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     public Secp256k1Foreign(int flags, boolean randomize) {
+        // TODO: Verify using cryptographic random number generator properly
+        // We initialize a new `SecureRandom` per instance for the following reasons:
+        // 1. Per-instance allocation avoids the static being contained in GraalVM
+        //    native-image instances (GraalVM may special-case this) or being cloned when the
+        //    containing process is cloned (may occur with containers, etc.)
+        // 2. On certain JDK/OS configurations it's possible `SecureRandom.getInstanceStrong()`
+        //    can cause a delay. It's better to incur this
+        // 3. Some implementations of `SecureRandom` may have locking contention
+        //    that could show up in a multi-threaded environment
+        // 4. Per-instance allocation allows for override for testing or custom
+        //    configurations, though this will require adding new constructors.
+        try {
+            secureRandom = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            // This should never happen. The Javadoc for getInstanceStrong() says
+            // "Every implementation of the Java platform is required to support
+            // at least one strong SecureRandom implementation."
+            throw new RuntimeException("No strong SecureRandom available", e);
+        }
+
         /* Before we can call actual API functions, we need to create a "context". */
         ctx = secp256k1_h.secp256k1_context_create(flags);
 
@@ -545,7 +554,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     /// @param allocator allocator to create segment with
     /// @param size size in bytes of random data
     /// @return A newly-allocated memory segment full of random data
-    private static MemorySegment fill_random(SegmentAllocator allocator, int size) {
+    private MemorySegment fill_random(SegmentAllocator allocator, int size) {
         byte[] data = new byte[size];
         secureRandom.nextBytes(data);
         return allocator.allocateFrom(JAVA_BYTE, data);
