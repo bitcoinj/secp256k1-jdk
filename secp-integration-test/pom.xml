@@ -57,6 +57,12 @@
 
         <!-- Test dependencies -->
         <dependency>
+            <groupId>org.bitcoinj.secp</groupId>
+            <artifactId>secp-graalvm</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
@@ -120,4 +126,38 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>native-test</id>
+            <build><plugins>
+                <plugin>
+                    <groupId>org.graalvm.buildtools</groupId>
+                    <artifactId>native-maven-plugin</artifactId>
+                    <version>${maven-native-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <executions>
+                        <execution>
+                            <id>test-native</id>
+                            <goals><goal>test</goal></goals>
+                            <phase>test</phase>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <buildArgs>
+                            <buildArg>--enable-native-access=ALL-UNNAMED</buildArg>
+                            <buildArg>--features=org.bitcoinj.secp.graalvmffm.ForeignRegistrationFeature</buildArg>
+                            <buildArg>-H:+ForeignAPISupport</buildArg>
+                            <buildArg>-H:+SharedArenaSupport</buildArg>
+                            <buildArg>-H:-CheckToolchain</buildArg>
+                            <buildArg>--initialize-at-build-time=org.junit.platform.commons.logging</buildArg>
+                            <buildArg>--initialize-at-build-time=org.junit.platform.engine.UniqueId</buildArg>
+                        </buildArgs>
+                        <runtimeArgs>
+                            <runtimeArg>-Djava.library.path=${env.LIBSECP_DIR}</runtimeArg>
+                        </runtimeArgs>
+                    </configuration>
+                </plugin>
+            </plugins></build>
+        </profile>
+    </profiles>
 </project>
