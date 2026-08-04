@@ -52,7 +52,6 @@ import org.bouncycastle.util.Arrays;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -76,10 +75,6 @@ public class Bouncy256k1 implements Secp256k1 {
     static final BigInteger HALF_CURVE_ORDER;
 
     private final SecureRandom secureRandom;
-
-    private static final byte[] TAG_AUX = "BIP0340/aux".getBytes(StandardCharsets.UTF_8);
-    private static final byte[] TAG_NONCE = "BIP0340/nonce".getBytes(StandardCharsets.UTF_8);
-    private static final byte[] TAG_CHALLENGE = "BIP0340/challenge".getBytes(StandardCharsets.UTF_8);
 
     static {
         // Tell Bouncy Castle to precompute data that's needed during secp256k1 calculations.
