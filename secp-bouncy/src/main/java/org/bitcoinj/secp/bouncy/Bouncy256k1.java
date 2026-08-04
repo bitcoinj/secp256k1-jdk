@@ -231,8 +231,7 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     private static boolean hasLowR(BigInteger r) {
-        // TODO: check low-r directly on BigInteger
-        return SecpScalarImpl.integerTo32Bytes(r)[0] >= 0;
+        return !r.testBit(255);
     }
 
     // Convert and canonicalize signature
