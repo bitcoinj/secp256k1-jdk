@@ -550,7 +550,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     public byte[] ellswiftEncode(SecpPubKey pubKey, byte[] auxiliaryRandom) {
         try (Arena ta = Arena.ofConfined()) {
-            MemorySegment pubKeySeg = ta.allocateFrom(JAVA_BYTE, pubKey.getEncoded());
+            MemorySegment pubKeySeg = pubKeyParse(ta, pubKey).get();
             MemorySegment auxiliaryRandomSeg = ta.allocateFrom(JAVA_BYTE, auxiliaryRandom);
 
             MemorySegment ellSwiftPubKey = ta.allocate(64);
