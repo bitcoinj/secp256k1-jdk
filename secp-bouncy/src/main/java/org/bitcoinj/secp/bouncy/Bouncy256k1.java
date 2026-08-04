@@ -296,11 +296,6 @@ public class Bouncy256k1 implements Secp256k1 {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * This is preliminary implementation which is not yet optimized or constant time.
-     */
     @Override
     public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey) {
         checkArg(msg_hash.length == 32, "Message must be 32-byte (hash)");
@@ -313,11 +308,6 @@ public class Bouncy256k1 implements Secp256k1 {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * This is preliminary implementation which is not yet optimized or constant time.
-     */
     @Override
     public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
         ECPrivateKeyParameters priv = new ECPrivateKeyParameters(privKey.getS(), BC_ECDOMAIN_PARAMS);
@@ -330,11 +320,6 @@ public class Bouncy256k1 implements Secp256k1 {
         return new SchnorrSignatureImpl(signer.generateSignature());
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * This is a preliminary implementation which is not yet optimized.
-     */
     @Override
     public SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, byte[] msg_hash, SecpXOnlyPubKey pubKey) {
         ECPublicKeyParameters pub = new ECPublicKeyParameters(BC_CURVE.decodePoint(pubKey.serializeCompressed()), BC_ECDOMAIN_PARAMS);
