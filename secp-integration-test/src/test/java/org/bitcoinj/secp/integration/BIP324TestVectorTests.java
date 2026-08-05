@@ -17,7 +17,6 @@ package org.bitcoinj.secp.integration;
 
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
-import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpPubKey;
 
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
@@ -32,38 +31,43 @@ import java.util.List;
 
 /// Tests decoding the ElligatorSwift encoding of public keys
 /// from a [CSV](https://github.com/bitcoin/bips/blob/master/bip-0324/ellswift_decode_test_vectors.csv)
-/// of test vectors provided in [BIP-0327](https://github.com/bitcoin/bips/tree/master/bip-0324).
+/// of test vectors provided in [BIP-0324](https://github.com/bitcoin/bips/tree/master/bip-0324).
 /// Based on the provided [Python reference](https://github.com/bitcoin/bips/blob/master/bip-0324/reference.py).
 public class BIP324TestVectorTests implements SecpTestSupport {
 
-    private record DecodeTestVector(byte[] ellswift, SecpFieldElement x, String comment){ }
-    private record EncodeTestVector(SecpPubKey pubkey, byte[] aux_rand, byte[] ellswift){ }
+    private record TestVector(byte[] ellswift, byte[] x, String comment){ }
 
     private static final Secp256k1Foreign secp = new Secp256k1Foreign();
 
-    static final List<DecodeTestVector> DECODE_VECTORS = parseDecodeCSV();
-    static final List<EncodeTestVector> ENCODE_VECTORS = parseEncodeCSV();
+    static final List<TestVector> VECTORS = parseCSV();
 
     /// For each vector, verify that the `secp` instance decodes the Ellswift encoding
-    /// into a public key with an x-coorinate matching the one in the [DecodeTestVector] argument.
+    /// into a public key with an x-coorinate matching the one in the [TestVector] argument.
     /// @param vec TestVector to be tested.
     @ParameterizedTest
-    @FieldSource("DECODE_VECTORS")
-    void ellSwiftDecodeTest(DecodeTestVector vec) {
+    @FieldSource("VECTORS")
+    void ellSwiftDecodeTest(TestVector vec) {
         SecpPubKey pubKey = secp.ellswiftDecode(vec.ellswift);
 
-        Assertions.assertArrayEquals(vec.x.serialize(), pubKey.x().serialize());
+        Assertions.assertArrayEquals(vec.x, pubKey.x().serialize());
     }
 
+    /// For each vector, verify that the encoding of a public key with the x-coordinate in the [TestVector]
+    /// decodes to the same public key.
+    /// @param vec TestVector to be tested.
     @ParameterizedTest
-    @FieldSource("ENCODE_VECTORS")
-    void ellSwiftEncodeTest(EncodeTestVector vec) {
-        byte[] encoded = secp.ellswiftEncode(vec.pubkey,  vec.aux_rand);
+    @FieldSource("VECTORS")
+    void ellSwiftEncodeTest(TestVector vec) {
+        SecpPubKey pub = secp.ecPubKeyFromXOnly(secp.xOnlyPubKeyParse(vec.x).get());
 
-        Assertions.assertArrayEquals(vec.ellswift, encoded);
+        byte[] encoded = secp.ellswiftEncode(pub);
+        SecpPubKey decoded = secp.ellswiftDecode(encoded);
+
+        Assertions.assertArrayEquals(vec.x, decoded.x().serialize());
+        Assertions.assertArrayEquals(pub.getEncoded(), decoded.getEncoded());
     }
 
-    private static List<DecodeTestVector> parseDecodeCSV() {
+    private static List<TestVector> parseCSV() {
         try (var in = BIP324TestVectorTests.class.getResourceAsStream("/ellswift_decode_test_vectors.csv");
              var reader = new InputStreamReader(in)) {
             return new CSVReaderBuilder(reader)
@@ -71,40 +75,18 @@ public class BIP324TestVectorTests implements SecpTestSupport {
                     .build()
                     .readAll()
                     .stream()
-                    .map(BIP324TestVectorTests::parseDecodeVector)
+                    .map(BIP324TestVectorTests::parseVector)
                     .toList();
         } catch (IOException | CsvException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static List<EncodeTestVector> parseEncodeCSV() {
-        try (var in = BIP324TestVectorTests.class.getResourceAsStream("/ellswift_encode_test_vectors.csv");
-             var reader = new InputStreamReader(in)) {
-            return new CSVReaderBuilder(reader)
-                    .withSkipLines(1)
-                    .build()
-                    .readAll()
-                    .stream()
-                    .map(BIP324TestVectorTests::parseEncodeVector)
-                    .toList();
-        } catch (IOException | CsvException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static DecodeTestVector parseDecodeVector(String[] f) {
-        return new DecodeTestVector(
+    private static TestVector parseVector(String[] f) {
+        return new TestVector(
                 parseHex(f[0]),                         // ellswift
-                SecpFieldElement.of(parseHex(f[1])),    // private key
+                parseHex(f[1]),    // private key
                 f[2]                                    // comment
-        );
-    }
-    private static EncodeTestVector parseEncodeVector(String[] f) {
-        return new EncodeTestVector(
-                secp.ecPubKeyParse(parseHex(f[0])).get(),   // public key
-                parseHex(f[1]),                             // auxiliary random
-                parseHex(f[2])                              // ellswift encoding
         );
     }
 
