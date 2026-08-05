@@ -548,77 +548,65 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         }
     }
 
+    @Override
     public byte[] ellswiftEncode(SecpPubKey pubKey) {
         try (Arena ta = Arena.ofConfined()) {
-            MemorySegment auxiliary_rand = fill_random(ta, 32);
-
-            return ellswiftEncode(pubKey, auxiliary_rand);
-        }
-    }
-
-    public byte[] ellswiftEncode(SecpPubKey pubKey, byte[] auxiliaryRandom) {
-        try (Arena ta = Arena.ofConfined()) {
-            MemorySegment auxiliaryRandomSeg = ta.allocateFrom(JAVA_BYTE, auxiliaryRandom);
-
-            return ellswiftEncode(pubKey, auxiliaryRandomSeg);
-        }
-    }
-
-    private byte[] ellswiftEncode(SecpPubKey pubKey, MemorySegment auxiliaryRandom) {
-        try (Arena ta = Arena.ofConfined()) {
             MemorySegment pubKeySeg = pubKeyParse(ta, pubKey).get();
+            MemorySegment auxiliaryRandom = fill_random(ta, 32);
 
             MemorySegment ellSwiftPubKey = ta.allocate(64);
 
             int ret = secp256k1_h.secp256k1_ellswift_encode(ctx, ellSwiftPubKey, pubKeySeg, auxiliaryRandom);
-
             assert(ret == 1);
 
             return ellSwiftPubKey.toArray(JAVA_BYTE);
         }
     }
 
+    @Override
     public SecpPubKey ellswiftDecode(byte[] encodedPubKey) {
+        checkArg(encodedPubKey.length == 64, "The byte array length must be 64 bytes");
         try (Arena ta = Arena.ofConfined()) {
             MemorySegment encodedPubKeySeg = ta.allocateFrom(JAVA_BYTE, encodedPubKey);
 
             MemorySegment decodedPubKeySeg = secp256k1_pubkey.allocate(ta);
 
             int ret = secp256k1_h.secp256k1_ellswift_decode(ctx, decodedPubKeySeg, encodedPubKeySeg);
-
             assert(ret == 1);
 
             return toSecpPubKey(ta, decodedPubKeySeg);
         }
     }
 
-    public byte[] ellswiftCreate(SecpPrivKey privKey, byte[] auxiliaryRandom) {
+    @Override
+    public byte[] ellswiftCreate(SecpPrivKey privKey) {
         try (Arena ta = Arena.ofConfined()) {
             MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
-            MemorySegment auxiliaryRandomSeg = ta.allocateFrom(JAVA_BYTE, auxiliaryRandom);
+            MemorySegment auxiliaryRandomSeg = fill_random(ta, 32);
 
             MemorySegment ellswiftPubKey = ta.allocate(64);
 
             int ret = secp256k1_h.secp256k1_ellswift_create(ctx, ellswiftPubKey, privKeySeg, auxiliaryRandomSeg);
 
             privKeySeg.fill((byte) 0x00);
-
             assert(ret == 1);
 
             return ellswiftPubKey.toArray(JAVA_BYTE);
         }
     }
 
-    public byte[] ellswiftXDH(byte[] encodedPubKey1, byte[] encodedPubKey2, SecpPrivKey privKey, int party) {
+    @Override
+    public byte[] ellswiftXDH(byte[] encodedPubKey0, byte[] encodedPubKey1, SecpPrivKey privKey, int party) {
+        checkArg(encodedPubKey0.length == 64 && encodedPubKey1.length == 64, "The byte array length must be 64 bytes");
+        checkArg(party == 0 || party == 1, "The party must be either 0 or 1");
         try (Arena ta = Arena.ofConfined()) {
-            MemorySegment encodedPubKeySeg1 = ta.allocateFrom(JAVA_BYTE, encodedPubKey1);
-            MemorySegment encodedPubKeySeg2 = ta.allocateFrom(JAVA_BYTE, encodedPubKey2);
+            MemorySegment encodedPubKeySeg1 = ta.allocateFrom(JAVA_BYTE, encodedPubKey0);
+            MemorySegment encodedPubKeySeg2 = ta.allocateFrom(JAVA_BYTE, encodedPubKey1);
             MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
 
             MemorySegment sharedSecret = ta.allocate(32);
 
             int ret = secp256k1_h.secp256k1_ellswift_xdh(ctx, sharedSecret, encodedPubKeySeg1, encodedPubKeySeg2, privKeySeg, party, secp256k1_ellswift_xdh_hash_function_bip324(), MemorySegment.NULL);
-
             assert(ret == 1);
 
             return sharedSecret.toArray(JAVA_BYTE);

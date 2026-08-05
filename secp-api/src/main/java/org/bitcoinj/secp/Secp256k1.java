@@ -336,8 +336,39 @@ public interface Secp256k1 extends Closeable {
     SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey privKey);
 
     /**
-     * Override close and declare that no checked exceptions are thrown
+     * Create the ElligatorSwift encoding of a public key
+     * @param pubKey pubkey to be encoded
+     * @return encoding of pubkey
      */
+    byte[] ellswiftEncode(SecpPubKey pubKey);
+
+    /**
+     * Decode an ElligatoSwift encoding into a SecpPubKey
+     * @param encodedPubKey length 64 byte array to decode
+     * @return decoded pubkey
+     */
+    SecpPubKey ellswiftDecode(byte[] encodedPubKey);
+
+    /**
+     * Create the ElligatorSwift encoding of the public key associated with a given private key
+     * @param privKey privkey of the pubkey to be encoded
+     * @return encoding of privKey's pubkey
+     */
+    byte[] ellswiftCreate(SecpPrivKey privKey);
+
+    /**
+     * Generate the shared secret of two ElligatorSwift encodings and a corresponding private key
+     * @param encodedPubKey0 encoded public key of party 0
+     * @param encodedPubKey1 encoded public key of party 1
+     * @param privKey private key corresponding with one party
+     * @param party an int indicating which party privKey corresponds to
+     * @return the shared secret
+     */
+    byte[] ellswiftXDH(byte[] encodedPubKey0, byte[] encodedPubKey1, SecpPrivKey privKey, int party);
+
+        /**
+         * Override close and declare that no checked exceptions are thrown
+         */
     void close();
 
     /**
