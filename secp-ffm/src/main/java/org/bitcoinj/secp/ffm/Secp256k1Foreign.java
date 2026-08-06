@@ -607,9 +607,14 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             MemorySegment sharedSecret = ta.allocate(32);
 
             int ret = secp256k1_h.secp256k1_ellswift_xdh(ctx, sharedSecret, encodedPubKeySeg1, encodedPubKeySeg2, privKeySeg, party, secp256k1_ellswift_xdh_hash_function_bip324(), MemorySegment.NULL);
+
+            privKeySeg.fill((byte) 0x00);
             assert(ret == 1);
 
-            return sharedSecret.toArray(JAVA_BYTE);
+            byte[] shareSecretArray = sharedSecret.toArray(JAVA_BYTE);
+            sharedSecret.fill((byte) 0x00);
+
+            return shareSecretArray;
         }
     }
 
