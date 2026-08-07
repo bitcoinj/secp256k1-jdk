@@ -596,17 +596,16 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public byte[] ellswiftXDH(byte[] encodedPubKey0, byte[] encodedPubKey1, SecpPrivKey privKey, int party) {
-        checkArg(encodedPubKey0.length == 64 && encodedPubKey1.length == 64, "The byte array length must be 64 bytes");
-        checkArg(party == 0 || party == 1, "The party must be either 0 or 1");
+    public byte[] ellswiftXDH(byte[] encodedPubKeyA, byte[] encodedPubKeyB, SecpPrivKey privKey, boolean isPartyA) {
+        checkArg(encodedPubKeyA.length == 64 && encodedPubKeyB.length == 64, "The byte array length must be 64 bytes");
         try (Arena ta = Arena.ofConfined()) {
-            MemorySegment encodedPubKeySeg1 = ta.allocateFrom(JAVA_BYTE, encodedPubKey0);
-            MemorySegment encodedPubKeySeg2 = ta.allocateFrom(JAVA_BYTE, encodedPubKey1);
+            MemorySegment encodedPubKeySegA = ta.allocateFrom(JAVA_BYTE, encodedPubKeyA);
+            MemorySegment encodedPubKeySegB = ta.allocateFrom(JAVA_BYTE, encodedPubKeyB);
             MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
 
             MemorySegment sharedSecret = ta.allocate(32);
 
-            int ret = secp256k1_h.secp256k1_ellswift_xdh(ctx, sharedSecret, encodedPubKeySeg1, encodedPubKeySeg2, privKeySeg, party, secp256k1_ellswift_xdh_hash_function_bip324(), MemorySegment.NULL);
+            int ret = secp256k1_h.secp256k1_ellswift_xdh(ctx, sharedSecret, encodedPubKeySegA, encodedPubKeySegB, privKeySeg, isPartyA ? 0 : 1 , secp256k1_ellswift_xdh_hash_function_bip324(), MemorySegment.NULL);
 
             privKeySeg.fill((byte) 0x00);
             assert(ret == 1);

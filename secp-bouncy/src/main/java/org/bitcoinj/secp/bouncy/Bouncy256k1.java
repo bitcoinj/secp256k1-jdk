@@ -392,7 +392,7 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public byte[] ellswiftXDH(byte[] encodedPubKey0, byte[] encodedPubKey1, SecpPrivKey privKey, int party) {
+    public byte[] ellswiftXDH(byte[] encodedPubKeyA, byte[] encodedPubKeyB, SecpPrivKey privKey, boolean isPartyA) {
         throw new UnsupportedOperationException();
     }
 
