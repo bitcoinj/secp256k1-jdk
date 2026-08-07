@@ -366,9 +366,9 @@ public interface Secp256k1 extends Closeable {
      */
     byte[] ellswiftXDH(byte[] encodedPubKeyA, byte[] encodedPubKeyB, SecpPrivKey privKey, boolean isPartyA);
 
-        /**
-         * Override close and declare that no checked exceptions are thrown
-         */
+    /**
+     * Override close and declare that no checked exceptions are thrown
+     */
     void close();
 
     /**
