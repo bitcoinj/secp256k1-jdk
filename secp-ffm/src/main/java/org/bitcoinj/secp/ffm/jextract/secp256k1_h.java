@@ -3161,6 +3161,351 @@ public class secp256k1_h extends secp256k1_h$shared {
            throw new AssertionError("should not reach here", ex$);
         }
     }
+
+    private static class secp256k1_ellswift_xdh_hash_function_prefix$constants {
+        public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
+        public static final MemorySegment SEGMENT = SYMBOL_LOOKUP.findOrThrow("secp256k1_ellswift_xdh_hash_function_prefix").reinterpret(LAYOUT.byteSize());
+    }
+
+    /**
+     * Layout for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ellswift_xdh_hash_function secp256k1_ellswift_xdh_hash_function_prefix
+     * }
+     */
+    public static AddressLayout secp256k1_ellswift_xdh_hash_function_prefix$layout() {
+        return secp256k1_ellswift_xdh_hash_function_prefix$constants.LAYOUT;
+    }
+
+    /**
+     * Segment for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ellswift_xdh_hash_function secp256k1_ellswift_xdh_hash_function_prefix
+     * }
+     */
+    public static MemorySegment secp256k1_ellswift_xdh_hash_function_prefix$segment() {
+        return secp256k1_ellswift_xdh_hash_function_prefix$constants.SEGMENT;
+    }
+
+    /**
+     * Getter for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ellswift_xdh_hash_function secp256k1_ellswift_xdh_hash_function_prefix
+     * }
+     */
+    public static MemorySegment secp256k1_ellswift_xdh_hash_function_prefix() {
+        return secp256k1_ellswift_xdh_hash_function_prefix$constants.SEGMENT.get(secp256k1_ellswift_xdh_hash_function_prefix$constants.LAYOUT, 0L);
+    }
+
+    /**
+     * Setter for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ellswift_xdh_hash_function secp256k1_ellswift_xdh_hash_function_prefix
+     * }
+     */
+    public static void secp256k1_ellswift_xdh_hash_function_prefix(MemorySegment varValue) {
+        secp256k1_ellswift_xdh_hash_function_prefix$constants.SEGMENT.set(secp256k1_ellswift_xdh_hash_function_prefix$constants.LAYOUT, 0L, varValue);
+    }
+
+    private static class secp256k1_ellswift_xdh_hash_function_bip324$constants {
+        public static final AddressLayout LAYOUT = secp256k1_h.C_POINTER;
+        public static final MemorySegment SEGMENT = SYMBOL_LOOKUP.findOrThrow("secp256k1_ellswift_xdh_hash_function_bip324").reinterpret(LAYOUT.byteSize());
+    }
+
+    /**
+     * Layout for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ellswift_xdh_hash_function secp256k1_ellswift_xdh_hash_function_bip324
+     * }
+     */
+    public static AddressLayout secp256k1_ellswift_xdh_hash_function_bip324$layout() {
+        return secp256k1_ellswift_xdh_hash_function_bip324$constants.LAYOUT;
+    }
+
+    /**
+     * Segment for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ellswift_xdh_hash_function secp256k1_ellswift_xdh_hash_function_bip324
+     * }
+     */
+    public static MemorySegment secp256k1_ellswift_xdh_hash_function_bip324$segment() {
+        return secp256k1_ellswift_xdh_hash_function_bip324$constants.SEGMENT;
+    }
+
+    /**
+     * Getter for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ellswift_xdh_hash_function secp256k1_ellswift_xdh_hash_function_bip324
+     * }
+     */
+    public static MemorySegment secp256k1_ellswift_xdh_hash_function_bip324() {
+        return secp256k1_ellswift_xdh_hash_function_bip324$constants.SEGMENT.get(secp256k1_ellswift_xdh_hash_function_bip324$constants.LAYOUT, 0L);
+    }
+
+    /**
+     * Setter for variable:
+     * {@snippet lang=c :
+     * extern const secp256k1_ellswift_xdh_hash_function secp256k1_ellswift_xdh_hash_function_bip324
+     * }
+     */
+    public static void secp256k1_ellswift_xdh_hash_function_bip324(MemorySegment varValue) {
+        secp256k1_ellswift_xdh_hash_function_bip324$constants.SEGMENT.set(secp256k1_ellswift_xdh_hash_function_bip324$constants.LAYOUT, 0L, varValue);
+    }
+
+    private static class secp256k1_ellswift_encode {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ellswift_encode");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_encode(const secp256k1_context *ctx, unsigned char *ell64, const secp256k1_pubkey *pubkey, const unsigned char *rnd32)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_ellswift_encode$descriptor() {
+        return secp256k1_ellswift_encode.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_encode(const secp256k1_context *ctx, unsigned char *ell64, const secp256k1_pubkey *pubkey, const unsigned char *rnd32)
+     * }
+     */
+    public static MethodHandle secp256k1_ellswift_encode$handle() {
+        return secp256k1_ellswift_encode.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_encode(const secp256k1_context *ctx, unsigned char *ell64, const secp256k1_pubkey *pubkey, const unsigned char *rnd32)
+     * }
+     */
+    public static MemorySegment secp256k1_ellswift_encode$address() {
+        return secp256k1_ellswift_encode.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_encode(const secp256k1_context *ctx, unsigned char *ell64, const secp256k1_pubkey *pubkey, const unsigned char *rnd32)
+     * }
+     */
+    public static int secp256k1_ellswift_encode(MemorySegment ctx, MemorySegment ell64, MemorySegment pubkey, MemorySegment rnd32) {
+        var mh$ = secp256k1_ellswift_encode.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_ellswift_encode", ctx, ell64, pubkey, rnd32);
+            }
+            return (int)mh$.invokeExact(ctx, ell64, pubkey, rnd32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_ellswift_decode {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ellswift_decode");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_decode(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *ell64)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_ellswift_decode$descriptor() {
+        return secp256k1_ellswift_decode.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_decode(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *ell64)
+     * }
+     */
+    public static MethodHandle secp256k1_ellswift_decode$handle() {
+        return secp256k1_ellswift_decode.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_decode(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *ell64)
+     * }
+     */
+    public static MemorySegment secp256k1_ellswift_decode$address() {
+        return secp256k1_ellswift_decode.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_decode(const secp256k1_context *ctx, secp256k1_pubkey *pubkey, const unsigned char *ell64)
+     * }
+     */
+    public static int secp256k1_ellswift_decode(MemorySegment ctx, MemorySegment pubkey, MemorySegment ell64) {
+        var mh$ = secp256k1_ellswift_decode.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_ellswift_decode", ctx, pubkey, ell64);
+            }
+            return (int)mh$.invokeExact(ctx, pubkey, ell64);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_ellswift_create {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ellswift_create");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_create(const secp256k1_context *ctx, unsigned char *ell64, const unsigned char *seckey32, const unsigned char *auxrnd32)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_ellswift_create$descriptor() {
+        return secp256k1_ellswift_create.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_create(const secp256k1_context *ctx, unsigned char *ell64, const unsigned char *seckey32, const unsigned char *auxrnd32)
+     * }
+     */
+    public static MethodHandle secp256k1_ellswift_create$handle() {
+        return secp256k1_ellswift_create.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_create(const secp256k1_context *ctx, unsigned char *ell64, const unsigned char *seckey32, const unsigned char *auxrnd32)
+     * }
+     */
+    public static MemorySegment secp256k1_ellswift_create$address() {
+        return secp256k1_ellswift_create.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_create(const secp256k1_context *ctx, unsigned char *ell64, const unsigned char *seckey32, const unsigned char *auxrnd32)
+     * }
+     */
+    public static int secp256k1_ellswift_create(MemorySegment ctx, MemorySegment ell64, MemorySegment seckey32, MemorySegment auxrnd32) {
+        var mh$ = secp256k1_ellswift_create.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_ellswift_create", ctx, ell64, seckey32, auxrnd32);
+            }
+            return (int)mh$.invokeExact(ctx, ell64, seckey32, auxrnd32);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
+
+    private static class secp256k1_ellswift_xdh {
+        public static final FunctionDescriptor DESC = FunctionDescriptor.of(
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_INT,
+            secp256k1_h.C_POINTER,
+            secp256k1_h.C_POINTER
+        );
+
+        public static final MemorySegment ADDR = SYMBOL_LOOKUP.findOrThrow("secp256k1_ellswift_xdh");
+
+        public static final MethodHandle HANDLE = Linker.nativeLinker().downcallHandle(ADDR, DESC);
+    }
+
+    /**
+     * Function descriptor for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_xdh(const secp256k1_context *ctx, unsigned char *output, const unsigned char *ell_a64, const unsigned char *ell_b64, const unsigned char *seckey32, int party, secp256k1_ellswift_xdh_hash_function hashfp, void *data)
+     * }
+     */
+    public static FunctionDescriptor secp256k1_ellswift_xdh$descriptor() {
+        return secp256k1_ellswift_xdh.DESC;
+    }
+
+    /**
+     * Downcall method handle for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_xdh(const secp256k1_context *ctx, unsigned char *output, const unsigned char *ell_a64, const unsigned char *ell_b64, const unsigned char *seckey32, int party, secp256k1_ellswift_xdh_hash_function hashfp, void *data)
+     * }
+     */
+    public static MethodHandle secp256k1_ellswift_xdh$handle() {
+        return secp256k1_ellswift_xdh.HANDLE;
+    }
+
+    /**
+     * Address for:
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_xdh(const secp256k1_context *ctx, unsigned char *output, const unsigned char *ell_a64, const unsigned char *ell_b64, const unsigned char *seckey32, int party, secp256k1_ellswift_xdh_hash_function hashfp, void *data)
+     * }
+     */
+    public static MemorySegment secp256k1_ellswift_xdh$address() {
+        return secp256k1_ellswift_xdh.ADDR;
+    }
+
+    /**
+     * {@snippet lang=c :
+     * extern int secp256k1_ellswift_xdh(const secp256k1_context *ctx, unsigned char *output, const unsigned char *ell_a64, const unsigned char *ell_b64, const unsigned char *seckey32, int party, secp256k1_ellswift_xdh_hash_function hashfp, void *data)
+     * }
+     */
+    public static int secp256k1_ellswift_xdh(MemorySegment ctx, MemorySegment output, MemorySegment ell_a64, MemorySegment ell_b64, MemorySegment seckey32, int party, MemorySegment hashfp, MemorySegment data) {
+        var mh$ = secp256k1_ellswift_xdh.HANDLE;
+        try {
+            if (TRACE_DOWNCALLS) {
+                traceDowncall("secp256k1_ellswift_xdh", ctx, output, ell_a64, ell_b64, seckey32, party, hashfp, data);
+            }
+            return (int)mh$.invokeExact(ctx, output, ell_a64, ell_b64, seckey32, party, hashfp, data);
+        } catch (Error | RuntimeException ex) {
+           throw ex;
+        } catch (Throwable ex$) {
+           throw new AssertionError("should not reach here", ex$);
+        }
+    }
     private static final MemorySegment NULL = MemorySegment.ofAddress(0L);
     /**
      * {@snippet lang=c :

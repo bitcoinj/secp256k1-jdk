@@ -29,12 +29,12 @@ import static java.lang.foreign.MemoryLayout.PathElement.*;
 
 /**
  * {@snippet lang=c :
- * extern const secp256k1_ecdh_hash_function secp256k1_ecdh_hash_function_default
+ * typedef int (*secp256k1_ellswift_xdh_hash_function)(unsigned char *, const unsigned char *, const unsigned char *, const unsigned char *, void *)
  * }
  */
-public final class secp256k1_ecdh_hash_function_default {
+public final class secp256k1_ellswift_xdh_hash_function {
 
-    private secp256k1_ecdh_hash_function_default() {
+    private secp256k1_ellswift_xdh_hash_function() {
         // Should not be called directly
     }
 
@@ -42,11 +42,12 @@ public final class secp256k1_ecdh_hash_function_default {
      * The function pointer signature, expressed as a functional interface
      */
     public interface Function {
-        int apply(MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, MemorySegment _x3);
+        int apply(MemorySegment output, MemorySegment x32, MemorySegment ell_a64, MemorySegment ell_b64, MemorySegment data);
     }
 
     private static final FunctionDescriptor $DESC = FunctionDescriptor.of(
         secp256k1_h.C_INT,
+        secp256k1_h.C_POINTER,
         secp256k1_h.C_POINTER,
         secp256k1_h.C_POINTER,
         secp256k1_h.C_POINTER,
@@ -75,9 +76,9 @@ public final class secp256k1_ecdh_hash_function_default {
     /**
      * Invoke the upcall stub {@code funcPtr}, with given parameters
      */
-    public static int invoke(MemorySegment funcPtr, MemorySegment _x0, MemorySegment _x1, MemorySegment _x2, MemorySegment _x3) {
+    public static int invoke(MemorySegment funcPtr, MemorySegment output, MemorySegment x32, MemorySegment ell_a64, MemorySegment ell_b64, MemorySegment data) {
         try {
-            return (int) DOWN$MH.invokeExact(funcPtr, _x0, _x1, _x2, _x3);
+            return (int) DOWN$MH.invokeExact(funcPtr, output, x32, ell_a64, ell_b64, data);
         } catch (Error | RuntimeException ex) {
             throw ex;
         } catch (Throwable ex$) {
