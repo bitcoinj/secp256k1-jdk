@@ -71,8 +71,8 @@ public class Ecdsa {
 
             println("Is the signature valid? " + isValidSignature);
             println("Secret Key: " + privKey.getS().toString(16));
-            println("Public Key (Uncompressed): " + pubkey);
-            println("Public Key (Compressed)  : " + pubkey.getCompressed());
+            println("Public Key (Compressed): " + pubkey);
+            println("Public Key (Uncompressed)  : " + pubkey.point());
             println("Signature: " + sig);
 
             /* It's best practice to try to clear secrets from memory after using them.
