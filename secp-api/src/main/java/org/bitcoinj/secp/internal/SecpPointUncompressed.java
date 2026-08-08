@@ -25,8 +25,7 @@ import java.util.Objects;
 /**
  *
  */
-public
-class SecpPointUncompressed extends SecpPointImpl implements SecpPoint.Uncompressed {
+public class SecpPointUncompressed implements SecpPoint.Uncompressed {
     private final SecpFieldElement x;
     private final SecpFieldElement y;
 
