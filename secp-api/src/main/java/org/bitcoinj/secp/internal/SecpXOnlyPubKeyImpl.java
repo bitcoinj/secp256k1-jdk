@@ -17,6 +17,7 @@ package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
+import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -74,7 +75,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         return o instanceof SecpXOnlyPubKeyImpl && MessageDigest.isEqual(x, ((SecpXOnlyPubKeyImpl) o).x);
     }
 

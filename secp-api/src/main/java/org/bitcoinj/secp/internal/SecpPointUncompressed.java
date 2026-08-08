@@ -17,6 +17,7 @@ package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpPoint;
+import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.security.spec.ECPoint;
@@ -65,14 +66,14 @@ class SecpPointUncompressed extends SecpPointImpl implements SecpPoint.Uncompres
         return new SecpPointCompressed(x, y);
     }
 
-    public boolean equals(SecpPoint other) {
+    public boolean equals(@Nullable SecpPoint other) {
         if (!(other instanceof SecpPointUncompressed)) return false;
         Uncompressed otherUncompressed = (Uncompressed) other;
         return x().equals(otherUncompressed.x()) && y().equals(otherUncompressed.y());
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SecpPointUncompressed that = (SecpPointUncompressed) o;
         return Objects.equals(x, that.x) && Objects.equals(y, that.y);
