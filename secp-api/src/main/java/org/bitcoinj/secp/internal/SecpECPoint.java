@@ -61,6 +61,6 @@ public class SecpECPoint extends ECPoint implements SecpPoint.Uncompressed {
 
     @Override
     public boolean isOdd() {
-        return SecpFieldElement.of(super.getAffineY()).isOdd();
+        return getAffineY().testBit(0);
     }
 }
