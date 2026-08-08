@@ -29,6 +29,7 @@ import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
+import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
 import org.bouncycastle.asn1.x9.X9ECParameters;
@@ -118,7 +119,17 @@ public class Bouncy256k1 implements Secp256k1 {
         generator.init(keygenParams);
         AsymmetricCipherKeyPair keypair = generator.generateKeyPair();
         ECPrivateKeyParameters privParams = (ECPrivateKeyParameters) keypair.getPrivate();
-        return SecpPrivKey.of(privParams.getD());
+        return new SecpPrivKeyImpl(privParams.getD());
+    }
+
+    @Override
+    public SecpPrivKey ecPrivKeyImport(BigInteger privKeyInt) {
+        return new SecpPrivKeyImpl(privKeyInt);
+    }
+
+    @Override
+    public SecpPrivKey ecPrivKeyImport(byte[] privKeyBytes) {
+        return new SecpPrivKeyImpl(privKeyBytes);
     }
 
     @Override
@@ -136,7 +147,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpKeyPair ecKeyPairCreate(SecpPrivKey privKey) {
-        SecpPrivKey priv = SecpPrivKey.of(privKey.getS());
+        SecpPrivKey priv = new SecpPrivKeyImpl(privKey.getS());
         SecpPubKey pub = ecPubKeyCreate(priv);
         return new SecpKeyPairImpl(priv, pub);
     }

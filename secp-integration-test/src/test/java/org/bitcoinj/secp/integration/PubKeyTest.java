@@ -43,7 +43,7 @@ public class PubKeyTest implements SecpTestSupport {
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Test Pubkeys for {0}")
     void testPubKeys(Secp256k1 secp) {
-        SecpPrivKey privKey = SecpPrivKey.of(BigInteger.ONE);
+        SecpPrivKey privKey = secp.ecPrivKeyImport(BigInteger.ONE);
         SecpPubKey pubKey = secp.ecPubKeyCreate(privKey);
         assertNotNull(pubKey);
         assertEquals("Secp256k1", pubKey.getAlgorithm());

@@ -151,6 +151,20 @@ public interface Secp256k1 extends Closeable {
     SecpPrivKey ecPrivKeyCreate();
 
     /**
+     * Import a private key.
+     * @param privKeyInt an integer representing a private key
+     * @return the private key
+     */
+    SecpPrivKey ecPrivKeyImport(BigInteger privKeyInt);
+
+    /**
+     * Import a private key.
+     * @param privKeyBytes 32-bytes, unsigned, big-endian representing a private key
+     * @return the private key
+     */
+    SecpPrivKey ecPrivKeyImport(byte[] privKeyBytes);
+
+    /**
      * Create a public key from the given private key.
      * @param privKey the private key
      * @return derived public key

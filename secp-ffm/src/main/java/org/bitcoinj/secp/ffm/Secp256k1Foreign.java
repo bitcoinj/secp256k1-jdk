@@ -31,6 +31,7 @@ import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
+import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
@@ -151,10 +152,20 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             do {
                 privKeySeg = fill_random(ta, 32);
             } while (secp256k1_h.secp256k1_ec_seckey_verify(ctx, privKeySeg) != 1);
-            SecpPrivKey privKey = SecpPrivKey.of(privKeySeg.toArray(JAVA_BYTE));
+            SecpPrivKey privKey = new SecpPrivKeyImpl(privKeySeg.toArray(JAVA_BYTE));
             privKeySeg.fill((byte) 0x00);
             return privKey;
         }
+    }
+
+    @Override
+    public SecpPrivKey ecPrivKeyImport(BigInteger privKeyInt) {
+        return new SecpPrivKeyImpl(privKeyInt);
+    }
+
+    @Override
+    public SecpPrivKey ecPrivKeyImport(byte[] privKeyBytes) {
+        return new SecpPrivKeyImpl(privKeyBytes);
     }
 
     @Override
@@ -514,7 +525,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment privKeySegment = alloc.allocate(32);
         int return_val2 = secp256k1_h.secp256k1_keypair_sec(ctx, privKeySegment, keyPairSegment);
         assert(return_val2 == 1);
-        SecpPrivKey privKey = SecpPrivKey.of(privKeySegment.toArray(JAVA_BYTE));
+        SecpPrivKey privKey = new SecpPrivKeyImpl(privKeySegment.toArray(JAVA_BYTE));
         privKeySegment.fill((byte) 0x00);
         return new SecpKeyPairImpl(privKey, pubKey);
     }
