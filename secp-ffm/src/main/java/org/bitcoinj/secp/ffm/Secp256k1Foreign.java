@@ -31,6 +31,7 @@ import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
+import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
@@ -155,6 +156,16 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             privKeySeg.fill((byte) 0x00);
             return privKey;
         }
+    }
+
+    @Override
+    public SecpPrivKey ecPrivKeyImport(BigInteger privKeyInt) {
+        return new SecpPrivKeyImpl(privKeyInt);
+    }
+
+    @Override
+    public SecpPrivKey ecPrivKeyImport(byte[] privKeyBytes) {
+        return new SecpPrivKeyImpl(privKeyBytes);
     }
 
     @Override
