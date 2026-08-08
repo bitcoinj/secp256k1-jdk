@@ -48,7 +48,6 @@ public class PubKeyTest implements SecpTestSupport {
         assertNotNull(pubKey);
         assertEquals("Secp256k1", pubKey.getAlgorithm());
         byte[] pubKeyUncompressed = pubKey.serialize(false);
-        System.out.println(HexFormat.of().formatHex(pubKeyUncompressed));
         assertArrayEquals(ONE_SERIALIZED, pubKeyUncompressed);
 
         SecpPoint.Uncompressed uPoint = pubKey.point();

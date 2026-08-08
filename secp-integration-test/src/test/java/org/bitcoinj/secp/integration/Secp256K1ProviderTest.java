@@ -29,14 +29,12 @@ public class Secp256K1ProviderTest implements SecpTestSupport {
     @MethodSource("secpProviders")
     @ParameterizedTest(name = "Provider: {0}")
     void checkProviders(Secp256k1.Provider provider) {
-        System.out.println("Provider " + provider.id());
         assertTrue(provider.id().length() > 1);
     }
 
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Implementation for {0}")
     void checkImplementations(Secp256k1 secp) {
-        System.out.println("Implementation " + secp);
         assertNotNull(secp);
     }
 }
