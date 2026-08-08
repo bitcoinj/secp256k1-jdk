@@ -19,8 +19,6 @@ import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
 
-import java.security.spec.ECPoint;
-
 /**
  * Default/Internal SecpPubKey implementation storing as {@link SecpPointUncompressed}.
  */
@@ -35,19 +33,6 @@ public class SecpPubKeyImpl implements SecpPubKey {
         this.point = (point instanceof SecpPointUncompressed)
                 ? (SecpPointUncompressed) point
                 : new SecpPointUncompressed(point.x(), point.y());
-    }
-
-    public SecpPubKeyImpl(ECPoint ecPoint) {
-        this.point = SecpPointUncompressed.of(ecPoint);
-    }
-
-    /**
-     * Construct a public key from an {@link ECPoint}
-     * @param ecPoint the point
-     * @return the pubkey
-     */
-    public static SecpPubKey ofPoint(ECPoint ecPoint) {
-        return new SecpPubKeyImpl(ecPoint);
     }
 
     @Override
