@@ -68,14 +68,15 @@ public interface SecpPubKey extends ECPublicKey, SecpPoint.Uncompressed {
      */
     default byte[] serialize(boolean compressed) {
         return compressed
-                ? getCompressed().serialize()
-                : getUncompressed().serialize();
+                ? point().compress().serialize()
+                : point().serialize();
     }
 
     /**
      * Return as a compressed point
      * @return compressed point
      */
+    @Deprecated(forRemoval = true)
     default SecpPoint.Compressed getCompressed() {
         return point().compress();
     }
@@ -84,6 +85,7 @@ public interface SecpPubKey extends ECPublicKey, SecpPoint.Uncompressed {
      * Return as an uncompressed point
      * @return uncompressed point
      */
+    @Deprecated(forRemoval = true)
     default SecpPoint.Uncompressed getUncompressed() {
         return point();
     }
