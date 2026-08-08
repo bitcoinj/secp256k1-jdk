@@ -20,7 +20,6 @@ import org.bitcoinj.secp.SecpPoint;
 import org.jspecify.annotations.Nullable;
 
 import java.math.BigInteger;
-import java.security.spec.ECPoint;
 import java.util.Objects;
 
 /**
@@ -33,11 +32,6 @@ public class SecpPointUncompressed implements SecpPoint.Uncompressed {
     public SecpPointUncompressed(SecpFieldElement x, SecpFieldElement y) {
         this.x = x;
         this.y = y;
-    }
-
-    public static SecpPointUncompressed of(ECPoint point) {
-        return new SecpPointUncompressed(SecpFieldElement.of(point.getAffineX()),
-                SecpFieldElement.of(point.getAffineY()));
     }
 
     public static SecpPointUncompressed of(BigInteger x, BigInteger y) {
