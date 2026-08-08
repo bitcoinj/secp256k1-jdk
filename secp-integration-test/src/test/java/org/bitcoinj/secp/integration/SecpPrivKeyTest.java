@@ -18,10 +18,23 @@ package org.bitcoinj.secp.integration;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpPubKey;
+import org.bitcoinj.secp.internal.UInt256;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedClass;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.math.BigInteger;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.TWO;
+import static java.math.BigInteger.ZERO;
+import static org.bitcoinj.secp.Secp256k1.N;
+import static org.bitcoinj.secp.Secp256k1.P;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,6 +45,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @MethodSource("secpImplementations")
 public class SecpPrivKeyTest implements SecpTestSupport {
     private final Secp256k1 secp;
+    static final List<BigInteger> VALID_PRIV_KEYS = List.of(ONE, TWO, N.subtract(ONE));
+    static final List<BigInteger> INVALID_PRIV_KEYS = List.of(ONE.negate(), ZERO, N, P);
+    static final List<byte[]> VALID_PRIV_KEYS_BYTES = VALID_PRIV_KEYS.stream().map(UInt256::integerTo32Bytes).toList();
+    static final List<byte[]> INVALID_PRIV_KEYS_BYTES = Stream.of(ZERO, N, P).map(UInt256::integerTo32Bytes).toList();
 
     /// `@ParameterizedClass` constructor
     /// @param secp injected Secp256k1 implementation to test
@@ -67,5 +84,31 @@ public class SecpPrivKeyTest implements SecpTestSupport {
         assertThrows(IllegalStateException.class, privKey::getS);
 
         privKey.destroy();      // Destroy is idempotent
+    }
+
+    @FieldSource("VALID_PRIV_KEYS")
+    @ParameterizedTest(name = "i: {0}")
+    void testValidKeys(BigInteger i) {
+        SecpPrivKey privKey = secp.ecPrivKeyImport(i);
+        assertEquals(i, privKey.getS());
+    }
+
+    @FieldSource("INVALID_PRIV_KEYS")
+    @ParameterizedTest(name = "i: {0}")
+    void testInvalidKeys(BigInteger i) {
+        assertThrows(IllegalArgumentException.class, () -> secp.ecPrivKeyImport(i));
+    }
+
+    @FieldSource("VALID_PRIV_KEYS_BYTES")
+    @ParameterizedTest(name = "b: {0}")
+    void testValidKeys(byte[] b) {
+        SecpPrivKey privKey = secp.ecPrivKeyImport(b);
+        assertArrayEquals(b, privKey.getEncoded());
+    }
+
+    @FieldSource("INVALID_PRIV_KEYS_BYTES")
+    @ParameterizedTest(name = "b: {0}")
+    void testInvalidKeys(byte[] b) {
+        assertThrows(IllegalArgumentException.class, () -> secp.ecPrivKeyImport(b));
     }
 }
