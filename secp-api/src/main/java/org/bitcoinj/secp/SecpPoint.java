@@ -85,6 +85,12 @@ public interface SecpPoint {
          * @return {@code true} if odd, {@code false} if even
          */
         boolean isOdd();
+
+        /**
+         * Serialize using the default format
+         * @return serialized point
+         */
+        byte[] serialize();
     }
 
     /**
@@ -101,6 +107,7 @@ public interface SecpPoint {
          * Get the default serialization encoding
          * @return serialized point
          */
+        @Override
         default byte[] serialize() {
             byte[] compressed = new byte[33];
             compressed[0] = isOdd()
@@ -134,6 +141,7 @@ public interface SecpPoint {
          * Get the default serialization encoding
          * @return serialized point
          */
+        @Override
         default byte[] serialize() {
             byte[] uncompressed = new byte[65];
             uncompressed[0] = 0x04;
