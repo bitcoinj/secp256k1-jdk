@@ -52,7 +52,7 @@ public class SecpPubKeyImpl implements SecpPubKey {
 
     @Override
     public SecpECPoint getW() {
-        return new SecpECPoint(point.x(), point.y());
+        return SecpECPoint.of(point);
     }
 
     @Override
