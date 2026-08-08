@@ -17,6 +17,7 @@ package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpPoint;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -49,7 +50,7 @@ class SecpPointCompressed implements SecpPoint.Compressed {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SecpPointCompressed that = (SecpPointCompressed) o;
         return isOdd == that.isOdd && Objects.equals(x, that.x);

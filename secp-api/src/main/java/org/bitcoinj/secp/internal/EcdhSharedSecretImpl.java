@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.EcdhSharedSecret;
+import org.jspecify.annotations.Nullable;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -41,7 +42,7 @@ public class EcdhSharedSecretImpl  implements EcdhSharedSecret {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         return o instanceof EcdhSharedSecretImpl && MessageDigest.isEqual(bytes, ((EcdhSharedSecretImpl) o).bytes);
     }
 }
