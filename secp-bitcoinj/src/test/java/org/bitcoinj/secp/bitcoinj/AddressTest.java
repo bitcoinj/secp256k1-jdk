@@ -64,7 +64,7 @@ public class AddressTest {
     @ParameterizedTest(name = "key {0} -> Address {1}")
     void createAddressTest(BigInteger key, String address) throws Exception {
         Address tapRootAddress;
-        SecpKeyPair keyPair = secp.ecKeyPairCreate(SecpPrivKey.of(key));
+        SecpKeyPair keyPair = secp.ecKeyPairCreate(secp.ecPrivKeyImport(key));
         WitnessMaker maker = new WitnessMaker(secp);
         SecpFieldElement tweakedPubKey = maker.tweakedPubKey(keyPair.publicKey().xOnly());
         tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.serialize());

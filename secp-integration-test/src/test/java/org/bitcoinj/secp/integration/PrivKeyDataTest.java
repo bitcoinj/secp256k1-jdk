@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.integration;
 
 import org.bitcoinj.secp.SecpPrivKey;
+import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,7 @@ import java.math.BigInteger;
 public class PrivKeyDataTest {
     @Test
     void testBouncyPriv() {
-        SecpPrivKey priv = SecpPrivKey.of(BigInteger.ONE);
+        SecpPrivKey priv = new SecpPrivKeyImpl(BigInteger.ONE);
 
         BigInteger privInt = priv.getS();
         Assertions.assertEquals(BigInteger.ONE, privInt);
