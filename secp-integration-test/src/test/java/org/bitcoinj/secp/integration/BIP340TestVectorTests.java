@@ -76,7 +76,7 @@ public class BIP340TestVectorTests implements SecpTestSupport {
     @ParameterizedTest
     @FieldSource("SIGN32_VECTORS")
     void schnorrSigSign32(TestVector vec) {
-        var privKey = SecpPrivKey.of(vec.privKey);
+        var privKey = secp.ecPrivKeyImport(vec.privKey);
 
         var actualSignature = secp.schnorrSigSign32(vec.message, privKey, vec.auxRand);
 
@@ -105,7 +105,7 @@ public class BIP340TestVectorTests implements SecpTestSupport {
     @ParameterizedTest
     @FieldSource("PUBKEYCREATE_VECTORS")
     void pubKeyGenFromPrivKey(TestVector vec) {
-        var privKey = SecpPrivKey.of(vec.privKey);
+        var privKey = secp.ecPrivKeyImport(vec.privKey);
 
         var actualPub = secp.ecPubKeyCreate(privKey).xOnly();
 

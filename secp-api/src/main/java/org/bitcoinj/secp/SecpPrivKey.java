@@ -58,7 +58,9 @@ public interface SecpPrivKey extends ECPrivateKey {
      * Construct a private key from an integer
      * @param p Must be a member of the Secp256k1 field
      * @return private key
+     * @deprecated Use {@link Secp256k1#ecPrivKeyImport(BigInteger)}
      */
+    @Deprecated
     static SecpPrivKey of(BigInteger p) {
         return new SecpPrivKeyImpl(p);
     }
@@ -67,7 +69,9 @@ public interface SecpPrivKey extends ECPrivateKey {
      * Construct a private key from bytes
      * @param bytes bytes
      * @return private key
+     * @deprecated Use {@link Secp256k1#ecPrivKeyImport(byte[])}
      */
+    @Deprecated
     static SecpPrivKey of(byte[] bytes) {
         return new SecpPrivKeyImpl(bytes.clone());
     }

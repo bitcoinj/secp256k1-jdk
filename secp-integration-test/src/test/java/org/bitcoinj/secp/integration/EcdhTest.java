@@ -32,7 +32,7 @@ public class EcdhTest {
     @Test
     void ecdhSmokeTest() {
         try (Secp256k1 secp = new Secp256k1Foreign()) {
-            SecpPrivKey secKey = SecpPrivKey.of(BigInteger.ONE);
+            SecpPrivKey secKey = secp.ecPrivKeyImport(BigInteger.ONE);
             SecpPubKey pubKey = secp.ecPubKeyCreate(secKey);
             SecpResult<EcdhSharedSecret> result = secp.ecdh(pubKey, secKey);
             Assertions.assertNotNull(result);
@@ -70,7 +70,7 @@ public class EcdhTest {
     @Test
     void ecdhSmokeTestBouncy() {
         try (Secp256k1 secp = new Bouncy256k1()) {
-            SecpPrivKey secKey = SecpPrivKey.of(BigInteger.ONE);
+            SecpPrivKey secKey = secp.ecPrivKeyImport(BigInteger.ONE);
             SecpPubKey pubKey = secp.ecPubKeyCreate(secKey);
             SecpResult<EcdhSharedSecret> result = secp.ecdh(pubKey, secKey);
             Assertions.assertNotNull(result);
@@ -108,7 +108,7 @@ public class EcdhTest {
     @Test
     void ecdhResultCompare() {
         try (Secp256k1Foreign secp1 = new Secp256k1Foreign(); Bouncy256k1 secp2 = new Bouncy256k1()) {
-            SecpPrivKey secKey = SecpPrivKey.of(BigInteger.ONE);
+            SecpPrivKey secKey = secp1.ecPrivKeyImport(BigInteger.ONE);
             SecpPubKey pubKey = secp1.ecPubKeyCreate(secKey);
             SecpResult<EcdhSharedSecret> result1 = secp1.ecdh(pubKey, secKey);
             SecpResult<EcdhSharedSecret> result2 = secp2.ecdh(pubKey, secKey);

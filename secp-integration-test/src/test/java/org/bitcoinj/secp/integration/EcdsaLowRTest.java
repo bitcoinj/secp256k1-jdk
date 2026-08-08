@@ -74,7 +74,7 @@ public class EcdsaLowRTest implements SecpTestSupport {
     @FieldSource("vectors")
     @ParameterizedTest(name = "Test Ecdsa for {0}")
     void testEcdsaLowR(LowRVector vec) {
-        SecpPrivKey privKey = SecpPrivKey.of(vec.privKey);
+        SecpPrivKey privKey = secp.ecPrivKeyImport(vec.privKey);
         SecpPubKey pubKey = secp.ecPubKeyCreate(privKey);
 
         // Sign
