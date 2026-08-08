@@ -16,7 +16,6 @@
 package org.bitcoinj.secp;
 
 import org.bitcoinj.secp.internal.SecpECPoint;
-import org.bitcoinj.secp.internal.SecpPointUncompressed;
 
 import java.security.spec.ECPoint;
 
@@ -34,31 +33,6 @@ import java.security.spec.ECPoint;
 public interface SecpPoint {
     /** The P256K1 infinity point */
     Infinity POINT_INFINITY = Infinity.INSTANCE;
-
-    /**
-     * Construct an uncompressed SecpPoint from two field elements
-     * @param x x component
-     * @param y y component
-     * @return point
-     */
-    @Deprecated(forRemoval = true)
-    static SecpPointUncompressed of(SecpFieldElement x, SecpFieldElement y) {
-        return new SecpPointUncompressed(x, y);
-    }
-
-    /**
-     * Construct a SecpPoint from a Java Cryptography {@link ECPoint}
-     * @param point Java point
-     * @return SecpPoint point
-     */
-    @Deprecated(forRemoval = true)
-    static SecpPoint of(ECPoint point) {
-        return  point == ECPoint.POINT_INFINITY
-                    ? SecpPoint.POINT_INFINITY
-                    : point instanceof SecpECPoint
-                        ? (SecpECPoint) point
-                        : SecpPointUncompressed.of(point);
-    }
 
     /** Singleton representing the point-at-infinity */
     enum Infinity implements SecpPoint {
