@@ -114,12 +114,8 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpPrivKey ecPrivKeyCreate() {
-        ECKeyPairGenerator generator = new ECKeyPairGenerator();
-        ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(BC_ECDOMAIN_PARAMS, secureRandom);
-        generator.init(keygenParams);
-        AsymmetricCipherKeyPair keypair = generator.generateKeyPair();
-        ECPrivateKeyParameters privParams = (ECPrivateKeyParameters) keypair.getPrivate();
-        return new SecpPrivKeyImpl(privParams.getD());
+        BigInteger privKey = ((ECPrivateKeyParameters) bcKeyPairCreate().getPrivate()).getD();
+        return SecpPrivKey.of(privKey);
     }
 
     @Override
@@ -140,9 +136,10 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpKeyPair ecKeyPairCreate() {
-        SecpPrivKey priv = ecPrivKeyCreate();
-        SecpPubKey pub = ecPubKeyCreate(priv);
-        return new SecpKeyPairImpl(priv, pub);
+        AsymmetricCipherKeyPair bcKeyPair = bcKeyPairCreate();
+        BigInteger privKey = ((ECPrivateKeyParameters) bcKeyPair.getPrivate()).getD();
+        ECPoint pubPoint = (((ECPublicKeyParameters) bcKeyPair.getPublic()).getQ());
+        return new SecpKeyPairImpl(SecpPrivKey.of(privKey), BC.toSecpPubKey(pubPoint));
     }
 
     @Override
@@ -150,6 +147,17 @@ public class Bouncy256k1 implements Secp256k1 {
         SecpPrivKey priv = new SecpPrivKeyImpl(privKey.getS());
         SecpPubKey pub = ecPubKeyCreate(priv);
         return new SecpKeyPairImpl(priv, pub);
+    }
+
+    /**
+     * Generate a Bouncy Castle secp256k1 {@link AsymmetricCipherKeyPair}.
+     * @return key pair
+     */
+    private AsymmetricCipherKeyPair bcKeyPairCreate() {
+        ECKeyPairGenerator generator = new ECKeyPairGenerator();
+        ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(BC_ECDOMAIN_PARAMS, secureRandom);
+        generator.init(keygenParams);
+        return generator.generateKeyPair();
     }
 
     @Override
