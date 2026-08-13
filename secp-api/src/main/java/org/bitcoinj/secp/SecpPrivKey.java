@@ -38,6 +38,7 @@ public interface SecpPrivKey extends ECPrivateKey {
     }
 
     /**
+     * {@inheritDoc}
      * @return 32-bytes, Big endian with no prefix or suffix
      */
     @Override
