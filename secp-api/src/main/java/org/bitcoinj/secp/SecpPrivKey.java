@@ -15,7 +15,6 @@
  */
 package org.bitcoinj.secp;
 
-import org.bitcoinj.secp.internal.ByteArray;
 import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 
 import java.math.BigInteger;
@@ -45,9 +44,7 @@ public interface SecpPrivKey extends ECPrivateKey {
     byte[] getEncoded();
 
     @Override
-    default BigInteger getS() {
-        return ByteArray.toInteger(getEncoded());
-    }
+    BigInteger getS();
 
     @Override
     default ECParameterSpec getParams() {
