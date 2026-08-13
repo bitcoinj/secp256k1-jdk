@@ -19,6 +19,8 @@ import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpPubKey;
 
+import java.math.BigInteger;
+
 /**
  *
  */
@@ -46,6 +48,11 @@ public class SecpKeyPairImpl implements SecpKeyPair {
     @Override
     public byte[] getEncoded() {
         return privKey.getEncoded();
+    }
+
+    @Override
+    public BigInteger getS() {
+        return privKey.getS();
     }
 
     @Override
