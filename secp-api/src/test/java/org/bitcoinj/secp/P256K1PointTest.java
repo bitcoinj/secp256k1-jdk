@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
+import static org.bitcoinj.secp.Secp256k1.G;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -29,27 +30,24 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 public class P256K1PointTest {
     static BigInteger p = Secp256k1.P;
-    static SecpFieldElement ONE = SecpFieldElement.of(BigInteger.ONE);
-    static SecpFieldElement MAX = SecpFieldElement.of(p.subtract(BigInteger.ONE));
-    static BigInteger INT_MAX = MAX.toBigInteger();
 
     @Test
     void testDefaultImpl() {
-        SecpPoint.Uncompressed uncompressed = new SecpPointUncompressed(ONE, MAX);
-        assertEquals(ONE, uncompressed.x());
-        assertEquals(MAX, uncompressed.y());
+        SecpPoint.Uncompressed uncompressed = new SecpPointUncompressed(G.x(), G.y());
+        assertEquals(G.x(), uncompressed.x());
+        assertEquals(G.y(), uncompressed.y());
 
         SecpPoint.Compressed compressed = uncompressed.compress();
-        assertEquals(ONE, compressed.x());
+        assertEquals(G.x(), compressed.x());
         assertFalse(compressed.isOdd());
     }
 
     @Test
     void testECPointSubclass() {
-        SecpECPoint p = new SecpECPoint(ONE, MAX);
-        assertEquals(ONE, p.x());
-        assertEquals(MAX, p.y());
-        assertEquals(BigInteger.ONE, p.getAffineX());
-        assertEquals(INT_MAX, p.getAffineY());
+        SecpECPoint p = SecpECPoint.of(G);
+        assertEquals(G.x(), p.x());
+        assertEquals(G.y(), p.y());
+        assertEquals(G.x().toBigInteger(), p.getAffineX());
+        assertEquals(G.y().toBigInteger(), p.getAffineY());
     }
 }

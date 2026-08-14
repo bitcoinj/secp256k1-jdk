@@ -29,19 +29,20 @@ import java.security.spec.ECPoint;
 public class SecpECPoint extends ECPoint implements SecpPoint.Uncompressed {
     /**
      * Creates an ECPoint from the specified affine x-coordinate
-     * {@code x} and affine y-coordinate {@code y}.
+     * {@code x} and affine y-coordinate {@code y}. Constructor is private,
+     * and {@link SecpECPoint#of(Uncompressed)} only allows validated points.
      *
      * @param x the affine x-coordinate.
      * @param y the affine y-coordinate.
      * @throws NullPointerException if {@code x} or
      *                              {@code y} is null.
      */
-    public SecpECPoint(BigInteger x, BigInteger y) {
-        super(SecpFieldElement.checkInRange(x), SecpFieldElement.checkInRange(y));
+    private SecpECPoint(BigInteger x, BigInteger y) {
+        super(x, y);
     }
 
-    public SecpECPoint(SecpFieldElement x, SecpFieldElement y) {
-        super(x.toBigInteger(), y.toBigInteger());
+    public static SecpECPoint of(SecpPoint.Uncompressed point) {
+        return new SecpECPoint(point.x().toBigInteger(), point.y().toBigInteger());
     }
 
     @Override
