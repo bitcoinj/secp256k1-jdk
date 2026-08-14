@@ -25,6 +25,7 @@ import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
+import org.bitcoinj.secp.internal.ByteArray;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
@@ -115,17 +116,17 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpPrivKey ecPrivKeyCreate() {
         BigInteger privKey = ((ECPrivateKeyParameters) bcKeyPairCreate().getPrivate()).getD();
-        return SecpPrivKey.of(privKey);
+        return new SecpPrivKeyBc(privKey);
     }
 
     @Override
     public SecpPrivKey ecPrivKeyImport(BigInteger privKeyInt) {
-        return new SecpPrivKeyImpl(privKeyInt);
+        return SecpPrivKeyBc.of(privKeyInt);
     }
 
     @Override
     public SecpPrivKey ecPrivKeyImport(byte[] privKeyBytes) {
-        return new SecpPrivKeyImpl(privKeyBytes);
+        return SecpPrivKeyBc.of(ByteArray.toInteger(SecpScalarImpl.checkInRange(privKeyBytes)));
     }
 
     @Override
