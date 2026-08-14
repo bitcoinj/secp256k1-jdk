@@ -57,7 +57,8 @@ public class SecpFieldElementImpl implements SecpFieldElement {
 
     @Override
     public boolean isOdd() {
-        return ByteArray.toInteger(value).mod(BigInteger.TWO).equals(BigInteger.ONE);
+        // It's odd if the low-order bit (mask 0x01) of the low-order byte (index 31) is set.
+        return (value[31] & 0x01) != 0;
     }
 
     @Override
