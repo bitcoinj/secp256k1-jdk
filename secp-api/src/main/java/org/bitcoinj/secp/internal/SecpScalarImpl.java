@@ -59,7 +59,7 @@ public class SecpScalarImpl implements SecpScalar {
      * @param e unvalidated integer ({@code byte[]} format)
      * @return a validated integer ({@code byte[]} format)
      */
-    static byte[] checkInRange(byte[] e) {
+    public static byte[] checkInRange(byte[] e) {
         if (e.length != 32) {
             throw new IllegalArgumentException("SecpScalar must have 32 bytes, found : " + e.length);
         }
