@@ -18,6 +18,7 @@ package org.bitcoinj.secp.internal;
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.SecpScalar;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
@@ -57,6 +58,16 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
     @Override
     public SecpScalarImpl s() {
         return s;
+    }
+
+    @Override
+    public BigInteger rBigInteger() {
+        return r.toBigInteger();
+    }
+
+    @Override
+    public BigInteger sBigInteger() {
+        return s.toBigInteger();
     }
 
     @Override
