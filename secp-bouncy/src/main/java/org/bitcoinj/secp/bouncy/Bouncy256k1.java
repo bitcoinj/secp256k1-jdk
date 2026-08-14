@@ -250,10 +250,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     // Convert and canonicalize signature
     private EcdsaSignature ecdsaSignature(BigInteger[] components) {
-        return new EcdsaSignatureImpl(
-                new SecpScalarImpl(components[0]),
-                new SecpScalarImpl(canonicalize(components[1]))
-        );
+        return new EcdsaSignatureBc(components[0], canonicalize(components[1]));
     }
 
     BigInteger canonicalize(BigInteger s) {
