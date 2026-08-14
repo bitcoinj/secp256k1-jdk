@@ -285,7 +285,7 @@ public class Bouncy256k1 implements Secp256k1 {
         signer.init(false, params);
         boolean result;
         try {
-            result = signer.verifySignature(msg_hash_data, signature.r().toBigInteger(), signature.s().toBigInteger());
+            result = signer.verifySignature(msg_hash_data, signature.rBigInteger(), signature.sBigInteger());
         } catch (NullPointerException e) {
             // Bouncy Castle contains a bug that can cause NPEs given specially crafted signatures. Those signatures
             // are inherently invalid/attack sigs so we just fail them here rather than crash the thread.
