@@ -38,6 +38,11 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
         this.s = new SecpScalarImpl(s.serialize());
     }
 
+    public EcdsaSignatureImpl(BigInteger r, BigInteger s) {
+        this.r = new SecpScalarImpl(r);
+        this.s = new SecpScalarImpl(s);
+    }
+
     /**
      * Construct from a 64-byte, big-endian compact serialized signature
      * @param signature Signature in compact serialized format.
