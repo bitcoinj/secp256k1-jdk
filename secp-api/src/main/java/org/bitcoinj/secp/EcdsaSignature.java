@@ -17,6 +17,8 @@ package org.bitcoinj.secp;
 
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 
+import java.math.BigInteger;
+
 /**
  * An secp256k1 ECDSA signature.
  */
@@ -32,6 +34,18 @@ public interface EcdsaSignature {
      * @return S
      */
     SecpScalar s();
+
+    /**
+     * Get scalar R
+     * @return R
+     */
+    BigInteger rBigInteger();
+
+    /**
+     * Get scalar S
+     * @return S
+     */
+    BigInteger sBigInteger();
 
     /**
      * Serialize as a Bitcoin <i>compact signature</i>. A compact signature is  the two signature component
