@@ -10,12 +10,19 @@ owner = "bitcoinj"
 name = "secp256k1-jdk"
 enabled = false
 
-# Validate with Maven Central Rules and Deploy to our GitLab Maven Repo
-[deploy.maven.gitlab.secp256k1-jdk]
+[signing]
 active = "ALWAYS"
-projectIdentifier = 55956336
-url = "https://gitlab.com/api/v4/projects/55956336/packages/maven"
+
+[signing.pgp]
+armored = true
+mode = "COMMAND"
+
+[signing.pgp.command]
+executable = "gpg"
+defaultKeyring = true
+
+[deploy.maven.mavenCentral.sonatype]
+active = "ALWAYS"
+url = "https://central.sonatype.com/api/v1/publisher"
 applyMavenCentralRules = true
-sign = false
-snapshotSupported = false
 stagingRepositories = ["target/repo-signed"]
