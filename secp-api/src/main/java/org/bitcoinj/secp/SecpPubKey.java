@@ -32,7 +32,7 @@ public interface SecpPubKey extends ECPublicKey, SecpPoint.Uncompressed {
      */
     @Override
     default String getAlgorithm() {
-        return "Secp256k1";
+        return Secp256k1.ALGORITHM_NAME;
     }
 
     /**

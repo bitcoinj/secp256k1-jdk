@@ -29,7 +29,7 @@ public interface SecpPrivKey extends ECPrivateKey {
 
     @Override
     default String getAlgorithm() {
-        return "Secp256k1";
+        return Secp256k1.ALGORITHM_NAME;
     }
 
     @Override
