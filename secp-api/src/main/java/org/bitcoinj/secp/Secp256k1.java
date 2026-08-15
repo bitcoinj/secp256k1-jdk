@@ -20,6 +20,7 @@ import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import java.io.Closeable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECFieldFp;
 import java.security.spec.ECParameterSpec;
@@ -52,6 +53,9 @@ import java.util.stream.StreamSupport;
  * </ul>
  */
 public interface Secp256k1 extends Closeable {
+    /** The algorithm name returned by {@link ECPublicKey#getAlgorithm()} and {@link ECPrivateKey#getAlgorithm()} */
+    String ALGORITHM_NAME = "Secp256k1";
+
     /**
      * The prime {@code P}, that defines the secp256k1 field.
      * <p>
