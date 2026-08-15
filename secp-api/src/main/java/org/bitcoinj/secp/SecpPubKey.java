@@ -26,6 +26,11 @@ import java.security.spec.ECPoint;
  * A valid secp256k1 Public Key that is a subclass of {@link ECPublicKey}.
  */
 public interface SecpPubKey extends ECPublicKey, SecpPoint.Uncompressed {
+    /** The format name returned by {@link ECPublicKey#getFormat()} for compressed keys (the default) */
+    String COMPRESSED_FORMAT_NAME = "Compressed SEC";
+    /** The format name returned by {@link ECPublicKey#getFormat()} for uncompressed keys (typically non-HD {@code P2PKH} keys) */
+    String UNCOMPRESSED_FORMAT_NAME = "Uncompressed SEC";
+
     /**
      * Return associated cryptographic algorithm. This implements the {@link java.security.Key} interface.
      * @return string indicating algorithm
@@ -35,14 +40,6 @@ public interface SecpPubKey extends ECPublicKey, SecpPoint.Uncompressed {
         return Secp256k1.ALGORITHM_NAME;
     }
 
-    /**
-     * Return default encoding (serialization) format. This implements the {@link java.security.Key} interface.
-     * @return string indicating format
-     */
-    @Override
-    default String getFormat() {
-        return "Compressed SEC";
-    }
 
     /**
      * Return serialized key. This implements the {@link java.security.Key} interface and is an alias for {@link #serialize()}.
