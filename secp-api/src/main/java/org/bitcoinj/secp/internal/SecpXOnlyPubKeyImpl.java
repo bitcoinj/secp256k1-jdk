@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.SecpFieldElement;
+import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.jspecify.annotations.Nullable;
 
@@ -44,10 +45,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
      * @return SECG Compressed (even) value (33-bytes)
      */
     public static byte[] xOnlyToSerializedCompressed(byte[] xOnly) {
-        byte[] compressed = new byte[33];
-        compressed[0] = 0x02;   // Even 'y'
-        System.arraycopy(xOnly, 0, compressed, 1, 32);
-        return compressed;
+        return SecpPoint.serializeCompressed(xOnly, false);
     }
 
     @Override

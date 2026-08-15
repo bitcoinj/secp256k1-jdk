@@ -83,16 +83,7 @@ public interface SecpPoint {
          */
         @Override
         default byte[] serialize() {
-            byte[] compressed = new byte[33];
-            compressed[0] = isOdd()
-                    ? (byte) 0x03      // odd
-                    : (byte) 0x02;     // even;
-            System.arraycopy(x().serialize(),
-                    0,
-                    compressed,
-                    1,
-                    32);
-            return compressed;
+            return serializeCompressed(x().serialize(), isOdd());
         }
     }
 
@@ -117,11 +108,7 @@ public interface SecpPoint {
          */
         @Override
         default byte[] serialize() {
-            byte[] uncompressed = new byte[65];
-            uncompressed[0] = 0x04;
-            System.arraycopy(x().serialize(), 0, uncompressed, 1, 32);
-            System.arraycopy(y().serialize(), 0, uncompressed, 33, 32);
-            return uncompressed;
+            return SecpPoint.serializeUncompressed(x().serialize(), y().serialize());
         }
 
         default ECPoint toECPoint() {
@@ -129,5 +116,41 @@ public interface SecpPoint {
                     ? (SecpECPoint) this
                     : new ECPoint(x().toBigInteger(), y().toBigInteger());
         }
+    }
+
+    /**
+     * Serialize a point to SEC Compressed format
+     * @param x x coordinate in 32-byte big-endian format
+     * @param isOdd low-bit of y coordinate
+     * @return serialized bytes
+     */
+    static byte[] serializeCompressed(byte[] x, boolean isOdd) {
+        byte[] compressed = new byte[33];
+        compressed[0] = serializationPrefix(isOdd);
+        System.arraycopy(x, 0, compressed, 1, 32);
+        return compressed;
+    }
+
+    /**
+     * Serialize a point to SEC Uncompressed format
+     * @param x x coordinate in 32-byte big-endian format
+     * @param y y coordinate in 32-byte big-endian format
+     * @return serialized bytes
+     */
+    static byte[] serializeUncompressed(byte[] x, byte[] y) {
+        byte[] uncompressed = new byte[65];
+        uncompressed[0] = 0x04;
+        System.arraycopy(x, 0, uncompressed, 1, 32);
+        System.arraycopy(y, 0, uncompressed, 33, 32);
+        return uncompressed;
+    }
+
+    /**
+     * Return SEC serialization prefix
+     * @param isOdd true if the y-coordinate is odd
+     * @return {@code 2} for even, {@code 3} for odd
+     */
+    static byte serializationPrefix(boolean isOdd) {
+        return isOdd ? (byte) 0x03 : (byte) 0x02;
     }
 }
