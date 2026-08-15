@@ -15,6 +15,7 @@
  */
 package org.bitcoinj.secp.internal;
 
+import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
@@ -33,6 +34,16 @@ public class SecpPubKeyImpl implements SecpPubKey {
         this.point = (point instanceof SecpPointUncompressed)
                 ? (SecpPointUncompressed) point
                 : new SecpPointUncompressed(point.x(), point.y());
+    }
+
+    // TODO: Add support for uncompressed format (for P2PKH non-HD keys)
+    /**
+     * Return default encoding (serialization) format. This implements the {@link java.security.Key} interface.
+     * @return string indicating format
+     */
+    @Override
+    public String getFormat() {
+        return COMPRESSED_FORMAT_NAME;
     }
 
     @Override

@@ -25,7 +25,8 @@ import java.security.spec.ECParameterSpec;
  * A P256k1 private key.
  */
 public interface SecpPrivKey extends ECPrivateKey {
-
+    /** The format name returned by {@link ECPrivateKey#getFormat()} */
+    String FORMAT_NAME = "Big-endian";
 
     @Override
     default String getAlgorithm() {
@@ -34,7 +35,7 @@ public interface SecpPrivKey extends ECPrivateKey {
 
     @Override
     default String getFormat() {
-        return "Big-endian";
+        return FORMAT_NAME;
     }
 
     /**
