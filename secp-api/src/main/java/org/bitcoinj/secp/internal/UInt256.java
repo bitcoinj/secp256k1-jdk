@@ -33,18 +33,12 @@ public interface UInt256 {
      * Convert a BigInteger to a 32-byte fixed-length byte array (UInt256).
      * @param i an unsigned BigInteger in the range {@link #MIN_VALUE} to {@link #MAX_VALUE}
      * @return a 32-byte, big-endian unsigned integer value
+     * @throws IllegalArgumentException if out of range
      */
     static byte[] integerTo32Bytes(BigInteger i) {
         checkInRange(i);
-        byte[] minBytes = i.toByteArray(); // return minimum, signed bytes
-        // Since toByteArray() returns a sign bit (even though we know there isn't one) and a variable
-        // length result, we need to convert to fixed 32-byte length with no sign bit.
         byte[] result = new byte[32];
-        System.arraycopy(minBytes,                                  // src
-                minBytes.length == 33 ? 1 : 0,                      // src pos (skip sign byte if present)
-                result,                                             // dest
-                minBytes.length == 33 ? 0 : 32 - minBytes.length,   // dest pos
-                minBytes.length == 33 ? 32 : minBytes.length);      // num bytes to copy
+        ByteUtils.copyAsUnsigned32Bytes(i, result, 0);
         return result;
     }
 

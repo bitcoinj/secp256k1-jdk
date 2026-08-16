@@ -17,8 +17,8 @@ package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.SecpScalar;
+import org.bitcoinj.secp.internal.ByteUtils;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
-import org.bitcoinj.secp.internal.UInt256;
 
 import java.math.BigInteger;
 
@@ -56,8 +56,8 @@ public class EcdsaSignatureBc implements EcdsaSignature {
     @Override
     public byte[] serializeCompact() {
         byte[] signature = new byte[64];
-        System.arraycopy(UInt256.integerTo32Bytes(r), 0, signature, 0, 32);
-        System.arraycopy(UInt256.integerTo32Bytes(s), 0, signature, 32, 32);
+        ByteUtils.copyAsUnsigned32Bytes(r, signature, 0);
+        ByteUtils.copyAsUnsigned32Bytes(s, signature, 32);
         return signature;
     }
 
