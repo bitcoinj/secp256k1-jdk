@@ -76,6 +76,9 @@ public class SecpScalarImpl implements SecpScalar {
      * @return a 32-byte, big-endian, unsigned, in-range integer value
      */
     public static byte[] integerTo32Bytes(BigInteger i) {
-        return UInt256.integerTo32Bytes(SecpScalar.checkInRange(i));
+        SecpScalar.checkInRange(i);
+        byte[] result = new byte[32];
+        ByteUtils.copyAsUnsigned32Bytes(i, result, 0);
+        return result;
     }
 }

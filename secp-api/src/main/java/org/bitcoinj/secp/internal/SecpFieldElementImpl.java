@@ -84,7 +84,10 @@ public class SecpFieldElementImpl implements SecpFieldElement {
      * @return a 32-byte, big-endian unsigned integer value
      */
     public static byte[] integerTo32Bytes(BigInteger i) {
-        return UInt256.integerTo32Bytes(SecpFieldElement.checkInRange(i));
+        SecpFieldElement.checkInRange(i);
+        byte[] result = new byte[32];
+        ByteUtils.copyAsUnsigned32Bytes(i, result, 0);
+        return result;
     }
 
     public static boolean isInRange(byte[] e) {
