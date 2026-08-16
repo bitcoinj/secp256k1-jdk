@@ -91,7 +91,7 @@ public class SecpFieldElementImpl implements SecpFieldElement {
         if (e.length != 32) {
             throw new IllegalArgumentException("SecpFieldElement must have 32 bytes, found : " + e.length);
         }
-        return ByteUtils.compareUnsigned(e, SecpFieldElementImpl.MAX_VALUE_BYTES) <= 0;
+        return Arrays.compareUnsigned(e, SecpFieldElementImpl.MAX_VALUE_BYTES) <= 0;
     }
 
     // TODO: constant-time implementation?

@@ -20,28 +20,6 @@ package org.bitcoinj.secp.internal;
  */
 public class ByteUtils {
     static final HexFormat HEX_FORMAT = new HexFormat();
-    // In Java 9+, this can be replaced with Arrays.compareUnsigned()
-    /**
-     * Compare byte arrays treating each byte as unsigned.
-     * @param a byte array to compare
-     * @param b byte array to compare
-     * @return a negative integer if {@code a < b}, zero if {@code a == b},
-     * or a positive integer if {@code a > b}
-     */
-    public static int compareUnsigned(byte[] a, byte[] b) {
-        int minLength = Math.min(a.length, b.length);
-        for (int i = 0; i < minLength; i++) {
-            int result = compareUnsigned(a[i], b[i]);
-            if (result != 0) {
-                return result;
-            }
-        }
-        return a.length - b.length;
-    }
-
-    private static int compareUnsigned(byte a, byte b) {
-        return Byte.toUnsignedInt(a) - Byte.toUnsignedInt(b);
-    }
 
     /**
      * Utility method to format hex bytes as string

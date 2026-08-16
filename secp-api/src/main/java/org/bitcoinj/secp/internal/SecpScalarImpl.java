@@ -19,6 +19,7 @@ import org.bitcoinj.secp.SecpScalar;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.Arrays;
 
 public class SecpScalarImpl implements SecpScalar {
     static final byte[] MAX_VALUE_BYTES = integerTo32Bytes(MAX_VALUE);
@@ -48,7 +49,7 @@ public class SecpScalarImpl implements SecpScalar {
         if (e.length != 32) {
             throw new IllegalArgumentException("SecpScalar must have 32 bytes, found : " + e.length);
         }
-        return !MessageDigest.isEqual(e, UInt256.ZERO_VALUE) && ByteUtils.compareUnsigned(e, MAX_VALUE_BYTES) <= 0;
+        return !MessageDigest.isEqual(e, UInt256.ZERO_VALUE) && Arrays.compareUnsigned(e, MAX_VALUE_BYTES) <= 0;
     }
 
     // TODO: constant-time implementation?
