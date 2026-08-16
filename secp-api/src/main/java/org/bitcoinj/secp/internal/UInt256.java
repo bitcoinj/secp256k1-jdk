@@ -49,12 +49,13 @@ public interface UInt256 {
     }
 
     /**
-     * Check if an integer is in the inclusive range {@link #MIN_VALUE} to {@link #MAX_VALUE}
+     * Check if an integer is positive and can be represented in 32 unsigned bytes.
      * @param e A possible field element to validate
      * @return true if valid
      */
     static boolean isInRange(BigInteger e) {
-        return e.signum() >= 0 && e.compareTo(MAX_VALUE) <= 0;
+        // For non-negative, bitLength() returns the minimal, unsigned bit length
+        return e.signum() >= 0 && e.bitLength() <= 8 * 32;
     }
 
     /**
