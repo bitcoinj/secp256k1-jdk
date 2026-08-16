@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.internal;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 
 /**
  * An effectively-immutable sequence of bytes.
@@ -44,7 +45,7 @@ public interface ByteArray extends Comparable<ByteArray> {
      */
     @Override
     default int compareTo(ByteArray o) {
-        return ByteUtils.compareUnsigned(bytes(), o.bytes());
+        return Arrays.compareUnsigned(bytes(), o.bytes());
     }
 
     /**
