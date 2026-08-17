@@ -30,7 +30,7 @@ jobs:
         run: |
           brew install secp256k1
           echo "DYLD_LIBRARY_PATH=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
-          echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
+          echo "LIBSECP_DIR=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
       - name: Build with Maven
         run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
       - name: Compute CI revision
@@ -76,7 +76,7 @@ jobs:
         run: |
           brew install secp256k1
           echo "DYLD_LIBRARY_PATH=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
-          echo "JAVA_TOOL_OPTIONS=-Djava.library.path=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
+          echo "LIBSECP_DIR=$(brew --prefix secp256k1)/lib" >> $GITHUB_ENV
       - name: Build (JIT) with Maven
         run: mvn verify -Prun-schnorr,run-ecdsa,run-schnorr-kotlin,run-ecdsa-kotlin
       - name: Run Native Integration Tests
