@@ -140,7 +140,7 @@ public class Bouncy256k1 implements Secp256k1 {
         AsymmetricCipherKeyPair bcKeyPair = bcKeyPairCreate();
         BigInteger privKey = ((ECPrivateKeyParameters) bcKeyPair.getPrivate()).getD();
         ECPoint pubPoint = (((ECPublicKeyParameters) bcKeyPair.getPublic()).getQ());
-        return new SecpKeyPairImpl(SecpPrivKey.of(privKey), BC.toSecpPubKey(pubPoint));
+        return new SecpKeyPairImpl(new SecpPrivKeyBc(privKey), BC.toSecpPubKey(pubPoint));
     }
 
     @Override
