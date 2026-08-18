@@ -65,6 +65,6 @@ public class SchnorrSignatureImpl implements SchnorrSignature, ByteArray {
 
     @Override
     public String toString() {
-        return this.formatHex();
+        return "SchnorrSignatureImpl [r=" + r + ", s=" + s + "]";
     }
 }
