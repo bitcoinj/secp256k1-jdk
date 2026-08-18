@@ -339,7 +339,7 @@ public class Bouncy256k1 implements Secp256k1 {
         signer.init(true, new ParametersWithRandom(priv, new FixedBytesRandom(auxiliaryRandom)));
         signer.update(msg_hash, 0, msg_hash.length);
 
-        return new SchnorrSignatureImpl(signer.generateSignature());
+        return SchnorrSignatureImpl.of(signer.generateSignature());
     }
 
     @Override

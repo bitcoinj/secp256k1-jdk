@@ -28,7 +28,7 @@ public class SchnorrSignatureImpl implements SchnorrSignature, ByteArray {
     private final SecpFieldElement r;
     private final SecpScalar s;
 
-    public SchnorrSignatureImpl(byte[] signature) {
+    private SchnorrSignatureImpl(byte[] signature) {
         if (signature.length != 64) {
             throw new IllegalArgumentException("Sig Not 64 bytes");
         }

@@ -497,7 +497,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keyPairSeg, auxiliary_rand);
         keyPairSeg.fill((byte) 0x00);   // Contains the private key
         assert(return_val == 1);
-        return new SchnorrSignatureImpl(sig.toArray(JAVA_BYTE));
+        return SchnorrSignatureImpl.of(sig.toArray(JAVA_BYTE));
     }
 
     /// Create a `secp256k1_keypair` segment from a [SecpPrivKey]
