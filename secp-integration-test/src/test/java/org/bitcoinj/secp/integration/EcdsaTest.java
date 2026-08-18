@@ -118,16 +118,14 @@ public class EcdsaTest implements SecpTestSupport {
     @Test
     void ecdsaCrossCheck() {
         try (Secp256k1 secp1 = new Secp256k1Foreign(); Secp256k1 secp2 = new Bouncy256k1()) {
-            SecpPrivKey secKey1 = secp1.ecPrivKeyCreate();
-            SecpPubKey pubKey1 = secp1.ecPubKeyCreate(secKey1);
-
-            SecpPrivKey secKey2 = secKey1;
-            SecpPubKey pubKey2 = secp2.ecPubKeyCreate(secKey1);
+            SecpPrivKey secKey = secp1.ecPrivKeyCreate();
+            SecpPubKey pubKey1 = secp1.ecPubKeyCreate(secKey);
+            SecpPubKey pubKey2 = secp2.ecPubKeyCreate(secKey);
 
             assertArrayEquals(pubKey1.serialize(), pubKey2.serialize());
 
-            EcdsaSignature sig1 = secp1.ecdsaSign(MSG_HASH, secKey1).get();
-            EcdsaSignature sig2 = secp2.ecdsaSign(MSG_HASH, secKey2).get();
+            EcdsaSignature sig1 = secp1.ecdsaSign(MSG_HASH, secKey).get();
+            EcdsaSignature sig2 = secp2.ecdsaSign(MSG_HASH, secKey).get();
 
             assertArrayEquals(sig1.serializeCompact(), sig2.serializeCompact());
 
@@ -142,16 +140,14 @@ public class EcdsaTest implements SecpTestSupport {
     @Test
     void ecdsaCrossCheckLowR() {
         try (Secp256k1 secp1 = new Secp256k1Foreign(); Secp256k1 secp2 = new Bouncy256k1()) {
-            SecpPrivKey secKey1 = secp1.ecPrivKeyCreate();
-            SecpPubKey pubKey1 = secp1.ecPubKeyCreate(secKey1);
-
-            SecpPrivKey secKey2 = secKey1;
-            SecpPubKey pubKey2 = secp2.ecPubKeyCreate(secKey1);
+            SecpPrivKey secKey = secp1.ecPrivKeyCreate();
+            SecpPubKey pubKey1 = secp1.ecPubKeyCreate(secKey);
+            SecpPubKey pubKey2 = secp2.ecPubKeyCreate(secKey);
 
             assertArrayEquals(pubKey1.serialize(), pubKey2.serialize());
 
-            EcdsaSignature sig1 = secp1.ecdsaSignLowR(MSG_HASH, secKey1).get();
-            EcdsaSignature sig2 = secp2.ecdsaSignLowR(MSG_HASH, secKey2).get();
+            EcdsaSignature sig1 = secp1.ecdsaSignLowR(MSG_HASH, secKey).get();
+            EcdsaSignature sig2 = secp2.ecdsaSignLowR(MSG_HASH, secKey).get();
 
             assertArrayEquals(sig1.serializeCompact(), sig2.serializeCompact());
 
