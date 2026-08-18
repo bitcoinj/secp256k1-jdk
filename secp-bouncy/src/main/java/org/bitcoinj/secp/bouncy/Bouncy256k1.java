@@ -266,9 +266,14 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SecpResult<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature) {
+    public SecpResult<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serializedSignature) {
         try {
-            return SecpResult.ok(new EcdsaSignatureImpl(serialized_signature));
+            if (serializedSignature.length != 64) {
+                throw new IllegalArgumentException("Serialized signature is not 64 bytes");
+            }
+            BigInteger r = SecpScalarImpl.bytes32ToInteger(java.util.Arrays.copyOfRange(serializedSignature, 0, 32));
+            BigInteger s = SecpScalarImpl.bytes32ToInteger(java.util.Arrays.copyOfRange(serializedSignature, 32, 64));
+            return SecpResult.ok(new EcdsaSignatureBc(r, s));
         } catch (IllegalArgumentException iae) {
             return SecpResult.err(0);
         }
