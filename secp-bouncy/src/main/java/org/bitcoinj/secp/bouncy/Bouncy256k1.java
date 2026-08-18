@@ -33,6 +33,12 @@ import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DLSequence;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -51,7 +57,9 @@ import org.bouncycastle.math.ec.FixedPointCombMultiplier;
 import org.bouncycastle.math.ec.FixedPointUtil;
 import org.bouncycastle.math.ec.custom.sec.SecP256K1Curve;
 import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Properties;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -276,6 +284,79 @@ public class Bouncy256k1 implements Secp256k1 {
             return SecpResult.ok(new EcdsaSignatureBc(r, s));
         } catch (IllegalArgumentException iae) {
             return SecpResult.err(0);
+        }
+    }
+
+    @Override
+    public SecpResult<EcdsaSignature> ecdsaSignatureParseDer(byte[] derSignature) {
+        ASN1Sequence seq;
+        try {
+            // fromByteArray() rejects trailing bytes after the top-level object
+            ASN1Primitive primitive = ASN1Primitive.fromByteArray(derSignature);
+            if (!(primitive instanceof ASN1Sequence)) {
+                return SecpResult.err(0);
+            }
+            seq = (ASN1Sequence) primitive;
+            // BC's parser accepts BER. Re-encoding as DER and comparing rejects the
+            // indefinite-length and non-minimal encodings that strict DER forbids.
+            if (!Arrays.areEqual(derSignature, seq.getEncoded(ASN1Encoding.DER))) {
+                return SecpResult.err(0);
+            }
+        } catch (IOException | IllegalArgumentException e) {
+            // IOException: malformed input or trailing data
+            // IllegalArgumentException: BC rejecting a non-minimally-encoded INTEGER
+            return SecpResult.err(0);
+        }
+        if (seq.size() != 2
+                || !(seq.getObjectAt(0) instanceof ASN1Integer)
+                || !(seq.getObjectAt(1) instanceof ASN1Integer)) {
+            return SecpResult.err(0);
+        }
+        BigInteger r = ((ASN1Integer) seq.getObjectAt(0)).getValue();
+        BigInteger s = ((ASN1Integer) seq.getObjectAt(1)).getValue();
+        if (r.signum() < 0 || s.signum() < 0) {
+            return SecpResult.err(0);   // the C parser rejects a set high bit as negative
+        }
+        return SecpResult.ok(new EcdsaSignatureBc(zeroIfOverflow(r), zeroIfOverflow(s)));
+    }
+
+    /**
+     * Replace an out-of-range scalar with zero, matching {@code secp256k1_der_parse_integer}.
+     * @param scalar a non-negative scalar
+     * @return the scalar, or {@link BigInteger#ZERO} if it is not less than the curve order
+     */
+    private static BigInteger zeroIfOverflow(BigInteger scalar) {
+        return scalar.compareTo(BC_ECDOMAIN_PARAMS.getN()) < 0 ? scalar : BigInteger.ZERO;
+    }
+
+    public SecpResult<EcdsaSignature> ecdsaSignatureParseDerBitcoinJ(byte[] derSignature) {
+        try {
+            // BouncyCastle by default is strict about parsing ASN.1 integers. We relax this check, because some
+            // Bitcoin signatures would not parse.
+            Properties.setThreadOverride("org.bouncycastle.asn1.allow_unsafe_integer", true);
+            final ASN1Primitive seqObj;
+            try (ASN1InputStream decoder = new ASN1InputStream(derSignature)) {
+                seqObj = decoder.readObject();
+            }
+            if (seqObj == null)
+                throw new IllegalArgumentException("Reached past end of ASN.1 stream.");
+            if (!(seqObj instanceof DLSequence))
+                throw new IllegalArgumentException("Read unexpected class: " + seqObj.getClass().getName());
+            final DLSequence seq = (DLSequence) seqObj;
+            ASN1Integer r, s;
+            try {
+                r = (ASN1Integer) seq.getObjectAt(0);
+                s = (ASN1Integer) seq.getObjectAt(1);
+            } catch (ClassCastException e) {
+                throw new IllegalArgumentException(e);
+            }
+            // OpenSSL deviates from the DER spec by interpreting these values as unsigned, though they should not be
+            // Thus, we always use the positive versions. See: http://r6.ca/blog/20111119T211504Z.html
+            return SecpResult.ok(new EcdsaSignatureBc(r.getPositiveValue(), s.getPositiveValue()));
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        } finally {
+            Properties.removeThreadOverride("org.bouncycastle.asn1.allow_unsafe_integer");
         }
     }
 
