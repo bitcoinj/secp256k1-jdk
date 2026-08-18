@@ -19,8 +19,10 @@ import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
+import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedClass;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -49,5 +51,19 @@ public class SchnorrTest implements SecpTestSupport {
         SchnorrSignature signature = secp.schnorrSigSign32(messageHash, keyPair);
         boolean isValid = secp.schnorrSigVerify(signature, messageHash, xOnly).get();
         assertTrue(isValid);
+    }
+
+    @MethodSource("secpImplementations")
+    @ParameterizedTest(name = "Test Ecdsa for {0}")
+    void testSchnorrSignatureToString(Secp256k1 secp) {
+        String sigString = "00".repeat(31) + "01" + "00".repeat(31) + "0A";
+        byte[] sigBytes = SecpTestSupport.parseHex(sigString);
+        SchnorrSignature sig = SchnorrSignatureImpl.of(sigBytes);
+        String string = sig.toString();
+        IO.println("toString() is: " + string);
+        assertTrue(string.contains("r=00"));
+        assertTrue(string.contains("s=00"));
+        assertTrue(string.contains("0001,"));
+        assertTrue(string.contains("000A]"));
     }
 }

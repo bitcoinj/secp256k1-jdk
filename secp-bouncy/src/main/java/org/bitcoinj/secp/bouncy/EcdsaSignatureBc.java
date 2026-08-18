@@ -19,6 +19,7 @@ import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.SecpScalar;
 import org.bitcoinj.secp.internal.ByteUtils;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
+import org.bitcoinj.secp.internal.UInt256;
 
 import java.math.BigInteger;
 
@@ -64,5 +65,10 @@ public class EcdsaSignatureBc implements EcdsaSignature {
     @Override
     public boolean hasLowR() {
         return !r.testBit(255);
+    }
+
+    @Override
+    public String toString() {
+        return "EcdsaSignatureBc [r=" + UInt256.toString(r) + ", s=" + UInt256.toString(s) + "]";
     }
 }

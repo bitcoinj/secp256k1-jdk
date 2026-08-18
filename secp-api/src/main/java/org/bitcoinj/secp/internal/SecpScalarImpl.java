@@ -45,6 +45,11 @@ public class SecpScalarImpl implements SecpScalar {
         return value.clone();
     }
 
+    @Override
+    public String toString() {
+        return ByteUtils.toHexString(value);
+    }
+
     static boolean isInRange(byte[] e) {
         if (e.length != 32) {
             throw new IllegalArgumentException("SecpScalar must have 32 bytes, found : " + e.length);
