@@ -66,7 +66,7 @@ public class PubKeyTest implements SecpTestSupport {
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Test Pubkeys for {0}")
     void pubKeySerialization(Secp256k1 secp) {
-        SecpPubKey pubKey = secp.ecPubKeyCreate(SecpPrivKey.of(BigInteger.ONE));
+        SecpPubKey pubKey = secp.ecPubKeyCreate(secp.ecPrivKeyImport(BigInteger.ONE));
         // Default serialization for public keys is compressed format
         assertArrayEquals(ONE_SERIALIZED_COMPRESSED, pubKey.serialize());
         assertArrayEquals(ONE_SERIALIZED_COMPRESSED, pubKey.serialize(true));
