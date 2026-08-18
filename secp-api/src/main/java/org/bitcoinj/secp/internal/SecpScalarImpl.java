@@ -81,4 +81,14 @@ public class SecpScalarImpl implements SecpScalar {
         ByteUtils.copyAsUnsigned32Bytes(i, result, 0);
         return result;
     }
+
+    /**
+     * Convert a 32-byte unsigned array to BigInteger verifying it's a valid P256k1 scalar
+     * @param bytes32 an UInt256 containing a valid Secp256k1 scalar value
+     * @return in-range integer value
+     */
+    public static BigInteger bytes32ToInteger(byte[] bytes32) {
+        SecpScalarImpl.checkInRange(bytes32);
+        return new BigInteger(1, bytes32);
+    }
 }
