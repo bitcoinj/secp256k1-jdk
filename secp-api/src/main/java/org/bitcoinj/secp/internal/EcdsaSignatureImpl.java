@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.EcdsaSignature;
+import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.SecpScalar;
 
 import java.math.BigInteger;
@@ -79,6 +80,16 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
     public boolean hasLowR() {
         // Is the high-bit of the first (high, big-endian) byte zero?
         return this.r().serialize()[0] >= 0;
+    }
+
+    @Override
+    public boolean hasLowS() {
+        return this.sBigInteger().compareTo(Secp256k1.HALF_CURVE_ORDER.toBigInteger()) <= 0;
+    }
+
+    @Override
+    public EcdsaSignature normalize() {
+        return hasLowS() ? this : new EcdsaSignatureImpl(rBigInteger(), Secp256k1.N.subtract(sBigInteger()));
     }
 
     @Override

@@ -55,11 +55,26 @@ public interface EcdsaSignature {
     byte[] serializeCompact();
 
     /**
-     * Is this signature a "low R" signature.
+     * Indicates this signature has a "low-r" value.
      * In other words: In a 256-bit big-endian representation of {@code R}, the high-bit is zero.
-     * @return true if this signature has a <i>low R</i> value.
+     * @return true if this signature has a low-<i>r</i> value.
      */
     boolean hasLowR();
+
+    /**
+     * Indicates this signature has a "low-s" value.
+     * In other words: if s is less than or equal to the half curve order.
+     * @return true if this signature has a low-<i>s</i> value.
+     */
+    boolean hasLowS();
+
+    /**
+     * Normalize this signature to its low-<i>s</i> form.
+     * If {@link #hasLowS()} is already true, this signature is returned unchanged. Otherwise, an equivalent
+     * signature is returned with <i>s</i> replaced by {@link Secp256k1#N} - <i>s</i>.
+     * @return a signature with a low-<i>s</i> value
+     */
+    EcdsaSignature normalize();
 
     /**
      * Create an ECDSA signature from serialized bytes
