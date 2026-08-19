@@ -282,6 +282,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpResult<Boolean> ecdsaVerify(EcdsaSignature signature, byte[] msg_hash_data, SecpPubKey pubKey) {
         checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
+        if (!signature.hasLowS()) return SecpResult.ok(false);
         ECDSASigner signer = new ECDSASigner();
         ECPoint pubPoint = BC.fromSecpPoint(pubKey.point());
         ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_ECDOMAIN_PARAMS);
