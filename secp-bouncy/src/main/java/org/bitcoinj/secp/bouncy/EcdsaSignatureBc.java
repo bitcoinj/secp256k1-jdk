@@ -68,6 +68,16 @@ public class EcdsaSignatureBc implements EcdsaSignature {
     }
 
     @Override
+    public boolean hasLowS() {
+        return s.compareTo(Bouncy256k1.HALF_CURVE_ORDER) <= 0;
+    }
+
+    @Override
+    public EcdsaSignature normalize() {
+        return hasLowS() ? this : new EcdsaSignatureBc(rBigInteger(), Bouncy256k1.N.subtract(sBigInteger()));
+    }
+
+    @Override
     public String toString() {
         return "EcdsaSignatureBc [r=" + UInt256.toString(r) + ", s=" + UInt256.toString(s) + "]";
     }
