@@ -31,21 +31,30 @@ import java.math.BigInteger;
 import static org.bitcoinj.secp.integration.SecpTestSupport.hash;
 import static org.bitcoinj.secp.integration.SecpTestSupport.parseHex;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test ECDA Signing and verification.
  */
 public class EcdsaTest implements SecpTestSupport {
-    private static final byte[] msg_hash = hash("Hello, world!");
+    private static final byte[] MSG_HASH = hash("Hello, world!");
+
+    private static final byte[] TEST_PRIVKEY = hash("secp256k1-jdk ECDSA canonicalization test key");
+    /// This message was selected such that a high-s signature would be produced under TEST_PRIVKEY. Specifically, a
+    /// high-s signature would be produced by the `sign` algorithm defined by BIP-461 given the message and private key
+    /// (and `extra` = b''). Both FFM and BC implementations effectively implement `sign`, just with low-*s* normalization.
+    private static final byte[] HIGH_S_MSG_HASH = hash("high-s");
+    /// High-s signature generated from MSG_HASH (not HIGH_S_MSG_HASH) and TEST_PRIVKEY, but with a negated *s*.
+    private static final byte[] HIGH_S_SIG = parseHex("A2377BF9BFCC5A3E1E0E62EAC08F8F99B5FE37330AAA4CDADDA565C6FE2CF568D267903C02788014B75BA39F3BC534B67623AD2CBF64A578A593B9CB95535A74");
 
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Test Ecdsa for {0}")
     void testEcdsa(Secp256k1 secp) {
         SecpPrivKey privKey = secp.ecPrivKeyCreate();
         SecpPubKey pubKey = secp.ecPubKeyCreate(privKey);
-        EcdsaSignature sig = secp.ecdsaSign(msg_hash, privKey).get();
-        boolean validSignature = secp.ecdsaVerify(sig, msg_hash, pubKey).get();
+        EcdsaSignature sig = secp.ecdsaSign(MSG_HASH, privKey).get();
+        boolean validSignature = secp.ecdsaVerify(sig, MSG_HASH, pubKey).get();
         assertTrue(validSignature);
     }
 
@@ -54,10 +63,43 @@ public class EcdsaTest implements SecpTestSupport {
     void testEcdsaLowR(Secp256k1 secp) {
         SecpPrivKey privKey = secp.ecPrivKeyCreate();
         SecpPubKey pubKey = secp.ecPubKeyCreate(privKey);
-        EcdsaSignature sig = secp.ecdsaSignLowR(msg_hash, privKey).get();
-        boolean validSignature = secp.ecdsaVerify(sig, msg_hash, pubKey).get();
+        EcdsaSignature sig = secp.ecdsaSignLowR(MSG_HASH, privKey).get();
+        boolean validSignature = secp.ecdsaVerify(sig, MSG_HASH, pubKey).get();
         assertTrue(validSignature);
         assertTrue(sig.hasLowR());
+    }
+
+    @MethodSource("secpImplementations")
+    @ParameterizedTest(name = "Test Ecdsa for {0}")
+    void testEcdsaCanonicalSign(Secp256k1 secp) {
+        SecpPrivKey privKey = secp.ecPrivKeyImport(TEST_PRIVKEY);
+        SecpPubKey pubKey = secp.ecPubKeyCreate(privKey);
+
+        EcdsaSignature sig = secp.ecdsaSign(HIGH_S_MSG_HASH, privKey).get();
+
+        boolean validSignature = secp.ecdsaVerify(sig, HIGH_S_MSG_HASH, pubKey).get();
+
+        assertTrue(validSignature);
+        assertTrue(sig.hasLowS());
+    }
+
+    @MethodSource("secpImplementations")
+    @ParameterizedTest(name = "Test Ecdsa for {0}")
+    void testEcdsaVerifyHighSFails(Secp256k1 secp) {
+        SecpPrivKey privKey = secp.ecPrivKeyImport(TEST_PRIVKEY);
+        SecpPubKey pubKey = secp.ecPubKeyCreate(privKey);
+
+        EcdsaSignature sigHighS = secp.ecdsaSignatureParseCompact(HIGH_S_SIG).get();
+        assertFalse(sigHighS.hasLowS());
+
+        boolean validSignature1 = secp.ecdsaVerify(sigHighS, MSG_HASH, pubKey).get();
+        assertFalse(validSignature1);
+
+        EcdsaSignature sigLowS = sigHighS.normalize();
+        assertTrue(sigLowS.hasLowS());
+
+        boolean validSignature2 = secp.ecdsaVerify(sigLowS, MSG_HASH, pubKey).get();
+        assertTrue(validSignature2);
     }
 
     @MethodSource("secpImplementations")
@@ -84,15 +126,15 @@ public class EcdsaTest implements SecpTestSupport {
 
             assertArrayEquals(pubKey1.serialize(), pubKey2.serialize());
 
-            EcdsaSignature sig1 = secp1.ecdsaSign(msg_hash, secKey1).get();
-            EcdsaSignature sig2 = secp2.ecdsaSign(msg_hash, secKey2).get();
+            EcdsaSignature sig1 = secp1.ecdsaSign(MSG_HASH, secKey1).get();
+            EcdsaSignature sig2 = secp2.ecdsaSign(MSG_HASH, secKey2).get();
 
             assertArrayEquals(sig1.serializeCompact(), sig2.serializeCompact());
 
-            assertTrue(secp1.ecdsaVerify(sig1, msg_hash, pubKey1).get());
-            assertTrue(secp1.ecdsaVerify(sig2, msg_hash, pubKey2).get());
-            assertTrue(secp2.ecdsaVerify(sig1, msg_hash, pubKey1).get());
-            assertTrue(secp2.ecdsaVerify(sig2, msg_hash, pubKey2).get());
+            assertTrue(secp1.ecdsaVerify(sig1, MSG_HASH, pubKey1).get());
+            assertTrue(secp1.ecdsaVerify(sig2, MSG_HASH, pubKey2).get());
+            assertTrue(secp2.ecdsaVerify(sig1, MSG_HASH, pubKey1).get());
+            assertTrue(secp2.ecdsaVerify(sig2, MSG_HASH, pubKey2).get());
         }
     }
 
@@ -108,15 +150,15 @@ public class EcdsaTest implements SecpTestSupport {
 
             assertArrayEquals(pubKey1.serialize(), pubKey2.serialize());
 
-            EcdsaSignature sig1 = secp1.ecdsaSignLowR(msg_hash, secKey1).get();
-            EcdsaSignature sig2 = secp2.ecdsaSignLowR(msg_hash, secKey2).get();
+            EcdsaSignature sig1 = secp1.ecdsaSignLowR(MSG_HASH, secKey1).get();
+            EcdsaSignature sig2 = secp2.ecdsaSignLowR(MSG_HASH, secKey2).get();
 
             assertArrayEquals(sig1.serializeCompact(), sig2.serializeCompact());
 
-            assertTrue(secp1.ecdsaVerify(sig1, msg_hash, pubKey1).get());
-            assertTrue(secp1.ecdsaVerify(sig2, msg_hash, pubKey2).get());
-            assertTrue(secp2.ecdsaVerify(sig1, msg_hash, pubKey1).get());
-            assertTrue(secp2.ecdsaVerify(sig2, msg_hash, pubKey2).get());
+            assertTrue(secp1.ecdsaVerify(sig1, MSG_HASH, pubKey1).get());
+            assertTrue(secp1.ecdsaVerify(sig2, MSG_HASH, pubKey2).get());
+            assertTrue(secp2.ecdsaVerify(sig1, MSG_HASH, pubKey1).get());
+            assertTrue(secp2.ecdsaVerify(sig2, MSG_HASH, pubKey2).get());
         }
     }
 
