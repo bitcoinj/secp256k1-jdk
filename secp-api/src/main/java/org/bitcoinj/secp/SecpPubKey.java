@@ -51,22 +51,13 @@ public interface SecpPubKey extends ECPublicKey, SecpPoint.Uncompressed {
     }
 
     /**
-     * Serialize key in primary encoded format (compressed)
+     * Serialize key in primary encoded format (compressed). Although this public key interface
+     * subclasses {@link SecpPoint.Uncompressed}, its _serialization_ defaults to compressed.
      * @return public key in compressed format
      */
+    @Override
     default byte[] serialize() {
         return serialize(true);
-    }
-
-    /**
-     * Return encoded key in either compressed or uncompressed SEC format.
-     * @param compressed Use compressed variant of format
-     * @return public key in SEC format
-     */
-    default byte[] serialize(boolean compressed) {
-        return compressed
-                ? point().compress().serialize()
-                : point().serialize();
     }
 
     /**

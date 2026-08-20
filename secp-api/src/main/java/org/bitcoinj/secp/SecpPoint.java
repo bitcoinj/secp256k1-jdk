@@ -61,7 +61,7 @@ public interface SecpPoint {
         boolean isOdd();
 
         /**
-         * Serialize using the default format
+         * Serialize using the implementation's default format
          * @return serialized point
          */
         byte[] serialize();
@@ -76,15 +76,6 @@ public interface SecpPoint {
          * @return uncompressed point
          */
         Uncompressed uncompress();
-
-        /**
-         * Get the default serialization encoding
-         * @return serialized point
-         */
-        @Override
-        default byte[] serialize() {
-            return serializeCompressed(x().serialize(), isOdd());
-        }
     }
 
     /**
@@ -103,13 +94,21 @@ public interface SecpPoint {
         Compressed compress();
 
         /**
-         * Get the default serialization encoding
+         * Get the default serialization encoding. Uncompressed points default to uncompressed serialization,
+         * but his can be overridden by calling {@link #serialize(boolean)}.
          * @return serialized point
          */
         @Override
         default byte[] serialize() {
-            return SecpPoint.serializeUncompressed(x().serialize(), y().serialize());
+            return serialize(false);
         }
+
+        /**
+         * Return encoded key in either compressed or uncompressed SEC format.
+         * @param compressed Use compressed variant of format
+         * @return public key in SEC format
+         */
+        byte[] serialize(boolean compressed);
 
         default ECPoint toECPoint() {
             return this instanceof SecpECPoint
