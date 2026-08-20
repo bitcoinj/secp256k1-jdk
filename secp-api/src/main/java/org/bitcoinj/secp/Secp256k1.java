@@ -25,6 +25,7 @@ import java.security.spec.ECFieldFp;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.EllipticCurve;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -132,13 +133,15 @@ public interface Secp256k1 extends Closeable {
 
         @Override
         public String toString() {
-            return id();
+            return id;
         }
 
         /**
          * Get the provider ID as a string
          * @return provider ID string
+         * @deprecated Use {@link ProviderId#toString()}
          */
+        @Deprecated
         public String id() {
             return id;
         }
@@ -390,8 +393,20 @@ public interface Secp256k1 extends Closeable {
      * @return A Secp256k1 instance using the <i>default</i> implementation
      */
     static Secp256k1 get() {
-        return findAll(p -> p.id().equals(ProviderId.LIBSECP256K1_FFM.id())).findFirst()
+        return findAll(p -> p.id().isPresent() && p.id().get() == ProviderId.LIBSECP256K1_FFM)
+                .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Default Provider not found."))
+                .get();
+    }
+
+    /**
+     * Get implementation by name
+     * @param name implementation name
+     * @return A Secp256k1 instance using the <i>default</i> implementation
+     */
+    static Secp256k1 getByName(String name) {
+        return findAll(p -> p.name().equals(name)).findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Provider name " + name + " not found."))
                 .get();
     }
 
@@ -400,19 +415,10 @@ public interface Secp256k1 extends Closeable {
      * @param id implementation ID
      * @return A Secp256k1 instance using the <i>default</i> implementation
      */
-    static Secp256k1 getById(String id) {
-        return findAll(provider -> provider.id().equals(id)).findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Provider " + id + " not found."))
+    static Secp256k1 getById(ProviderId id) {
+        return findAll(p -> p.id().isPresent() && p.id().get() == id).findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Provider ID " + id + " not found."))
                 .get();
-    }
-
-    /**
-     * Get implementation by ID enum
-     * @param idEnum implementation ID enum
-     * @return A Secp256k1 instance using the <i>default</i> implementation
-     */
-    static Secp256k1 getById(ProviderId idEnum) {
-        return getById(idEnum.id());
     }
 
     /**
@@ -423,7 +429,14 @@ public interface Secp256k1 extends Closeable {
          * Implementations must implement this method to return a unique ID
          * @return A unique ID for this Secp256k1 implementation
          */
-        String id();
+        Optional<ProviderId> id();
+
+        /**
+         * Implementations must implement this method to return a unique name. Experimental
+         * implementations should use domain-style names (e.g. {@code org.project.name})
+         * @return A unique ID for this Secp256k1 implementation
+         */
+        String name();
 
         /**
          * Get the instance this provider object describes

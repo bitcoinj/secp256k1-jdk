@@ -17,19 +17,22 @@ package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.Secp256k1;
 
+import java.util.Optional;
+
 import static org.bitcoinj.secp.Secp256k1.ProviderId.BOUNCY_CASTLE;
 
 /**
  * Provider implementations providing name and access to {@link Bouncy256k1}.
  */
 public class BouncyProvider implements Secp256k1.Provider {
-    /**
-     * Default constructor.
-     */
-    public BouncyProvider() {}
     @Override
-    public String id() {
-        return BOUNCY_CASTLE.id();
+    public Optional<Secp256k1.ProviderId> id() {
+        return Optional.of(BOUNCY_CASTLE);
+    }
+
+    @Override
+    public String name() {
+        return BOUNCY_CASTLE.toString();
     }
 
     @Override

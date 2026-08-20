@@ -17,12 +17,19 @@ package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.Secp256k1;
 
+import java.util.Optional;
+
 import static org.bitcoinj.secp.Secp256k1.ProviderId.LIBSECP256K1_FFM;
 
 public class ForeignProvider implements Secp256k1.Provider {
     @Override
-    public String id() {
-        return LIBSECP256K1_FFM.id();
+    public Optional<Secp256k1.ProviderId> id() {
+        return Optional.of(LIBSECP256K1_FFM);
+    }
+
+    @Override
+    public String name() {
+        return LIBSECP256K1_FFM.toString();
     }
 
     @Override
