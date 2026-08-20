@@ -19,6 +19,9 @@ import org.bitcoinj.secp.Secp256k1;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,7 +32,10 @@ public class Secp256K1ProviderTest implements SecpTestSupport {
     @MethodSource("secpProviders")
     @ParameterizedTest(name = "Provider: {0}")
     void checkProviders(Secp256k1.Provider provider) {
-        assertTrue(provider.id().length() > 1);
+        // All providers in this test must have an ID
+        Optional<Secp256k1.ProviderId> id = provider.id();
+        assertTrue(id.isPresent());
+        assertTrue(Arrays.asList(Secp256k1.ProviderId.values()).contains(id.get()));
     }
 
     @MethodSource("secpImplementations")
