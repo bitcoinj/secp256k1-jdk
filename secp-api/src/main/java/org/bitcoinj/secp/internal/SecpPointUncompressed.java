@@ -59,6 +59,13 @@ public class SecpPointUncompressed implements SecpPoint.Uncompressed {
         return new SecpPointCompressed(x, y);
     }
 
+    @Override
+    public byte[] serialize(boolean compressed) {
+        return compressed
+                ? SecpPoint.serializeCompressed(x().serialize(), isOdd())
+                : SecpPoint.serializeUncompressed(x().serialize(), y().serialize());
+    }
+
     public boolean equals(@Nullable SecpPoint other) {
         if (!(other instanceof SecpPointUncompressed)) return false;
         Uncompressed otherUncompressed = (Uncompressed) other;

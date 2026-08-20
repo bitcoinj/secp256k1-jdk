@@ -29,7 +29,7 @@ class SecpPointCompressed implements SecpPoint.Compressed {
     private final SecpFieldElement x;
     private final boolean isOdd;
 
-    SecpPointCompressed(SecpFieldElement x, SecpFieldElement y) {
+    public SecpPointCompressed(SecpFieldElement x, SecpFieldElement y) {
         this.x = x;
         this.isOdd = y.isOdd();
     }
@@ -47,6 +47,15 @@ class SecpPointCompressed implements SecpPoint.Compressed {
     @Override
     public Uncompressed uncompress() {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Get the default serialization encoding
+     * @return serialized point
+     */
+    @Override
+    public byte[] serialize() {
+        return SecpPoint.serializeCompressed(x().serialize(), isOdd());
     }
 
     @Override
