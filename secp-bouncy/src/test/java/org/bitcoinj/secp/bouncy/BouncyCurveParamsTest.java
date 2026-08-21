@@ -31,7 +31,7 @@ public class BouncyCurveParamsTest {
         // "P" = "P"
         assertEquals(Secp256k1.P, Bouncy256k1.BC_CURVE.getField().getCharacteristic());
         // "G" = "G"
-        assertEquals(Secp256k1.G, BC.toSecpPoint(Bouncy256k1.BC_ECDOMAIN_PARAMS.getG()));
+        assertEquals(Secp256k1.G, Bouncy256k1.toSecpPoint(Bouncy256k1.BC_ECDOMAIN_PARAMS.getG()));
         // "Order" = "N"
         assertEquals(Secp256k1.EC_PARAMS.getOrder(), Bouncy256k1.BC_ECDOMAIN_PARAMS.getN());
         // HALF_CURVE_ORDER = HALF_CURVE_ORDER
