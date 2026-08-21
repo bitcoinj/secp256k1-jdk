@@ -66,17 +66,11 @@ public class SecpPointUncompressed implements SecpPoint.Uncompressed {
                 : SecpPoint.serializeUncompressed(x().toByteArray(), y().toByteArray());
     }
 
-    public boolean equals(@Nullable SecpPoint other) {
-        if (!(other instanceof SecpPointUncompressed)) return false;
-        Uncompressed otherUncompressed = (Uncompressed) other;
-        return x().equals(otherUncompressed.x()) && y().equals(otherUncompressed.y());
-    }
-
     @Override
     public boolean equals(@Nullable Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        SecpPointUncompressed that = (SecpPointUncompressed) o;
-        return Objects.equals(x, that.x) && Objects.equals(y, that.y);
+        if (!(o instanceof SecpPoint.Uncompressed)) return false;
+        SecpPoint.Uncompressed that = (SecpPoint.Uncompressed) o;
+        return x.equals(that.x()) && y.equals(that.y());
     }
 
     @Override
