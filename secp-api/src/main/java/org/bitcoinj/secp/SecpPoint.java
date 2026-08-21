@@ -32,7 +32,7 @@ import java.security.spec.ECPoint;
  */
 public interface SecpPoint {
     /** The P256K1 infinity point */
-    Infinity POINT_INFINITY = Infinity.INSTANCE;
+    Infinity INFINITY = Infinity.INSTANCE;
 
     /** Singleton representing the point-at-infinity */
     enum Infinity implements SecpPoint {

@@ -29,6 +29,7 @@ import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.ffm.segments.LowRGrindingNonce;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
+import org.bitcoinj.secp.internal.SecpFieldElementImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
@@ -48,6 +49,7 @@ import java.lang.foreign.SegmentAllocator;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.ECPoint;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -162,6 +164,29 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     @Override
     public SecpPrivKey ecPrivKeyImport(BigInteger privKeyInt) {
         return new SecpPrivKeyImpl(privKeyInt);
+    }
+
+    @Override
+    public SecpResult<SecpPoint.Uncompressed> ecPointImport(ECPoint point) {
+        if (ECPoint.POINT_INFINITY.equals(point)) {
+            return SecpResult.err();
+        }
+        // To validate a point with libsecp256k1 we have to serialize and parse
+        byte[] uncompressed;
+        try {
+            // Serialize and range-check
+            byte[] x = SecpFieldElementImpl.integerTo32Bytes(point.getAffineX());
+            byte[] y = SecpFieldElementImpl.integerTo32Bytes(point.getAffineY());
+            uncompressed = SecpPoint.serializeUncompressed(x, y);
+        } catch (IllegalArgumentException e) {
+            return SecpResult.err();
+        }
+        return validatePoint(uncompressed);
+    }
+
+    // Validate an (x,y) pair. return a SecpPoint or throw IllegalArgument
+    SecpResult<SecpPoint.Uncompressed> validatePoint(byte[] serializedPoint) {
+       return ecPointParse(serializedPoint);
     }
 
     @Override
@@ -331,6 +356,15 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         }
     }
 
+    private SecpResult<SecpPoint.Uncompressed> ecPointParse(byte[] inputData) {
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment input = ta.allocateFrom(JAVA_BYTE, inputData);
+            MemorySegment pubkey = secp256k1_pubkey.allocate(ta);
+            int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
+            return SecpResult.checked(return_val, () -> toSecpPubKey(ta, pubkey));
+        }
+    }
+
     @Override
     public SecpResult<SecpXOnlyPubKey> xOnlyPubKeyParse(byte[] inputData) {
         if (inputData.length != 32) throw new IllegalArgumentException("length != 32");
@@ -351,7 +385,15 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     /// @param pubKeyData the pubKey to parse
     /// @return a result containing a segment (valid for the lifetime of `alloc`) in internal format
     private SecpResult<MemorySegment> pubKeyParse(SegmentAllocator alloc, SecpPoint.Uncompressed pubKeyData) {
-        MemorySegment input = alloc.allocateFrom(JAVA_BYTE, pubKeyData.serialize()); // 65 byte, uncompressed format
+        return pubKeyParse(alloc, pubKeyData.serialize());
+    }
+
+    /// Parse a pubKey into the 64-byte internal format.
+    /// @param alloc allocator to create segments with
+    /// @param pubKeyData the pubKey to parse
+    /// @return a result containing a segment (valid for the lifetime of `alloc`) in internal format
+    private SecpResult<MemorySegment> pubKeyParse(SegmentAllocator alloc, byte[] pubKeyData) {
+        MemorySegment input = alloc.allocateFrom(JAVA_BYTE, pubKeyData); // 65 byte, uncompressed format
         MemorySegment pubkey = secp256k1_pubkey.allocate(alloc);
         int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
         return SecpResult.checked(return_val, () -> pubkey);

@@ -27,6 +27,8 @@ import org.jspecify.annotations.Nullable;
 import java.security.spec.ECPoint;
 import java.util.Objects;
 
+import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
+
 /**
  * Bouncy Castle implementation of SecpPubKey using {@link SecP256K1Point}.
  */
@@ -42,7 +44,12 @@ class SecpPubKeyBc implements SecpPubKey {
         if (bcPoint instanceof SecP256K1Point) {
             return new SecpPubKeyBc((SecP256K1Point) bcPoint);
         } else {
-            throw new IllegalArgumentException("point must be SecP256K1Point");
+            SecP256K1Point imported = (SecP256K1Point) BC_CURVE.importPoint(bcPoint);
+            if (imported.isValid()) {
+                return new SecpPubKeyBc((SecP256K1Point) imported);
+            } else {
+                throw new IllegalArgumentException("point must be SecP256K1Point");
+            }
         }
     }
 

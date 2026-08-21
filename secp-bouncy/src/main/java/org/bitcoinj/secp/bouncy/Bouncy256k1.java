@@ -28,7 +28,9 @@ import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.ByteArray;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
+import org.bitcoinj.secp.internal.SecpECPoint;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
+import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
@@ -130,8 +132,23 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
+    public SecpResult<SecpPoint.Uncompressed> ecPointImport(java.security.spec.ECPoint point) {
+        SecP256K1Point bcPoint;
+        try {
+            bcPoint = (SecP256K1Point) BC_CURVE.validatePoint(point.getAffineX(), point.getAffineY());
+        } catch (IllegalArgumentException e) {
+            return SecpResult.err();
+        }
+        if (bcPoint.isInfinity()) {
+            return SecpResult.err();
+        }
+        SecpPubKeyBc validated = toSecpPoint(bcPoint);
+        return SecpResult.ok(validated) ;
+    }
+
+    @Override
     public SecpPubKey ecPubKeyCreate(SecpPrivKey privKey) {
-        ECPoint pub = BC_ECDOMAIN_PARAMS.getG().multiply(privKey.getS());
+        SecP256K1Point pub = (SecP256K1Point) BC_ECDOMAIN_PARAMS.getG().multiply(privKey.getS());
         return toSecpPubKey(pub);
     }
 
@@ -139,7 +156,7 @@ public class Bouncy256k1 implements Secp256k1 {
     public SecpKeyPair ecKeyPairCreate() {
         AsymmetricCipherKeyPair bcKeyPair = bcKeyPairCreate();
         BigInteger privKey = ((ECPrivateKeyParameters) bcKeyPair.getPrivate()).getD();
-        ECPoint pubPoint = (((ECPublicKeyParameters) bcKeyPair.getPublic()).getQ());
+        SecP256K1Point pubPoint = (SecP256K1Point) (((ECPublicKeyParameters) bcKeyPair.getPublic()).getQ());
         return new SecpKeyPairImpl(new SecpPrivKeyBc(privKey), toSecpPubKey(pubPoint));
     }
 
@@ -164,7 +181,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpPubKey ecPubKeyTweakMul(SecpPoint.Uncompressed pubKey, BigInteger scalarMultiplier) {
         SecP256K1Point pubKeyBC = fromSecpPoint(pubKey);
-        ECPoint pub = new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier);
+        SecP256K1Point pub = (SecP256K1Point) new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier);
         return toSecpPubKey(pub);
     }
 
@@ -172,7 +189,7 @@ public class Bouncy256k1 implements Secp256k1 {
     public SecpPubKey ecPubKeyCombine(SecpPoint.Uncompressed  key1, SecpPoint.Uncompressed  key2) {
         SecP256K1Point pubKey1BC = fromSecpPoint(key1);
         SecP256K1Point pubKey2BC = fromSecpPoint(key2);
-        ECPoint result = pubKey1BC.add(pubKey2BC);
+        SecP256K1Point result = (SecP256K1Point) pubKey1BC.add(pubKey2BC);
         return toSecpPubKey(result);
     }
 
@@ -190,7 +207,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData) {
         try {
-            ECPoint bcPoint = BC_CURVE.decodePoint(inputData);
+            SecP256K1Point bcPoint = (SecP256K1Point) BC_CURVE.decodePoint(inputData);
             return SecpResult.ok(toSecpPubKey(bcPoint));
         } catch (IllegalArgumentException e) {
             return SecpResult.err(0);
