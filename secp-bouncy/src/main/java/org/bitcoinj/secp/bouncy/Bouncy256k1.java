@@ -131,7 +131,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpPubKey ecPubKeyCreate(SecpPrivKey privKey) {
         ECPoint pub = BC_ECDOMAIN_PARAMS.getG().multiply(privKey.getS());
-        return BC.toSecpPubKey(pub);
+        return toSecpPubKey(pub);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class Bouncy256k1 implements Secp256k1 {
         AsymmetricCipherKeyPair bcKeyPair = bcKeyPairCreate();
         BigInteger privKey = ((ECPrivateKeyParameters) bcKeyPair.getPrivate()).getD();
         ECPoint pubPoint = (((ECPublicKeyParameters) bcKeyPair.getPublic()).getQ());
-        return new SecpKeyPairImpl(new SecpPrivKeyBc(privKey), BC.toSecpPubKey(pubPoint));
+        return new SecpKeyPairImpl(new SecpPrivKeyBc(privKey), toSecpPubKey(pubPoint));
     }
 
     @Override
@@ -162,17 +162,17 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpPubKey ecPubKeyTweakMul(SecpPoint.Uncompressed pubKey, BigInteger scalarMultiplier) {
-        SecP256K1Point pubKeyBC = BC.fromSecpPoint(pubKey);
+        SecP256K1Point pubKeyBC = fromSecpPoint(pubKey);
         ECPoint pub = new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier);
-        return BC.toSecpPubKey(pub);
+        return toSecpPubKey(pub);
     }
 
     @Override
     public SecpPubKey ecPubKeyCombine(SecpPoint.Uncompressed  key1, SecpPoint.Uncompressed  key2) {
-        SecP256K1Point pubKey1BC = BC.fromSecpPoint(key1);
-        SecP256K1Point pubKey2BC = BC.fromSecpPoint(key2);
+        SecP256K1Point pubKey1BC = fromSecpPoint(key1);
+        SecP256K1Point pubKey2BC = fromSecpPoint(key2);
         ECPoint result = pubKey1BC.add(pubKey2BC);
-        return BC.toSecpPubKey(result);
+        return toSecpPubKey(result);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class Bouncy256k1 implements Secp256k1 {
     public SecpResult<SecpPubKey> ecPubKeyParse(byte[] inputData) {
         try {
             ECPoint bcPoint = BC_CURVE.decodePoint(inputData);
-            return SecpResult.ok(BC.toSecpPubKey(bcPoint));
+            return SecpResult.ok(toSecpPubKey(bcPoint));
         } catch (IllegalArgumentException e) {
             return SecpResult.err(0);
         }
@@ -283,7 +283,7 @@ public class Bouncy256k1 implements Secp256k1 {
         checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
         if (!signature.hasLowS()) return SecpResult.ok(false);
         ECDSASigner signer = new ECDSASigner();
-        SecP256K1Point pubPoint = BC.fromSecpPoint(pubKey);
+        SecP256K1Point pubPoint = fromSecpPoint(pubKey);
         ECPublicKeyParameters params = new ECPublicKeyParameters(pubPoint, BC_ECDOMAIN_PARAMS);
         signer.init(false, params);
         boolean result;
@@ -381,7 +381,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpResult<EcdhSharedSecret> ecdh(SecpPubKey pubKey, SecpPrivKey privKey) {
-        SecP256K1Point point = BC.fromSecpPoint(pubKey);
+        SecP256K1Point point = fromSecpPoint(pubKey);
         SecP256K1Point ssPoint = (SecP256K1Point) point.multiply(privKey.getS());
         byte[] hashed = ecdhHash(ssPoint);
         return SecpResult.ok(new EcdhSharedSecretImpl(hashed));
@@ -426,6 +426,20 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public String toString() {
         return "Secp256k1/" + ProviderId.BOUNCY_CASTLE;
+    }
+
+    static SecpPubKeyBc toSecpPubKey(ECPoint bcPoint) {
+        return SecpPubKeyBc.of(bcPoint);
+    }
+
+    static SecpPubKeyBc toSecpPoint(ECPoint bcPoint) {
+        return SecpPubKeyBc.of(bcPoint);
+    }
+
+    static SecP256K1Point fromSecpPoint(SecpPoint.Uncompressed point) {
+        return point instanceof SecpPubKeyBc
+                ? ((SecpPubKeyBc) point).getQ()
+                : (SecP256K1Point) BC_CURVE.createPoint(point.x().toBigInteger(), point.y().toBigInteger());
     }
 
     private static void checkArg(boolean condition, String string) {

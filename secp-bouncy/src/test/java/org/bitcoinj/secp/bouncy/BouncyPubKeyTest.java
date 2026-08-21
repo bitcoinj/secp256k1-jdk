@@ -40,7 +40,7 @@ public class BouncyPubKeyTest {
             point = secp.ecPubKeyCreate(secp.ecPrivKeyCreate()).point();
         }
         assertNotNull(point);
-        SecP256K1Point bcPoint = (SecP256K1Point) BC.fromSecpPoint(point).normalize();
+        SecP256K1Point bcPoint = (SecP256K1Point) Bouncy256k1.fromSecpPoint(point).normalize();
 
         assertNotNull(bcPoint);
         assertEquals(point.x().toBigInteger(), bcPoint.getAffineXCoord().toBigInteger());
@@ -49,7 +49,7 @@ public class BouncyPubKeyTest {
 
     @Test
     public void testEquals() {
-        SecpPubKeyBc g1 = BC.toSecpPoint(Bouncy256k1.BC_ECDOMAIN_PARAMS.getG());
+        SecpPubKeyBc g1 = Bouncy256k1.toSecpPoint(Bouncy256k1.BC_ECDOMAIN_PARAMS.getG());
         assertEquals(Secp256k1.G.x(), g1.x());
         assertEquals(Secp256k1.G.y(), g1.y());
 
@@ -64,7 +64,7 @@ public class BouncyPubKeyTest {
     @Test
     public void infinityConversionTest() {
         assertThrows(IllegalArgumentException.class,
-                () -> BC.toSecpPubKey(BOUNCY_INFINITY)
+                () -> Bouncy256k1.toSecpPubKey(BOUNCY_INFINITY)
         );
     }
 }
