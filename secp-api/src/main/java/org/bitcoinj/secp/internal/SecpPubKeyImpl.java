@@ -63,7 +63,7 @@ public class SecpPubKeyImpl implements SecpPubKey {
 
     @Override
     public String toString() {
-        return ByteUtils.toHexString(point.compress().serialize());
+        return ByteUtils.toHexString(serialize(true));
     }
 
     @Override
