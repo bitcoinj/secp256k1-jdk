@@ -16,10 +16,8 @@
 package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.SecpPoint;
-import org.bitcoinj.secp.SecpPubKey;
-import org.bitcoinj.secp.internal.SecpPointUncompressed;
-import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.math.ec.custom.sec.SecP256K1Point;
 
 import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
 
@@ -28,19 +26,17 @@ import static org.bitcoinj.secp.bouncy.Bouncy256k1.BC_CURVE;
  */
 interface BC {
 
-    static SecpPubKey toSecpPubKey(ECPoint bcPoint) {
-        if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
-        return  new SecpPubKeyImpl(BC.toSecpPoint(bcPoint));
+    static SecpPubKeyBc toSecpPubKey(ECPoint bcPoint) {
+        return SecpPubKeyBc.of(bcPoint);
     }
 
-    static SecpPointUncompressed toSecpPoint(ECPoint bcPoint) {
-        if (bcPoint.isInfinity()) { throw new IllegalArgumentException("bcPoint is infinity"); }
-        return SecpPointUncompressed.of(
-                bcPoint.normalize().getAffineXCoord().toBigInteger(),
-                bcPoint.normalize().getAffineYCoord().toBigInteger());
+    static SecpPubKeyBc toSecpPoint(ECPoint bcPoint) {
+        return SecpPubKeyBc.of(bcPoint);
     }
 
-    static ECPoint fromSecpPoint(SecpPoint.Uncompressed point) {
-        return BC_CURVE.createPoint(point.x().toBigInteger(), point.y().toBigInteger());
+    static SecP256K1Point fromSecpPoint(SecpPoint.Uncompressed point) {
+        return point instanceof SecpPubKeyBc
+                ? ((SecpPubKeyBc) point).getQ()
+                : (SecP256K1Point) BC_CURVE.createPoint(point.x().toBigInteger(), point.y().toBigInteger());
     }
 }

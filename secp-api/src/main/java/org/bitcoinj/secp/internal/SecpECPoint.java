@@ -45,6 +45,12 @@ public class SecpECPoint extends ECPoint implements SecpPoint.Uncompressed {
         return new SecpECPoint(point.x().toBigInteger(), point.y().toBigInteger());
     }
 
+    // Unvalidated, assumes caller has validated the point.
+    // We should have implementation-specific versions/subclasses of this type (make it abstract)
+    public static SecpECPoint of(BigInteger x, BigInteger y) {
+        return new SecpECPoint(x, y);
+    }
+
     @Override
     public SecpFieldElement x() {
         return SecpFieldElement.of(super.getAffineX());
