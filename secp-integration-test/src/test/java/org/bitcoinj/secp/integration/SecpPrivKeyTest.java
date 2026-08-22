@@ -47,8 +47,8 @@ public class SecpPrivKeyTest implements SecpTestSupport {
     private final Secp256k1 secp;
     static final List<BigInteger> VALID_PRIV_KEYS = List.of(ONE, TWO, N.subtract(ONE));
     static final List<BigInteger> INVALID_PRIV_KEYS = List.of(ONE.negate(), ZERO, N, P);
-    static final List<byte[]> VALID_PRIV_KEYS_BYTES = VALID_PRIV_KEYS.stream().map(UInt256::integerTo32Bytes).toList();
-    static final List<byte[]> INVALID_PRIV_KEYS_BYTES = Stream.of(ZERO, N, P).map(UInt256::integerTo32Bytes).toList();
+    static final List<byte[]> VALID_PRIV_KEYS_BYTES = VALID_PRIV_KEYS.stream().map(UInt256::to32Bytes).toList();
+    static final List<byte[]> INVALID_PRIV_KEYS_BYTES = Stream.of(ZERO, N, P).map(UInt256::to32Bytes).toList();
 
     /// `@ParameterizedClass` constructor
     /// @param secp injected Secp256k1 implementation to test

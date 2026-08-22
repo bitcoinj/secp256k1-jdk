@@ -41,7 +41,7 @@ public class P256K1FieldElementImplTest {
     void testConstructors(BigInteger n) {
         SecpFieldElement element = new SecpFieldElementImpl(n);
         assertEquals(n, element.toBigInteger());
-        SecpFieldElement element2 = new SecpFieldElementImpl(UInt256.integerTo32Bytes(n));
+        SecpFieldElement element2 = new SecpFieldElementImpl(UInt256.to32Bytes(n));
         assertEquals(n, element2.toBigInteger());
     }
 
@@ -49,7 +49,7 @@ public class P256K1FieldElementImplTest {
     @ParameterizedTest(name = "n: {0}")
     void testIsInRange(BigInteger n) {
         assertTrue(SecpFieldElement.isInRange(n));
-        assertTrue(SecpFieldElementImpl.isInRange(UInt256.integerTo32Bytes(n)));
+        assertTrue(SecpFieldElementImpl.isInRange(UInt256.to32Bytes(n)));
     }
 
     @FieldSource("outOfRangeFieldInts")
@@ -58,12 +58,12 @@ public class P256K1FieldElementImplTest {
         assertFalse(SecpFieldElement.isInRange(n));
         if (UInt256.isInRange(n)) {
             // Integer is a valid UInt256, isInRange should report `false`
-            byte[] bytes = UInt256.integerTo32Bytes(n);
+            byte[] bytes = UInt256.to32Bytes(n);
             assertFalse(SecpFieldElementImpl.isInRange(bytes));
         } else {
             // Integer is not a valid UInt256, attempt to convert should throw
             assertThrows(IllegalArgumentException.class,
-                    () -> UInt256.integerTo32Bytes(n)
+                    () -> UInt256.to32Bytes(n)
             );
         }
     }
@@ -75,7 +75,7 @@ public class P256K1FieldElementImplTest {
             () -> SecpFieldElement.checkInRange(n)
         );
         assertEquals(n, SecpFieldElement.checkInRange(n));
-        byte[] bytes = UInt256.integerTo32Bytes(n);
+        byte[] bytes = UInt256.to32Bytes(n);
         assertDoesNotThrow(
                 () -> SecpFieldElementImpl.checkInRange(bytes)
         );
