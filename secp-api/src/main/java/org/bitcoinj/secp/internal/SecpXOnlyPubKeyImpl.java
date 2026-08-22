@@ -31,7 +31,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey {
     private final byte[] x;
 
     public SecpXOnlyPubKeyImpl(SecpFieldElement x) {
-        this.x = x.serialize();
+        this.x = x.toByteArray();
     }
 
     // Only call this method for x-only pubkeys that have been verified as valid

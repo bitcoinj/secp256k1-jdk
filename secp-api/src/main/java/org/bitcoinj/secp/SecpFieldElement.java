@@ -32,12 +32,6 @@ public interface SecpFieldElement extends SecpUInt256 {
     BigInteger toBigInteger();
 
     /**
-     * Get serialized (big-endian) field element (32 bytes unsigned)
-     * @return serialized field element
-     */
-    byte[] serialize();
-
-    /**
      * Get the parity of the field value
      * @return {@code true} if odd, {@code false} if even
      */
