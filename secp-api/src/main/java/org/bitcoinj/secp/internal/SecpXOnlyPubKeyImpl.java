@@ -92,6 +92,6 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey {
      */
     @Override
     public String toString() {
-        return ByteUtils.toHexString(serialize());
+        return UInt256.toHexString(serialize());
     }
 }

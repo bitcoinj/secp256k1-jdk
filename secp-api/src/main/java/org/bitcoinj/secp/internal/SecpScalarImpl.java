@@ -52,7 +52,7 @@ public class SecpScalarImpl implements SecpScalar {
 
     @Override
     public String toString() {
-        return ByteUtils.toHexString(value);
+        return UInt256.toHexString(value);
     }
 
     static boolean isInRange(byte[] e) {
@@ -75,7 +75,7 @@ public class SecpScalarImpl implements SecpScalar {
             throw new IllegalArgumentException("SecpScalar must have 32 bytes, found : " + e.length);
         }
         if (!isInRange(e)) {
-            throw new IllegalArgumentException("byte[] is not a valid SecpScalar: " + ByteUtils.toHexString(e));
+            throw new IllegalArgumentException("byte[] is not a valid SecpScalar: " + UInt256.toHexString(e));
         }
         return e;
     }

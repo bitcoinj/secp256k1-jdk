@@ -32,6 +32,7 @@ public interface UInt256 {
     /** The maximum unsigned 32-byte / 256-bit value. ({@code 2^256 - 1}) */
     BigInteger MAX_VALUE = BigInteger.ONE.shiftLeft(256).subtract(BigInteger.ONE);
     byte[] ZERO_VALUE = new byte[32];
+    HexFormat HEX_FORMAT = new HexFormat();
 
     /**
      * Convert a BigInteger to a 32-byte fixed-length byte array (UInt256).
@@ -91,6 +92,15 @@ public interface UInt256 {
         return e;
     }
 
+    /**
+     * Utility method to format hex bytes as string
+     * @param bytes bytes to format
+     * @return hex-formatted String
+     */
+    static String toHexString(byte[] bytes) {
+        return HEX_FORMAT.formatHex(bytes);
+    }
+
     static String toString(BigInteger uint256) {
         return String.format("%064X", uint256);
     }
@@ -111,4 +121,5 @@ public interface UInt256 {
         }
         return new BigInteger(signum, bytes);
     }
+
 }

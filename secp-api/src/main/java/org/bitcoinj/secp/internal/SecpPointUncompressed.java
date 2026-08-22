@@ -86,6 +86,6 @@ public class SecpPointUncompressed implements SecpPoint.Uncompressed {
 
     @Override
     public String toString() {
-        return ByteUtils.toHexString(this.serialize());
+        return UInt256.toHexString(this.serialize());
     }
 }
