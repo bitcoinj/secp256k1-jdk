@@ -71,4 +71,21 @@ public interface UInt256 {
     static String toString(byte[] uint256) {
         return ByteUtils.toHexString(uint256);
     }
+
+    /**
+     * Utility to convert unsigned big-endian {@code byte[]} to integer
+     * @param bytes bytes
+     * @return integer representation of unsigned, big-endian bytes
+     */
+    static BigInteger toBigInteger(byte[] bytes) {
+        // byte[] is unsigned, so `signum` can be 0 or 1: default to 0 then search for nonzero bytes
+        int signum = 0;
+        for (byte b : bytes) {
+            if (b != 0) {
+                signum = 1;
+                break;
+            }
+        }
+        return new BigInteger(signum, bytes);
+    }
 }

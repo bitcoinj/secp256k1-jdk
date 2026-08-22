@@ -37,7 +37,7 @@ public class SecpScalarImpl implements SecpScalar {
 
     @Override
     public BigInteger toBigInteger() {
-        return ByteArray.toInteger(value);
+        return UInt256.toBigInteger(value);
     }
 
     @Override
