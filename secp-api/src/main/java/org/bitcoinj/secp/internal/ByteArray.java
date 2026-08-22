@@ -16,38 +16,11 @@
 package org.bitcoinj.secp.internal;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 
 /**
- * An effectively-immutable sequence of bytes.
+ * Byte array utility.
  */
-public interface ByteArray extends Comparable<ByteArray> {
-
-    /**
-     * Get the bytes as an array
-     * @return the bytes as an array
-     */
-    byte[] bytes();
-
-    /**
-     * Format the bytes as a hex string
-     * @return hex-formatted string
-     */
-    default String formatHex() {
-        return ByteUtils.toHexString(bytes());
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>For {@link ByteArray} this is a byte-by-byte, unsigned comparison.
-     * @param o {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    default int compareTo(ByteArray o) {
-        return Arrays.compareUnsigned(bytes(), o.bytes());
-    }
-
+public interface ByteArray {
     /**
      * Utility to convert unsigned big-endian {@code byte[]} to integer
      * @param bytes bytes

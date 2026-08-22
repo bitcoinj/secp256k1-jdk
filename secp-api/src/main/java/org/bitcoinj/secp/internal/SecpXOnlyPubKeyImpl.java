@@ -27,7 +27,7 @@ import java.util.Arrays;
 /**
  * Simple implementation using {code @byte[]} as internal storage.
  */
-public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
+public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey {
     private final byte[] x;
 
     public SecpXOnlyPubKeyImpl(SecpFieldElement x) {
@@ -62,12 +62,6 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
     @Override
     public BigInteger getX() {
         return toBigInteger();
-    }
-
-    @Override
-    public byte[] bytes() {
-        // Defensive copy
-        return toByteArray();
     }
 
     /**
