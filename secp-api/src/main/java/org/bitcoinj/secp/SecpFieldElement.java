@@ -23,19 +23,13 @@ import java.math.BigInteger;
  * A number that is a valid element of the P256K1 field. We use this instead of {@link BigInteger}
  * so we can use a fixed-length, unsigned representation for simplicity and performance.
  */
-public interface SecpFieldElement {
+public interface SecpFieldElement extends SecpUInt256 {
 
     /**
      * Get the field element as a {@code BigInteger}
      * @return field element value
      */
     BigInteger toBigInteger();
-
-    /**
-     * Get serialized (big-endian) field element (32 bytes unsigned)
-     * @return serialized field element
-     */
-    byte[] serialize();
 
     /**
      * Get the parity of the field value

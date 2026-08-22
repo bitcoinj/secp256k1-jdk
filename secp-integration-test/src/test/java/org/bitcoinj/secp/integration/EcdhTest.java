@@ -37,7 +37,7 @@ public class EcdhTest {
             SecpResult<EcdhSharedSecret> result = secp.ecdh(pubKey, secKey);
             Assertions.assertNotNull(result);
             Assertions.assertInstanceOf(SecpResult.Ok.class, result);
-            Assertions.assertEquals(32, result.get().bytes().length);
+            Assertions.assertEquals(32, result.get().toByteArray().length);
         }
     }
 
@@ -54,13 +54,13 @@ public class EcdhTest {
             SecpResult<EcdhSharedSecret> result1 = secp.ecdh(pubKey2, secKey1);
             Assertions.assertNotNull(result1);
             Assertions.assertInstanceOf(SecpResult.Ok.class, result1);
-            Assertions.assertEquals(32, result1.get().bytes().length);
+            Assertions.assertEquals(32, result1.get().toByteArray().length);
 
             // Compute shared secret with secKey2
             SecpResult<EcdhSharedSecret> result2 = secp.ecdh(pubKey1, secKey2);
             Assertions.assertNotNull(result1);
             Assertions.assertInstanceOf(SecpResult.Ok.class, result2);
-            Assertions.assertEquals(32, result2.get().bytes().length);
+            Assertions.assertEquals(32, result2.get().toByteArray().length);
 
             // The separately computed shared secrets should be equal
             Assertions.assertEquals(result1.get(), result2.get());
@@ -75,7 +75,7 @@ public class EcdhTest {
             SecpResult<EcdhSharedSecret> result = secp.ecdh(pubKey, secKey);
             Assertions.assertNotNull(result);
             Assertions.assertInstanceOf(SecpResult.Ok.class, result);
-            Assertions.assertEquals(32, result.get().bytes().length);
+            Assertions.assertEquals(32, result.get().toByteArray().length);
         }
     }
 
@@ -92,13 +92,13 @@ public class EcdhTest {
             SecpResult<EcdhSharedSecret> result1 = secp.ecdh(pubKey2, secKey1);
             Assertions.assertNotNull(result1);
             Assertions.assertInstanceOf(SecpResult.Ok.class, result1);
-            Assertions.assertEquals(32, result1.get().bytes().length);
+            Assertions.assertEquals(32, result1.get().toByteArray().length);
 
             // Compute shared secret with secKey2
             SecpResult<EcdhSharedSecret> result2 = secp.ecdh(pubKey1, secKey2);
             Assertions.assertNotNull(result1);
             Assertions.assertInstanceOf(SecpResult.Ok.class, result2);
-            Assertions.assertEquals(32, result2.get().bytes().length);
+            Assertions.assertEquals(32, result2.get().toByteArray().length);
 
             // The separately computed shared secrets should be equal
             Assertions.assertEquals(result1.get(), result2.get());
@@ -129,13 +129,13 @@ public class EcdhTest {
             SecpResult<EcdhSharedSecret> result1 = secp1.ecdh(pubKey2, secKey1);
             Assertions.assertNotNull(result1);
             Assertions.assertInstanceOf(SecpResult.Ok.class, result1);
-            Assertions.assertEquals(32, result1.get().bytes().length);
+            Assertions.assertEquals(32, result1.get().toByteArray().length);
 
             // Compute shared secret with secKey2 and secp2 (implementation 2)
             SecpResult<EcdhSharedSecret> result2 = secp2.ecdh(pubKey1, secKey2);
             Assertions.assertNotNull(result1);
             Assertions.assertInstanceOf(SecpResult.Ok.class, result2);
-            Assertions.assertEquals(32, result2.get().bytes().length);
+            Assertions.assertEquals(32, result2.get().toByteArray().length);
 
             // The separately computed shared secrets should be equal
             Assertions.assertEquals(result1.get(), result2.get());

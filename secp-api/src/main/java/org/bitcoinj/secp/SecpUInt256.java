@@ -15,13 +15,23 @@
  */
 package org.bitcoinj.secp;
 
+import java.math.BigInteger;
+
 /**
- * An secp256k1 ECDH shared secret (a 32-byte hash.)
+ * An Unsigned 256-bit value.
+ * <p>
+ * Implementations should be value types.
  */
-public interface EcdhSharedSecret {
+public interface SecpUInt256 {
     /**
-     * Get the 32-byte hash as a {@code byte[]}
-     * @return the secret bytes
+     * Get the value as a {@code BigInteger}.
+     * @return value
+     */
+    BigInteger toBigInteger();
+
+    /**
+     * Get the value as a big-endian {@code byte[]}.
+     * @return value
      */
     byte[] toByteArray();
 }

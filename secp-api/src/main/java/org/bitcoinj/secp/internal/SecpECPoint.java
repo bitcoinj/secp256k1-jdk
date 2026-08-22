@@ -63,8 +63,8 @@ public class SecpECPoint extends ECPoint implements SecpPoint.Uncompressed {
     @Override
     public byte[] serialize(boolean compressed) {
         return compressed
-                ? SecpPoint.serializeUncompressed(UInt256.integerTo32Bytes(getAffineX()), UInt256.integerTo32Bytes(getAffineY()))
-                : SecpPoint.serializeCompressed(UInt256.integerTo32Bytes(getAffineX()), isOdd());
+                ? SecpPoint.serializeUncompressed(UInt256.to32Bytes(getAffineX()), UInt256.to32Bytes(getAffineY()))
+                : SecpPoint.serializeCompressed(UInt256.to32Bytes(getAffineX()), isOdd());
     }
 
     @Override

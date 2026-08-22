@@ -22,6 +22,7 @@ import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.bouncy.Bouncy256k1;
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
+import org.bitcoinj.secp.internal.UInt256;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -105,8 +106,12 @@ public class EcdsaTest implements SecpTestSupport {
     @MethodSource("secpImplementations")
     @ParameterizedTest(name = "Test Ecdsa for {0}")
     void testEcdsaSignatureToString(Secp256k1 secp) {
-        byte[] sigBytes = new EcdsaSignatureImpl(BigInteger.ONE, BigInteger.TEN).serializeCompact();
+        // Create compact signature
+        byte[] sigBytes = new byte[64];
+        UInt256.writeTo32Bytes(BigInteger.ONE, sigBytes, 0);
+        UInt256.writeTo32Bytes(BigInteger.TEN, sigBytes, 32);
         EcdsaSignature sig = secp.ecdsaSignatureParseCompact(sigBytes).get();
+
         String string = sig.toString();
         IO.println("toString() is: " + string);
         assertTrue(string.contains("r=00"));

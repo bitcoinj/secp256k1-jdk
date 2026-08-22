@@ -49,7 +49,7 @@ public class BIP324TestVectorTests implements SecpTestSupport {
     void ellSwiftDecodeTest(TestVector vec) {
         SecpPubKey pubKey = secp.ellswiftDecode(vec.ellswift);
 
-        Assertions.assertArrayEquals(vec.x, pubKey.x().serialize());
+        Assertions.assertArrayEquals(vec.x, pubKey.x().toByteArray());
     }
 
     /// For each vector, verify that the encoding of a public key with the x-coordinate in the [TestVector]
@@ -63,7 +63,7 @@ public class BIP324TestVectorTests implements SecpTestSupport {
         byte[] encoded = secp.ellswiftEncode(pub);
         SecpPubKey decoded = secp.ellswiftDecode(encoded);
 
-        Assertions.assertArrayEquals(vec.x, decoded.x().serialize());
+        Assertions.assertArrayEquals(vec.x, decoded.x().toByteArray());
         Assertions.assertArrayEquals(pub.getEncoded(), decoded.getEncoded());
     }
 

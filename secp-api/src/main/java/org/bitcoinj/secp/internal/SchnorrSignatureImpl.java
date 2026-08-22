@@ -24,7 +24,7 @@ import java.util.Arrays;
 /**
  * A secp256k1 Schnorr signature.
  */
-public class SchnorrSignatureImpl implements SchnorrSignature, ByteArray {
+public class SchnorrSignatureImpl implements SchnorrSignature {
     private final SecpFieldElement r;
     private final SecpScalar s;
 
@@ -56,10 +56,10 @@ public class SchnorrSignatureImpl implements SchnorrSignature, ByteArray {
     }
 
     @Override
-    public byte[] bytes() {
+    public byte[] serialize() {
         byte[] signature = new byte[64];
-        System.arraycopy(r.serialize(), 0, signature, 0, 32);
-        System.arraycopy(s.serialize(), 0, signature, 32, 32);
+        System.arraycopy(r.toByteArray(), 0, signature, 0, 32);
+        System.arraycopy(s.toByteArray(), 0, signature, 32, 32);
         return signature;
     }
 

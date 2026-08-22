@@ -17,8 +17,8 @@ package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpScalar;
-import org.bitcoinj.secp.internal.ByteArray;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
+import org.bitcoinj.secp.internal.UInt256;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class SecpPrivKeyBc implements SecpPrivKey {
 
     // Checked, use for import, etc.
     static SecpPrivKeyBc of(byte[] privKeyBytes) {
-        return new SecpPrivKeyBc(ByteArray.toInteger(SecpScalarImpl.checkInRange(privKeyBytes)));
+        return new SecpPrivKeyBc(UInt256.toBigInteger(SecpScalarImpl.checkInRange(privKeyBytes)));
     }
 
     @Override

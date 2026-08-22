@@ -21,7 +21,6 @@ import org.bitcoinj.base.Network;
 import org.bitcoinj.base.SegwitAddress;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpKeyPair;
-import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpScalar;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.Secp256k1;
@@ -67,7 +66,7 @@ public class AddressTest {
         SecpKeyPair keyPair = secp.ecKeyPairCreate(secp.ecPrivKeyImport(key));
         WitnessMaker maker = new WitnessMaker(secp);
         SecpFieldElement tweakedPubKey = maker.tweakedPubKey(keyPair.publicKey().xOnly());
-        tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.serialize());
+        tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.toByteArray());
         Assertions.assertEquals(address, tapRootAddress.toString());
     }
 
@@ -80,7 +79,7 @@ public class AddressTest {
         WitnessMaker maker = new WitnessMaker(secp);
         SecpXOnlyPubKey internalPubkey = secp.xOnlyPubKeyParse(serializedInternalPubKey).get();
         SecpFieldElement tweakedPubKey = maker.tweakedPubKey(internalPubkey);
-        Address tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.serialize());
+        Address tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.toByteArray());
 
         Assertions.assertEquals(expectedBip350Address, tapRootAddress.toString());
     }
@@ -104,14 +103,14 @@ public class AddressTest {
         // tweak = int(hashTapTweak(bytes(P))))
         SecpScalar tweak = maker.hashTapTweak(internalPubkey);
 
-        Assertions.assertArrayEquals(expectedTweak, tweak.serialize());
+        Assertions.assertArrayEquals(expectedTweak, tweak.toByteArray());
 
         // tweakedPubKey (aka Q.x(), where Q = P + int(hashTapTweak(bytes(P)))G)
         SecpFieldElement tweakedPubKey = maker.tweakedPubKey(internalPubkey, tweak);
 
-        Assertions.assertArrayEquals(expectedTweakedPubkey, tweakedPubKey.serialize());
+        Assertions.assertArrayEquals(expectedTweakedPubkey, tweakedPubKey.toByteArray());
 
-        Address tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.serialize());
+        Address tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.toByteArray());
         Assertions.assertEquals(expectedBip350Address, tapRootAddress.toString());
     }
 

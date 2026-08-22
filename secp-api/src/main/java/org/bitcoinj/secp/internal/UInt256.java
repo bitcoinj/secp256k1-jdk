@@ -15,7 +15,11 @@
  */
 package org.bitcoinj.secp.internal;
 
+import org.bitcoinj.secp.SecpFieldElement;
+import org.bitcoinj.secp.SecpScalar;
+
 import java.math.BigInteger;
+import java.util.Arrays;
 
 /**
  * Utility methods for handling UInt256 (32-byte unsigned) values.
@@ -28,6 +32,7 @@ public interface UInt256 {
     /** The maximum unsigned 32-byte / 256-bit value. ({@code 2^256 - 1}) */
     BigInteger MAX_VALUE = BigInteger.ONE.shiftLeft(256).subtract(BigInteger.ONE);
     byte[] ZERO_VALUE = new byte[32];
+    HexFormat HEX_FORMAT = new HexFormat();
 
     /**
      * Convert a BigInteger to a 32-byte fixed-length byte array (UInt256).
@@ -35,11 +40,34 @@ public interface UInt256 {
      * @return a 32-byte, big-endian unsigned integer value
      * @throws IllegalArgumentException if out of range
      */
-    static byte[] integerTo32Bytes(BigInteger i) {
+    static byte[] to32Bytes(BigInteger i) {
         checkInRange(i);
         byte[] result = new byte[32];
-        ByteUtils.copyAsUnsigned32Bytes(i, result, 0);
+        writeTo32Bytes(i, result, 0);
         return result;
+    }
+
+    /**
+     * Copy integer as 32 unsigned big-endian bytes. This method deliberately does no range-checking
+     * (other than the built-in array bounds-checking.) For range-checking use {@link UInt256#checkInRange},
+     * {@link SecpScalar#checkInRange(BigInteger)}, or {@link SecpFieldElement#checkInRange(BigInteger)}
+     * @param i integer
+     * @param bytes destination array
+     * @param offset destination offset
+     */
+    static void writeTo32Bytes(BigInteger i, byte[] bytes, int offset) {
+        byte[] minBytes = i.toByteArray(); // return minimum, signed bytes
+        if (minBytes.length == 32) {
+            System.arraycopy(minBytes, 0, bytes, offset, 32);
+        } else {
+            int destPos = minBytes.length == 33 ? offset : offset + 32 - minBytes.length;
+            Arrays.fill(bytes, offset, destPos, (byte)0);           // Fill leading zeros
+            System.arraycopy(minBytes,                              // src
+                    minBytes.length == 33 ? 1 : 0,                  // src pos (skip sign byte if present)
+                    bytes,                                          // dest
+                    destPos,                                        // dest pos
+                    minBytes.length == 33 ? 32 : minBytes.length);  // num bytes to copy
+        }
     }
 
     /**
@@ -64,11 +92,34 @@ public interface UInt256 {
         return e;
     }
 
-    static String toString(BigInteger uint256) {
+    /**
+     * Utility method to format hex bytes as string
+     * @param bytes bytes to format
+     * @return hex-formatted String
+     */
+    static String toHexString(byte[] bytes) {
+        return HEX_FORMAT.formatHex(bytes);
+    }
+
+    static String toHexString(BigInteger uint256) {
         return String.format("%064X", uint256);
     }
 
-    static String toString(byte[] uint256) {
-        return ByteUtils.toHexString(uint256);
+    /**
+     * Utility to convert unsigned big-endian {@code byte[]} to integer
+     * @param bytes bytes
+     * @return integer representation of unsigned, big-endian bytes
+     */
+    static BigInteger toBigInteger(byte[] bytes) {
+        // byte[] is unsigned, so `signum` can be 0 or 1: default to 0 then search for nonzero bytes
+        int signum = 0;
+        for (byte b : bytes) {
+            if (b != 0) {
+                signum = 1;
+                break;
+            }
+        }
+        return new BigInteger(signum, bytes);
     }
+
 }

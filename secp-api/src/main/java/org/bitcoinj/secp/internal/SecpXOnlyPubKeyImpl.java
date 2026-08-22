@@ -27,11 +27,11 @@ import java.util.Arrays;
 /**
  * Simple implementation using {code @byte[]} as internal storage.
  */
-public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
+public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey {
     private final byte[] x;
 
     public SecpXOnlyPubKeyImpl(SecpFieldElement x) {
-        this.x = x.serialize();
+        this.x = x.toByteArray();
     }
 
     // Only call this method for x-only pubkeys that have been verified as valid
@@ -48,15 +48,20 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
         return SecpPoint.serializeCompressed(xOnly, false);
     }
 
+
     @Override
-    public BigInteger getX() {
-        return ByteArray.toInteger(x);
+    public BigInteger toBigInteger() {
+        return UInt256.toBigInteger(x);
     }
 
     @Override
-    public byte[] bytes() {
-        // Defensive copy
+    public byte[] toByteArray() {
         return x.clone();
+    }
+
+    @Override
+    public BigInteger getX() {
+        return toBigInteger();
     }
 
     /**
@@ -64,7 +69,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
      */
     @Override
     public byte[] serialize() {
-        return x.clone();
+        return toByteArray();
     }
 
     @Override
@@ -87,6 +92,6 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
      */
     @Override
     public String toString() {
-        return ByteUtils.toHexString(serialize());
+        return UInt256.toHexString(serialize());
     }
 }
