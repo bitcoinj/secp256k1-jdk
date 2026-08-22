@@ -95,10 +95,6 @@ public interface UInt256 {
         return String.format("%064X", uint256);
     }
 
-    static String toString(byte[] uint256) {
-        return ByteUtils.toHexString(uint256);
-    }
-
     /**
      * Utility to convert unsigned big-endian {@code byte[]} to integer
      * @param bytes bytes
