@@ -69,7 +69,7 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
     @Override
     public boolean hasLowR() {
         // Is the high-bit of the first (high, big-endian) byte zero?
-        return this.r().serialize()[0] >= 0;
+        return this.r().toByteArray()[0] >= 0;
     }
 
     @Override
@@ -85,8 +85,8 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
     @Override
     public byte[] serializeCompact() {
         byte[] signature = new byte[64];
-        System.arraycopy(r.serialize(), 0, signature, 0, 32);
-        System.arraycopy(s.serialize(), 0, signature, 32, 32);
+        System.arraycopy(r.toByteArray(), 0, signature, 0, 32);
+        System.arraycopy(s.toByteArray(), 0, signature, 32, 32);
         return signature;
     }
 

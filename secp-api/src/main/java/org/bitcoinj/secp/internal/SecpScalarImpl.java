@@ -46,11 +46,6 @@ public class SecpScalarImpl implements SecpScalar {
     }
 
     @Override
-    public byte[] serialize() {
-        return value.clone();
-    }
-
-    @Override
     public String toString() {
         return UInt256.toHexString(value);
     }

@@ -51,6 +51,4 @@ public interface SecpScalar extends SecpUInt256 {
         }
         return e;
     }
-
-    byte[] serialize();
 }

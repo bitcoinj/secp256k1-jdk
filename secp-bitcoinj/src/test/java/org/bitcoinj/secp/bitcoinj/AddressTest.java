@@ -104,7 +104,7 @@ public class AddressTest {
         // tweak = int(hashTapTweak(bytes(P))))
         SecpScalar tweak = maker.hashTapTweak(internalPubkey);
 
-        Assertions.assertArrayEquals(expectedTweak, tweak.serialize());
+        Assertions.assertArrayEquals(expectedTweak, tweak.toByteArray());
 
         // tweakedPubKey (aka Q.x(), where Q = P + int(hashTapTweak(bytes(P)))G)
         SecpFieldElement tweakedPubKey = maker.tweakedPubKey(internalPubkey, tweak);
