@@ -29,17 +29,7 @@ public class EcdsaSignatureImpl implements EcdsaSignature {
     private final SecpScalarImpl r;
     private final SecpScalarImpl s;
 
-    public EcdsaSignatureImpl(SecpScalarImpl r, SecpScalarImpl s) {
-        this.r = r;
-        this.s = s;
-    }
-
-    public EcdsaSignatureImpl(SecpScalar r, SecpScalar s) {
-        this.r = new SecpScalarImpl(r.serialize());
-        this.s = new SecpScalarImpl(s.serialize());
-    }
-
-    public EcdsaSignatureImpl(BigInteger r, BigInteger s) {
+    private EcdsaSignatureImpl(BigInteger r, BigInteger s) {
         this.r = new SecpScalarImpl(r);
         this.s = new SecpScalarImpl(s);
     }
