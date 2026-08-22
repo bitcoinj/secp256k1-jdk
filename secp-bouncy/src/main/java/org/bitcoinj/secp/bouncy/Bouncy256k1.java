@@ -25,7 +25,6 @@ import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
-import org.bitcoinj.secp.internal.ByteArray;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;

@@ -22,7 +22,7 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 
 /**
- * A secp256k1 ECDH shared secret, stored as a {@link ByteArray}.
+ * A secp256k1 ECDH shared secret.
  */
 public class EcdhSharedSecretImpl  implements EcdhSharedSecret {
     private final byte[] bytes;

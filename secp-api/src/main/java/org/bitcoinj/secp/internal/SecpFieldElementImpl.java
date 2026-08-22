@@ -47,7 +47,7 @@ public class SecpFieldElementImpl implements SecpFieldElement {
 
     @Override
     public BigInteger toBigInteger() {
-        return ByteArray.toInteger(value);
+        return UInt256.toBigInteger(value);
     }
 
     @Override

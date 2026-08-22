@@ -57,7 +57,7 @@ public class SecpPrivKeyImpl implements SecpPrivKey {
     @Override
     public BigInteger getS() {
         if (privKeyBytes == null) throwKeyDestroyed();
-        return ByteArray.toInteger(privKeyBytes);
+        return UInt256.toBigInteger(privKeyBytes);
     }
 
     @Override

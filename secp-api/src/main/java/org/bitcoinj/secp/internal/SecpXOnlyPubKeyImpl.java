@@ -51,7 +51,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey {
 
     @Override
     public BigInteger toBigInteger() {
-        return ByteArray.toInteger(x);
+        return UInt256.toBigInteger(x);
     }
 
     @Override
