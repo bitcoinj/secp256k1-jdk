@@ -91,7 +91,7 @@ public class SecpFieldElementImpl implements SecpFieldElement {
     public static byte[] integerTo32Bytes(BigInteger i) {
         SecpFieldElement.checkInRange(i);
         byte[] result = new byte[32];
-        ByteUtils.copyAsUnsigned32Bytes(i, result, 0);
+        UInt256.writeTo32Bytes(i, result, 0);
         return result;
     }
 
