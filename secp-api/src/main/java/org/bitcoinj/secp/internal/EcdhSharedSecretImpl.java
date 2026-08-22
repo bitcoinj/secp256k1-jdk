@@ -32,7 +32,7 @@ public class EcdhSharedSecretImpl  implements EcdhSharedSecret {
     }
 
     @Override
-    public byte[] bytes() {
+    public byte[] toByteArray() {
         return bytes.clone();
     }
 
