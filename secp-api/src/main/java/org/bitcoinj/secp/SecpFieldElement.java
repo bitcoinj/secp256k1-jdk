@@ -23,7 +23,7 @@ import java.math.BigInteger;
  * A number that is a valid element of the P256K1 field. We use this instead of {@link BigInteger}
  * so we can use a fixed-length, unsigned representation for simplicity and performance.
  */
-public interface SecpFieldElement {
+public interface SecpFieldElement extends SecpUInt256 {
 
     /**
      * Get the field element as a {@code BigInteger}

@@ -17,7 +17,7 @@ package org.bitcoinj.secp;
 
 import java.math.BigInteger;
 
-public interface SecpScalar {
+public interface SecpScalar extends SecpUInt256 {
     BigInteger MIN_VALUE = BigInteger.ONE;
     BigInteger MAX_VALUE = Secp256k1.N.subtract(BigInteger.ONE);
 

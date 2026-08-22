@@ -51,6 +51,11 @@ public class SecpFieldElementImpl implements SecpFieldElement {
     }
 
     @Override
+    public byte[] toByteArray() {
+        return value.clone();
+    }
+
+    @Override
     public byte[] serialize() {
         return value.clone();
     }

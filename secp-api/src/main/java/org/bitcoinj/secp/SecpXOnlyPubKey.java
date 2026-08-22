@@ -23,7 +23,7 @@ import java.math.BigInteger;
 /**
  * An x-only public key from a point on the secp256k1 curve
  */
-public interface SecpXOnlyPubKey {
+public interface SecpXOnlyPubKey extends SecpUInt256 {
     /**
      *  Get X as a {@link BigInteger}
      * @return X as a {@link BigInteger}
