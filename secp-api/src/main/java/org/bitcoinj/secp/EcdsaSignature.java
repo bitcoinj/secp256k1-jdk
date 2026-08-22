@@ -75,26 +75,4 @@ public interface EcdsaSignature {
      * @return a signature with a low-<i>s</i> value
      */
     EcdsaSignature normalize();
-
-    /**
-     * Create an ECDSA signature from serialized bytes
-     * @param bytes bytes
-     * @return signature
-     * @deprecated use {@link Secp256k1#ecdsaSignatureParseCompact(byte[])}
-     */
-    @Deprecated(forRemoval = true)
-    static EcdsaSignature of(byte[] bytes) {
-        return new EcdsaSignatureImpl(bytes);
-    }
-
-    /**
-     * Create an ECDSA signature from R and S values
-     * @param r R
-     * @param s S
-     * @return signature
-     */
-    @Deprecated(forRemoval = true)
-    static EcdsaSignature of(SecpScalar r, SecpScalar s) {
-        return new EcdsaSignatureImpl(r, s);
-    }
 }
