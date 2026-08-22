@@ -56,11 +56,6 @@ public class SecpFieldElementImpl implements SecpFieldElement {
     }
 
     @Override
-    public byte[] serialize() {
-        return value.clone();
-    }
-
-    @Override
     public boolean isOdd() {
         // It's odd if the low-order bit (mask 0x01) of the low-order byte (index 31) is set.
         return (value[31] & 0x01) != 0;

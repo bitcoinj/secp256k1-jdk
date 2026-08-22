@@ -55,7 +55,7 @@ class SecpPointCompressed implements SecpPoint.Compressed {
      */
     @Override
     public byte[] serialize() {
-        return SecpPoint.serializeCompressed(x().serialize(), isOdd());
+        return SecpPoint.serializeCompressed(x().toByteArray(), isOdd());
     }
 
     @Override
