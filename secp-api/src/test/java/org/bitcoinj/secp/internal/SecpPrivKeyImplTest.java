@@ -42,7 +42,7 @@ public class SecpPrivKeyImplTest {
     @ParameterizedTest(name = "n: {0}")
     void testIsInRange(BigInteger n) {
         assertTrue(SecpScalar.isInRange(n));
-        assertTrue(SecpScalarImpl.isInRange(UInt256.integerTo32Bytes(n)));
+        assertTrue(SecpScalarImpl.isInRange(UInt256.to32Bytes(n)));
     }
 
     @FieldSource("outOfRangeScalarInts")
@@ -51,12 +51,12 @@ public class SecpPrivKeyImplTest {
         assertFalse(SecpScalar.isInRange(n));
         if (UInt256.isInRange(n)) {
             // Integer is a valid UInt256, isInRange should report `false`
-            byte[] bytes = UInt256.integerTo32Bytes(n);
+            byte[] bytes = UInt256.to32Bytes(n);
             assertFalse(SecpScalarImpl.isInRange(bytes));
         } else {
             // Integer is not a valid UInt256, attempt to convert should throw
             assertThrows(IllegalArgumentException.class,
-                    () -> UInt256.integerTo32Bytes(n)
+                    () -> UInt256.to32Bytes(n)
             );
         }
     }
@@ -68,7 +68,7 @@ public class SecpPrivKeyImplTest {
                 () -> SecpScalar.checkInRange(n)
         );
         assertEquals(n, SecpScalar.checkInRange(n));
-        byte[] bytes = UInt256.integerTo32Bytes(n);
+        byte[] bytes = UInt256.to32Bytes(n);
         assertDoesNotThrow(
                 () -> SecpScalarImpl.checkInRange(bytes)
         );

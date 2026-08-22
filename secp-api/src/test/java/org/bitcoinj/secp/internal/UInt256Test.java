@@ -75,7 +75,7 @@ public class UInt256Test {
     @ParameterizedTest(name = "n: {0}")
     void testIntToBytesValid(BigInteger n) {
         assertDoesNotThrow(
-                () -> UInt256.integerTo32Bytes(n)
+                () -> UInt256.to32Bytes(n)
         );
     }
 
@@ -83,7 +83,7 @@ public class UInt256Test {
     @ParameterizedTest(name = "n: {0}")
     void testIntToBytesInvalid(BigInteger n) {
         assertThrows(IllegalArgumentException.class,
-                () -> UInt256.integerTo32Bytes(n)
+                () -> UInt256.to32Bytes(n)
         );
     }
 }

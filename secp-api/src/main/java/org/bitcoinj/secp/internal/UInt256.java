@@ -35,7 +35,7 @@ public interface UInt256 {
      * @return a 32-byte, big-endian unsigned integer value
      * @throws IllegalArgumentException if out of range
      */
-    static byte[] integerTo32Bytes(BigInteger i) {
+    static byte[] to32Bytes(BigInteger i) {
         checkInRange(i);
         byte[] result = new byte[32];
         ByteUtils.copyAsUnsigned32Bytes(i, result, 0);
