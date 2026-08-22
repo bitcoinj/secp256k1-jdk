@@ -80,7 +80,7 @@ public class BIP340TestVectorTests implements SecpTestSupport {
 
         var actualSignature = secp.schnorrSigSign32(vec.message, privKey, vec.auxRand);
 
-        assertArrayEquals(vec.signature, actualSignature.bytes());
+        assertArrayEquals(vec.signature, actualSignature.serialize());
     }
 
     /// For each vector in the subset containing valid public keys and valid signatures,
