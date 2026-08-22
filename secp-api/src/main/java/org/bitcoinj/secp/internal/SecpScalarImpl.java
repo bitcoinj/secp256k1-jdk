@@ -88,7 +88,7 @@ public class SecpScalarImpl implements SecpScalar {
     public static byte[] integerTo32Bytes(BigInteger i) {
         SecpScalar.checkInRange(i);
         byte[] result = new byte[32];
-        ByteUtils.copyAsUnsigned32Bytes(i, result, 0);
+        UInt256.writeTo32Bytes(i, result, 0);
         return result;
     }
 
