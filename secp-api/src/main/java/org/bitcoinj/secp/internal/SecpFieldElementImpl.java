@@ -80,7 +80,7 @@ public class SecpFieldElementImpl implements SecpFieldElement {
 
     @Override
     public String toString() {
-        return ByteUtils.toHexString(value);
+        return UInt256.toHexString(value);
     }
 
     /**
@@ -115,7 +115,7 @@ public class SecpFieldElementImpl implements SecpFieldElement {
             throw new IllegalArgumentException("SecpFieldElement must have 32 bytes, found : " + e.length);
         }
         if (!isInRange(e)) {
-            throw new IllegalArgumentException("byte[] is not a valid SecpFieldElement: " + ByteUtils.toHexString(e));
+            throw new IllegalArgumentException("byte[] is not a valid SecpFieldElement: " + UInt256.toHexString(e));
         }
         return e;
     }

@@ -72,6 +72,6 @@ class SecpPointCompressed implements SecpPoint.Compressed {
 
     @Override
     public String toString() {
-        return ByteUtils.toHexString(this.serialize());
+        return UInt256.toHexString(this.serialize());
     }
 }
