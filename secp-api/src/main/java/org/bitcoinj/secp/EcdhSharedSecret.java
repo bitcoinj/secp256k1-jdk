@@ -23,5 +23,5 @@ public interface EcdhSharedSecret {
      * Get the 32-byte hash as a {@code byte[]}
      * @return the secret bytes
      */
-    byte[] bytes();
+    byte[] toByteArray();
 }
