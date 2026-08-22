@@ -101,7 +101,7 @@ public interface UInt256 {
         return HEX_FORMAT.formatHex(bytes);
     }
 
-    static String toString(BigInteger uint256) {
+    static String toHexString(BigInteger uint256) {
         return String.format("%064X", uint256);
     }
 

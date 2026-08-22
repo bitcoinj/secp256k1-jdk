@@ -78,6 +78,6 @@ public class EcdsaSignatureBc implements EcdsaSignature {
 
     @Override
     public String toString() {
-        return "EcdsaSignatureBc [r=" + UInt256.toString(r) + ", s=" + UInt256.toString(s) + "]";
+        return "EcdsaSignatureBc [r=" + UInt256.toHexString(r) + ", s=" + UInt256.toHexString(s) + "]";
     }
 }
