@@ -24,7 +24,7 @@ import java.util.Arrays;
 /**
  * A secp256k1 Schnorr signature.
  */
-public class SchnorrSignatureImpl implements SchnorrSignature, ByteArray {
+public class SchnorrSignatureImpl implements SchnorrSignature {
     private final SecpFieldElement r;
     private final SecpScalar s;
 
