@@ -350,7 +350,7 @@ public class Bouncy256k1 implements Secp256k1 {
         verifier.init(false, pub);
         verifier.update(msg_hash, 0, msg_hash.length);
 
-        return SecpResult.ok(verifier.verifySignature(signature.bytes()));
+        return SecpResult.ok(verifier.verifySignature(signature.serialize()));
     }
 
     /**

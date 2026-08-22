@@ -38,7 +38,7 @@ public interface SchnorrSignature {
      * Serialize to 64-byte raw format in a {@code byte[]}.
      * @return serialized bytes
      */
-    byte[] bytes();
+    byte[] serialize();
 
     /**
      * Create an ECDSA signature from serialized bytes

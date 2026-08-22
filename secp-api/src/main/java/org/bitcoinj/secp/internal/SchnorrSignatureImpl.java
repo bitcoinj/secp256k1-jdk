@@ -56,7 +56,7 @@ public class SchnorrSignatureImpl implements SchnorrSignature {
     }
 
     @Override
-    public byte[] bytes() {
+    public byte[] serialize() {
         byte[] signature = new byte[64];
         System.arraycopy(r.serialize(), 0, signature, 0, 32);
         System.arraycopy(s.serialize(), 0, signature, 32, 32);
