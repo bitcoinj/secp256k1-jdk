@@ -126,7 +126,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SecpPrivKey ecPrivKeyImport(byte[] privKeyBytes) {
-        return SecpPrivKeyBc.of(ByteArray.toInteger(SecpScalarImpl.checkInRange(privKeyBytes)));
+        return SecpPrivKeyBc.of(privKeyBytes);
     }
 
     @Override
