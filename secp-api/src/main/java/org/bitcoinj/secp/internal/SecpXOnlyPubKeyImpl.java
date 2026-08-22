@@ -48,15 +48,26 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
         return SecpPoint.serializeCompressed(xOnly, false);
     }
 
+
+    @Override
+    public BigInteger toBigInteger() {
+        return ByteArray.toInteger(x);
+    }
+
+    @Override
+    public byte[] toByteArray() {
+        return x.clone();
+    }
+
     @Override
     public BigInteger getX() {
-        return ByteArray.toInteger(x);
+        return toBigInteger();
     }
 
     @Override
     public byte[] bytes() {
         // Defensive copy
-        return x.clone();
+        return toByteArray();
     }
 
     /**
@@ -64,7 +75,7 @@ public class SecpXOnlyPubKeyImpl implements SecpXOnlyPubKey, ByteArray {
      */
     @Override
     public byte[] serialize() {
-        return x.clone();
+        return toByteArray();
     }
 
     @Override
