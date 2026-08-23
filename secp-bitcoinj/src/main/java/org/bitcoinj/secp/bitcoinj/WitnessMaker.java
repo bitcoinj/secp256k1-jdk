@@ -15,13 +15,13 @@
  */
 package org.bitcoinj.secp.bitcoinj;
 
-import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpHash256;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpScalar;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
+import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
 
 import java.nio.charset.StandardCharsets;
 
@@ -43,18 +43,18 @@ public class WitnessMaker {
     /// returns Q.x()
     /// @param xOnlyPubKey The x-only pubKey
     /// @return tweaked, pubKey as an x-only field element
-    public SecpFieldElement tweakedPubKey(SecpXOnlyPubKey xOnlyPubKey) {
+    public SecpXOnlyPubKey tweakedPubKey(SecpXOnlyPubKey xOnlyPubKey) {
         SecpScalar tweak = hashTapTweak(xOnlyPubKey);
         return tweakedPubKey(xOnlyPubKey, tweak);
     }
 
     /// Return Q.x(), where Q = P + tweak * G
-    SecpFieldElement tweakedPubKey(SecpXOnlyPubKey xOnlyPubKey, SecpScalar tweak) {
+    SecpXOnlyPubKey tweakedPubKey(SecpXOnlyPubKey xOnlyPubKey, SecpScalar tweak) {
         SecpPoint.Uncompressed P = secp.ecPubKeyFromXOnly(xOnlyPubKey);
-        SecpPoint.Uncompressed tempPoint = secp.ecPubKeyTweakMul(Secp256k1.G, tweak.toBigInteger()).point();
+        SecpPoint.Uncompressed tempPoint = secp.ecPubKeyTweakMul(Secp256k1.G, tweak.toBigInteger());
         // tweakedPubKey (aka Q)
         SecpPoint.Uncompressed Q = secp.ecPubKeyCombine(P, tempPoint);
-        return Q.x();
+        return new SecpXOnlyPubKeyImpl(Q.x());
     }
 
     /// int(hashTapTweak(bytes(P)))
