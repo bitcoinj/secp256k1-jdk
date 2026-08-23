@@ -18,9 +18,9 @@ package org.bitcoinj.secp.bouncy;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
-import org.bitcoinj.secp.internal.ByteUtils;
 import org.bitcoinj.secp.internal.SecpECPoint;
 import org.bitcoinj.secp.internal.SecpPointCompressed;
+import org.bitcoinj.secp.internal.UInt256;
 import org.bouncycastle.math.ec.custom.sec.SecP256K1Point;
 import org.jspecify.annotations.Nullable;
 
@@ -145,6 +145,6 @@ class SecpPubKeyBc implements SecpPubKey {
 
     @Override
     public String toString() {
-        return ByteUtils.toHexString(this.serialize());
+        return UInt256.toHexString(this.serialize());
     }
 }
