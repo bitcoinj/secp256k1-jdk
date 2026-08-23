@@ -76,10 +76,8 @@ public class AddressTest {
         byte[] serializedInternalPubKey = parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
         String expectedBip350Address = "bc1p2wsldez5mud2yam29q22wgfh9439spgduvct83k3pm50fcxa5dps59h4z5";
 
-        WitnessMaker maker = new WitnessMaker(secp);
         SecpXOnlyPubKey internalPubkey = secp.xOnlyPubKeyParse(serializedInternalPubKey).get();
-        SecpXOnlyPubKey tweakedPubKey = maker.tweakedPubKey(internalPubkey);
-        Address tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.toByteArray());
+        Address tapRootAddress = TapRootAddress.fromXOnlyPubKey(secp, network, internalPubkey);
 
         Assertions.assertEquals(expectedBip350Address, tapRootAddress.toString());
     }
