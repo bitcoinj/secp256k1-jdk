@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.EcdhSharedSecret;
+import org.bitcoinj.secp.SecpHash256;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
@@ -301,7 +302,21 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public byte[] taggedSha256(byte[] tag, byte[] message) {
+    public SecpHash256Bc sha256(byte[] message) {
+        try {
+            return new SecpHash256Bc(MessageDigest.getInstance("SHA-256").digest(message));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);  // Can't happen.
+        }
+    }
+
+    @Override
+    public SecpHash256Bc sha256Import(byte[] messageHash) {
+        return new SecpHash256Bc(messageHash);
+    }
+
+    @Override
+    public SecpHash256Bc taggedSha256(byte[] tag, byte[] message) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] tagHash;
@@ -314,7 +329,7 @@ public class Bouncy256k1 implements Secp256k1 {
             digest.update(tagHash, 0, 32);
             digest.update(message, 0, message.length);
 
-            return digest.digest();
+            return new SecpHash256Bc(digest.digest());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -326,20 +341,21 @@ public class Bouncy256k1 implements Secp256k1 {
         byte[] auxiliaryRandom = new byte[32];
         try {
             fillRandom(auxiliaryRandom);
-            return schnorrSigSign32(msg_hash, privKey, auxiliaryRandom);
+            SecpHash256 hash = new SecpHash256Bc(msg_hash);
+            return schnorrSigSign32(hash, privKey, auxiliaryRandom);
         } finally {
             Arrays.fill(auxiliaryRandom, (byte) 0);
         }
     }
 
     @Override
-    public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
+    public SchnorrSignature schnorrSigSign32(SecpHash256 messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
         ECPrivateKeyParameters priv = new ECPrivateKeyParameters(privKey.getS(), BC_ECDOMAIN_PARAMS);
 
         BIP340Signer signer = new BIP340Signer();
 
         signer.init(true, new ParametersWithRandom(priv, new FixedBytesRandom(auxiliaryRandom)));
-        signer.update(msg_hash, 0, msg_hash.length);
+        signer.update(messageHash.toByteArray(), 0, 32);
 
         return SchnorrSignatureImpl.of(signer.generateSignature());
     }

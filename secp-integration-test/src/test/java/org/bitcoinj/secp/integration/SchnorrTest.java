@@ -17,6 +17,7 @@ package org.bitcoinj.secp.integration;
 
 import org.bitcoinj.secp.SchnorrSignature;
 import org.bitcoinj.secp.Secp256k1;
+import org.bitcoinj.secp.SecpHash256;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
@@ -47,7 +48,7 @@ public class SchnorrTest implements SecpTestSupport {
     void testSchnorr() {
         SecpKeyPair keyPair = secp.ecKeyPairCreate();
         SecpXOnlyPubKey xOnly = keyPair.publicKey().xOnly();
-        byte[] messageHash = secp.taggedSha256(tag, msg);
+        SecpHash256 messageHash = secp.taggedSha256(tag, msg);
         SchnorrSignature signature = secp.schnorrSigSign32(messageHash, keyPair);
         boolean isValid = secp.schnorrSigVerify(signature, messageHash, xOnly).get();
         assertTrue(isValid);

@@ -248,6 +248,10 @@ public interface Secp256k1 extends Closeable {
      */
     SecpResult<SecpXOnlyPubKey> xOnlyPubKeyParse(byte[] inputData);
 
+    default SecpResult<EcdsaSignature> ecdsaSign(SecpHash256 messageHash, SecpPrivKey privKey) {
+        return ecdsaSign(messageHash.toByteArray(), privKey);
+    }
+
     /**
      * Sign a message hash using the ECDSA algorithm
      * @param msg_hash_data 32-byte hash of message to sign
@@ -255,6 +259,10 @@ public interface Secp256k1 extends Closeable {
      * @return the signature
      */
     SecpResult<EcdsaSignature> ecdsaSign(byte[] msg_hash_data, SecpPrivKey privKey);
+
+    default SecpResult<EcdsaSignature> ecdsaSignLowR(SecpHash256 messageHash, SecpPrivKey privKey) {
+        return ecdsaSignLowR(messageHash.toByteArray(), privKey);
+    }
 
     /**
      * Sign a message hash using the ECDSA algorithm and Low-R signature griding
@@ -284,6 +292,10 @@ public interface Secp256k1 extends Closeable {
      */
     SecpResult<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature);
 
+    default SecpResult<Boolean> ecdsaVerify(EcdsaSignature sig, SecpHash256 messageHash, SecpPubKey pubKey) {
+        return ecdsaVerify(sig, messageHash.toByteArray(), pubKey);
+    }
+
     /**
      * Verify an ECDSA signature is valid and low-s.
      * @param sig The signature to verify.
@@ -293,13 +305,17 @@ public interface Secp256k1 extends Closeable {
      */
     SecpResult<Boolean> ecdsaVerify(EcdsaSignature sig, byte[] msg_hash_data, SecpPubKey pubKey);
 
+    SecpHash256 sha256(byte[] message);
+
+    SecpHash256 sha256Import(byte[] messageHash);
+
     /**
      * Generate a tagged SHA-256 hash.
      * @param tag a tag specifying the context of usage
      * @param message the message itself
      * @return the SHA-256 HASH
      */
-    default byte[] taggedSha256(String tag, String message) {
+    default SecpHash256 taggedSha256(String tag, String message) {
         return  taggedSha256(tag.getBytes(StandardCharsets.UTF_8), message.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -309,7 +325,11 @@ public interface Secp256k1 extends Closeable {
      * @param message the message itself
      * @return the SHA-256 HASH
      */
-    byte[] taggedSha256(byte[] tag, byte[] message);
+    SecpHash256 taggedSha256(byte[] tag, byte[] message);
+
+    default SchnorrSignature schnorrSigSign32(SecpHash256 message, SecpPrivKey privKey) {
+        return schnorrSigSign32(message.toByteArray(), privKey);
+    }
 
     /**
      * Create a Schnorr signature for a message.
@@ -326,7 +346,11 @@ public interface Secp256k1 extends Closeable {
      * @param auxiliaryRandom auxiliary randomness (typically from a test vector)
      * @return the signature
      */
-    SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom);
+    SchnorrSignature schnorrSigSign32(SecpHash256 messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom);
+
+    default SecpResult<Boolean> schnorrSigVerify(SchnorrSignature signature, SecpHash256 messageHash, SecpXOnlyPubKey pubKey) {
+        return schnorrSigVerify(signature, messageHash.toByteArray(), pubKey);
+    }
 
     /**
      * Verify a Schnorr signature.

@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.bitcoinj;
 
 import org.bitcoinj.secp.SecpFieldElement;
+import org.bitcoinj.secp.SecpHash256;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpScalar;
 import org.bitcoinj.secp.SecpXOnlyPubKey;
@@ -58,7 +59,7 @@ public class WitnessMaker {
 
     /// int(hashTapTweak(bytes(P)))
     SecpScalar hashTapTweak(SecpXOnlyPubKey xOnlyPubKey) {
-        byte[] tweak = secp.taggedSha256(TAG_TAP_TWEAK, xOnlyPubKey.serialize());
+        SecpHash256 tweak = secp.taggedSha256(TAG_TAP_TWEAK, xOnlyPubKey.serialize());
         return new SecpScalarImpl(tweak);
     }
 }

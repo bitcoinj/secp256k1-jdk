@@ -17,9 +17,9 @@ package org.bitcoinj.secp.kotlin.examples
 
 import org.bitcoinj.secp.EcdsaSignature
 import org.bitcoinj.secp.Secp256k1
+import org.bitcoinj.secp.SecpHash256
 import org.bitcoinj.secp.SecpPrivKey
 import org.bitcoinj.secp.SecpPubKey
-import java.security.MessageDigest
 
 /**
  * Kotlin version of [secp256k1](https://github.com/bitcoin-core/secp256k1) example [ecdsa.c](https://github.com/bitcoin-core/secp256k1/blob/master/examples/ecdsa.c).
@@ -29,7 +29,7 @@ fun main() {
      * Here the message is "Hello, world!" and the hash function is SHA-256.
      * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116
      */
-    val messageHash : ByteArray = hash("Hello, world!")
+    val message : ByteArray = "Hello, world!".encodeToByteArray()
 
     println("Running secp256k1-jdk Ecdsa example...")
     /* Kotlin `use` handles cleanup of `Closeable`  -- secp256k1_context_destroy is automatically called */
@@ -49,6 +49,7 @@ fun main() {
 
         /* Generate an ECDSA signature using the RFC-6979 safe default nonce.
          * Signing with a valid context, verified secret key and the default nonce function should never fail. */
+        val messageHash : SecpHash256 = secp.sha256(message);
         val sig : EcdsaSignature = secp.ecdsaSign(messageHash, privKey).get()
 
         /* Serialize the signature in a compact form. Should always succeed according to
@@ -81,8 +82,4 @@ fun main() {
          */
         privKey.destroy()
     }
-}
-
-private fun hash(messageString: String): ByteArray {
-    return MessageDigest.getInstance("SHA-256").digest(messageString.toByteArray())
 }

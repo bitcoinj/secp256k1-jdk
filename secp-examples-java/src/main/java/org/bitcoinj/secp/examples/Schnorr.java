@@ -42,7 +42,7 @@ public class Schnorr {
 
             /* === Signing === */
 
-            byte[] messageHash = secp.taggedSha256(tag, msg);
+            SecpHash256 messageHash = secp.taggedSha256(tag, msg);
 
             SchnorrSignature signature = secp.schnorrSigSign32(messageHash, keyPair);
 
@@ -51,7 +51,7 @@ public class Schnorr {
             SecpXOnlyPubKey xOnly2 = secp.xOnlyPubKeyParse(serializedXOnly).get();
 
             /* Compute the tagged hash on the received message using the same tag as the signer. */
-            byte[] messageHash2 = secp.taggedSha256(tag, msg);
+            SecpHash256 messageHash2 = secp.taggedSha256(tag, msg);
 
             boolean isValidSignature = secp.schnorrSigVerify(signature, messageHash2, xOnly2).get();
 

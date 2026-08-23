@@ -78,7 +78,8 @@ public class BIP340TestVectorTests implements SecpTestSupport {
     void schnorrSigSign32(TestVector vec) {
         var privKey = secp.ecPrivKeyImport(vec.privKey);
 
-        var actualSignature = secp.schnorrSigSign32(vec.message, privKey, vec.auxRand);
+        var hash = secp.sha256Import(vec.message);
+        var actualSignature = secp.schnorrSigSign32(hash, privKey, vec.auxRand);
 
         assertArrayEquals(vec.signature, actualSignature.serialize());
     }

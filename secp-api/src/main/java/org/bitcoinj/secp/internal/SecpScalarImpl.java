@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.internal;
 
 import org.bitcoinj.secp.SecpScalar;
+import org.bitcoinj.secp.SecpUInt256;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -26,6 +27,10 @@ public class SecpScalarImpl implements SecpScalar {
 
     /** scalar value as a 32-byte big-endian byte array */
     private final byte[] value;
+
+    public SecpScalarImpl(SecpUInt256 u256) {
+        value = checkInRange(u256.toByteArray());
+    }
 
     public SecpScalarImpl(byte[] bytes) {
         value = checkInRange(bytes);
