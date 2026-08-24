@@ -79,7 +79,7 @@ class SecpPubKeyBc implements SecpPubKey {
 
     @Override
     public Compressed compress() {
-        return new SecpPointCompressed(x(), y());
+        return new SecpPointCompressed(x(), isOdd());
     }
 
     @Override

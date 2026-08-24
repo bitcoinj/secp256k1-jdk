@@ -56,7 +56,7 @@ public class SecpPointUncompressed implements SecpPoint.Uncompressed {
     // Must be overridden so it can return something that knows how to uncompress itself
     @Override
     public Compressed compress() {
-        return new SecpPointCompressed(x, y);
+        return new SecpPointCompressed(x, y.isOdd());
     }
 
     @Override
