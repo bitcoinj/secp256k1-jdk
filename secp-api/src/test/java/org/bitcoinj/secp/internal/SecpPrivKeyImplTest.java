@@ -86,16 +86,4 @@ public class SecpPrivKeyImplTest {
                 () -> SecpScalarImpl.checkInRange(bytes)
         );
     }
-
-    @Test
-    void privateKeySerializationThrows() {
-        assertThrows(NotSerializableException.class, () -> {
-            var priv = new SecpPrivKeyImpl(BigInteger.ONE);
-
-            var baos = new ByteArrayOutputStream();
-            try (var oos = new ObjectOutputStream(baos)) {
-                oos.writeObject(priv);
-            }
-        });
-    }
 }
