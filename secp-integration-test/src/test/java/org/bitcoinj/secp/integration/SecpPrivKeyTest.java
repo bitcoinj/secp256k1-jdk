@@ -25,6 +25,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.ByteArrayOutputStream;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.stream.Stream;
@@ -84,6 +87,22 @@ public class SecpPrivKeyTest implements SecpTestSupport {
         assertThrows(IllegalStateException.class, privKey::getS);
 
         privKey.destroy();      // Destroy is idempotent
+    }
+
+    @Test
+    void privateKeySerializationThrows() {
+        var priv = secp.ecPrivKeyCreate();
+        var baos = new ByteArrayOutputStream();
+
+        var exception = assertThrows(Throwable.class, () -> {
+            try (var oos = new ObjectOutputStream(baos)) {
+                oos.writeObject(priv);
+            }
+        });
+        // A different exception is thrown for GraalVM native image. So check for either exception.
+        assertTrue(exception instanceof NotSerializableException ||
+                        exception.getClass().getName().contains("UnsupportedFeatureError"),
+                "Expected NotSerializableException or UnsupportedFeatureError, got: " + exception.getClass());
     }
 
     @FieldSource("VALID_PRIV_KEYS")
