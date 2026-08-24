@@ -29,9 +29,9 @@ class SecpPointCompressed implements SecpPoint.Compressed {
     private final SecpFieldElement x;
     private final boolean isOdd;
 
-    public SecpPointCompressed(SecpFieldElement x, SecpFieldElement y) {
+    public SecpPointCompressed(SecpFieldElement x, boolean isOdd) {
         this.x = x;
-        this.isOdd = y.isOdd();
+        this.isOdd = isOdd;
     }
 
     @Override
