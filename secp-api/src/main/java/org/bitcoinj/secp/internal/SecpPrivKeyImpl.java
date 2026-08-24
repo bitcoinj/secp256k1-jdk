@@ -27,7 +27,9 @@ import java.util.Arrays;
 
 /**
  * Default/internal implementation of {@link SecpPrivKey}
+ * @deprecated Use methods in {@link org.bitcoinj.secp.Secp256k1} to create or import private keys.
  */
+@Deprecated
 public class SecpPrivKeyImpl implements SecpPrivKey {
     /**
      * private key or null if key was destroyed
