@@ -21,7 +21,9 @@ import org.bitcoinj.secp.SecpPubKey;
 
 /**
  * Default/Internal SecpPubKey implementation storing as {@link SecpPointUncompressed}.
+ * @deprecated Use methods in {@link org.bitcoinj.secp.Secp256k1} to create or import public keys.
  */
+@Deprecated
 public class SecpPubKeyImpl implements SecpPubKey {
     private final SecpPointUncompressed point;
 
