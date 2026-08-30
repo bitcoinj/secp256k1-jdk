@@ -27,8 +27,6 @@ import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.SchnorrSignatureImpl;
-import org.bitcoinj.secp.internal.SecpKeyPairImpl;
-import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
 import org.bouncycastle.asn1.x9.X9ECParameters;
@@ -135,24 +133,24 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SecpKeyPair ecKeyPairCreate() {
+    public SecpKeyPairBc ecKeyPairCreate() {
         AsymmetricCipherKeyPair bcKeyPair = bcKeyPairCreate();
         BigInteger privKey = ((ECPrivateKeyParameters) bcKeyPair.getPrivate()).getD();
-        ECPoint pubPoint = (((ECPublicKeyParameters) bcKeyPair.getPublic()).getQ());
-        return new SecpKeyPairImpl(new SecpPrivKeyBc(privKey), toSecpPubKey(pubPoint));
+        SecP256K1Point pubPoint = (SecP256K1Point) (((ECPublicKeyParameters) bcKeyPair.getPublic()).getQ());
+        return new SecpKeyPairBc(pubPoint, privKey);
     }
 
     @Override
     public SecpKeyPair ecKeyPairCreate(SecpPrivKey privKey) {
-        SecpPrivKeyBc priv = (privKey instanceof SecpPrivKeyBc)
-                ? (SecpPrivKeyBc) privKey
-                : new SecpPrivKeyBc(privKey.getS());
-        SecpPubKey pub = ecPubKeyCreate(priv);
-        return new SecpKeyPairImpl(priv, pub);
+        return ecKeyPairCreate(privKey.getS());
+    }
+
+    private SecpKeyPairBc ecKeyPairCreate(BigInteger privKey) {
+        return new SecpKeyPairBc(bcPubPointFromPrivKey(privKey), privKey);
     }
 
     /**
-     * Generate a Bouncy Castle secp256k1 {@link AsymmetricCipherKeyPair}.
+     * Generate a random Bouncy Castle secp256k1 {@link AsymmetricCipherKeyPair}.
      * @return key pair
      */
     private AsymmetricCipherKeyPair bcKeyPairCreate() {
@@ -160,6 +158,10 @@ public class Bouncy256k1 implements Secp256k1 {
         ECKeyGenerationParameters keygenParams = new ECKeyGenerationParameters(BC_ECDOMAIN_PARAMS, secureRandom);
         generator.init(keygenParams);
         return generator.generateKeyPair();
+    }
+
+    private static SecP256K1Point bcPubPointFromPrivKey(BigInteger privKey) {
+        return (SecP256K1Point) BC_ECDOMAIN_PARAMS.getG().multiply(privKey).normalize();
     }
 
     @Override
