@@ -113,18 +113,18 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SecpPrivKey ecPrivKeyCreate() {
+    public SecpPrivKeyBc ecPrivKeyCreate() {
         BigInteger privKey = ((ECPrivateKeyParameters) bcKeyPairCreate().getPrivate()).getD();
         return new SecpPrivKeyBc(privKey);
     }
 
     @Override
-    public SecpPrivKey ecPrivKeyImport(BigInteger privKeyInt) {
+    public SecpPrivKeyBc ecPrivKeyImport(BigInteger privKeyInt) {
         return SecpPrivKeyBc.of(privKeyInt);
     }
 
     @Override
-    public SecpPrivKey ecPrivKeyImport(byte[] privKeyBytes) {
+    public SecpPrivKeyBc ecPrivKeyImport(byte[] privKeyBytes) {
         return SecpPrivKeyBc.of(privKeyBytes);
     }
 
@@ -163,14 +163,14 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SecpPubKey ecPubKeyTweakMul(SecpPoint.Uncompressed pubKey, BigInteger scalarMultiplier) {
+    public SecpPubKeyBc ecPubKeyTweakMul(SecpPoint.Uncompressed pubKey, BigInteger scalarMultiplier) {
         SecP256K1Point pubKeyBC = fromSecpPoint(pubKey);
         ECPoint pub = new FixedPointCombMultiplier().multiply(pubKeyBC, scalarMultiplier);
         return toSecpPubKey(pub);
     }
 
     @Override
-    public SecpPubKey ecPubKeyCombine(SecpPoint.Uncompressed  key1, SecpPoint.Uncompressed  key2) {
+    public SecpPubKeyBc ecPubKeyCombine(SecpPoint.Uncompressed  key1, SecpPoint.Uncompressed  key2) {
         SecP256K1Point pubKey1BC = fromSecpPoint(key1);
         SecP256K1Point pubKey2BC = fromSecpPoint(key2);
         ECPoint result = pubKey1BC.add(pubKey2BC);

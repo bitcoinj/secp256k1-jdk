@@ -30,7 +30,7 @@ import java.util.Objects;
 /**
  * Bouncy Castle implementation of SecpPubKey using {@link SecP256K1Point}.
  */
-class SecpPubKeyBc implements SecpPubKey {
+public class SecpPubKeyBc implements SecpPubKey {
     private final SecP256K1Point bcPoint;
 
     SecpPubKeyBc(SecP256K1Point bcPoint) {
