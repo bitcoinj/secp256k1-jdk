@@ -31,7 +31,6 @@ import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
-import org.bitcoinj.secp.internal.SecpPrivKeyImpl;
 import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
@@ -153,7 +152,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             do {
                 privKeySeg = fill_random(ta, 32);
             } while (secp256k1_h.secp256k1_ec_seckey_verify(ctx, privKeySeg) != 1);
-            SecpPrivKey privKey = new SecpPrivKeyImpl(privKeySeg.toArray(JAVA_BYTE));
+            SecpPrivKey privKey = new SecpPrivKeyNative(privKeySeg);
             privKeySeg.fill((byte) 0x00);
             return privKey;
         }
@@ -161,21 +160,21 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public SecpPrivKey ecPrivKeyImport(BigInteger privKeyInt) {
-        return new SecpPrivKeyImpl(privKeyInt);
+        return new SecpPrivKeyNative(SecpScalarImpl.integerTo32Bytes(privKeyInt));
     }
 
     @Override
     public SecpPrivKey ecPrivKeyImport(byte[] privKeyBytes) {
-        return new SecpPrivKeyImpl(privKeyBytes);
+        return new SecpPrivKeyNative(privKeyBytes);
     }
 
     @Override
     public SecpPubKey ecPubKeyCreate(SecpPrivKey privkey) {
         try (Arena ta = Arena.ofConfined()) {
 // Should we verify the key here for safety? (Probably)
-            MemorySegment privkeySegment = ta.allocateFrom(JAVA_BYTE, privkey.getEncoded());
+            MemorySegment privkeySegment = privKeySeg(ta, privkey);
             MemorySegment pubKey = ecPubKeyCreate(ta, privkeySegment);
-            privkeySegment.fill((byte) 0x00);
+            zeroIfWriteable(privkeySegment);
             // Return serialized pubkey
             return toSecpPubKey(ta, pubKey);
         }
@@ -227,9 +226,9 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     public SecpKeyPair ecKeyPairCreate(SecpPrivKey privKey) {
         try (Arena ta = Arena.ofConfined()) {
             MemorySegment keyPairSeg = secp256k1_keypair.allocate(ta);
-            MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+            MemorySegment privKeySeg = privKeySeg(ta, privKey);
             int return_val = secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, privKeySeg);
-            privKeySeg.fill((byte) 0x00);
+            zeroIfWriteable(privKeySeg);
             assert(return_val == 1);
             // TODO: Parse keyPairSeg into standard SecpKeyPairImpl
             SecpKeyPair keyPair = toKeyPair(ta, keyPairSeg);
@@ -368,9 +367,9 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             MemorySegment msg_hash = ta.allocateFrom(JAVA_BYTE, msg_hash_data);
             MemorySegment sig = secp256k1_ecdsa_signature.allocate(ta);          // internal signature format
             MemorySegment serSigSeg = secp256k1_ecdsa_signature.allocate(ta);    // serialized signature format
-            MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+            MemorySegment privKeySeg = privKeySeg(ta, privKey);
             int return_val = secp256k1_h.secp256k1_ecdsa_sign(ctx, sig, msg_hash, privKeySeg, NULL, NULL);
-            privKeySeg.fill((byte) 0x00);
+            zeroIfWriteable(privKeySeg);
             secp256k1_h.secp256k1_ecdsa_signature_serialize_compact(ctx, serSigSeg, sig);
             return SecpResult.checked(return_val, () -> new EcdsaSignatureImpl(serSigSeg.toArray(JAVA_BYTE)));
         }
@@ -385,7 +384,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         checkArg(msg_hash_data.length == 32, "Message must be 32-byte (hash)");
         try (Arena ta = Arena.ofConfined()) {
             MemorySegment msg_hash = ta.allocateFrom(JAVA_BYTE, msg_hash_data);
-            MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+            MemorySegment privKeySeg = privKeySeg(ta, privKey);
             MemorySegment sig = secp256k1_ecdsa_signature.allocate(ta);  // internal signature format
             MemorySegment serSigSeg = secp256k1_ecdsa_signature.allocate(ta);  // serialized signature format
             MemorySegment nonce = null;
@@ -405,7 +404,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
                 count++;
                 secp256k1_h.secp256k1_ecdsa_signature_serialize_compact(ctx, serSigSeg, sig);
             } while (return_val == OK && !hasLowR(serSigSeg)); // Retry until we get an error or low-R
-            privKeySeg.fill((byte) 0x00);
+            zeroIfWriteable(privKeySeg);
             return SecpResult.checked(return_val, () -> new EcdsaSignatureImpl(serSigSeg.toArray(JAVA_BYTE)));
         }
     }
@@ -501,6 +500,22 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return SchnorrSignatureImpl.of(sig.toArray(JAVA_BYTE));
     }
 
+
+    /// Get a segment with a private key in it. If `privKey` is an [SecpPrivKeyNative] we return
+    /// the read-only segment provided by [SecpPrivKeyNative#segment()], otherwise we allocate
+    /// a temporary segment, that should be zero-filled after use by [Secp256k1Foreign#zeroIfWriteable(MemorySegment)]
+    /// @param alloc allocator (arena) to use if we need to allocate a temporary segment
+    /// @param privKey a private key
+    /// @return private key segment (writable if temporary copy)
+    private MemorySegment privKeySeg(SegmentAllocator alloc, SecpPrivKey privKey) {
+        if (privKey instanceof SecpPrivKeyNative privKeyFfm) {
+            return privKeyFfm.segment();
+        } else {
+            // TODO: zero temporary array copy
+            return alloc.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+        }
+    }
+
     /// Create a `secp256k1_keypair` segment from a [SecpPrivKey]
     /// @param alloc allocator to create segments with
     /// @param privKey private key
@@ -526,7 +541,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment privKeySegment = alloc.allocate(32);
         int return_val2 = secp256k1_h.secp256k1_keypair_sec(ctx, privKeySegment, keyPairSegment);
         assert(return_val2 == 1);
-        SecpPrivKey privKey = new SecpPrivKeyImpl(privKeySegment.toArray(JAVA_BYTE));
+        SecpPrivKey privKey = new SecpPrivKeyNative(privKeySegment);
         privKeySegment.fill((byte) 0x00);
         return new SecpKeyPairImpl(privKey, pubKey);
     }
@@ -551,10 +566,10 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             SecpResult<MemorySegment> parsedPubKey = pubKeyParse(ta, pubKey);
             if (parsedPubKey instanceof SecpResult.Err<MemorySegment> err) return SecpResult.err(err.code());
             MemorySegment pubKeySeg = parsedPubKey.get();  // Get pubkey in 64-byte internal format
-            MemorySegment privKeySeg = ta.allocateFrom(JAVA_BYTE, privKey.getEncoded());
+            MemorySegment privKeySeg = privKeySeg(ta, privKey);
             MemorySegment output = ta.allocate(32);
             int success = secp256k1_h.secp256k1_ecdh(ctx, output, pubKeySeg, privKeySeg, NULL, NULL);
-            privKeySeg.fill((byte) 0x00);
+            zeroIfWriteable(privKeySeg);
             return SecpResult.checked(success, () -> new EcdhSharedSecretImpl(output.toArray(JAVA_BYTE)));
         }
     }
@@ -631,6 +646,15 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     @Override
     public String toString() {
         return "Secp256k1/" + ProviderId.LIBSECP256K1_FFM;
+    }
+
+    /// Fill writeable (temporary) segments with zeros. In this context, non-temporary segments are read-only
+    /// so they shouldn't (and can't) be erased.
+    /// @param segment a segment to zero if writeable/temporary
+    private void zeroIfWriteable(MemorySegment segment) {
+        if (!segment.isReadOnly()) {
+            segment.fill((byte) 0x00);
+        }
     }
 
     /// @param allocator allocator to create segment with
