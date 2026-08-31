@@ -31,7 +31,6 @@ import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
-import org.bitcoinj.secp.internal.SecpPubKeyImpl;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_keypair;
@@ -53,7 +52,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
 import static org.bitcoinj.secp.SecpResult.OK;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.C_POINTER;
-import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.SECP256K1_EC_UNCOMPRESSED;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_ellswift_xdh_hash_function_bip324;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_schnorrsig_sign32;
 import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_xonly_pubkey_serialize;
@@ -175,11 +173,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             MemorySegment privkeySegment = privKeySeg(ta, privkey);
             MemorySegment pubKey = ecPubKeyCreate(ta, privkeySegment);
             zeroIfWriteable(privkeySegment);
-            // Return serialized pubkey
             return toSecpPubKey(ta, pubKey);
         }
     }
 
+    /// Create an (internal format) Pub Key Segment
     MemorySegment ecPubKeyCreate(SegmentAllocator alloc, MemorySegment privkeySegment) {
         /* Public key creation using a valid context with a verified private key should never fail */
         MemorySegment pubkey = secp256k1_pubkey.allocate(alloc);
@@ -188,19 +186,30 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         return pubkey;
     }
 
-    /// Convert a pubKey [MemorySegment] to a [SecpPubKeyImpl]
-    private SecpPubKeyImpl toSecpPubKey(SegmentAllocator alloc, MemorySegment pubKeySegment) {
-        MemorySegment serialized_pubkey = pubKeySerializeSegment(alloc, pubKeySegment, SECP256K1_EC_UNCOMPRESSED());
-        return new SecpPubKeyImpl(serializedPubKeyToPoint(serialized_pubkey));
+    /// Convert a pubKey [MemorySegment] to a [SecpPubKeyNative]
+    private SecpPubKeyNative toSecpPubKey(SegmentAllocator alloc, MemorySegment pubKeySegment) {
+        return new SecpPubKeyNative(pubKeySerializeSegment(alloc, pubKeySegment, 2));
     }
 
     /// Convert a serialized, uncompressed pubKey [MemorySegment] to a [SecpPointUncompressed]
-    static private SecpPointUncompressed serializedPubKeyToPoint(MemorySegment serializedPubKeySegment) {
+    static SecpPointUncompressed serializedPubKeyToPoint(MemorySegment serializedPubKeySegment) {
         // Extract x and y, create an [SecpPointUncompressed] and return it
         byte[] xBytes = serializedPubKeySegment.asSlice(1, 32).toArray(JAVA_BYTE);
         byte[] yBytes = serializedPubKeySegment.asSlice(33, 32).toArray(JAVA_BYTE);
         // TODO: How to handle point at infinity?
         return new SecpPointUncompressed(SecpFieldElement.of(xBytes), SecpFieldElement.of(yBytes));
+    }
+
+    static SecpFieldElement serializedPubKeyToX(MemorySegment serializedPubKeySegment) {
+        return SecpFieldElement.of(serializedPubKeySegment.asSlice(1, 32).toArray(JAVA_BYTE));
+    }
+
+    static SecpFieldElement serializedPubKeyToY(MemorySegment serializedPubKeySegment) {
+        return SecpFieldElement.of(serializedPubKeySegment.asSlice(33, 32).toArray(JAVA_BYTE));
+    }
+
+    static boolean serializedPubKeyIsOdd(MemorySegment serializedPubKeySegment) {
+        return (serializedPubKeySegment.get(JAVA_BYTE, 64) & 0x01) == 1;
     }
 
     @Override
@@ -300,7 +309,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     /// @param pubKeySegment pubKey in internal format
     /// @param flags flags for serialization
     /// @return serialized pubKey
-    MemorySegment pubKeySerializeSegment(SegmentAllocator alloc, MemorySegment pubKeySegment, int flags) {
+    static MemorySegment pubKeySerializeSegment(SegmentAllocator alloc, MemorySegment pubKeySegment, int flags) {
         int byteSize = switch(flags) {
             case 2 -> 65;           // SECP256K1_EC_UNCOMPRESSED())
             case 258 -> 33;         // SECP256K1_EC_COMPRESSED())
@@ -326,7 +335,11 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             MemorySegment input = ta.allocateFrom(JAVA_BYTE, inputData);
             MemorySegment pubkey = secp256k1_pubkey.allocate(ta);
             int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
-            return SecpResult.checked(return_val, () -> toSecpPubKey(ta, pubkey));
+            if (return_val != 1) return SecpResult.err(return_val);
+            MemorySegment uncompressedSerialized = (input.byteSize() == 65)
+                    ? pubkey
+                    : pubKeySerializeSegment(ta, pubkey, 2);
+            return SecpResult.ok(new SecpPubKeyNative(uncompressedSerialized));
         }
     }
 
@@ -345,14 +358,17 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         }
     }
 
-    /// Parse a pubKey into the 64-byte internal format.
+    /// Parse a pubKey into the 64-byte internal format. This is also used for converting [SecpPubKeyNative]
+    /// from its [MemorySegment] (uncompressed, serialized, 65 bytes) to the libsecp256k1 internal (64 byte) format.
     /// @param alloc allocator to create segments with
-    /// @param pubKeyData the pubKey to parse
+    /// @param pubKeyData the pubKey to parse (or convert)
     /// @return a result containing a segment (valid for the lifetime of `alloc`) in internal format
     private SecpResult<MemorySegment> pubKeyParse(SegmentAllocator alloc, SecpPoint.Uncompressed pubKeyData) {
-        MemorySegment input = alloc.allocateFrom(JAVA_BYTE, pubKeyData.serialize()); // 65 byte, uncompressed format
+        MemorySegment serializedPubKey = (pubKeyData instanceof SecpPubKeyNative pubKeySeg)
+                ? pubKeySeg.segment()
+                : alloc.allocateFrom(JAVA_BYTE, pubKeyData.serialize());
         MemorySegment pubkey = secp256k1_pubkey.allocate(alloc);
-        int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
+        int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, serializedPubKey, serializedPubKey.byteSize());
         return SecpResult.checked(return_val, () -> pubkey);
     }
 
