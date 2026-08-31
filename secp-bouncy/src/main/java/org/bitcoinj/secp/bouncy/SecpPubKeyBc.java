@@ -19,8 +19,10 @@ import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.internal.SecpECPoint;
+import org.bitcoinj.secp.internal.SecpFieldElementImpl;
 import org.bitcoinj.secp.internal.SecpPointCompressed;
 import org.bitcoinj.secp.internal.UInt256;
+import org.bouncycastle.math.ec.ECFieldElement;
 import org.bouncycastle.math.ec.custom.sec.SecP256K1Point;
 import org.jspecify.annotations.Nullable;
 
@@ -68,13 +70,13 @@ public class SecpPubKeyBc implements SecpPubKey {
     @Override
     public SecpFieldElement x() {
         org.bouncycastle.math.ec.ECPoint normalized = bcPoint.normalize();
-        return SecpFieldElement.of(normalized.getAffineXCoord().getEncoded());
+        return toFieldElement(normalized.getAffineXCoord());
     }
 
     @Override
     public SecpFieldElement y() {
         org.bouncycastle.math.ec.ECPoint normalized = bcPoint.normalize();
-        return SecpFieldElement.of(normalized.getAffineYCoord().getEncoded());
+        return toFieldElement(normalized.getAffineYCoord());
     }
 
     @Override
@@ -132,19 +134,25 @@ public class SecpPubKeyBc implements SecpPubKey {
         } else {
             SecpPoint.Uncompressed other = (SecpPoint.Uncompressed) o;
             org.bouncycastle.math.ec.ECPoint norm = bcPoint.normalize();
-            return Objects.equals(norm.getAffineXCoord().toBigInteger(), other.x().toBigInteger()) &&
-                    Objects.equals(norm.getAffineYCoord().toBigInteger(), other.y().toBigInteger());
+            return Objects.equals(toFieldElement(norm.getAffineXCoord()).toBigInteger(), other.x().toBigInteger()) &&
+                    Objects.equals(norm.getAffineYCoord().testBitZero(), other.isOdd());
         }
     }
 
     @Override
     public int hashCode() {
         org.bouncycastle.math.ec.ECPoint norm = bcPoint.normalize();
-        return Objects.hash(norm.getAffineXCoord(), norm.getAffineYCoord());
+        return Objects.hash(x(), isOdd());
     }
 
     @Override
     public String toString() {
         return UInt256.toHexString(this.serialize());
+    }
+
+    private SecpFieldElementImpl toFieldElement(ECFieldElement element) {
+        byte[] bytes = new byte[32];
+        element.encodeTo(bytes, 0);
+        return new SecpFieldElementImpl(bytes);
     }
 }

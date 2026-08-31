@@ -33,14 +33,11 @@ public class SecpPrivKeyNativeTest {
 
     @Test
     void constructOne() {
-        var oneInt = BigInteger.ONE;
-        var oneBytes = SecpScalarImpl.integerTo32Bytes(oneInt);
-
-        var onePrivKey = new SecpPrivKeyNative(oneBytes);
-        assertEquals(oneInt, onePrivKey.getS());
+        var onePrivKey = new SecpPrivKeyNative(BigInteger.ONE);
+        assertEquals(BigInteger.ONE, onePrivKey.getS());
 
         var onePrivKeyClone = new SecpPrivKeyNative(onePrivKey.segment());
-        assertEquals(oneInt, onePrivKeyClone.getS());
+        assertEquals(BigInteger.ONE, onePrivKeyClone.getS());
 
         onePrivKeyClone.destroy();
         assertTrue(onePrivKeyClone.isDestroyed());
@@ -63,7 +60,7 @@ public class SecpPrivKeyNativeTest {
     @Test
     void multiplyTestOne() {
         try (Secp256k1Foreign secp = new Secp256k1Foreign()) {
-            SecpPrivKey onePrivKey = new SecpPrivKeyNative(SecpScalarImpl.integerTo32Bytes(BigInteger.ONE));
+            SecpPrivKey onePrivKey = new SecpPrivKeyNative(BigInteger.ONE);
             SecpPubKey pubKey = secp.ecPubKeyCreate(onePrivKey);
             SecpPubKey check = secp.ecPubKeyTweakMul(Secp256k1.G, onePrivKey.getS());
             assertEquals(pubKey.x(), check.x());

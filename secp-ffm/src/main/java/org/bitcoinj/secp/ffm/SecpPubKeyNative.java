@@ -107,11 +107,11 @@ public class SecpPubKeyNative implements SecpPubKey {
     @Override
     public boolean equals(@Nullable Object o) {
         if (!(o instanceof Uncompressed that)) return false;
-        return x().equals(that.x()) && y().equals(that.y());
+        return x().equals(that.x()) && isOdd() == that.isOdd();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x(), y());
+        return Objects.hash(x(), isOdd());
     }
 }

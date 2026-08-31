@@ -340,6 +340,7 @@ public class Bouncy256k1 implements Secp256k1 {
 
         BIP340Signer signer = new BIP340Signer();
 
+        // Bouncy has to do a point multiply because we don't pas in a keypair. Is thee a better way?
         signer.init(true, new ParametersWithRandom(priv, new FixedBytesRandom(auxiliaryRandom)));
         signer.update(msg_hash, 0, msg_hash.length);
 

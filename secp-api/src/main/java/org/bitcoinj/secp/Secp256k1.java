@@ -319,6 +319,12 @@ public interface Secp256k1 extends Closeable {
      */
     SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey);
 
+    // TODO: Encourage use of KeyPair for this function, should KeyPair really implement PrivKey??
+    // TODO: This is inefficient, we're droppoing the keypair then recreating inside the implementations
+    default SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpKeyPair keyPair) {
+        return  schnorrSigSign32(msg_hash, keyPair.privateKey());
+    }
+
     /**
      * Create a Schnorr signature for a message.
      * @param messageHash a hash of a message to sign

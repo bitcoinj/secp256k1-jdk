@@ -51,7 +51,9 @@ public class SecpPrivKeyBc implements SecpPrivKey {
     @Override
     public byte[] getEncoded() {
         if (privKey == null) throwKeyDestroyed();
-        return SecpScalarImpl.integerTo32Bytes(privKey);
+        byte[] result = new byte[32];
+        UInt256.writeTo32Bytes(privKey, result, 0);
+        return result;
     }
 
     @Override

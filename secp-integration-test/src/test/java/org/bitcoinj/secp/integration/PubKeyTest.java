@@ -19,6 +19,7 @@ import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPrivKey;
 import org.bitcoinj.secp.SecpPubKey;
 import org.bitcoinj.secp.Secp256k1;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -77,4 +78,16 @@ public class PubKeyTest implements SecpTestSupport {
         assertEquals(expectedToString, pubKey.toString());
     }
 
+    @Test
+    void pubKeyEqualsCrossCheck() {
+        try (Secp256k1 secpBc = Secp256k1.getById(Secp256k1.ProviderId.BOUNCY_CASTLE);
+        Secp256k1 secpNative = Secp256k1.getById(Secp256k1.ProviderId.LIBSECP256K1_FFM)) {
+            byte[] gBytes = Secp256k1.G.serialize();
+            SecpPubKey gBc = secpBc.ecPubKeyParse(gBytes).get();
+            SecpPubKey gNative = secpNative.ecPubKeyParse(gBytes).get();
+            assertEquals(gBc, gNative);
+            assertEquals(gNative, gBc);
+            assertEquals(gBc.hashCode(), gNative.hashCode(), "Hashcodes are not equal");
+        }
+    }
 }

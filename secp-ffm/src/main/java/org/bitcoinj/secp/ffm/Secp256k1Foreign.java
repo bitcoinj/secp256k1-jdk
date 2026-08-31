@@ -158,7 +158,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     @Override
     public SecpPrivKey ecPrivKeyImport(BigInteger privKeyInt) {
-        return new SecpPrivKeyNative(SecpScalarImpl.integerTo32Bytes(privKeyInt));
+        return new SecpPrivKeyNative(privKeyInt);
     }
 
     @Override
@@ -337,7 +337,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             int return_val = secp256k1_h.secp256k1_ec_pubkey_parse(ctx, pubkey, input, input.byteSize());
             if (return_val != 1) return SecpResult.err(return_val);
             MemorySegment uncompressedSerialized = (input.byteSize() == 65)
-                    ? pubkey
+                    ? input
                     : pubKeySerializeSegment(ta, pubkey, 2);
             return SecpResult.ok(new SecpPubKeyNative(uncompressedSerialized));
         }
@@ -509,7 +509,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private SchnorrSignature schnorrSigSign32(SegmentAllocator alloc, byte[] messageHash, SecpPrivKey privKey, MemorySegment auxiliary_rand) {
         MemorySegment sig = alloc.allocate(64);
         MemorySegment msg_hash = alloc.allocateFrom(JAVA_BYTE, messageHash);
-        MemorySegment keyPairSeg = privKeyToSegment(alloc, privKey);
+        MemorySegment keyPairSeg = privKeyToSegment(alloc, privKeySeg(alloc, privKey));
         int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keyPairSeg, auxiliary_rand);
         keyPairSeg.fill((byte) 0x00);   // Contains the private key
         assert(return_val == 1);
@@ -532,16 +532,14 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         }
     }
 
+    // TODO Rename to privKeyToKeyPairSeg
     /// Create a `secp256k1_keypair` segment from a [SecpPrivKey]
     /// @param alloc allocator to create segments with
-    /// @param privKey private key
+    /// @param privSeg private key
     /// @return a segment (valid for the lifetime of `alloc`) containing a key pair
-    private MemorySegment privKeyToSegment(SegmentAllocator alloc, SecpPrivKey privKey) {
-        byte[] privBytes = privKey.getEncoded();
-        MemorySegment privSeg = alloc.allocateFrom(JAVA_BYTE, privBytes);
+    private MemorySegment privKeyToSegment(SegmentAllocator alloc, MemorySegment privSeg) {
         MemorySegment keyPairSeg = secp256k1_keypair.allocate(alloc);
         secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, privSeg);
-        privSeg.fill((byte) 0x00);
         return keyPairSeg;
     }
 

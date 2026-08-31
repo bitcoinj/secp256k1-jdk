@@ -16,6 +16,7 @@
 package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.SecpPrivKey;
+import org.bitcoinj.secp.SecpScalar;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.UInt256;
 
@@ -26,6 +27,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
+import java.lang.foreign.ValueLayout;
 import java.math.BigInteger;
 import java.util.Arrays;
 
@@ -39,14 +41,21 @@ class SecpPrivKeyNative implements SecpPrivKey {
     private final MemorySegment segment;
 
     SecpPrivKeyNative(MemorySegment privKeySeg) {
-        var segment = Arena.ofAuto().allocate(KEY_LENGTH);
+        segment = Arena.ofAuto().allocate(KEY_LENGTH);
         MemorySegment.copy(privKeySeg, 0, segment, 0, KEY_LENGTH);
-        this.segment = segment;
     }
+
+    SecpPrivKeyNative(BigInteger privKeyInt) {
+        SecpScalar.checkInRange(privKeyInt);
+        segment = Arena.ofAuto().allocate(KEY_LENGTH);
+        copyTo32(privKeyInt, segment, 0);
+    }
+
 
     SecpPrivKeyNative(byte[] privKeyBytes) {
         SecpScalarImpl.checkInRange(privKeyBytes);
-        this(MemorySegment.ofArray(privKeyBytes));
+        segment = Arena.ofAuto().allocate(KEY_LENGTH);
+        MemorySegment.copy(privKeyBytes, 0, segment, ValueLayout.JAVA_BYTE, 0, KEY_LENGTH);
     }
 
     @Override
@@ -58,12 +67,7 @@ class SecpPrivKeyNative implements SecpPrivKey {
     @Override
     public BigInteger getS() {
         if (destroyed) throwKeyDestroyed();
-        byte[] bytes = getEncoded();
-        try {
-            return UInt256.toBigInteger(bytes);
-        } finally {
-            Arrays.fill(bytes, (byte) 0);
-        }
+        return bigIntegerFromKeySeg(segment);
     }
 
     @Override
@@ -97,5 +101,28 @@ class SecpPrivKeyNative implements SecpPrivKey {
     @Serial
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         throw new NotSerializableException("Deserialization of private keys is prohibited.");
+    }
+
+    static void copyTo32(BigInteger v, MemorySegment dst, long offset) {
+        if (v.signum() < 0 || v.bitLength() > 256)
+            throw new ArithmeticException("does not fit in unsigned 32 bytes");
+
+        byte[] b = v.toByteArray();
+        int srcOff = Math.max(0, b.length - 32);   // skip the 0x00 sign byte if present
+        int len    = b.length - srcOff;
+        long pad   = 32 - len;
+
+        dst.asSlice(offset, pad).fill((byte) 0);
+        MemorySegment.copy(b, srcOff, dst, ValueLayout.JAVA_BYTE, offset + pad, len);
+    }
+
+    private static BigInteger bigIntegerFromKeySeg(MemorySegment src) {
+        byte[] buf = new byte[32];
+        MemorySegment.copy(src, ValueLayout.JAVA_BYTE, 0, buf, 0, KEY_LENGTH);
+        try {
+            return new BigInteger(1, buf, 0, KEY_LENGTH);
+        } finally {
+            Arrays.fill(buf, (byte) 0);
+        }
     }
 }

@@ -18,6 +18,9 @@ package org.bitcoinj.secp.internal;
 import org.bitcoinj.secp.SecpFieldElement;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Default/Internal SecpPubKey implementation storing as {@link SecpPointUncompressed}.
@@ -85,5 +88,22 @@ public class SecpPubKeyImpl implements SecpPubKey {
     @Override
     public boolean isOdd() {
         return point.isOdd();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object o) {
+        if (!(o instanceof SecpPoint.Uncompressed)) return false;
+        if (o instanceof SecpPubKeyImpl) {
+            SecpPubKeyImpl other = (SecpPubKeyImpl) o;
+            return x().equals(other.x()) && (isOdd() == other.isOdd());
+        } else {
+            SecpPoint.Uncompressed other = (SecpPoint.Uncompressed) o;
+            return x().equals(other.x()) && (isOdd() == other.isOdd());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x(), isOdd());
     }
 }
