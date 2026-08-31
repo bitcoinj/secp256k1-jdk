@@ -8,8 +8,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-26.04, ubuntu-26.04-arm, macOS-15]
-        java: [ '25', '26' ]
-        distribution: ['temurin']
+        java: [ '25', '27-ea' ]
+        distribution: ['zulu']
       fail-fast: false
     name: ${{ matrix.os }} JDK ${{ matrix.java }} (via Maven)
     steps:
