@@ -17,8 +17,6 @@ package org.bitcoinj.secp.examples;
 
 import module org.bitcoinj.secp;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import static java.lang.IO.println;
@@ -29,7 +27,7 @@ public class Ecdsa {
      * Here the message is "Hello, world!" and the hash function is SHA-256.
      * See https://bitcoin.stackexchange.com/questions/81115/if-someone-wanted-to-pretend-to-be-satoshi-by-posting-a-fake-signature-to-defrau/81116#81116
      */
-    final byte[] messageHash = hash("Hello, world!");
+    final byte[] message = "Hello, world!".getBytes();
 
     void main() {
         println("Running secp256k1-jdk Ecdsa example...");
@@ -50,6 +48,7 @@ public class Ecdsa {
 
             /* Generate an ECDSA signature using Bitcoin-standard low-r nonce grinding.
              * Signing with a valid context and verified secret key should never fail. */
+            SecpHash256 messageHash = secp.sha256(message);
             EcdsaSignature sig = secp.ecdsaSignLowR(messageHash, privKey).get();
 
             /* Serialize the signature in a compact form. Should always succeed according to
@@ -81,14 +80,6 @@ public class Ecdsa {
              * swapping them to disk. Hence, we overwrite the secret key buffer with zeros.
              */
             privKey.destroy();
-        }
-    }
-
-    private static byte[] hash(String messageString) {
-        try {
-            return MessageDigest.getInstance("SHA-256").digest(messageString.getBytes());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);  // Can't happen.
         }
     }
 }

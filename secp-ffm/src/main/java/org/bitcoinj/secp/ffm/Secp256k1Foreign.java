@@ -17,6 +17,7 @@ package org.bitcoinj.secp.ffm;
 
 import org.bitcoinj.secp.EcdhSharedSecret;
 import org.bitcoinj.secp.SecpFieldElement;
+import org.bitcoinj.secp.SecpHash256;
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.SecpPoint;
 import org.bitcoinj.secp.SecpPubKey;
@@ -45,6 +46,7 @@ import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.SegmentAllocator;
 import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -456,23 +458,38 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public byte[] taggedSha256(byte[] tag, byte[] message) {
+    public SecpHash256Native sha256(byte[] message) {
+        try {
+            return new SecpHash256Native(MessageDigest.getInstance("SHA-256").digest(message));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);  // Can't happen.
+        }
+    }
+
+    @Override
+    public SecpHash256Native sha256Import(byte[] messageHash) {
+        return new SecpHash256Native(messageHash);
+    }
+
+    @Override
+    public SecpHash256Native taggedSha256(byte[] tag, byte[] message) {
         try (Arena ta = Arena.ofConfined()) {
             MemorySegment hash32 = ta.allocate(32);
             MemorySegment tagSeg = ta.allocateFrom(JAVA_BYTE, tag);
             MemorySegment msgSeg = ta.allocateFrom(JAVA_BYTE, message);
             int return_val = secp256k1_h.secp256k1_tagged_sha256(ctx, hash32, tagSeg, tag.length, msgSeg, message.length);
             assert(return_val == 1);
-            return hash32.toArray(JAVA_BYTE);
+            return new SecpHash256Native(hash32.toArray(JAVA_BYTE));
         }
     }
 
     @Override
     public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey) {
         checkArg(messageHash.length == 32, "Message must be 32-byte (hash)");
+        SecpHash256 hash = new SecpHash256Native(messageHash);
         try (Arena ta = Arena.ofConfined()) {
             MemorySegment auxiliary_rand = fill_random(ta, 32);
-            return schnorrSigSign32(ta, messageHash, privKey, auxiliary_rand);
+            return schnorrSigSign32(ta, hash, privKey, auxiliary_rand);
         }
     }
 
@@ -481,8 +498,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     /// @param privKey private key
     /// @param auxiliaryRandom auxiliary randomness (typically from a test vector)
     /// @return the signature
-    public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
-        checkArg(messageHash.length == 32, "Message must be 32-byte (hash)");
+    public SchnorrSignature schnorrSigSign32(SecpHash256 messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
         checkArg(auxiliaryRandom.length == 32, "auxiliaryRandom must be 32-byte)");
         try (Arena ta = Arena.ofConfined()) {
             MemorySegment auxiliary_rand = ta.allocateFrom(JAVA_BYTE, auxiliaryRandom);
@@ -490,9 +506,9 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         }
     }
 
-    private SchnorrSignature schnorrSigSign32(SegmentAllocator alloc, byte[] messageHash, SecpPrivKey privKey, MemorySegment auxiliary_rand) {
+    private SchnorrSignature schnorrSigSign32(SegmentAllocator alloc, SecpHash256 messageHash, SecpPrivKey privKey, MemorySegment auxiliary_rand) {
         MemorySegment sig = alloc.allocate(64);
-        MemorySegment msg_hash = alloc.allocateFrom(JAVA_BYTE, messageHash);
+        MemorySegment msg_hash = alloc.allocateFrom(JAVA_BYTE, messageHash.toByteArray());
         MemorySegment keyPairSeg = privKeyToSegment(alloc, privKey);
         int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keyPairSeg, auxiliary_rand);
         keyPairSeg.fill((byte) 0x00);   // Contains the private key

@@ -65,7 +65,7 @@ public class AddressTest {
         Address tapRootAddress;
         SecpKeyPair keyPair = secp.ecKeyPairCreate(secp.ecPrivKeyImport(key));
         WitnessMaker maker = new WitnessMaker(secp);
-        SecpFieldElement tweakedPubKey = maker.tweakedPubKey(keyPair.publicKey().xOnly());
+        SecpXOnlyPubKey tweakedPubKey = maker.tweakedPubKey(keyPair.publicKey().xOnly());
         tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.toByteArray());
         Assertions.assertEquals(address, tapRootAddress.toString());
     }
@@ -76,10 +76,8 @@ public class AddressTest {
         byte[] serializedInternalPubKey = parseHex("d6889cb081036e0faefa3a35157ad71086b123b2b144b649798b494c300a961d");
         String expectedBip350Address = "bc1p2wsldez5mud2yam29q22wgfh9439spgduvct83k3pm50fcxa5dps59h4z5";
 
-        WitnessMaker maker = new WitnessMaker(secp);
         SecpXOnlyPubKey internalPubkey = secp.xOnlyPubKeyParse(serializedInternalPubKey).get();
-        SecpFieldElement tweakedPubKey = maker.tweakedPubKey(internalPubkey);
-        Address tapRootAddress = SegwitAddress.fromProgram(network, 1, tweakedPubKey.toByteArray());
+        Address tapRootAddress = TapRootAddress.fromXOnlyPubKey(secp, network, internalPubkey);
 
         Assertions.assertEquals(expectedBip350Address, tapRootAddress.toString());
     }
@@ -106,7 +104,7 @@ public class AddressTest {
         Assertions.assertArrayEquals(expectedTweak, tweak.toByteArray());
 
         // tweakedPubKey (aka Q.x(), where Q = P + int(hashTapTweak(bytes(P)))G)
-        SecpFieldElement tweakedPubKey = maker.tweakedPubKey(internalPubkey, tweak);
+        SecpXOnlyPubKey tweakedPubKey = maker.tweakedPubKey(internalPubkey, tweak);
 
         Assertions.assertArrayEquals(expectedTweakedPubkey, tweakedPubKey.toByteArray());
 
