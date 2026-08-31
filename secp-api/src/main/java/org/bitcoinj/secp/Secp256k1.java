@@ -285,6 +285,13 @@ public interface Secp256k1 extends Closeable {
     SecpResult<EcdsaSignature> ecdsaSignatureParseCompact(byte[] serialized_signature);
 
     /**
+     * Parse an ECDSA signature in DER format.
+     * @param derSignature DER-format signature bytes
+     * @return signature object
+     */
+    SecpResult<EcdsaSignature> ecdsaSignatureParseDer(byte[] derSignature);
+
+    /**
      * Verify an ECDSA signature is valid and low-s.
      * @param sig The signature to verify.
      * @param msg_hash_data A 32-byte hash of the message to verify.
