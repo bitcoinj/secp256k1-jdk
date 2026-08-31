@@ -43,9 +43,13 @@ import org.bitcoinj.secp.internal.SecpScalarImpl;
 import org.bitcoinj.secp.internal.SecpXOnlyPubKeyImpl;
 
 import java.lang.foreign.Arena;
+import java.lang.foreign.MemoryLayout;
 import java.lang.foreign.MemorySegment;
 import java.lang.foreign.SegmentAllocator;
+import java.lang.foreign.StructLayout;
+import java.lang.foreign.ValueLayout;
 import java.math.BigInteger;
+import java.nio.ByteOrder;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -431,6 +435,17 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             MemorySegment sig = secp256k1_ecdsa_signature.allocate(ta);
             int return_val = secp256k1_h.secp256k1_ecdsa_signature_parse_compact(ctx, sig, ta.allocateFrom(JAVA_BYTE, serialized_signature));
             return SecpResult.checked(return_val, () -> new EcdsaSignatureImpl(serialized_signature));
+        }
+    }
+
+    public SecpResult<EcdsaSignature> ecdsaSignatureParseDer(byte[] derSignature) {
+        try (Arena ta = Arena.ofConfined()) {
+            MemorySegment sig = secp256k1_ecdsa_signature.allocate(ta);
+            int parseResult = secp256k1_h.secp256k1_ecdsa_signature_parse_der(ctx, sig, ta.allocateFrom(JAVA_BYTE, derSignature), derSignature.length);
+            if (parseResult != OK) return SecpResult.err(parseResult);
+            MemorySegment compactSigSeg = ta.allocate(64);
+            int serializeResult = secp256k1_h.secp256k1_ecdsa_signature_serialize_compact(ctx, compactSigSeg, sig);
+            return SecpResult.checked(serializeResult, () -> new EcdsaSignatureImpl(compactSigSeg.toArray(JAVA_BYTE)));
         }
     }
 

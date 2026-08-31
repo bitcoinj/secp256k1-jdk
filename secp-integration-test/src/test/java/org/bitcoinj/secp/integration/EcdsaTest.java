@@ -21,7 +21,6 @@ import org.bitcoinj.secp.Secp256k1;
 import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.bouncy.Bouncy256k1;
 import org.bitcoinj.secp.ffm.Secp256k1Foreign;
-import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
 import org.bitcoinj.secp.internal.UInt256;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -169,5 +168,21 @@ public class EcdsaTest implements SecpTestSupport {
         byte[] sigBytes = parseHex("252EC55A0CB7CD96F3BA47D7B3E16876C75F00CCF85B5F0CA5C51A8058BA9E7640F5D8DF25ADED2A4EA8DD7B2CA4CD3D8A3187D6FEF24A9C7111B9F9B4E0CFAE");
         EcdsaSignature signature = secp.ecdsaSignatureParseCompact(sigBytes).get();
         assertArrayEquals(sigBytes, signature.serializeCompact());
+    }
+
+    // Test interop with a signature from elsewhere (from a bitcoinj test)
+    @MethodSource("secpImplementations")
+    @ParameterizedTest(name = "Test Ecdsa for {0}")
+    void testInterop(Secp256k1 secp) {
+        SecpPrivKey privKey = secp.ecPrivKeyImport(parseHex("180cb41c7c600be951b5d3d0a7334acc7506173875834f7a6c4c786a28fcbb19"));
+        SecpPubKey pubKey = secp.ecPubKeyCreate(privKey);
+        byte[] sigBytes = parseHex(
+                "3046022100dffbc26774fc841bbe1c1362fd643609c6e42dcb274763476d87af2c0597e89e022100c59e3c13b96b316cae9fa0ab0260612c7a133a6fe2b3445b6bf80b3123bf274d");
+        EcdsaSignature sig = secp.ecdsaSignatureParseDer(sigBytes).get();
+        assertFalse(sig.hasLowS());
+        EcdsaSignature canonicalSig = sig.normalize();
+        assertTrue(canonicalSig.hasLowS());
+        assertFalse(secp.ecdsaVerify(sig, UInt256.ZERO_VALUE, pubKey).get(), "signature with non-canonical-S verified");
+        assertTrue(secp.ecdsaVerify(canonicalSig, UInt256.ZERO_VALUE, pubKey).get(), "signature with non-canonical-S failed to verify");
     }
 }
