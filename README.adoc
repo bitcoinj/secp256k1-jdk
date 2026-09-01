@@ -246,8 +246,8 @@ See link:SECURITY.md[]
 
 === Other JDK wrappers of (lib)secp256k1
 
-* bitcoin-s fork https://bitcoin-s.org/docs/secp256k1/jni-modify
-* Sparrow/Drongo JNI: https://github.com/sparrowwallet/drongo/tree/master/src/main/java/org/bitcoin
+* The https://bitcoin-s.org[bitcoin-s] project maintains https://bitcoin-s.org/docs/secp256k1/secp256k1[Secp256k1 JNI], a fork of the original JNI implementation.
+* Sparrow maintains another https://github.com/sparrowwallet/drongo/tree/master/src/main/java/org/bitcoin[JNI fork] in the https://github.com/sparrowwallet/drongo[Drongo] subproject.
 * Kotlin multiplatform wrapper: https://github.com/acinq/secp256k1-kmp
 
 === Other JDK implementations of secp256k1
