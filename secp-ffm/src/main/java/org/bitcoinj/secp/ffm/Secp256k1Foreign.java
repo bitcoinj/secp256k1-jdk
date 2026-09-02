@@ -75,9 +75,14 @@ import static org.bitcoinj.secp.ffm.jextract.secp256k1_h.secp256k1_xonly_pubkey_
 public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final MemorySegment ctx;
-    static final MemorySegment secp256k1StaticContext = secp256k1_h.secp256k1_context_static();
+    static final MemorySegment STATIC_CTX;
     private static final MemorySegment NULL = MemorySegment.ofAddress(0L);
     private final SecureRandom secureRandom;
+
+    static {
+            secp256k1_h.secp256k1_selftest();
+            STATIC_CTX = secp256k1_h.secp256k1_context_static();
+    }
 
     /// TBD: Static verify method that doesn't require a class instance.
     public static boolean ecdsaVerify(MemorySegment sig, MemorySegment msg_hash, MemorySegment pubkey) {
@@ -318,7 +323,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment serialized_pubkey = alloc.allocate(byteSize);
         MemorySegment lenSegment = alloc.allocate(secp256k1_h.size_t);
         lenSegment.set(secp256k1_h.size_t, 0, serialized_pubkey.byteSize());
-        int return_val = secp256k1_h.secp256k1_ec_pubkey_serialize(secp256k1StaticContext,
+        int return_val = secp256k1_h.secp256k1_ec_pubkey_serialize(STATIC_CTX,
                 serialized_pubkey,
                 lenSegment,
                 pubKeySegment,
