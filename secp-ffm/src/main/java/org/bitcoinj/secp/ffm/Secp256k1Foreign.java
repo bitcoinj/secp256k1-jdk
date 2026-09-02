@@ -29,7 +29,6 @@ import org.bitcoinj.secp.EcdsaSignature;
 import org.bitcoinj.secp.ffm.segments.LowRGrindingNonce;
 import org.bitcoinj.secp.internal.EcdhSharedSecretImpl;
 import org.bitcoinj.secp.internal.EcdsaSignatureImpl;
-import org.bitcoinj.secp.internal.SecpKeyPairImpl;
 import org.bitcoinj.secp.internal.SecpPointUncompressed;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_ecdsa_signature;
 import org.bitcoinj.secp.ffm.jextract.secp256k1_h;
@@ -509,7 +508,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         MemorySegment hashSeg = alloc.allocateFrom(JAVA_BYTE, messageHash);
         MemorySegment keyPairSeg = keyPair instanceof SecpKeyPairNative keyPairNative
                 ? keyPairNative.segment()
-                : privKeyToSegment(alloc, keyPair.privateKey());
+                : privKeyToKeyPairSegment(alloc, keyPair.privateKey());
         return schnorrSigSign32(alloc, hashSeg, keyPairSeg, auxiliaryRand);
     }
 
@@ -539,7 +538,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     /// @param alloc allocator to create segments with
     /// @param privKey private key
     /// @return a segment (valid for the lifetime of `alloc`) containing a key pair
-    private MemorySegment privKeyToSegment(SegmentAllocator alloc, SecpPrivKey privKey) {
+    private MemorySegment privKeyToKeyPairSegment(SegmentAllocator alloc, SecpPrivKey privKey) {
         byte[] privBytes = privKey.getEncoded();
         MemorySegment privSeg = alloc.allocateFrom(JAVA_BYTE, privBytes);
         MemorySegment keyPairSeg = secp256k1_keypair.allocate(alloc);
