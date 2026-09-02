@@ -323,20 +323,21 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
-    public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey) {
+    public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpKeyPair keyPair) {
         checkArg(msg_hash.length == 32, "Message must be 32-byte (hash)");
         byte[] auxiliaryRandom = new byte[32];
         try {
             fillRandom(auxiliaryRandom);
-            return schnorrSigSign32(msg_hash, privKey, auxiliaryRandom);
+            return schnorrSigSign32(msg_hash, keyPair, auxiliaryRandom);
         } finally {
             Arrays.fill(auxiliaryRandom, (byte) 0);
         }
     }
 
     @Override
-    public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
-        ECPrivateKeyParameters priv = new ECPrivateKeyParameters(privKey.getS(), BC_ECDOMAIN_PARAMS);
+    public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpKeyPair keyPair, byte[] auxiliaryRandom) {
+        // TODO: Is there a way to pass the x-only pubkey to Bouncy Castle to save a point multiply?
+        ECPrivateKeyParameters priv = new ECPrivateKeyParameters(keyPair.getS(), BC_ECDOMAIN_PARAMS);
 
         BIP340Signer signer = new BIP340Signer();
 
