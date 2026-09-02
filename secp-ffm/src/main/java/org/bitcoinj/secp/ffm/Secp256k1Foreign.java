@@ -484,38 +484,36 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
     }
 
     @Override
-    public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey) {
+    public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpKeyPair keyPair) {
         checkArg(messageHash.length == 32, "Message must be 32-byte (hash)");
         try (Arena ta = Arena.ofConfined()) {
             MemorySegment auxiliary_rand = fill_random(ta, 32);
-            return schnorrSigSign32(ta, messageHash, privKey, auxiliary_rand);
+            return schnorrSigSign32(ta, messageHash, keyPair, auxiliary_rand);
         }
     }
 
-    /// schnorrSigSign32 using provided randomness. This is not part of the API and is intended for testing.
-    /// @param messageHash message hash
-    /// @param privKey private key
-    /// @param auxiliaryRandom auxiliary randomness (typically from a test vector)
-    /// @return the signature
-    public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpPrivKey privKey, byte[] auxiliaryRandom) {
+    @Override
+    public SchnorrSignature schnorrSigSign32(byte[] messageHash, SecpKeyPair keyPair, byte[] auxiliaryRandom) {
         checkArg(messageHash.length == 32, "Message must be 32-byte (hash)");
         checkArg(auxiliaryRandom.length == 32, "auxiliaryRandom must be 32-byte)");
         try (Arena ta = Arena.ofConfined()) {
             MemorySegment auxiliary_rand = ta.allocateFrom(JAVA_BYTE, auxiliaryRandom);
-            return schnorrSigSign32(ta, messageHash, privKey, auxiliary_rand);
+            return schnorrSigSign32(ta, messageHash, keyPair, auxiliary_rand);
         }
     }
 
-    private SchnorrSignature schnorrSigSign32(SegmentAllocator alloc, byte[] messageHash, SecpPrivKey privKey, MemorySegment auxiliary_rand) {
+    private SchnorrSignature schnorrSigSign32(SegmentAllocator alloc, byte[] messageHash, SecpKeyPair keyPair, MemorySegment auxiliaryRand) {
+        MemorySegment hashSeg = alloc.allocateFrom(JAVA_BYTE, messageHash);
+        MemorySegment keyPairSeg = privKeyToSegment(alloc, keyPair.privateKey());
+        return schnorrSigSign32(alloc, hashSeg, keyPairSeg, auxiliaryRand);
+    }
+
+    private SchnorrSignature schnorrSigSign32(SegmentAllocator alloc, MemorySegment hashSeg, MemorySegment keyPairSeg, MemorySegment auxiliaryRand) {
         MemorySegment sig = alloc.allocate(64);
-        MemorySegment msg_hash = alloc.allocateFrom(JAVA_BYTE, messageHash);
-        MemorySegment keyPairSeg = privKeyToSegment(alloc, privKey);
-        int return_val = secp256k1_schnorrsig_sign32(ctx, sig, msg_hash, keyPairSeg, auxiliary_rand);
-        keyPairSeg.fill((byte) 0x00);   // Contains the private key
+        int return_val = secp256k1_schnorrsig_sign32(ctx, sig, hashSeg, keyPairSeg, auxiliaryRand);
         assert(return_val == 1);
         return SchnorrSignatureImpl.of(sig.toArray(JAVA_BYTE));
     }
-
 
     /// Get a segment with a private key in it. If `privKey` is an [SecpPrivKeyNative] we return
     /// the read-only segment provided by [SecpPrivKeyNative#segment()], otherwise we allocate
