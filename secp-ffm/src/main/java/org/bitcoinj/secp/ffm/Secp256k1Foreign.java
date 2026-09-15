@@ -228,8 +228,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             do {
                 privKeySeg = fill_random(ta, 32);
             } while (secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, privKeySeg) != 1);
-            // TODO: Parse keyPairSeg into standard SecpKeyPairImpl
-            SecpKeyPair keyPair = toKeyPair(ta, keyPairSeg);
+            SecpKeyPair keyPair = SecpKeyPairNative.ofInternal(keyPairSeg);
             privKeySeg.fill((byte) 0x00);
             keyPairSeg.fill((byte) 0x00);
             return keyPair;
@@ -244,8 +243,7 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
             int return_val = secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, privKeySeg);
             zeroIfWriteable(privKeySeg);
             assert(return_val == 1);
-            // TODO: Parse keyPairSeg into standard SecpKeyPairImpl
-            SecpKeyPair keyPair = toKeyPair(ta, keyPairSeg);
+            SecpKeyPair keyPair = SecpKeyPairNative.ofInternal(keyPairSeg);
             keyPairSeg.fill((byte) 0x00);
             return keyPair;
         }
@@ -509,7 +507,9 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
 
     private SchnorrSignature schnorrSigSign32(SegmentAllocator alloc, byte[] messageHash, SecpKeyPair keyPair, MemorySegment auxiliaryRand) {
         MemorySegment hashSeg = alloc.allocateFrom(JAVA_BYTE, messageHash);
-        MemorySegment keyPairSeg = privKeyToSegment(alloc, keyPair.privateKey());
+        MemorySegment keyPairSeg = keyPair instanceof SecpKeyPairNative keyPairNative
+                ? keyPairNative.segment()
+                : privKeyToSegment(alloc, keyPair.privateKey());
         return schnorrSigSign32(alloc, hashSeg, keyPairSeg, auxiliaryRand);
     }
 
@@ -546,23 +546,6 @@ public class Secp256k1Foreign implements AutoCloseable, Secp256k1 {
         secp256k1_h.secp256k1_keypair_create(ctx, keyPairSeg, privSeg);
         privSeg.fill((byte) 0x00);
         return keyPairSeg;
-    }
-
-    /// Construct a [SecpKeyPair]
-    /// @param alloc allocator to create segments with
-    /// @param keyPairSegment a segment containing a key pair
-    /// @return key pair
-    private SecpKeyPair toKeyPair(SegmentAllocator alloc, MemorySegment keyPairSegment) {
-        MemorySegment pubKeySegment = secp256k1_pubkey.allocate(alloc);
-        int return_val = secp256k1_h.secp256k1_keypair_pub(ctx, pubKeySegment, keyPairSegment);
-        assert(return_val == 1);
-        SecpPubKey pubKey = toSecpPubKey(alloc, pubKeySegment);
-        MemorySegment privKeySegment = alloc.allocate(32);
-        int return_val2 = secp256k1_h.secp256k1_keypair_sec(ctx, privKeySegment, keyPairSegment);
-        assert(return_val2 == 1);
-        SecpPrivKey privKey = new SecpPrivKeyNative(privKeySegment);
-        privKeySegment.fill((byte) 0x00);
-        return new SecpKeyPairImpl(privKey, pubKey);
     }
 
     @Override
