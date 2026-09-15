@@ -135,9 +135,7 @@ public class Bouncy256k1 implements Secp256k1 {
     @Override
     public SecpKeyPairBc ecKeyPairCreate() {
         AsymmetricCipherKeyPair bcKeyPair = bcKeyPairCreate();
-        BigInteger privKey = ((ECPrivateKeyParameters) bcKeyPair.getPrivate()).getD();
-        SecP256K1Point pubPoint = (SecP256K1Point) (((ECPublicKeyParameters) bcKeyPair.getPublic()).getQ());
-        return new SecpKeyPairBc(pubPoint, privKey);
+        return new SecpKeyPairBc((ECPublicKeyParameters) bcKeyPair.getPublic(), (ECPrivateKeyParameters) bcKeyPair.getPrivate());
     }
 
     @Override
@@ -146,7 +144,9 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     private SecpKeyPairBc ecKeyPairCreate(BigInteger privKey) {
-        return new SecpKeyPairBc(bcPubPointFromPrivKey(privKey), privKey);
+        ECPublicKeyParameters pub = new ECPublicKeyParameters(bcPubPointFromPrivKey(privKey), BC_ECDOMAIN_PARAMS);
+        ECPrivateKeyParameters priv = new ECPrivateKeyParameters(privKey, BC_ECDOMAIN_PARAMS);
+        return new SecpKeyPairBc(pub, priv);
     }
 
     /**
@@ -336,12 +336,14 @@ public class Bouncy256k1 implements Secp256k1 {
 
     @Override
     public SchnorrSignature schnorrSigSign32(byte[] msg_hash, SecpKeyPair keyPair, byte[] auxiliaryRandom) {
-        // TODO: Is there a way to pass the x-only pubkey to Bouncy Castle to save a point multiply?
-        ECPrivateKeyParameters priv = new ECPrivateKeyParameters(keyPair.getS(), BC_ECDOMAIN_PARAMS);
-
         BIP340Signer signer = new BIP340Signer();
 
-        signer.init(true, new ParametersWithRandom(priv, new FixedBytesRandom(auxiliaryRandom)));
+        if (keyPair instanceof SecpKeyPairBc) {
+           signer.init(true, ((SecpKeyPairBc) keyPair).getBcKeyPair(), new FixedBytesRandom(auxiliaryRandom));
+        } else {
+            ECPrivateKeyParameters priv = new ECPrivateKeyParameters(keyPair.getS(), BC_ECDOMAIN_PARAMS);
+            signer.init(true, new ParametersWithRandom(priv, new FixedBytesRandom(auxiliaryRandom)));
+        }
         signer.update(msg_hash, 0, msg_hash.length);
 
         return SchnorrSignatureImpl.of(signer.generateSignature());
