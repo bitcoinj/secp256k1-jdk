@@ -17,8 +17,10 @@ package org.bitcoinj.secp.bouncy;
 
 import org.bitcoinj.secp.SecpKeyPair;
 import org.bitcoinj.secp.internal.SecpScalarImpl;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.math.ec.custom.sec.SecP256K1Point;
-import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -27,53 +29,59 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 
 /**
- * Bouncy Castle implementation of SecpKeyPair using {@link BigInteger} and {@link SecP256K1Point}.
+ * Bouncy Castle implementation of SecpKeyPair using {@link ECPrivateKeyParameters} and {@link ECPublicKeyParameters}.
+ * {@link #getBcKeyPair()} returns {@link AsymmetricCipherKeyPair} which can be used by {@link org.bouncycastle.crypto.signers.BIP340Signer}.
  */
 public class SecpKeyPairBc implements SecpKeyPair {
-    private @Nullable BigInteger privKey;
-    private final SecP256K1Point bcPoint;
+    private final ECPublicKeyParameters pubKeyParams;
+    private final ECPrivateKeyParameters privKeyParams;
 
-    SecpKeyPairBc(SecP256K1Point bcPoint, BigInteger privKey) {
-        this.privKey = privKey;
-        this.bcPoint = bcPoint;
+    SecpKeyPairBc(ECPublicKeyParameters pubKeyParams, ECPrivateKeyParameters privKeyParams) {
+        this.pubKeyParams = pubKeyParams;
+        this.privKeyParams = privKeyParams;
     }
 
     @Override
     public SecpPubKeyBc publicKey() {
-        return new SecpPubKeyBc(bcPoint);
+        return new SecpPubKeyBc(getQ());
     }
 
     @Override
     public SecpPrivKeyBc privateKey() {
-        if (privKey == null) throwKeyDestroyed();
-        return new SecpPrivKeyBc(privKey);
+        if (privKeyParams.isDestroyed()) throwKeyDestroyed();
+        return new SecpPrivKeyBc(privKeyParams.getD());
     }
 
     @Override
     public byte[] getEncoded() {
-        if (privKey == null) throwKeyDestroyed();
-        return SecpScalarImpl.integerTo32Bytes(privKey);
+        if (privKeyParams.isDestroyed()) throwKeyDestroyed();
+        return SecpScalarImpl.integerTo32Bytes(privKeyParams.getD());
     }
 
     @Override
     public BigInteger getS() {
-        if (privKey == null) throwKeyDestroyed();
-        return privKey;
+        if (privKeyParams.isDestroyed()) throwKeyDestroyed();
+        return privKeyParams.getD();
+    }
+
+    AsymmetricCipherKeyPair getBcKeyPair() {
+        if (privKeyParams.isDestroyed()) throwKeyDestroyed();
+        return new AsymmetricCipherKeyPair(pubKeyParams, privKeyParams);
     }
 
     // Method to get pubkey as SecP256K1Point directly
     SecP256K1Point getQ() {
-        return bcPoint;
+        return (SecP256K1Point)(pubKeyParams.getQ());
     }
 
     @Override
     public void destroy() {
-        privKey = null;
+        privKeyParams.destroy();
     }
 
     @Override
     public boolean isDestroyed() {
-        return privKey == null;
+        return privKeyParams.isDestroyed();
     }
 
     private void throwKeyDestroyed() {
