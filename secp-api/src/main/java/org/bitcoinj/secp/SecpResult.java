@@ -65,6 +65,7 @@ public /* sealed */ interface SecpResult<T> {
          * @param code error code
          */
         public Err(int code) {
+            if (code == OK) throw new IllegalArgumentException("Err result type can't have code OK (1).");
             this.code = code;
         }
 
@@ -76,6 +77,8 @@ public /* sealed */ interface SecpResult<T> {
             return code;
         }
     }
+    /** Error return integer value for most errors */
+    int ERROR = 0;
     /** Error return integer value for success */
     int OK = 1;
 
@@ -113,6 +116,11 @@ public /* sealed */ interface SecpResult<T> {
      */
     static <T> SecpResult<T> err(int error_code) {
         return new Err<>(error_code);
+    }
+
+    // Default/generic error
+    static <T> SecpResult<T> err() {
+        return new Err<>(ERROR);
     }
 
     /**
