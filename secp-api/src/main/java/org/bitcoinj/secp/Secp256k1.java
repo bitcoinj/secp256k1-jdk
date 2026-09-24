@@ -24,6 +24,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECFieldFp;
 import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -170,6 +171,15 @@ public interface Secp256k1 extends Closeable {
      * @return the private key
      */
     SecpPrivKey ecPrivKeyImport(byte[] privKeyBytes);
+
+    /**
+     * Import a (non-infinity) point.
+     * <p>
+     * {@link SecpPoint#INFINITY} is available, but most applications shouldn't need it.
+     * @param point a Java cryptography point
+     * @return a validated secp256k1 point or error if infinity or not-on-curve
+     */
+    SecpResult<SecpPoint.Uncompressed> ecPointImport(ECPoint point);
 
     /**
      * Create a public key from the given private key.

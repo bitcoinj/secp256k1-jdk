@@ -115,6 +115,7 @@ public /* sealed */ interface SecpResult<T> {
      * @param <T> expected result type
      */
     static <T> SecpResult<T> err(int error_code) {
+        // TODO: exception if errorCode 0 is passed
         return new Err<>(error_code);
     }
 

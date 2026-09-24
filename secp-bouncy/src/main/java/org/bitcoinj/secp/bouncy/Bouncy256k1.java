@@ -127,6 +127,21 @@ public class Bouncy256k1 implements Secp256k1 {
     }
 
     @Override
+    public SecpResult<SecpPoint.Uncompressed> ecPointImport(java.security.spec.ECPoint point) {
+        SecP256K1Point bcPoint;
+        try {
+            bcPoint = (SecP256K1Point) BC_CURVE.validatePoint(point.getAffineX(), point.getAffineY());
+        } catch (IllegalArgumentException e) {
+            return SecpResult.err();
+        }
+        if (bcPoint.isInfinity()) {
+            return SecpResult.err();
+        }
+        SecpPubKeyBc validated = toSecpPoint(bcPoint);
+        return SecpResult.ok(validated) ;
+    }
+
+    @Override
     public SecpPubKey ecPubKeyCreate(SecpPrivKey privKey) {
         SecP256K1Point pub = (SecP256K1Point) BC_ECDOMAIN_PARAMS.getG().multiply(privKey.getS());
         return toSecpPubKey(pub);
