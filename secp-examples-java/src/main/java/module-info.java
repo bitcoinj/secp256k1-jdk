@@ -21,4 +21,5 @@ module org.bitcoinj.secp.examples {
     requires org.bitcoinj.secp;
     requires org.bitcoinj.secp.graalvm;
     requires org.jspecify;
+    requires org.bitcoinj.core;
 }
