@@ -260,10 +260,11 @@ See link:SECURITY.md[]
 * https://www.bouncycastle.org/documentation/documentation-java/[Bouncy Castle for Java]
 * OpenJDK https://openjdk.org/projects/brisbane/[Project Brisbane] - uses Foreign Function & Memory API to encapsulate the FIPS 140 validated OpenSSL library.
 
-=== BIPS
+=== BIPs
 
 * https://github.com/bitcoin/bips/blob/master/bip-0340.mediawiki[BIP 340]: Schnorr Signatures for secp256k1
 * https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki[BIP 341]: Taproot: SegWit version 1 spending rules
+* https://github.com/bitcoin/bips/blob/master/bip-0461.md[BIP 461]: Deterministic ECDSA Signatures
 
 === General and Elliptic Curve Cryptography
 
