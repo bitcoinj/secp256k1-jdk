@@ -29,7 +29,7 @@ module org.bitcoinj.secp {
     requires org.jspecify;
 
     exports org.bitcoinj.secp;
-    exports org.bitcoinj.secp.internal to org.bitcoinj.secp.bouncy, org.bitcoinj.secp.ffm, org.bitcoinj.secp.bitcoinj;
+    exports org.bitcoinj.secp.internal to org.bitcoinj.secp.bouncy, org.bitcoinj.secp.ffm, org.bitcoinj.secp.bitcoinj, org.bitcoinj.secp.integrationtest.test;
 
     uses Secp256k1.Provider;
 }
