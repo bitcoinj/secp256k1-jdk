@@ -58,12 +58,5 @@
           shellHook = sharedShellHook;
         };
       });
-      # define flake output packages
-      packages = let
-        # common properties across the derivations
-        version = "0.0.1";
-      in {
-        # TBD
-      };
   };
 }
