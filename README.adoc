@@ -115,7 +115,7 @@ dependencies {
 
 == Building secp256k1-jdk
 
-The build requires JDK 25. Maven 3.9.0 or later is required and is provided by the Nix devShell. You must also install the native `secp256k1` library.
+The build requires JDK 25. Maven 3.9.9 or later is required and is provided by the Nix devShell. You must also install the native `secp256k1` library.
 
 === Installing OpenJDK 25 or GraalVM JDK 25
 
