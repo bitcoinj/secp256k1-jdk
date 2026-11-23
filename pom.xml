@@ -56,7 +56,7 @@
         <revision>0.3.2-SNAPSHOT</revision>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
-        <maven.version.minimum>3.9.0</maven.version.minimum>
+        <maven.version.minimum>3.9.9</maven.version.minimum>
 
         <!-- Properties enabling reproducible builds -->
         <project.build.outputTimestamp>1980-01-01T00:00:02Z</project.build.outputTimestamp>
